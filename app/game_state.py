@@ -39,14 +39,19 @@ class GameState:
             if residents:
                 location.owner_or_keeper = residents[0].name
                 location.associated_npcs = [npc.name for npc in residents]
+                location.owner_npc_id = residents[0].entity_id
+                location.associated_npc_ids = [npc.entity_id for npc in residents]
             else:
                 # Every important location receives a keeper, and that NPC is reassigned
                 # consistently so no building becomes an orphaned generated detail.
                 keeper = npcs[index % len(npcs)]
                 old_location = keeper.location
                 keeper.location = location.name
+                keeper.location_id = location.entity_id
                 location.owner_or_keeper = keeper.name
                 location.associated_npcs = [keeper.name]
+                location.owner_npc_id = keeper.entity_id
+                location.associated_npc_ids = [keeper.entity_id]
                 npcs_by_location[old_location] = [
                     npc for npc in npcs_by_location[old_location] if npc is not keeper
                 ]
@@ -83,28 +88,28 @@ class GameState:
 
     def _connect_region(self, settlement, npcs, dungeon, wilderness, hook) -> None:
         """Turn isolated table results into one inspectable local situation."""
-        problem_target = self.rng.choice(["dungeon", "encounter", "npc", "hook"])
+        problem_target = self.rng.choice(["dungeon", "encounter", "hook"])
         if problem_target == "dungeon":
             settlement.problem_connection = (
                 f"The problem originates in {dungeon.name}: {dungeon.connection_to_town}"
             )
+            settlement.problem_target_type = "dungeon_room"
+            settlement.problem_target_id = dungeon.rooms[0].entity_id
         elif problem_target == "encounter":
             encounter = self.rng.choice(wilderness.encounter_table)
             settlement.problem_connection = (
                 f"The problem is worsened by {encounter.creature_or_npc} in "
                 f"{wilderness.name}, which seeks to {encounter.intent}."
             )
-        elif problem_target == "npc":
-            npc = self.rng.choice(npcs)
-            settlement.problem_connection = (
-                f"{npc.name} at {npc.location} is entangled in the problem because they "
-                f"seek to {npc.motivation} and conceal that they {npc.secret}."
-            )
+            settlement.problem_target_type = "wilderness_encounter"
+            settlement.problem_target_id = encounter.entity_id
         else:
             settlement.problem_connection = (
                 f"The problem is the opening movement of the adventure hook: "
                 f"{hook.major_goal}, before {hook.time_pressure.lower()}."
             )
+            settlement.problem_target_type = "adventure_hook"
+            settlement.problem_target_id = hook.entity_id
 
         # Every rumor names real generated content and doubles as a navigation clue.
         featured_encounter = wilderness.encounter_table[0]

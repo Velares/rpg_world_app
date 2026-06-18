@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from app.generators.common import BaseGenerator
+from app.ids import new_id
 from app.models import Location, Settlement
 
 
@@ -24,6 +25,7 @@ class SettlementGenerator(BaseGenerator):
             rumor_connected=self.pick("settlement_tables", "rumors"),
             possible_encounter=self.pick("settlement_tables", "local_events"),
             useful_resource=self.pick("settlement_tables", "useful_resources"),
+            entity_id=new_id("loc"),
         )
 
     def generate(self) -> Settlement:

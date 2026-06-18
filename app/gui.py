@@ -189,11 +189,11 @@ class RPGWorldApp(tk.Tk):
             npcs = self.state.require_world().npcs
             self.show_index(
                 "NPCs",
-                [f"{npc.name} — {npc.profession}" for npc in npcs],
+                [f"{npc.name} — {npc.profession} [{npc.entity_id}]" for npc in npcs],
                 self.view_npc_detail,
             )
             text = "NPC LIST\n========\n\n" + "\n".join(
-                f"{index}. {npc.name} — {npc.profession} at {npc.location}"
+                f"{index}. {npc.name} — {npc.profession} at {npc.location} [{npc.entity_id}]"
                 for index, npc in enumerate(npcs, 1)
             )
             text += "\n\nSelect an NPC from the middle panel to inspect their full details."
@@ -210,11 +210,15 @@ class RPGWorldApp(tk.Tk):
             locations = self.state.require_world().settlement.important_locations
             self.show_index(
                 "Locations",
-                [f"{location.name} — {location.type}" for location in locations],
+                [
+                    f"{location.name} — {location.type} [{location.entity_id}]"
+                    for location in locations
+                ],
                 self.view_location_detail,
             )
             text = "LOCATION LIST\n=============\n\n" + "\n".join(
-                f"{index}. {location.name} — {location.type}; keeper: {location.owner_or_keeper}"
+                f"{index}. {location.name} — {location.type}; "
+                f"keeper: {location.owner_or_keeper} [{location.entity_id}]"
                 for index, location in enumerate(locations, 1)
             )
             text += "\n\nSelect a location from the middle panel to inspect its people and secrets."
@@ -246,11 +250,12 @@ class RPGWorldApp(tk.Tk):
             rooms = self.state.require_world().dungeon.rooms
             self.show_index(
                 "Dungeon Rooms",
-                [f"{room.room_id}. {room.name}" for room in rooms],
+                [f"{room.room_id}. {room.name} [{room.entity_id}]" for room in rooms],
                 self.view_room_detail,
             )
             text = "DUNGEON ROOMS\n=============\n\n" + "\n".join(
-                f"{room.room_id}. {room.name} — exits to {', '.join(map(str, room.exits))}"
+                f"{room.room_id}. {room.name} — exits to {', '.join(map(str, room.exits))} "
+                f"[{room.entity_id}]"
                 for room in rooms
             )
             text += "\n\nSelect a room to inspect dangers, clues, preparation, and retreat options."
@@ -280,7 +285,7 @@ class RPGWorldApp(tk.Tk):
             self.show_index(
                 "Encounters",
                 [
-                    f"{index}. {encounter.creature_or_npc}"
+                    f"{index}. {encounter.creature_or_npc} [{encounter.entity_id}]"
                     for index, encounter in enumerate(encounters, 1)
                 ],
                 self.view_encounter_detail,

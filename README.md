@@ -27,6 +27,9 @@ list of prior saves.
 Version 0.2 adds explicit links among town problems, NPCs, locations, rumors,
 the dungeon, wilderness signs, and the adventure hook. NPCs, locations, dungeon
 rooms, and encounters have selectable list-and-detail views in the GUI.
+Generated NPCs, locations, rooms, encounters, and adventure hooks also receive
+stable prefixed IDs. These ID-backed relationships survive save/load, while
+older saves are upgraded in memory when opened.
 
 The database is created automatically at:
 

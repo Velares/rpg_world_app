@@ -2,11 +2,17 @@ from __future__ import annotations
 
 from app.dice import reaction_roll
 from app.generators.common import BaseGenerator
+from app.ids import new_id
 from app.models import Encounter
 
 
 class EncounterGenerator(BaseGenerator):
-    def generate(self, foreshadowing: str | None = None) -> Encounter:
+    def generate(
+        self,
+        foreshadowing: str | None = None,
+        foreshadows_type: str = "",
+        foreshadows_id: str = "",
+    ) -> Encounter:
         encounter_type = self.rng.choice(["animal", "monster", "traveler", "landmark"])
         if encounter_type == "monster":
             subject = self.pick("monster_tables", "monster_names")
@@ -30,4 +36,7 @@ class EncounterGenerator(BaseGenerator):
             reward_or_clue=self.pick("treasure_tables", "clue_items"),
             morale=self.rng.randint(4, 11),
             reaction_roll_result=reaction_roll(self.rng),
+            entity_id=new_id("enc"),
+            foreshadows_type=foreshadows_type,
+            foreshadows_id=foreshadows_id,
         )

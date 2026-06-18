@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from app.generators.common import BaseGenerator
+from app.ids import new_id
 from app.models import Dungeon, DungeonRoom, Settlement
 
 
@@ -33,6 +34,7 @@ class DungeonGenerator(BaseGenerator):
                     noncombat_resolution_options=self.pick("monster_tables", "noncombat_options"),
                     preparation_that_helps=self.pick("monster_tables", "monster_weaknesses"),
                     retreat_option=self.pick("dungeon_tables", "retreat_options"),
+                    entity_id=new_id("room"),
                 )
             )
         return Dungeon(
@@ -50,4 +52,5 @@ class DungeonGenerator(BaseGenerator):
                 f"{settlement.local_secret}"
             ),
             rooms=rooms,
+            town_location_id=settlement.important_locations[0].entity_id,
         )

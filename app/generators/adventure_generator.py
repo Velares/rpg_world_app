@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from app.generators.common import BaseGenerator
+from app.ids import new_id
 from app.models import AdventureHook, Dungeon, NPC, Settlement
 
 
@@ -25,4 +26,6 @@ class AdventureGenerator(BaseGenerator):
             time_pressure=self.pick("adventure_tables", "time_pressures"),
             failure_consequence=self.pick("adventure_tables", "failure_consequences"),
             noncombat_paths=self.pick("adventure_tables", "noncombat_paths"),
+            entity_id=new_id("hook"),
+            key_npc_id=key_npc.entity_id,
         )

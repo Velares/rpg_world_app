@@ -21,15 +21,25 @@ class WildernessGenerator(BaseGenerator):
                     f"The sign bears the same unnatural marks described at {dungeon.name}; "
                     f"scouting it may reveal a safer approach."
                 )
+                target_type = "dungeon_room"
+                target_id = dungeon.rooms[0].entity_id
             elif settlement:
                 connection = (
                     f"Locals connect this sign to {settlement.nearby_danger}; careful travelers "
                     f"can use it as an early warning."
                 )
+                target_type = "local_threat"
+                target_id = f"threat:{settlement.name}"
             else:
                 connection = ""
+                target_type = ""
+                target_id = ""
             generated_encounters.append(
-                encounters.generate(f"{base_sign} {connection}".strip())
+                encounters.generate(
+                    f"{base_sign} {connection}".strip(),
+                    foreshadows_type=target_type,
+                    foreshadows_id=target_id,
+                )
             )
         return WildernessArea(
             name=self.pick("wilderness_tables", "wilderness_names"),

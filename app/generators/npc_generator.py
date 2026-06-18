@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from app.generators.common import BaseGenerator
+from app.ids import new_id
 from app.models import Location, NPC
 
 
@@ -17,6 +18,7 @@ class NPCGenerator(BaseGenerator):
             used_names[name] = used_names.get(name, 0) + 1
             if used_names[name] > 1:
                 name = f"{name} the {self.pick('npc_tables', 'professions').title()}"
+            location = locations[index] if index < len(locations) else self.rng.choice(locations)
             npcs.append(
                 NPC(
                     name=name,
@@ -25,11 +27,7 @@ class NPCGenerator(BaseGenerator):
                     profession=self.pick("npc_tables", "professions"),
                     # Seed one NPC into every important location before assigning
                     # additional townsfolk, guaranteeing a keeper-sized roster.
-                    location=(
-                        locations[index].name
-                        if index < len(locations)
-                        else self.rng.choice(locations).name
-                    ),
+                    location=location.name,
                     appearance=self.pick("npc_tables", "appearances"),
                     personality=self.pick("npc_tables", "personalities"),
                     motivation=self.pick("npc_tables", "motivations"),
@@ -40,6 +38,8 @@ class NPCGenerator(BaseGenerator):
                     useful_information=self.pick("npc_tables", "useful_information"),
                     possible_service=self.pick("npc_tables", "possible_services"),
                     danger_level=self.danger(),
+                    entity_id=new_id("npc"),
+                    location_id=location.entity_id,
                 )
             )
         return npcs

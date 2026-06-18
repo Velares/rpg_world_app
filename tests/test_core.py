@@ -67,12 +67,26 @@ class WorldTests(unittest.TestCase):
             self.assertEqual(len(world.settlement.important_locations), 8)
             self.assertEqual(len(world.dungeon.rooms), 8)
             self.assertEqual(len(world.wilderness.encounter_table), 10)
+            all_entity_ids = [
+                *(npc.entity_id for npc in world.npcs),
+                *(location.entity_id for location in world.settlement.important_locations),
+                *(room.entity_id for room in world.dungeon.rooms),
+                *(encounter.entity_id for encounter in world.wilderness.encounter_table),
+                world.adventure_hook.entity_id,
+            ]
+            self.assertTrue(all(all_entity_ids))
+            self.assertEqual(len(all_entity_ids), len(set(all_entity_ids)))
             location_names = {item.name for item in world.settlement.important_locations}
+            location_ids = {item.entity_id for item in world.settlement.important_locations}
             self.assertTrue(all(npc.location in location_names for npc in world.npcs))
+            self.assertTrue(all(npc.location_id in location_ids for npc in world.npcs))
             npc_names = {npc.name for npc in world.npcs}
+            npc_ids = {npc.entity_id for npc in world.npcs}
             for location in world.settlement.important_locations:
                 self.assertIn(location.owner_or_keeper, npc_names)
                 self.assertIn(location.owner_or_keeper, location.associated_npcs)
+                self.assertIn(location.owner_npc_id, npc_ids)
+                self.assertTrue(set(location.associated_npc_ids) <= npc_ids)
                 self.assertTrue(location.associated_npcs)
                 self.assertTrue(
                     all(
@@ -88,13 +102,21 @@ class WorldTests(unittest.TestCase):
                 if index > 1:
                     self.assertIn(index - 1, room.exits)
             self.assertIn(world.adventure_hook.key_npc, {npc.name for npc in world.npcs})
+            self.assertIn(world.adventure_hook.key_npc_id, npc_ids)
             self.assertTrue(world.settlement.problem_connection)
+            valid_problem_ids = {
+                *(room.entity_id for room in world.dungeon.rooms),
+                *(encounter.entity_id for encounter in world.wilderness.encounter_table),
+                world.adventure_hook.entity_id,
+            }
+            self.assertIn(world.settlement.problem_target_id, valid_problem_ids)
             self.assertIn(world.settlement.name, world.dungeon.connection_to_town)
             self.assertIn(
                 world.settlement.important_locations[0].name,
                 world.dungeon.connection_to_town,
             )
             for encounter in world.wilderness.encounter_table:
+                self.assertTrue(encounter.foreshadows_id)
                 self.assertTrue(
                     world.dungeon.name in encounter.signs_or_foreshadowing
                     or world.local_threat in encounter.signs_or_foreshadowing
@@ -125,6 +147,18 @@ class WorldTests(unittest.TestCase):
             self.assertEqual(loaded.name, "Test Save")
             self.assertEqual(loaded.settlement, original.settlement)
             self.assertEqual(loaded.npcs, original.npcs)
+            self.assertEqual(
+                [npc.entity_id for npc in loaded.npcs],
+                [npc.entity_id for npc in original.npcs],
+            )
+            self.assertEqual(
+                [encounter.foreshadows_id for encounter in loaded.wilderness.encounter_table],
+                [encounter.foreshadows_id for encounter in original.wilderness.encounter_table],
+            )
+            self.assertEqual(
+                loaded.settlement.problem_target_id,
+                original.settlement.problem_target_id,
+            )
             counts = {}
             for table in (
                 "worlds", "settlements", "npcs", "locations", "dungeons",
@@ -163,13 +197,48 @@ class WorldTests(unittest.TestCase):
             world = state.generate_new_region()
             data = world.to_dict()
             data["settlement"].pop("problem_connection")
+            data["settlement"].pop("problem_target_type")
+            data["settlement"].pop("problem_target_id")
             for location in data["settlement"]["important_locations"]:
                 location.pop("associated_npcs")
+                location.pop("associated_npc_ids")
+                location.pop("owner_npc_id")
+                location.pop("entity_id")
+            for npc in data["npcs"]:
+                npc.pop("entity_id")
+                npc.pop("location_id")
+            data["dungeon"].pop("town_location_id")
+            for room in data["dungeon"]["rooms"]:
+                room.pop("entity_id")
+            for encounter in data["wilderness"]["encounter_table"]:
+                encounter.pop("entity_id")
+                encounter.pop("foreshadows_type")
+                encounter.pop("foreshadows_id")
+            data["adventure_hook"].pop("entity_id")
+            data["adventure_hook"].pop("key_npc_id")
             restored = type(world).from_dict(data)
             self.assertEqual(restored.settlement.problem_connection, restored.settlement.local_problem)
             self.assertTrue(
-                all(not location.associated_npcs for location in restored.settlement.important_locations)
+                all(location.associated_npcs for location in restored.settlement.important_locations)
             )
+            self.assertTrue(all(npc.entity_id and npc.location_id for npc in restored.npcs))
+            self.assertTrue(
+                all(
+                    location.entity_id
+                    and location.owner_npc_id
+                    and location.associated_npc_ids
+                    for location in restored.settlement.important_locations
+                )
+            )
+            self.assertTrue(all(room.entity_id for room in restored.dungeon.rooms))
+            self.assertTrue(
+                all(
+                    encounter.entity_id and encounter.foreshadows_id
+                    for encounter in restored.wilderness.encounter_table
+                )
+            )
+            self.assertTrue(restored.adventure_hook.entity_id)
+            self.assertTrue(restored.adventure_hook.key_npc_id)
             state.close()
 
 
