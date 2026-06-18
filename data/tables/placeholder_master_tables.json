@@ -1,0 +1,9 @@
+{
+  "about": [
+    "Reserved for cleaned and imported master tables.",
+    "Future d30 PDF-derived tables can be added here or split into focused JSON files.",
+    "Each category must remain a non-empty JSON list."
+  ],
+  "future_hex_features": ["ruin", "lair", "settlement", "resource", "hazard", "landmark"],
+  "future_faction_states": ["friendly", "neutral", "suspicious", "hostile", "fractured"]
+}

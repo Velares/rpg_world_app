@@ -1,0 +1,17 @@
+{
+  "male_names": ["Arvo", "Bram", "Corren", "Dask", "Iven", "Mord"],
+  "female_names": ["Asha", "Brin", "Edda", "Mara", "Nim", "Ysra"],
+  "neutral_names": ["Kest", "Lark", "Moth", "Rill", "Sable", "Thorn"],
+  "surnames": ["Ashhand", "Crow", "Drail", "Mourn", "Salt", "Vey", "Wormwood"],
+  "ancestries": ["human", "dusk elf", "stone-blooded", "goat-horned exile", "marsh-born", "serpent-touched"],
+  "professions": ["smith", "goatherd", "hedge magician", "grave digger", "caravan guard", "apothecary", "scribe", "rat catcher"],
+  "appearances": ["tattooed with faded constellations", "missing two fingers and smiling often", "wrapped in immaculate red linen", "pale-eyed and mud-spattered", "wearing armor made from lacquered wood"],
+  "personalities": ["dryly humorous", "eager to please but observant", "ceremoniously rude", "patient and fatalistic", "nervous around open flame", "generous until contradicted"],
+  "motivations": ["escape an old debt", "protect a disgraced sibling", "recover forbidden knowledge", "become indispensable", "avenge a quiet humiliation", "keep the town from learning the truth"],
+  "fears": ["being buried alive", "mirrors after dark", "the eastern bells", "deep running water", "recognition by an old enemy", "losing control of a curse"],
+  "secrets": ["works for the local threat", "has already visited the cave", "is the rightful heir to a ruined throne", "can hear the thoughts of crows", "stole a relic from the shrine", "is slowly turning to salt"],
+  "relationships": ["beloved local nuisance", "newcomer tolerated for useful skills", "member of an old feuding family", "quiet power behind the council", "outcast protected by the poor"],
+  "attitudes": ["wary but curious", "friendly if shown respect", "openly suspicious", "amused and testing", "desperate for capable help"],
+  "useful_information": ["knows a safe route through the marsh", "can identify the cave's symbols", "saw the threat's servants at dusk", "knows which rumor is deliberately false", "has a key to a sealed cellar"],
+  "possible_services": ["healing and poison treatment", "guiding and scouting", "repairing arms and armor", "buying strange relics", "forging papers and local permits", "providing pack animals"]
+}

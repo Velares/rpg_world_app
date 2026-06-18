@@ -1,0 +1,14 @@
+{
+  "wilderness_names": ["The Saffron Waste", "Gallows Fen", "The Wolfglass Hills", "Mournwood Verge", "The Plain of Broken Idols"],
+  "terrain_types": ["salt marsh", "thorn forest", "wind-cut badlands", "black-grass steppe", "rocky highland", "flooded ruins"],
+  "weather": ["cold rain beneath a copper sky", "dry lightning on the horizon", "heavy mist that muffles speech", "a hot wind carrying gray ash", "still air before an unnatural frost"],
+  "dominant_features": ["a line of toppled giant statues", "a river running uphill at dusk", "a petrified forest", "an abandoned imperial road", "a crater filled with blue reeds"],
+  "resources": ["medicinal ghostcap mushrooms", "clean spring water beneath red stones", "resin suitable for torches", "edible black-root", "ironwood branches"],
+  "travel_hazards": ["sucking mud concealed by pale moss", "territorial corpse-crows", "flash floods in narrow gullies", "razor grass that cuts exposed skin", "paths that subtly return travelers to their start"],
+  "animal_encounters": ["a limping white stag", "a sounder of black-tusked boars", "three giant moths feeding on salt", "a pack of silent red dogs", "a two-headed marsh crane"],
+  "monster_encounters": ["a hungry troll under a skin cloak", "a dust wight", "a pilgrim-devouring tree", "three iron goblins", "a young wyvern with a broken wing"],
+  "npc_encounters": ["a wounded courier hiding a sealed message", "salt merchants with one empty wagon", "a deserter carrying a noble's sword", "pilgrims who refuse to show their faces", "a cheerful executioner seeking directions"],
+  "landmarks": ["a shrine made from ship ribs", "an enormous sword driven into the earth", "a door standing alone in a field", "a circle of warm black stones", "a gallows bearing fresh flowers"],
+  "tracks_and_signs": ["Fresh prints circle the path but never cross it", "Birds rise ahead in complete silence", "The smell of hot iron drifts against the wind", "A dropped bundle still contains warm food", "Every nearby insect begins chirping in rhythm"],
+  "camp_events": ["someone circles the camp without approaching", "a sleeper speaks in an unknown language", "all flames briefly turn green", "supplies are neatly rearranged", "a distant horn answers itself"]
+}

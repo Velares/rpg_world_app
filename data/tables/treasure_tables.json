@@ -1,0 +1,9 @@
+{
+  "coins": ["37 clipped silver coins", "a string of twelve electrum trade rings", "three heavy gold funerary disks", "a jar of copper temple tokens"],
+  "mundane_treasure": ["a fine wool cloak sealed in wax", "a set of ivory gaming pieces", "rare blue dye in glass tubes", "a silver-inlaid astrolabe"],
+  "useful_items": ["a coil of silk rope", "four smokeless torches", "a vial of universal antitoxin", "a collapsible ten-foot pole", "a waterproof map case"],
+  "weird_relics": ["a bronze eye that weeps near hidden doors", "a crown woven from living moths", "a stone tongue that answers one question badly", "a mirror showing the viewer's last resting place"],
+  "minor_magic_items": ["a knife that cuts only rope and bindings", "boots that leave animal tracks", "a lantern that reveals fresh blood", "a cloak warm only underground"],
+  "cursed_items": ["a gold ring that makes promises audible", "a sword that demands a burial after every battle", "a purse that replaces one coin nightly with a tooth", "a compass that points toward the owner's greatest fear"],
+  "clue_items": ["a wax-sealed letter bearing the reeve's mark", "a scrap of a map showing a hidden entrance", "a broken amulet matching one worn in town", "a ledger recording payments to masked travelers"]
+}

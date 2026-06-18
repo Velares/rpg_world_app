@@ -1,0 +1,16 @@
+{
+  "triggers": ["A dying stranger presses a marked coin into the party's hand", "A local disappears after publicly naming the threat", "The settlement's bells ring from underground", "A reward is posted in three mutually hostile shrines"],
+  "major_goals": ["recover the stolen relic before it is awakened", "find the missing scouts and learn what they saw", "break the pact poisoning the settlement", "reach the sealed chamber before the rival expedition"],
+  "obstacles": ["a rival band with official authority", "a route altered by supernatural weather", "the key witness refuses to speak while sober", "the enemy can imitate trusted voices"],
+  "locales": ["a forgotten cave", "a ruined watchtower", "a drowned temple", "a caravan road through cursed hills"],
+  "locale_features": ["a door that opens for a confessed secret", "an altar built over a deep shaft", "murals that change after each death", "a bridge made from fused swords"],
+  "phenomena": ["time slips forward around open wounds", "the dead answer one question at sunset", "written names slowly vanish", "moonlight turns spilled blood into crystal"],
+  "villain_goals": ["restore a defeated god through borrowed bodies", "erase evidence of an ancient betrayal", "force the settlement into a new blood pact", "open a road into a dead empire"],
+  "artifacts_or_relics": ["the Crown of Moths", "Saint Orra's iron tongue", "the Cup of Unmaking", "a map tattooed on living skin"],
+  "themes": ["the price of safety", "loyalty under hunger", "power built on a forgotten crime", "mercy toward the monstrous"],
+  "key_npcs": ["the frightened reeve", "a disgraced hunter", "the shrine's blind keeper", "a foreign antiquarian"],
+  "first_clues": ["the cave's ward bears a recently used town seal", "the missing scouts bought lamp oil but no food", "the same symbol appears beneath three local beds", "the relic is useless unless willingly surrendered"],
+  "failure_consequences": ["the local threat gains legal authority over the town", "the dungeon's corruption reaches the wells", "a rival claims the relic and becomes untouchable", "the settlement must be abandoned before winter"],
+  "time_pressures": ["three nights remain before the red moon", "the rival expedition leaves at dawn", "each sunset another villager falls into a deathlike sleep", "floodwater will seal the lower caves within two days"],
+  "noncombat_paths": ["expose the villain's broken oath and demand judgment", "bargain with rival factions separately", "restore the old wards using local testimony", "steal the objective while the monsters observe their ritual truce"]
+}

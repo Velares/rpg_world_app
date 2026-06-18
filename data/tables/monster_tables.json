@@ -1,0 +1,12 @@
+{
+  "monster_names": ["the Velvet Maw", "an ash basilisk", "the Nine-Fingered Ogre", "a lantern wight", "the marrow witch", "a brass jackal"],
+  "monster_types": ["beast", "undead", "outsider", "cursed mortal", "construct", "fungal colony"],
+  "monster_intents": ["protect its nesting ground", "trade information for warm blood", "drive travelers toward an ambush", "recover a stolen token", "test whether strangers are worthy prey"],
+  "monster_signs": ["scratches appear too high on nearby trees", "small animals have been arranged in circles", "the ground is warm despite the weather", "discarded gear has been carefully cleaned", "a low chant seems to come from underground"],
+  "monster_weaknesses": ["salt and open flame", "the sound of bronze bells", "bright cloth used as a distraction", "knowledge of its true name", "bitter smoke and elevated ground"],
+  "monster_morale": ["cowardly when wounded", "fanatical", "protective of its young", "breaks if its leader falls", "retreats when denied surprise"],
+  "monster_reactions": ["immediate hostility", "territorial warning", "cautious curiosity", "hungry bargaining", "unexpected assistance"],
+  "noncombat_options": ["offer food and withdraw without sudden movement", "invoke an old local custom of hospitality", "trade a secret more valuable than coin", "help it against a mutual enemy", "return something taken from its territory"],
+  "avoidance_options": ["wait downwind until it passes", "leave the marked trail before dusk", "cover reflective equipment and travel silently", "use animal tracks to circle its territory", "create a noisy decoy far from the route"],
+  "safe_combat_options": ["fight from a narrow choke point", "force it into daylight", "separate it from its allies with fire", "prepare an elevated fallback position", "attack only after learning its retreat route"]
+}

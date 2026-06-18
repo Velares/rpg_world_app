@@ -1,0 +1,10 @@
+{
+  "ominous_signs": ["a red star visible at noon", "dogs refuse to face east", "milk curdles in sealed vessels", "all shadows briefly vanish"],
+  "disturbing_sights": ["a tree hung with sleeping masks", "fish swimming through fog", "a corpse casting two shadows", "hoofprints filling slowly with black wax"],
+  "weird_mutations": ["transparent fingernails", "a second whispering mouth", "moth-wing eyelashes", "blood that crystallizes in moonlight"],
+  "forbidden_magic_effects": ["memories leak into nearby mirrors", "spoken lies attract pale insects", "time repeats until blood is shed", "names written nearby become illegible"],
+  "dark_prophecies": ["The town will drown beneath a cloudless sky", "The kindest hand will open the final door", "No crowned head will leave the cave alive", "The bell will ring once for every broken oath"],
+  "strange_weather": ["Rain falls upward around ancient stones", "A narrow band of night crosses the land at noon", "Warm snow carries tiny black seeds", "Lightning remains frozen in the sky for hours"],
+  "eerie_sounds": ["A child humming behind the stone", "Distant armor marching out of rhythm", "Slow breathing beneath the floor", "A bell heard only when nobody speaks"],
+  "supernatural_marks": ["Every doorway bears a different eye carved overnight", "The settlement casts no shadow at sunset", "Blue moths gather around anyone planning violence", "Old scars ache when the northern bell rings"]
+}

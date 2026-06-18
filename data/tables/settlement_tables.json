@@ -1,0 +1,21 @@
+{
+  "settlement_names_prefix": ["Ash", "Black", "Gloam", "Red", "Vulture", "Worm", "Saint", "Moon"],
+  "settlement_names_suffix": ["ford", "hollow", "watch", "mere", "market", "rest", "scar", "wick"],
+  "settlement_types": ["thorpe", "hamlet", "village", "town"],
+  "government_types": ["a council of indebted elders", "a hereditary reeve", "a masked oracle", "a mercenary charter", "a temple court"],
+  "wealth_levels": ["destitute", "poor", "modest", "prosperous but indebted", "rich and visibly afraid"],
+  "industries": ["salt cutting", "black-goat herding", "iron salvage", "mushroom farming", "river trade", "grave tending", "dye making"],
+  "settlement_conditions": ["mud-choked", "wind-scoured", "half-burned", "fortified with whale bone", "leaning over old ruins", "brightly painted and joyless"],
+  "local_problems": ["the wells whisper people's secrets", "livestock vanish without tracks", "a tax collector has hired grave robbers", "the dead refuse burial", "food stores spoil overnight"],
+  "local_secrets": ["the founders bargained away the settlement's shadow", "the shrine conceals a royal corpse", "the reeve feeds prisoners to something underground", "every family shares the same recurring dream", "the oldest houses are built from petrified giants"],
+  "nearby_dangers": ["a skin-changing warband", "the bell-witch in the eastern fen", "a sleeping basilisk beneath the road", "carrion knights collecting an ancient tithe", "a red mist that remembers violence"],
+  "building_types": ["tavern", "inn", "shop", "shrine", "smithy", "market", "watch house", "physicker"],
+  "tavern_names": ["The Bent Crown", "The Thirsty Vulture", "The Three Knives", "The Black Ladle"],
+  "inn_names": ["The Last Lantern", "Pilgrim's Respite", "The Moth and Moon", "The Quiet Gallows"],
+  "shop_names": ["Useful Misfortunes", "Brass & Bone", "The Crooked Measure", "Widow Sable's Goods"],
+  "local_laws": ["No blade may be drawn after moonrise", "Every stranger must bring salt to the shrine", "The names of the dead may not be spoken indoors", "Red cloth is reserved for the watch"],
+  "local_events": ["a public accusation turns into a duel", "a funeral procession stops and points at a stranger", "masked traders offer a dangerous bargain", "a child returns with someone else's shadow"],
+  "rumors": ["Blue fire has appeared in the old cave", "Someone is buying teeth without asking where they came from", "The northern path is safe only for liars", "A saint's sword lies under the hill", "The reeve has not slept in eleven years", "A wolf in a silver collar speaks courtly Common"],
+  "location_descriptions": ["Smoke hangs beneath low rafters and everyone watches the door", "Charms of bone and blue thread cover the lintel", "The floor slopes toward a sealed iron drain", "A warm golden light makes the surrounding street look colder", "The walls are painted with scenes no local will explain"],
+  "useful_resources": ["reliable local maps", "lamp oil and six dry torches", "a discreet healer", "climbing gear and iron spikes", "preserved rations", "a guide who knows the old paths"]
+}

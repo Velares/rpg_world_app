@@ -1,0 +1,15 @@
+{
+  "dungeon_names": ["The Caves of the Hollow Star", "Saint Orra's Throat", "The Vermilion Delve", "The Weeping Warrens", "The Grotto of Nine Echoes"],
+  "cave_descriptions": ["A split in the hill exhales air scented with copper", "Stone teeth frame a low entrance behind a dead waterfall", "A spiral stair has been cut into a natural sinkhole", "The cave mouth opens only when its bronze bell is rung"],
+  "dungeon_themes": ["a buried moon cult", "fungal alchemy and failed immortality", "the molting ground of an ancient serpent", "a drowned royal tomb", "a shrine corrupted by prophetic insects"],
+  "room_names": ["The Crooked Gallery", "Pool of Blind Faces", "The Bone Orchard", "Hall of Soft Footsteps", "The Red Cistern", "Chapel of Teeth", "The Split Vault", "The Listening Pit"],
+  "room_descriptions": ["The walls sweat black water around crude devotional carvings", "Pillars of translucent stone hum when approached", "Roots pierce the ceiling and clutch rusted weapons", "A mineral crust covers signs of a recent struggle", "The chamber narrows around a floor of fitted skulls"],
+  "exits": ["a narrow fissure", "a sloping crawlway", "bronze doors", "a flooded tunnel", "steps descending into red vapor"],
+  "hazards": ["unstable stone that collapses under sudden weight", "spores that cause waking dreams", "a current dragging toward a submerged shaft", "razor-edged crystal growths", "air that extinguishes ordinary flame"],
+  "traps": ["a bell wire that alerts the next chamber", "a counterweighted ceiling slab", "poison needles hidden in a saint's mouth", "a false bridge over a shallow spike pit", "a rune that steals the reader's voice"],
+  "clues": ["a bloodstained map scratched on slate", "wax tablets naming a town official", "tracks that stop at a blank wall", "a prayer describing the final threat's weakness", "fresh lamp soot from a recent visitor"],
+  "treasures": ["a silver funerary mask", "a purse of clipped imperial coins", "three vials of luminous antivenom", "a star-iron dagger with no edge", "a sealed coffer of trade bars"],
+  "dungeon_monsters": ["the molting oracle", "six ash-painted cave raiders", "a blind glass serpent", "the drowned knight and its oath-bound dead", "a colony of corpse-moths"],
+  "weird_room_details": ["Shadows point toward the nearest living heart", "An unseen host quietly counts every spoken word", "Old blood crawls uphill in thin threads", "A second ceiling is visible beneath the floor", "Metal objects become warm near the eastern wall"],
+  "retreat_options": ["fall back through the previous chamber and bar the passage", "scatter bitter herbs to discourage pursuit", "cross a narrow ledge the larger threat cannot follow", "cut a hanging rope bridge", "offer treasure while withdrawing slowly"]
+}
