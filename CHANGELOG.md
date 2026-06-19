@@ -3,6 +3,13 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## Unreleased — Player background profiles
+
+- Added JSON-driven origin, formative event, personality trait, ideal, bond,
+  and flaw generation for new player characters.
+- Added character-sheet display, table validation, safe fallbacks, and
+  compatibility defaults for older character saves.
+
 ## v0.7.0 — Generation data hardening
 
 - Added schema-aware validation and safe fallbacks for JSON generation tables.

@@ -7,6 +7,7 @@ from pathlib import Path
 
 from app.database import Database
 from app.characters import BONUS_NAMES, CharacterFactory
+from app.character_profiles import CharacterProfileGenerator
 from app.checks import DIFFICULTIES
 from app.dice import morale_check, reaction_roll, roll
 from app.game_state import GameState
@@ -278,6 +279,66 @@ class WorldTests(unittest.TestCase):
                 any("class_tables.json:classes[0]" in item for item in loader.warnings)
             )
 
+    def test_player_profile_generator_uses_json_tables(self):
+        with tempfile.TemporaryDirectory() as temp:
+            table_dir = Path(temp)
+            expected = {
+                "origins": "Origin from JSON.",
+                "formative_events": "Event from JSON.",
+                "personality_traits": "Trait from JSON.",
+                "ideals": "Ideal from JSON.",
+                "bonds": "Bond from JSON.",
+                "flaws": "Flaw from JSON.",
+            }
+            (table_dir / "player_background_tables.json").write_text(
+                json.dumps({key: [value] for key, value in expected.items()}),
+                encoding="utf-8",
+            )
+            profile = CharacterProfileGenerator(
+                TableLoader(table_dir), random.Random(1)
+            ).generate()
+            self.assertEqual(profile.origin_detail, expected["origins"])
+            self.assertEqual(profile.formative_event, expected["formative_events"])
+            self.assertEqual(profile.personality_trait, expected["personality_traits"])
+            self.assertEqual(profile.ideal, expected["ideals"])
+            self.assertEqual(profile.bond, expected["bonds"])
+            self.assertEqual(profile.flaw, expected["flaws"])
+
+    def test_player_profile_table_validation_and_fallbacks(self):
+        with tempfile.TemporaryDirectory() as temp:
+            table_dir = Path(temp)
+            (table_dir / "player_background_tables.json").write_text(
+                json.dumps(
+                    {
+                        "origins": [""],
+                        "formative_events": [12],
+                        "personality_traits": [],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            loader = TableLoader(table_dir)
+            profile = CharacterProfileGenerator(loader, random.Random(1)).generate()
+            self.assertTrue(profile.origin_detail)
+            self.assertTrue(profile.formative_event)
+            self.assertTrue(profile.personality_trait)
+            self.assertTrue(profile.ideal)
+            self.assertTrue(profile.bond)
+            self.assertTrue(profile.flaw)
+            self.assertTrue(
+                any(
+                    "player_background_tables.json:origins" in warning
+                    for warning in loader.warnings
+                )
+            )
+            self.assertTrue(
+                any(
+                    "Missing required table: player_background_tables.ideals"
+                    in warning
+                    for warning in loader.warnings
+                )
+            )
+
     def test_missing_table_directory_can_still_generate_and_create_character(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -291,6 +352,8 @@ class WorldTests(unittest.TestCase):
             self.assertEqual(len(world.dungeon.rooms), 8)
             character = state.create_character("Fallback Hero", "Explorer", "Wanderer")
             self.assertEqual(character.name, "Fallback Hero")
+            self.assertTrue(character.personality_trait)
+            self.assertTrue(character.bond)
             state.close()
 
     def test_class_table_contains_rules_neutral_starter_classes(self):
@@ -411,6 +474,12 @@ class WorldTests(unittest.TestCase):
             self.assertEqual(character.name, "Sable Vey")
             self.assertEqual(character.character_class, "Ranger")
             self.assertEqual(character.background, background)
+            self.assertTrue(character.origin_detail)
+            self.assertTrue(character.formative_event)
+            self.assertTrue(character.personality_trait)
+            self.assertTrue(character.ideal)
+            self.assertTrue(character.bond)
+            self.assertTrue(character.flaw)
             self.assertEqual(set(character.bonuses), set(BONUS_NAMES))
             self.assertEqual(player.supplies, definition.starting_supplies)
             self.assertEqual(player.food, definition.starting_food)
@@ -423,6 +492,37 @@ class WorldTests(unittest.TestCase):
             self.assertTrue(
                 any("Sable Vey" in entry for entry in loaded.player_state.event_log)
             )
+            state.close()
+
+    def test_pre_profile_character_save_loads_with_safe_defaults(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 17)
+            world = state.generate_new_region()
+            state.create_character(
+                "Old Wanderer",
+                state.character_classes()[0].class_name,
+                state.character_backgrounds()[0],
+            )
+            data = world.to_dict()
+            character_data = data["player_state"]["character"]
+            for key in (
+                "origin_detail",
+                "formative_event",
+                "personality_trait",
+                "ideal",
+                "bond",
+                "flaw",
+            ):
+                character_data.pop(key)
+            restored = type(world).from_dict(data)
+            character = restored.player_state.character
+            self.assertIsNotNone(character)
+            self.assertEqual(character.origin_detail, "")
+            self.assertEqual(character.formative_event, "")
+            self.assertEqual(character.personality_trait, "")
+            self.assertEqual(character.ideal, "")
+            self.assertEqual(character.bond, "")
+            self.assertEqual(character.flaw, "")
             state.close()
 
     def test_game_state_random_names_fall_back_without_cleaned_files(self):

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import random
 from dataclasses import dataclass
 
+from app.character_profiles import CharacterProfileGenerator
 from app.models import PlayerCharacter, World
 from app.table_loader import TableLoader
 from app.table_schemas import BONUS_NAMES
@@ -23,8 +25,9 @@ class CharacterClassDefinition:
 class CharacterFactory:
     """Loads replaceable class data and applies it to the existing player state."""
 
-    def __init__(self, tables: TableLoader):
+    def __init__(self, tables: TableLoader, rng: random.Random | None = None):
         self.tables = tables
+        self.rng = rng or random.Random()
 
     def classes(self) -> list[CharacterClassDefinition]:
         definitions = []
@@ -75,6 +78,7 @@ class CharacterFactory:
         if background not in self.backgrounds():
             raise ValueError(f"Unknown background: {background}")
 
+        profile = CharacterProfileGenerator(self.tables, self.rng).generate()
         character = PlayerCharacter(
             name=clean_name,
             character_class=definition.class_name,
@@ -83,6 +87,12 @@ class CharacterFactory:
             bonuses=dict(definition.bonuses),
             role_description=definition.role_description,
             special_ability_placeholder=definition.special_ability_placeholder,
+            origin_detail=profile.origin_detail,
+            formative_event=profile.formative_event,
+            personality_trait=profile.personality_trait,
+            ideal=profile.ideal,
+            bond=profile.bond,
+            flaw=profile.flaw,
         )
         player = world.player_state
         player.character = character

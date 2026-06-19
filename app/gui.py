@@ -114,7 +114,9 @@ class CharacterDialog(tk.Toplevel):
             f"food {definition.starting_food}, water {definition.starting_water}, "
             f"torches {definition.starting_torches}, coin {definition.starting_coin}\n\n"
             f"Bonuses: {bonuses}\n"
-            f"Ability placeholder: {definition.special_ability_placeholder}"
+            f"Ability placeholder: {definition.special_ability_placeholder}\n\n"
+            "Origin, formative event, personality, ideal, bond, and flaw "
+            "will be generated from the editable player background tables."
         )
 
     def accept(self) -> None:
@@ -491,6 +493,13 @@ class RPGWorldApp(tk.Tk):
             f"Background: {character.background}\n"
             f"Role: {character.role_description}\n"
             f"Starting Supplies: {character.starting_supplies}\n\n"
+            f"BACKGROUND DETAILS\n==================\n"
+            f"Origin: {character.origin_detail or 'Not recorded'}\n"
+            f"Formative Event: {character.formative_event or 'Not recorded'}\n"
+            f"Personality: {character.personality_trait or 'Not recorded'}\n"
+            f"Ideal: {character.ideal or 'Not recorded'}\n"
+            f"Bond: {character.bond or 'Not recorded'}\n"
+            f"Flaw: {character.flaw or 'Not recorded'}\n\n"
             f"BONUSES\n=======\n{bonuses}\n\n"
             f"SPECIAL ABILITY PLACEHOLDER\n===========================\n"
             f"{character.special_ability_placeholder}"

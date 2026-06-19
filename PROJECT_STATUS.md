@@ -8,6 +8,14 @@
 
 ## Latest completed work
 
+Work after Version 0.7 adds JSON-driven player background and personality
+details while retaining `v0.7.0` as the current tag:
+
+- New characters receive a generated origin, formative event, personality
+  trait, ideal, bond, and flaw.
+- Profile content is editable in `data/tables/player_background_tables.json`.
+- Older character saves default missing profile fields safely.
+
 Version 0.7 hardened the data-driven generation foundation:
 
 - Added schema-aware validation for required JSON files, categories, weighted
@@ -26,6 +34,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - Stable IDs and cross-references among NPCs, locations, rumors, threats,
   encounters, dungeon rooms, and hooks.
 - Character creation with name, background, and 10 JSON-defined classes.
+- JSON-driven origin, formative event, personality trait, ideal, bond, and flaw.
 - Six rules-neutral bonuses: Combat, Exploration, Social, Lore, Survival, and
   Stealth.
 - Class-based resources and placeholder special abilities.
@@ -50,9 +59,9 @@ Version 0.7 hardened the data-driven generation foundation:
 ## Testing status
 
 - Test suite: `tests/test_core.py`
-- Current verification: 36 tests passing with
+- Current verification: 39 tests passing with
   `python -m unittest discover -s tests -v`.
-- `python -m compileall .` passes, and all 10 JSON table files parse with zero
+- `python -m compileall .` passes, and all 11 JSON table files parse with zero
   `TableLoader` warnings.
 - `pytest` is not installed and is not required by the project.
 - Coverage includes dice, checks, names, cleanup/scrubbing, JSON validation,
@@ -71,11 +80,10 @@ Version 0.7 hardened the data-driven generation foundation:
 
 ## Next candidate goals
 
-1. Expand player background and personality generation through JSON tables.
-2. Improve inventory/equipment records without introducing a full ruleset.
-3. Add export for worlds, characters, and event logs.
-4. Add more NPC dialogue leads and encounter-resolution variety.
-5. Add optional seed entry for reproducible generation.
+1. Improve inventory/equipment records without introducing a full ruleset.
+2. Add export for worlds, characters, and event logs.
+3. Add more NPC dialogue leads and encounter-resolution variety.
+4. Add optional seed entry for reproducible generation.
 
 ## Important files and directories
 

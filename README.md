@@ -51,6 +51,9 @@ background, starting resources, and bonuses for combat, exploration, social,
 lore, survival, and stealth. The ten starter classes live in the editable
 `data/tables/class_tables.json` file. Special abilities remain placeholders so
 the eventual rules implementation can be SRD-friendly or replaced entirely.
+New characters also receive a generated origin, formative event, personality
+trait, ideal, bond, and flaw from `data/tables/player_background_tables.json`.
+These details are descriptive only and do not impose additional rules.
 
 Version 0.5 adds a generic `1d20 + bonus vs difficulty` action resolver. Easy,
 Standard, Hard, and Severe checks use the character's combat, exploration,
@@ -78,6 +81,7 @@ database on its next launch.
 - `app/table_loader.py`: JSON loading, validation, and fallbacks
 - `app/dice.py`: dice formulas, reaction rolls, and morale checks
 - `app/characters.py`: rules-light class loading and character creation
+- `app/character_profiles.py`: JSON-driven personal background details
 - `app/checks.py`: generic d20 checks, outcomes, and state consequences
 - `app/generators/`: focused procedural generators
 - `data/tables/`: editable generation content
@@ -174,10 +178,10 @@ From the project directory:
 python -m unittest discover -s tests -v
 ```
 
-Tests cover dice formulas, name cleanup and generation, schema-aware table
-validation, generation with missing data, generated counts and references,
-dungeon connectivity, SQLite child records, save/load reconstruction, and
-older-save compatibility.
+Tests cover dice formulas, name cleanup and generation, character background
+profiles, schema-aware table validation, generation with missing data,
+generated counts and references, dungeon connectivity, SQLite child records,
+save/load reconstruction, and older-save compatibility.
 
 ## Current boundaries
 

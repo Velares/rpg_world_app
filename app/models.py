@@ -173,6 +173,12 @@ class PlayerCharacter:
     bonuses: dict[str, int] = field(default_factory=dict)
     role_description: str = ""
     special_ability_placeholder: str = ""
+    origin_detail: str = ""
+    formative_event: str = ""
+    personality_trait: str = ""
+    ideal: str = ""
+    bond: str = ""
+    flaw: str = ""
 
 
 @dataclass
@@ -273,6 +279,16 @@ class World:
         player_data = data["player_state"]
         character_data = player_data.get("character")
         if isinstance(character_data, dict):
+            # Character profiles were added after the original class scaffold.
+            for field_name in (
+                "origin_detail",
+                "formative_event",
+                "personality_trait",
+                "ideal",
+                "bond",
+                "flaw",
+            ):
+                character_data.setdefault(field_name, "")
             player_data["character"] = PlayerCharacter(**character_data)
         else:
             player_data["character"] = None

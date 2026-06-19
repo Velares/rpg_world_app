@@ -43,7 +43,7 @@ Tkinter smoke test when the environment allows it.
 - Deepen town/location generation and ownership without breaking references.
 - Add more varied encounter tables and noncombat resolutions.
 - Improve inventory and equipment handling.
-- Add background/personality generation for player characters.
+- Deepen player background/personality tables without attaching new mechanics.
 - Add world, character, and event-log export features.
 
 Do not assume these are approved tasks; they are candidate directions only.

@@ -24,6 +24,14 @@ REQUIRED_CATEGORIES: dict[str, tuple[str, ...]] = {
         "noncombat_paths",
     ),
     "class_tables": ("backgrounds", "classes"),
+    "player_background_tables": (
+        "origins",
+        "formative_events",
+        "personality_traits",
+        "ideals",
+        "bonds",
+        "flaws",
+    ),
     "dungeon_tables": (
         "dungeon_names",
         "cave_descriptions",
@@ -148,6 +156,24 @@ DEFAULT_CHARACTER_CLASS = {
 FALLBACKS: dict[tuple[str, str], list[object]] = {
     ("class_tables", "backgrounds"): ["Wanderer"],
     ("class_tables", "classes"): [DEFAULT_CHARACTER_CLASS],
+    ("player_background_tables", "origins"): [
+        "Your early life left few reliable records."
+    ],
+    ("player_background_tables", "formative_events"): [
+        "You survived a journey that taught you to prepare before acting."
+    ],
+    ("player_background_tables", "personality_traits"): [
+        "Cautious, observant, and slow to trust easy answers."
+    ],
+    ("player_background_tables", "ideals"): [
+        "Survival: living people can repair what dead heroes cannot."
+    ],
+    ("player_background_tables", "bonds"): [
+        "You owe a debt to someone who once offered shelter without questions."
+    ],
+    ("player_background_tables", "flaws"): [
+        "You sometimes mistake careful preparation for certainty."
+    ],
     ("npc_tables", "male_names"): ["Nameless"],
     ("npc_tables", "female_names"): ["Nameless"],
     ("npc_tables", "neutral_names"): ["Nameless"],

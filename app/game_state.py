@@ -218,7 +218,7 @@ class GameState:
         return CharacterFactory(self.tables).backgrounds()
 
     def create_character(self, name: str, class_name: str, background: str):
-        return CharacterFactory(self.tables).create(
+        return CharacterFactory(self.tables, self.rng).create(
             self.require_world(), name, class_name, background
         )
 
