@@ -182,6 +182,56 @@ class PlayerCharacter:
 
 
 @dataclass
+class InventoryItem:
+    """A descriptive item record without combat or economy mechanics."""
+
+    item_key: str
+    name: str
+    category: str = "Miscellaneous"
+    quantity: int = 1
+    description: str = ""
+    tags: list[str] = field(default_factory=list)
+    equipped: bool = False
+    carried: bool = True
+    consumable: bool = False
+    quest_related: bool = False
+    tradeable: bool = True
+
+    @classmethod
+    def from_legacy(cls, name: str) -> "InventoryItem":
+        clean_name = str(name).strip() or "Unnamed item"
+        key = "".join(
+            character.lower() if character.isalnum() else "_"
+            for character in clean_name
+        ).strip("_")
+        return cls(
+            item_key=f"legacy_{key or 'item'}",
+            name=clean_name,
+            category="Miscellaneous",
+            tags=["legacy"],
+        )
+
+
+def default_inventory() -> list[InventoryItem]:
+    return [
+        InventoryItem(
+            item_key="bedroll",
+            name="Bedroll",
+            category="Supply",
+            description="Basic bedding for a rough camp.",
+            tags=["camp", "starter"],
+        ),
+        InventoryItem(
+            item_key="flint_steel",
+            name="Flint and Steel",
+            category="Tool",
+            description="A basic fire-lighting kit.",
+            tags=["fire", "starter"],
+        ),
+    ]
+
+
+@dataclass
 class CheckResult:
     action_name: str
     bonus_type: str
@@ -211,7 +261,7 @@ class PlayerState:
     coin: int = 20
     wounds: int = 0
     rest_risk: str = "Unknown"
-    inventory: list[str] = field(default_factory=lambda: ["bedroll", "flint and steel"])
+    inventory: list[InventoryItem] = field(default_factory=default_inventory)
     quest_log: list[str] = field(default_factory=list)
     hexes: list[Hex] = field(default_factory=list)
     discovered_room_ids: list[int] = field(default_factory=list)
@@ -228,6 +278,61 @@ class PlayerState:
     last_consequence: str = ""
     last_check: CheckResult | None = None
     turns_elapsed: int = 0
+
+    def inventory_item(self, item_key_or_name: str) -> InventoryItem | None:
+        needle = item_key_or_name.casefold()
+        return next(
+            (
+                item
+                for item in self.inventory
+                if item.item_key.casefold() == needle or item.name.casefold() == needle
+            ),
+            None,
+        )
+
+    def add_inventory_item(
+        self,
+        item: InventoryItem | str,
+        quantity: int | None = None,
+        **metadata,
+    ) -> InventoryItem:
+        if isinstance(item, str):
+            new_item = InventoryItem.from_legacy(item)
+            for key, value in metadata.items():
+                if hasattr(new_item, key):
+                    setattr(new_item, key, value)
+        else:
+            new_item = InventoryItem(**asdict(item))
+        amount = new_item.quantity if quantity is None else quantity
+        if amount <= 0:
+            raise ValueError("Inventory quantity must be positive.")
+        existing = self.inventory_item(new_item.item_key)
+        if existing:
+            existing.quantity += amount
+            return existing
+        new_item.quantity = amount
+        self.inventory.append(new_item)
+        return new_item
+
+    def ensure_inventory_item(self, item: InventoryItem) -> InventoryItem:
+        existing = self.inventory_item(item.item_key)
+        if existing:
+            existing.quantity = max(existing.quantity, item.quantity)
+            return existing
+        self.inventory.append(InventoryItem(**asdict(item)))
+        return self.inventory[-1]
+
+    def remove_inventory_item(self, item_key_or_name: str, quantity: int = 1) -> int:
+        if quantity <= 0:
+            raise ValueError("Removal quantity must be positive.")
+        item = self.inventory_item(item_key_or_name)
+        if item is None:
+            return 0
+        removed = min(quantity, item.quantity)
+        item.quantity -= removed
+        if item.quantity == 0:
+            self.inventory.remove(item)
+        return removed
 
 
 @dataclass
@@ -318,6 +423,31 @@ class World:
         player_data.setdefault("attention", 0)
         player_data.setdefault("last_consequence", "")
         player_data.setdefault("turns_elapsed", 0)
+        inventory_data = player_data.get("inventory")
+        if inventory_data is None:
+            player_data["inventory"] = default_inventory()
+        else:
+            inventory: list[InventoryItem] = []
+            for item in inventory_data:
+                if isinstance(item, str):
+                    inventory.append(InventoryItem.from_legacy(item))
+                elif isinstance(item, dict):
+                    legacy_key = InventoryItem.from_legacy(
+                        item.get("name", "")
+                    ).item_key
+                    item.setdefault("item_key", legacy_key)
+                    item.setdefault("name", "Unnamed item")
+                    item.setdefault("category", "Miscellaneous")
+                    item.setdefault("quantity", 1)
+                    item.setdefault("description", "")
+                    item.setdefault("tags", [])
+                    item.setdefault("equipped", False)
+                    item.setdefault("carried", True)
+                    item.setdefault("consumable", False)
+                    item.setdefault("quest_related", False)
+                    item.setdefault("tradeable", True)
+                    inventory.append(InventoryItem(**item))
+            player_data["inventory"] = inventory
         player_data["hexes"] = [Hex(**item) for item in player_data.get("hexes", [])]
         npc_data = data.get("npcs", [])
         for item in npc_data:

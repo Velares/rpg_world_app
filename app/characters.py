@@ -4,6 +4,7 @@ import random
 from dataclasses import dataclass
 
 from app.character_profiles import CharacterProfileGenerator
+from app.inventory import InventoryCatalog
 from app.models import PlayerCharacter, World
 from app.table_loader import TableLoader
 from app.table_schemas import BONUS_NAMES
@@ -101,6 +102,10 @@ class CharacterFactory:
         player.water = definition.starting_water
         player.torches = definition.starting_torches
         player.coin = definition.starting_coin
+        for item in InventoryCatalog(self.tables).starting_inventory(
+            definition.class_name
+        ):
+            player.ensure_inventory_item(item)
         entry = (
             f"Day {player.day}, {player.time_period} — {character.name}, a "
             f"{character.character_class} with the {character.background} background, "

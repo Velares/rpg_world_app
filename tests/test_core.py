@@ -11,8 +11,10 @@ from app.character_profiles import CharacterProfileGenerator
 from app.checks import DIFFICULTIES
 from app.dice import morale_check, reaction_roll, roll
 from app.game_state import GameState
+from app.inventory import InventoryCatalog
 from app.generators.npc_generator import NPCGenerator
 from app.generators.settlement_generator import SettlementGenerator
+from app.models import InventoryItem, PlayerState
 from app.name_generator import NameDataError, NameGenerator
 from app.table_loader import TableLoader
 from tools.clean_names import clean_name_file, find_raw_name_file
@@ -202,6 +204,99 @@ class NameTests(unittest.TestCase):
             self.assertFalse(path.with_suffix(".txt.tmp").exists())
 
 
+class InventoryTests(unittest.TestCase):
+    def test_inventory_items_add_stack_and_remove_quantities(self):
+        player = PlayerState(inventory=[])
+        rope = InventoryItem(
+            item_key="rope",
+            name="Coil of Rope",
+            category="Tool",
+            quantity=2,
+            description="Useful for climbing and retreat.",
+            tags=["climbing"],
+            tradeable=True,
+        )
+        added = player.add_inventory_item(rope)
+        self.assertEqual(added.quantity, 2)
+        player.add_inventory_item(rope, quantity=3)
+        self.assertEqual(player.inventory_item("rope").quantity, 5)
+        self.assertEqual(player.remove_inventory_item("Coil of Rope", 2), 2)
+        self.assertEqual(player.inventory_item("rope").quantity, 3)
+        self.assertEqual(player.remove_inventory_item("rope", 99), 3)
+        self.assertIsNone(player.inventory_item("rope"))
+        self.assertEqual(player.remove_inventory_item("missing"), 0)
+        with self.assertRaises(ValueError):
+            player.add_inventory_item(rope, quantity=0)
+
+    def test_item_catalog_loads_class_specific_starting_inventory(self):
+        loader = TableLoader(TABLES)
+        catalog = InventoryCatalog(loader)
+        items = catalog.starting_inventory("Ranger")
+        by_key = {item.item_key: item for item in items}
+        self.assertEqual(
+            set(by_key),
+            {"bedroll", "flint_steel", "blade", "field_kit"},
+        )
+        self.assertTrue(by_key["blade"].equipped)
+        self.assertEqual(by_key["field_kit"].category, "Tool")
+        self.assertTrue(all(item.quantity > 0 for item in items))
+        for definition in CharacterFactory(loader).classes():
+            class_items = catalog.starting_inventory(definition.class_name)
+            self.assertGreaterEqual(len(class_items), 4, definition.class_name)
+
+    def test_item_table_validation_filters_bad_entries_and_references(self):
+        with tempfile.TemporaryDirectory() as temp:
+            table_dir = Path(temp)
+            (table_dir / "item_tables.json").write_text(
+                json.dumps(
+                    {
+                        "item_definitions": [
+                            {
+                                "item_key": "valid",
+                                "name": "Valid Item",
+                                "category": "Tool",
+                                "tags": ["test"],
+                            },
+                            {
+                                "item_key": "bad",
+                                "name": "Bad Item",
+                                "category": "Spell",
+                            },
+                        ],
+                        "common_loadout": [
+                            {"item_key": "valid", "quantity": 2},
+                            {"item_key": "missing", "quantity": 1},
+                        ],
+                        "class_loadouts": [
+                            {
+                                "class_name": "Explorer",
+                                "items": [{"item_key": "valid", "quantity": 1}],
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            loader = TableLoader(table_dir)
+            self.assertEqual(
+                [item["item_key"] for item in loader.get("item_tables", "item_definitions")],
+                ["valid"],
+            )
+            self.assertEqual(
+                loader.get("item_tables", "common_loadout"),
+                [{"item_key": "valid", "quantity": 2}],
+            )
+            self.assertTrue(
+                any(
+                    "supported category" in warning
+                    for warning in loader.warnings
+                )
+            )
+            self.assertTrue(
+                any("references unknown item 'missing'" in warning for warning in loader.warnings)
+            )
+
+
 class WorldTests(unittest.TestCase):
     def make_state(self, folder: Path, seed: int = 1) -> GameState:
         return GameState(
@@ -354,6 +449,7 @@ class WorldTests(unittest.TestCase):
             self.assertEqual(character.name, "Fallback Hero")
             self.assertTrue(character.personality_trait)
             self.assertTrue(character.bond)
+            self.assertIsNotNone(world.player_state.inventory_item("basic_gear"))
             state.close()
 
     def test_class_table_contains_rules_neutral_starter_classes(self):
@@ -486,11 +582,45 @@ class WorldTests(unittest.TestCase):
             self.assertEqual(player.water, definition.starting_water)
             self.assertEqual(player.torches, definition.starting_torches)
             self.assertEqual(player.coin, definition.starting_coin)
+            inventory = {item.item_key: item for item in player.inventory}
+            self.assertTrue(
+                {"bedroll", "flint_steel", "blade", "field_kit"}
+                <= set(inventory)
+            )
+            self.assertTrue(inventory["blade"].equipped)
             world_id = state.save_world("Character Save")
             loaded = state.load_world(world_id)
             self.assertEqual(loaded.player_state.character, character)
+            self.assertEqual(loaded.player_state.inventory, player.inventory)
             self.assertTrue(
                 any("Sable Vey" in entry for entry in loaded.player_state.event_log)
+            )
+            state.close()
+
+    def test_legacy_string_and_missing_inventories_load_safely(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 19)
+            world = state.generate_new_region()
+            data = world.to_dict()
+            data["player_state"]["inventory"] = ["old bedroll", "silver clue"]
+            restored = type(world).from_dict(data)
+            self.assertEqual(
+                [item.name for item in restored.player_state.inventory],
+                ["old bedroll", "silver clue"],
+            )
+            self.assertTrue(
+                all(
+                    item.category == "Miscellaneous"
+                    for item in restored.player_state.inventory
+                )
+            )
+
+            data = world.to_dict()
+            data["player_state"].pop("inventory")
+            restored_without_inventory = type(world).from_dict(data)
+            self.assertEqual(
+                {item.item_key for item in restored_without_inventory.player_state.inventory},
+                {"bedroll", "flint_steel"},
             )
             state.close()
 

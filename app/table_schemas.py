@@ -3,6 +3,18 @@ from __future__ import annotations
 """Small, rules-neutral schemas for data consumed by procedural generators."""
 
 BONUS_NAMES = ("combat", "exploration", "social", "lore", "survival", "stealth")
+ITEM_CATEGORIES = (
+    "Weapon",
+    "Armor",
+    "Tool",
+    "Supply",
+    "Food",
+    "Water",
+    "Light",
+    "Treasure",
+    "Quest",
+    "Miscellaneous",
+)
 
 # These are the categories directly consumed by the current generators. Extra
 # categories remain valid and editable, but missing required data is reported.
@@ -24,6 +36,7 @@ REQUIRED_CATEGORIES: dict[str, tuple[str, ...]] = {
         "noncombat_paths",
     ),
     "class_tables": ("backgrounds", "classes"),
+    "item_tables": ("item_definitions", "common_loadout", "class_loadouts"),
     "player_background_tables": (
         "origins",
         "formative_events",
@@ -156,6 +169,26 @@ DEFAULT_CHARACTER_CLASS = {
 FALLBACKS: dict[tuple[str, str], list[object]] = {
     ("class_tables", "backgrounds"): ["Wanderer"],
     ("class_tables", "classes"): [DEFAULT_CHARACTER_CLASS],
+    ("item_tables", "item_definitions"): [
+        {
+            "item_key": "basic_gear",
+            "name": "Basic Gear",
+            "category": "Supply",
+            "description": "A small bundle of ordinary travel necessities.",
+            "tags": ["fallback"],
+            "equipped": False,
+            "carried": True,
+            "consumable": False,
+            "quest_related": False,
+            "tradeable": True,
+        }
+    ],
+    ("item_tables", "common_loadout"): [
+        {"item_key": "basic_gear", "quantity": 1}
+    ],
+    ("item_tables", "class_loadouts"): [
+        {"class_name": "Explorer", "items": []}
+    ],
     ("player_background_tables", "origins"): [
         "Your early life left few reliable records."
     ],

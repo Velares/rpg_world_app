@@ -1,0 +1,134 @@
+{
+  "item_definitions": [
+    {
+      "item_key": "bedroll",
+      "name": "Bedroll",
+      "category": "Supply",
+      "description": "A waxed blanket and compact bedding for rough camps.",
+      "tags": ["camp", "starter"],
+      "tradeable": true
+    },
+    {
+      "item_key": "flint_steel",
+      "name": "Flint and Steel",
+      "category": "Tool",
+      "description": "A reliable fire-lighting kit kept in an oiled pouch.",
+      "tags": ["fire", "starter"],
+      "tradeable": true
+    },
+    {
+      "item_key": "rope",
+      "name": "Coil of Rope",
+      "category": "Tool",
+      "description": "Thirty feet of serviceable hemp rope.",
+      "tags": ["climbing", "restraint"],
+      "tradeable": true
+    },
+    {
+      "item_key": "blade",
+      "name": "Travel-Worn Blade",
+      "category": "Weapon",
+      "description": "A practical close-combat weapon with no rules-specific statistics.",
+      "tags": ["martial", "starter"],
+      "equipped": true,
+      "tradeable": true
+    },
+    {
+      "item_key": "light_armor",
+      "name": "Travel Armor",
+      "category": "Armor",
+      "description": "Layered protection suited to long journeys and cautious delving.",
+      "tags": ["protection", "starter"],
+      "equipped": true,
+      "tradeable": true
+    },
+    {
+      "item_key": "lock_tools",
+      "name": "Fine Tool Roll",
+      "category": "Tool",
+      "description": "Small picks, probes, wedges, wire, and chalk.",
+      "tags": ["precision", "inspection"],
+      "tradeable": true
+    },
+    {
+      "item_key": "field_kit",
+      "name": "Fieldcraft Kit",
+      "category": "Tool",
+      "description": "Cord, wax, needles, marking cloth, and repair pieces.",
+      "tags": ["survival", "repair"],
+      "tradeable": true
+    },
+    {
+      "item_key": "journal",
+      "name": "Weatherproof Journal",
+      "category": "Tool",
+      "description": "A bound notebook with charcoal, ink, and folded reference sheets.",
+      "tags": ["lore", "mapping"],
+      "tradeable": true
+    },
+    {
+      "item_key": "ritual_kit",
+      "name": "Ritual Kit",
+      "category": "Tool",
+      "description": "Incense, clean thread, chalk, bells, and empty petition slips.",
+      "tags": ["ritual", "lore"],
+      "tradeable": true
+    },
+    {
+      "item_key": "occult_case",
+      "name": "Sealed Occult Case",
+      "category": "Tool",
+      "description": "A warded case for samples, rubbings, and unsettling evidence.",
+      "tags": ["occult", "evidence"],
+      "tradeable": false
+    },
+    {
+      "item_key": "contract_tokens",
+      "name": "Contract Tokens",
+      "category": "Miscellaneous",
+      "description": "Marked counters used to record employers, debts, and obligations.",
+      "tags": ["social", "records"],
+      "tradeable": false
+    },
+    {
+      "item_key": "mapping_kit",
+      "name": "Mapping Kit",
+      "category": "Tool",
+      "description": "Measuring cord, charcoal, parchment scraps, and a compass.",
+      "tags": ["exploration", "mapping"],
+      "tradeable": true
+    },
+    {
+      "item_key": "instrument",
+      "name": "Travel Instrument",
+      "category": "Tool",
+      "description": "A compact instrument suitable for performance and signaling.",
+      "tags": ["performance", "social"],
+      "tradeable": true
+    },
+    {
+      "item_key": "meditation_tokens",
+      "name": "Meditation Tokens",
+      "category": "Miscellaneous",
+      "description": "Smooth marked stones used for memory, focus, and interpretation.",
+      "tags": ["mystic", "focus"],
+      "tradeable": false
+    }
+  ],
+  "common_loadout": [
+    {"item_key": "bedroll", "quantity": 1},
+    {"item_key": "flint_steel", "quantity": 1}
+  ],
+  "class_loadouts": [
+    {"class_name": "Fighter", "items": [{"item_key": "blade", "quantity": 1}, {"item_key": "light_armor", "quantity": 1}]},
+    {"class_name": "Thief", "items": [{"item_key": "blade", "quantity": 1}, {"item_key": "lock_tools", "quantity": 1}]},
+    {"class_name": "Ranger", "items": [{"item_key": "blade", "quantity": 1}, {"item_key": "field_kit", "quantity": 1}]},
+    {"class_name": "Scholar", "items": [{"item_key": "journal", "quantity": 1}, {"item_key": "rope", "quantity": 1}]},
+    {"class_name": "Acolyte", "items": [{"item_key": "ritual_kit", "quantity": 1}, {"item_key": "light_armor", "quantity": 1}]},
+    {"class_name": "Occultist", "items": [{"item_key": "occult_case", "quantity": 1}, {"item_key": "journal", "quantity": 1}]},
+    {"class_name": "Mercenary", "items": [{"item_key": "blade", "quantity": 1}, {"item_key": "contract_tokens", "quantity": 1}]},
+    {"class_name": "Explorer", "items": [{"item_key": "mapping_kit", "quantity": 1}, {"item_key": "rope", "quantity": 1}]},
+    {"class_name": "Bard", "items": [{"item_key": "instrument", "quantity": 1}, {"item_key": "blade", "quantity": 1}]},
+    {"class_name": "Mystic", "items": [{"item_key": "meditation_tokens", "quantity": 1}, {"item_key": "ritual_kit", "quantity": 1}]}
+  ]
+}

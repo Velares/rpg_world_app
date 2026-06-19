@@ -3,6 +3,15 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.7.3 - Structured inventory
+
+- Added rules-neutral inventory records with quantities, categories,
+  descriptions, tags, and practical state flags.
+- Added JSON-defined common and class starting gear.
+- Added minimal character-sheet and player-state inventory display.
+- Migrated legacy string inventories and missing inventory fields safely.
+- Kept food, water, torches, coin, and supplies as separate gameplay counters.
+
 ## v0.7.2 - AI agent workflow
 
 - Defined eight coordinated Codex roles for planning, logic, content, GUI,

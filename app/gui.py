@@ -21,6 +21,23 @@ def block(title: str, values: dict, skip: set[str] | None = None) -> str:
     return "\n".join(lines)
 
 
+def inventory_item_text(item, detailed: bool = False) -> str:
+    flags = []
+    if item.equipped:
+        flags.append("equipped")
+    if item.consumable:
+        flags.append("consumable")
+    if item.quest_related:
+        flags.append("quest")
+    if not item.carried:
+        flags.append("stored")
+    suffix = f" [{', '.join(flags)}]" if flags else ""
+    base = f"{item.name} x{item.quantity} ({item.category}){suffix}"
+    if detailed and item.description:
+        return f"{base} - {item.description}"
+    return base
+
+
 class LoadDialog(tk.Toplevel):
     def __init__(self, parent: tk.Misc, worlds: list[tuple[int, str, str]]):
         super().__init__(parent)
@@ -338,7 +355,8 @@ class RPGWorldApp(tk.Tk):
             f"{player.current_location}{room}    Wounds: {player.wounds}\n"
             f"Supplies: {player.supplies}    Food: {player.food}    Water: {player.water}    "
             f"Torches/Light: {light}    Coin: {player.coin}\n"
-            f"Inventory: {', '.join(player.inventory) or 'empty'}    "
+            f"Inventory: "
+            f"{', '.join(inventory_item_text(item) for item in player.inventory) or 'empty'}\n"
             f"Known: {len(player.known_npc_ids)} NPCs, "
             f"{len(player.known_location_ids)} locations, "
             f"{len(player.known_rumor_indices)} rumors, "
@@ -487,6 +505,10 @@ class RPGWorldApp(tk.Tk):
         bonuses = "\n".join(
             f"{name.title()}: {value:+d}" for name, value in character.bonuses.items()
         )
+        inventory = "\n".join(
+            f"- {inventory_item_text(item, detailed=True)}"
+            for item in player.inventory
+        ) or "- Empty"
         return (
             f"{character.name.upper()}\n{'=' * len(character.name)}\n"
             f"Class: {character.character_class}\n"
@@ -500,6 +522,10 @@ class RPGWorldApp(tk.Tk):
             f"Ideal: {character.ideal or 'Not recorded'}\n"
             f"Bond: {character.bond or 'Not recorded'}\n"
             f"Flaw: {character.flaw or 'Not recorded'}\n\n"
+            f"EQUIPMENT AND INVENTORY\n=======================\n{inventory}\n\n"
+            f"Resource counters remain separate: supplies {player.supplies}, "
+            f"food {player.food}, water {player.water}, torches {player.torches}, "
+            f"coin {player.coin}.\n\n"
             f"BONUSES\n=======\n{bonuses}\n\n"
             f"SPECIAL ABILITY PLACEHOLDER\n===========================\n"
             f"{character.special_ability_placeholder}"

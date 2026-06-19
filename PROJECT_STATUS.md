@@ -2,11 +2,21 @@
 
 ## Current version
 
-- Current tag: `v0.7.2`
+- Current tag: `v0.7.3`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.7.3 adds a lightweight structured inventory:
+
+- Item records track category, quantity, description, tags, and rules-neutral
+  equipped/carried/consumable/quest/tradeable flags.
+- Common and class-flavored starting gear comes from
+  `data/tables/item_tables.json`.
+- Legacy string inventories and saves without inventory data migrate safely.
+- Food, water, torches, coin, and supplies remain authoritative counters rather
+  than duplicated inventory quantities.
 
 Version 0.7.2 adds the coordinated AI agent workflow documented in `AGENTS.md`
 and `README.md`. Named roles cover planning, logic, content, GUI, persistence,
@@ -41,6 +51,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - Six rules-neutral bonuses: Combat, Exploration, Social, Lore, Survival, and
   Stealth.
 - Class-based resources and placeholder special abilities.
+- Structured inventory records and JSON-driven class starting gear.
 - Generic d20 checks with five outcome grades and exploration consequences.
 - Travel, searching, conversations, rest, retreat, dungeon room movement,
   resource use, time periods, discoveries, quest log, and persistent event log.
@@ -62,9 +73,9 @@ Version 0.7 hardened the data-driven generation foundation:
 ## Testing status
 
 - Test suite: `tests/test_core.py`
-- Current verification: 39 tests passing with
+- Current verification: 43 tests passing with
   `python -m unittest discover -s tests -v`.
-- `python -m compileall .` passes, and all 11 JSON table files parse with zero
+- `python -m compileall .` passes, and all 12 JSON table files parse with zero
   `TableLoader` warnings.
 - `pytest` is not installed and is not required by the project.
 - Coverage includes dice, checks, names, cleanup/scrubbing, JSON validation,
@@ -83,10 +94,10 @@ Version 0.7 hardened the data-driven generation foundation:
 
 ## Next candidate goals
 
-1. Improve inventory/equipment records without introducing a full ruleset.
-2. Add export for worlds, characters, and event logs.
-3. Add more NPC dialogue leads and encounter-resolution variety.
-4. Add optional seed entry for reproducible generation.
+1. Add export for worlds, characters, and event logs.
+2. Add more NPC dialogue leads and encounter-resolution variety.
+3. Add optional seed entry for reproducible generation.
+4. Add a small inventory-management dialog only when gameplay needs it.
 
 ## Important files and directories
 
@@ -97,9 +108,11 @@ Version 0.7 hardened the data-driven generation foundation:
 - `app/database.py` — SQLite persistence
 - `app/table_loader.py`, `app/table_schemas.py` — data validation and fallbacks
 - `app/name_generator.py` — cached large-file name generation
+- `app/inventory.py` — item catalog and class starting loadouts
 - `app/generators/` — focused procedural generators
 - `data/tables/` — editable JSON content
 - `data/names/` — raw and cleaned name datasets
+- `data/tables/item_tables.json` — item definitions and starting gear
 - `data/saves/worlds.db` — current SQLite save database
 - `tools/` — name cleanup and corruption-scrubbing utilities
 - `tests/test_core.py` — automated test suite

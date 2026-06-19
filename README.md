@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.7.2 is a local, single-player weird-fantasy starting-region generator
+Version 0.7.3 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -55,6 +55,13 @@ New characters also receive a generated origin, formative event, personality
 trait, ideal, bond, and flaw from `data/tables/player_background_tables.json`.
 These details are descriptive only and do not impose additional rules.
 
+Characters have lightweight structured inventory records with a name, category,
+quantity, description, tags, and practical status flags such as equipped,
+consumable, quest-related, carried, and tradeable. Common and class-flavored
+starting gear is defined in `data/tables/item_tables.json`. Food, water,
+torches, coin, and abstract supplies remain separate resource counters because
+the exploration loop already consumes those values directly.
+
 Version 0.5 adds a generic `1d20 + bonus vs difficulty` action resolver. Easy,
 Standard, Hard, and Severe checks use the character's combat, exploration,
 social, lore, survival, or stealth bonus. Outcomes range from critical failure
@@ -82,6 +89,7 @@ database on its next launch.
 - `app/dice.py`: dice formulas, reaction rolls, and morale checks
 - `app/characters.py`: rules-light class loading and character creation
 - `app/character_profiles.py`: JSON-driven personal background details
+- `app/inventory.py`: item catalog and class starting-loadout construction
 - `app/checks.py`: generic d20 checks, outcomes, and state consequences
 - `app/generators/`: focused procedural generators
 - `data/tables/`: editable generation content
@@ -179,9 +187,9 @@ python -m unittest discover -s tests -v
 ```
 
 Tests cover dice formulas, name cleanup and generation, character background
-profiles, schema-aware table validation, generation with missing data,
-generated counts and references, dungeon connectivity, SQLite child records,
-save/load reconstruction, and older-save compatibility.
+profiles, structured inventory, schema-aware table validation, generation with
+missing data, generated counts and references, dungeon connectivity, SQLite
+child records, save/load reconstruction, and older-save compatibility.
 
 ## Current boundaries
 

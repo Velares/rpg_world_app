@@ -13,7 +13,7 @@ from app.generators.hex_generator import HexGenerator
 from app.generators.npc_generator import NPCGenerator
 from app.generators.settlement_generator import SettlementGenerator
 from app.generators.wilderness_generator import WildernessGenerator
-from app.models import PlayerState, World
+from app.models import InventoryItem, PlayerState, World
 from app.name_generator import NameGenerator
 from app.table_loader import TableLoader
 
@@ -220,6 +220,21 @@ class GameState:
     def create_character(self, name: str, class_name: str, background: str):
         return CharacterFactory(self.tables, self.rng).create(
             self.require_world(), name, class_name, background
+        )
+
+    def add_inventory_item(
+        self,
+        item: InventoryItem | str,
+        quantity: int = 1,
+        **metadata,
+    ):
+        return self.require_world().player_state.add_inventory_item(
+            item, quantity=quantity, **metadata
+        )
+
+    def remove_inventory_item(self, item_key_or_name: str, quantity: int = 1) -> int:
+        return self.require_world().player_state.remove_inventory_item(
+            item_key_or_name, quantity
         )
 
     def random_first_name(self) -> str:

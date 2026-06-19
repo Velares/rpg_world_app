@@ -5,7 +5,12 @@ import random
 from pathlib import Path
 from typing import Any
 
-from app.table_schemas import BONUS_NAMES, FALLBACKS, REQUIRED_CATEGORIES
+from app.table_schemas import (
+    BONUS_NAMES,
+    FALLBACKS,
+    ITEM_CATEGORIES,
+    REQUIRED_CATEGORIES,
+)
 
 
 class TableError(RuntimeError):
@@ -54,12 +59,20 @@ class TableLoader:
             except (OSError, json.JSONDecodeError, ValueError) as exc:
                 self._warn(f"Could not load {path.name}: {exc}")
         self._validate_required_categories()
+        self._validate_item_references()
 
     def _validate_entries(
         self, file_name: str, category: str, values: list[Any]
     ) -> list[Any]:
         if file_name == "class_tables.json" and category == "classes":
             return self._validate_classes(file_name, category, values)
+        if file_name == "item_tables.json":
+            if category == "item_definitions":
+                return self._validate_item_definitions(file_name, category, values)
+            if category == "common_loadout":
+                return self._validate_loadout_entries(file_name, category, values)
+            if category == "class_loadouts":
+                return self._validate_class_loadouts(file_name, category, values)
 
         clean: list[Any] = []
         for index, item in enumerate(values):
@@ -82,6 +95,120 @@ class TableLoader:
                 f"{file_name}:{category}[{index}] is not a usable text or "
                 "weighted-text entry"
             )
+        return clean
+
+    def _validate_item_definitions(
+        self, file_name: str, category: str, values: list[Any]
+    ) -> list[dict[str, Any]]:
+        clean: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for index, item in enumerate(values):
+            location = f"{file_name}:{category}[{index}]"
+            if not isinstance(item, dict):
+                self._warn(f"{location} must be an object")
+                continue
+            item_key = item.get("item_key")
+            name = item.get("name")
+            item_category = item.get("category")
+            tags = item.get("tags", [])
+            if (
+                not isinstance(item_key, str)
+                or not item_key.strip()
+                or not isinstance(name, str)
+                or not name.strip()
+                or item_category not in ITEM_CATEGORIES
+                or not isinstance(tags, list)
+                or any(not isinstance(tag, str) or not tag.strip() for tag in tags)
+            ):
+                self._warn(
+                    f"{location} requires item_key, name, a supported category, "
+                    "and text tags"
+                )
+                continue
+            normalized_key = item_key.strip()
+            if normalized_key.casefold() in seen:
+                self._warn(f"{location} duplicates item key {normalized_key!r}")
+                continue
+            seen.add(normalized_key.casefold())
+            normalized = {
+                "item_key": normalized_key,
+                "name": name.strip(),
+                "category": item_category,
+                "description": str(item.get("description", "")).strip(),
+                "tags": [tag.strip() for tag in tags],
+            }
+            for flag, default in (
+                ("equipped", False),
+                ("carried", True),
+                ("consumable", False),
+                ("quest_related", False),
+                ("tradeable", True),
+            ):
+                value = item.get(flag, default)
+                if not isinstance(value, bool):
+                    self._warn(f"{location}.{flag} must be true or false")
+                    break
+                normalized[flag] = value
+            else:
+                clean.append(normalized)
+        return clean
+
+    def _validate_loadout_entries(
+        self, file_name: str, category: str, values: list[Any]
+    ) -> list[dict[str, Any]]:
+        clean: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for index, item in enumerate(values):
+            location = f"{file_name}:{category}[{index}]"
+            if (
+                not isinstance(item, dict)
+                or not isinstance(item.get("item_key"), str)
+                or not item["item_key"].strip()
+                or not isinstance(item.get("quantity", 1), int)
+                or isinstance(item.get("quantity", 1), bool)
+                or item.get("quantity", 1) <= 0
+            ):
+                self._warn(f"{location} requires item_key and positive quantity")
+                continue
+            item_key = item["item_key"].strip()
+            if item_key.casefold() in seen:
+                self._warn(f"{location} duplicates item reference {item_key!r}")
+                continue
+            seen.add(item_key.casefold())
+            clean.append(
+                {
+                    "item_key": item_key,
+                    "quantity": item.get("quantity", 1),
+                }
+            )
+        return clean
+
+    def _validate_class_loadouts(
+        self, file_name: str, category: str, values: list[Any]
+    ) -> list[dict[str, Any]]:
+        clean: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for index, item in enumerate(values):
+            location = f"{file_name}:{category}[{index}]"
+            if (
+                not isinstance(item, dict)
+                or not isinstance(item.get("class_name"), str)
+                or not item["class_name"].strip()
+                or not isinstance(item.get("items"), list)
+            ):
+                self._warn(f"{location} requires class_name and an items list")
+                continue
+            class_name = item["class_name"].strip()
+            if class_name.casefold() in seen:
+                self._warn(f"{location} duplicates class name {class_name!r}")
+                continue
+            seen.add(class_name.casefold())
+            entries = self._validate_loadout_entries(
+                file_name,
+                f"{category}[{index}].items",
+                item["items"],
+            )
+            clean.append({"class_name": class_name, "items": entries})
         return clean
 
     def _validate_classes(
@@ -153,6 +280,63 @@ class TableLoader:
             for category in categories:
                 if category not in self.tables[table_file]:
                     self._warn(f"Missing required table: {table_file}.{category}")
+
+    def _validate_item_references(self) -> None:
+        item_tables = self.tables.get("item_tables")
+        if not item_tables:
+            return
+        known_items = {
+            item["item_key"]
+            for item in item_tables.get("item_definitions", [])
+            if isinstance(item, dict) and item.get("item_key")
+        }
+        known_classes = {
+            item["class_name"]
+            for item in self.tables.get("class_tables", {}).get("classes", [])
+            if isinstance(item, dict) and item.get("class_name")
+        }
+        for category in ("common_loadout",):
+            item_tables[category] = self._filter_loadout_references(
+                category, item_tables.get(category, []), known_items
+            )
+        valid_loadouts = []
+        for index, loadout in enumerate(item_tables.get("class_loadouts", [])):
+            if known_classes and loadout["class_name"] not in known_classes:
+                self._warn(
+                    f"item_tables.json:class_loadouts[{index}] references unknown "
+                    f"class {loadout['class_name']!r}"
+                )
+                continue
+            loadout["items"] = self._filter_loadout_references(
+                f"class_loadouts[{index}].items",
+                loadout.get("items", []),
+                known_items,
+            )
+            valid_loadouts.append(loadout)
+        item_tables["class_loadouts"] = valid_loadouts
+        if known_classes:
+            loadout_classes = {item["class_name"] for item in valid_loadouts}
+            for class_name in sorted(known_classes - loadout_classes):
+                self._warn(
+                    f"Missing class loadout: item_tables.class_loadouts.{class_name}"
+                )
+
+    def _filter_loadout_references(
+        self,
+        category: str,
+        entries: list[dict[str, Any]],
+        known_items: set[str],
+    ) -> list[dict[str, Any]]:
+        clean = []
+        for index, entry in enumerate(entries):
+            if entry["item_key"] not in known_items:
+                self._warn(
+                    f"item_tables.json:{category}[{index}] references unknown "
+                    f"item {entry['item_key']!r}"
+                )
+                continue
+            clean.append(entry)
+        return clean
 
     def get(self, table_file: str, category: str) -> list[Any]:
         values = self.tables.get(table_file, {}).get(category)

@@ -234,8 +234,14 @@ class ExplorationEngine:
         elif choice == "investigate":
             self._spend_turn()
             if self.rng.random() < 0.7:
-                if encounter.reward_or_clue not in player.inventory:
-                    player.inventory.append(encounter.reward_or_clue)
+                if player.inventory_item(encounter.reward_or_clue) is None:
+                    player.add_inventory_item(
+                        encounter.reward_or_clue,
+                        category="Quest",
+                        tags=["clue", "wilderness"],
+                        quest_related=True,
+                        tradeable=False,
+                    )
                 self._discover(
                     player.known_threats,
                     encounter.creature_or_npc,
@@ -319,8 +325,14 @@ class ExplorationEngine:
         if player.current_location == "dungeon":
             room = self.current_room()
             if self.rng.random() < 0.7:
-                if room.clue not in player.inventory:
-                    player.inventory.append(room.clue)
+                if player.inventory_item(room.clue) is None:
+                    player.add_inventory_item(
+                        room.clue,
+                        category="Quest",
+                        tags=["clue", "dungeon"],
+                        quest_related=True,
+                        tradeable=False,
+                    )
                 self._add_lead(
                     f"Ask {self.world.adventure_hook.key_npc} about {room.clue}."
                 )
