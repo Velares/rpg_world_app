@@ -15,6 +15,7 @@ from app.generators.settlement_generator import SettlementGenerator
 from app.name_generator import NameDataError, NameGenerator
 from app.table_loader import TableLoader
 from tools.clean_names import clean_name_file
+from tools.scrub_names import is_suspicious_name, scrub_name_file
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -124,6 +125,28 @@ class NameTests(unittest.TestCase):
             npcs = NPCGenerator(tables, rng, generator).generate(locations, 3)
             self.assertTrue(all(npc.name == "Textfirst Textlast" or " the " in npc.name for npc in npcs))
             self.assertTrue(npcs[0].name.startswith("Textfirst Textlast"))
+
+    def test_scrubber_removes_corruption_and_preserves_valid_unicode(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "names.txt"
+            path.write_text(
+                "José\nÅsa\nMüller\nBroken\ufffdName\nFranÃ§ois\nM├ller\n",
+                encoding="utf-8",
+            )
+            result = scrub_name_file(path)
+            self.assertEqual(result, (3, 3))
+            self.assertEqual(
+                path.read_text(encoding="utf-8").splitlines(),
+                ["José", "Åsa", "Müller"],
+            )
+
+    def test_scrubber_detects_controls_and_handles_missing_file(self):
+        self.assertTrue(is_suspicious_name("Bad\x00Name"))
+        self.assertFalse(is_suspicious_name("D'Arcy-Søren"))
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "missing.txt"
+            self.assertIsNone(scrub_name_file(path))
+            self.assertFalse(path.with_suffix(".txt.tmp").exists())
 
 
 class WorldTests(unittest.TestCase):

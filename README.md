@@ -132,6 +132,18 @@ file is missing or empty, the smaller editable JSON name tables remain as safe
 fallbacks. Name text files are ignored by Git so very large local datasets are
 not accidentally committed.
 
+If the source data contains replacement characters or obvious mojibake, scrub
+the cleaned files in place with:
+
+```powershell
+python tools/scrub_names.py
+```
+
+The scrubber preserves normal accented Unicode names, removes suspicious
+corrupted lines, safely replaces each cleaned file through a temporary file,
+and reports how many names were kept and removed. Raw source files are not
+modified.
+
 ## Tests
 
 From the project directory:
