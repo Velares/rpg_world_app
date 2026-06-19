@@ -10,6 +10,11 @@ from app.characters import BONUS_NAMES, CharacterFactory
 from app.character_profiles import CharacterProfileGenerator
 from app.checks import DIFFICULTIES
 from app.dice import morale_check, reaction_roll, roll
+from app.exporters import (
+    export_character_text,
+    export_event_log_text,
+    export_world_summary,
+)
 from app.game_state import GameState
 from app.inventory import InventoryCatalog
 from app.generators.npc_generator import NPCGenerator
@@ -801,6 +806,81 @@ class WorldTests(unittest.TestCase):
             self.assertEqual(restored.player_state.action_log, [])
             self.assertEqual(restored.player_state.event_log, [])
             self.assertIsNone(restored.player_state.character)
+            state.close()
+
+
+class ExporterTests(unittest.TestCase):
+    def make_state(self, folder: Path, seed: int = 1) -> GameState:
+        return GameState(
+            TableLoader(TABLES),
+            Database(folder / "worlds.db"),
+            random.Random(seed),
+        )
+
+    def test_world_export_contains_summary_sections(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 70)
+            world = state.generate_new_region()
+            text = export_world_summary(world)
+            self.assertIn(world.name.upper(), text)
+            self.assertIn("KNOWN CONTACTS AND LEADS", text)
+            self.assertIn("RUMOR LEADS", text)
+            self.assertIn("ACTIVE LEADS", text)
+            self.assertIn(world.adventure_hook.major_goal, text)
+            state.close()
+
+    def test_character_export_handles_missing_world_and_character(self):
+        self.assertIn("NO ACTIVE WORLD", export_character_text(None))
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 71)
+            world = state.generate_new_region()
+            self.assertIn("NO PLAYER CHARACTER", export_character_text(world))
+            state.close()
+
+    def test_character_export_separates_inventory_from_resource_counters(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 72)
+            try:
+                world = state.generate_new_region()
+                state.create_character(
+                    "Tarin Vale",
+                    "Ranger",
+                    state.character_backgrounds()[0],
+                )
+                state.add_inventory_item(
+                    InventoryItem(
+                        item_key="trail_rations",
+                        name="Trail Rations",
+                        category="Supply",
+                        quantity=2,
+                        description="Packed food for a short journey.",
+                        consumable=True,
+                    ),
+                    quantity=2,
+                )
+                text = export_character_text(world)
+                self.assertIn("Trail Rations x2 (Supply) [consumable]", text)
+                self.assertIn("RESOURCES", text)
+                self.assertIn("Food: 9", text)
+                self.assertNotIn("Food x9", text)
+                self.assertIn(
+                    "Resource counters remain separate from inventory records",
+                    text,
+                )
+            finally:
+                state.close()
+
+    def test_event_log_export_handles_empty_and_pending_states(self):
+        self.assertIn("NO ACTIVE WORLD", export_event_log_text(None))
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 73)
+            world = state.generate_new_region()
+            world.player_state.event_log = []
+            text = export_event_log_text(world)
+            self.assertIn("No events recorded yet.", text)
+            world.player_state.pending_encounter_id = "enc_test"
+            text = export_event_log_text(world)
+            self.assertIn("DANGER IS PENDING", text)
             state.close()
 
 

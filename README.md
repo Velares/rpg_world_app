@@ -23,7 +23,8 @@ python main.py
 
 Click **Generate New Region**, then use the viewing buttons to inspect the
 region. **Save World** writes the active world to SQLite. **Load World** opens a
-list of prior saves.
+list of prior saves. **Export World**, **Export Character**, and
+**Export Event Log** write plain-text `.txt` files for the current active data.
 
 Version 0.2 adds explicit links among town problems, NPCs, locations, rumors,
 the dungeon, wilderness signs, and the adventure hook. NPCs, locations, dungeon
@@ -62,6 +63,11 @@ starting gear is defined in `data/tables/item_tables.json`. Food, water,
 torches, coin, and abstract supplies remain separate resource counters because
 the exploration loop already consumes those values directly.
 
+The app also supports plain-text export for the active world summary, the
+active character sheet, and the persistent event log. Exported character text
+keeps inventory records and resource counters separate so food, water, torches,
+coin, and supplies are not duplicated as consumable inventory quantities.
+
 Version 0.5 adds a generic `1d20 + bonus vs difficulty` action resolver. Easy,
 Standard, Hard, and Severe checks use the character's combat, exploration,
 social, lore, survival, or stealth bonus. Outcomes range from critical failure
@@ -90,6 +96,7 @@ database on its next launch.
 - `app/characters.py`: rules-light class loading and character creation
 - `app/character_profiles.py`: JSON-driven personal background details
 - `app/inventory.py`: item catalog and class starting-loadout construction
+- `app/exporters.py`: plain-text export formatting helpers
 - `app/checks.py`: generic d20 checks, outcomes, and state consequences
 - `app/generators/`: focused procedural generators
 - `data/tables/`: editable generation content

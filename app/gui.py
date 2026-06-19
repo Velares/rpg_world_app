@@ -2,8 +2,15 @@ from __future__ import annotations
 
 import tkinter as tk
 from dataclasses import asdict
-from tkinter import messagebox, simpledialog, ttk
+from pathlib import Path
+from tkinter import filedialog, messagebox, simpledialog, ttk
 
+from app.exporters import (
+    export_character_text,
+    export_event_log_text,
+    export_world_summary,
+    inventory_item_text,
+)
 from app.game_state import GameState
 
 
@@ -19,23 +26,6 @@ def block(title: str, values: dict, skip: set[str] | None = None) -> str:
             continue
         lines.append(f"{label(key)}: {value}")
     return "\n".join(lines)
-
-
-def inventory_item_text(item, detailed: bool = False) -> str:
-    flags = []
-    if item.equipped:
-        flags.append("equipped")
-    if item.consumable:
-        flags.append("consumable")
-    if item.quest_related:
-        flags.append("quest")
-    if not item.carried:
-        flags.append("stored")
-    suffix = f" [{', '.join(flags)}]" if flags else ""
-    base = f"{item.name} x{item.quantity} ({item.category}){suffix}"
-    if detailed and item.description:
-        return f"{base} - {item.description}"
-    return base
 
 
 class LoadDialog(tk.Toplevel):
@@ -193,6 +183,7 @@ class RPGWorldApp(tk.Tk):
             ("Generate New Region", self.generate),
             ("Create Character", self.create_character),
             ("Character Sheet", self.view_character),
+            ("Export Character", self.export_character),
             ("Settlement Overview", self.view_settlement),
             ("NPC List", self.view_npcs),
             ("Location List", self.view_locations),
@@ -202,6 +193,8 @@ class RPGWorldApp(tk.Tk):
             ("Encounter List", self.view_encounters),
             ("Adventure Hook", self.view_hook),
             ("Event Log", self.view_event_log),
+            ("Export Event Log", self.export_event_log),
+            ("Export World", self.export_world),
             ("Data Diagnostics", self.view_data_diagnostics),
             ("Save World", self.save_world),
             ("Load World", self.load_world),
@@ -366,20 +359,7 @@ class RPGWorldApp(tk.Tk):
         )
 
     def action_log_text(self) -> str:
-        world = self.state.require_world()
-        lines = ["EVENT LOG", "=========", ""]
-        lines.extend(
-            f"{index}. {entry}" for index, entry in enumerate(world.player_state.event_log, 1)
-        )
-        if world.player_state.pending_encounter_id:
-            lines.extend(
-                [
-                    "",
-                    "DANGER IS PENDING",
-                    "Use Avoid, Approach, Investigate, or Retreat from Encounter.",
-                ]
-            )
-        return "\n".join(lines)
+        return export_event_log_text(self.state.require_world())
 
     def perform_action(self, action) -> None:
         def run():
@@ -494,42 +474,7 @@ class RPGWorldApp(tk.Tk):
         self.guarded(action)
 
     def character_sheet_text(self) -> str:
-        player = self.state.require_world().player_state
-        character = player.character
-        if character is None:
-            return (
-                "NO PLAYER CHARACTER\n"
-                "===================\n"
-                "Use Create Character to choose a name, class, and background."
-            )
-        bonuses = "\n".join(
-            f"{name.title()}: {value:+d}" for name, value in character.bonuses.items()
-        )
-        inventory = "\n".join(
-            f"- {inventory_item_text(item, detailed=True)}"
-            for item in player.inventory
-        ) or "- Empty"
-        return (
-            f"{character.name.upper()}\n{'=' * len(character.name)}\n"
-            f"Class: {character.character_class}\n"
-            f"Background: {character.background}\n"
-            f"Role: {character.role_description}\n"
-            f"Starting Supplies: {character.starting_supplies}\n\n"
-            f"BACKGROUND DETAILS\n==================\n"
-            f"Origin: {character.origin_detail or 'Not recorded'}\n"
-            f"Formative Event: {character.formative_event or 'Not recorded'}\n"
-            f"Personality: {character.personality_trait or 'Not recorded'}\n"
-            f"Ideal: {character.ideal or 'Not recorded'}\n"
-            f"Bond: {character.bond or 'Not recorded'}\n"
-            f"Flaw: {character.flaw or 'Not recorded'}\n\n"
-            f"EQUIPMENT AND INVENTORY\n=======================\n{inventory}\n\n"
-            f"Resource counters remain separate: supplies {player.supplies}, "
-            f"food {player.food}, water {player.water}, torches {player.torches}, "
-            f"coin {player.coin}.\n\n"
-            f"BONUSES\n=======\n{bonuses}\n\n"
-            f"SPECIAL ABILITY PLACEHOLDER\n===========================\n"
-            f"{character.special_ability_placeholder}"
-        )
+        return export_character_text(self.state.require_world())
 
     def view_character(self) -> None:
         self.guarded(
@@ -778,6 +723,86 @@ class RPGWorldApp(tk.Tk):
     def view_event_log(self) -> None:
         self.guarded(
             lambda: self.show(self.action_log_text(), "Viewing the persistent event log.")
+        )
+
+    def _default_export_name(self, stem: str) -> str:
+        safe = "".join(
+            character if character.isalnum() or character in (" ", "-", "_") else "_"
+            for character in stem.strip()
+        ).strip()
+        return safe or "export"
+
+    def _write_export(self, title: str, text: str, stem: str) -> bool:
+        path = filedialog.asksaveasfilename(
+            parent=self,
+            title=title,
+            defaultextension=".txt",
+            initialfile=f"{self._default_export_name(stem)}.txt",
+            filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")],
+        )
+        if not path:
+            self.status_var.set(f"{title} cancelled.")
+            return False
+        Path(path).write_text(text, encoding="utf-8")
+        self.status_var.set(f"Exported to {path}.")
+        return True
+
+    def export_world(self) -> None:
+        if self.state.world is None:
+            messagebox.showinfo(
+                "Export World",
+                "Generate or load a world first.",
+                parent=self,
+            )
+            return
+        world = self.state.world
+        self.guarded(
+            lambda: self._write_export(
+                "Export World",
+                export_world_summary(world),
+                f"{world.name} world summary",
+            )
+        )
+
+    def export_character(self) -> None:
+        if self.state.world is None:
+            messagebox.showinfo(
+                "Export Character",
+                "Generate or load a world first.",
+                parent=self,
+            )
+            return
+        player = self.state.world.player_state
+        if player.character is None:
+            messagebox.showinfo(
+                "Export Character",
+                "Create a character first.",
+                parent=self,
+            )
+            return
+        self.guarded(
+            lambda: self._write_export(
+                "Export Character",
+                export_character_text(self.state.world),
+                f"{player.character.name} character sheet",
+            )
+        )
+
+    def export_event_log(self) -> None:
+        if self.state.world is None:
+            messagebox.showinfo(
+                "Export Event Log",
+                "Generate or load a world first.",
+                parent=self,
+            )
+            return
+        world = self.state.world
+        self.guarded(
+            lambda: self._write_export(
+                "Export Event Log",
+                export_event_log_text(world),
+                f"{world.name} event log",
+            )
         )
 
     def view_data_diagnostics(self) -> None:

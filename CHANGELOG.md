@@ -3,6 +3,18 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## Unreleased - Plain-text export
+
+- Added `app/exporters.py` for focused plain-text world, character, and event
+  log export formatting.
+- Added simple Tkinter **Export World**, **Export Character**, and
+  **Export Event Log** actions with `.txt` as the default save type.
+- Kept export data rules-neutral and preserved separate food, water, torches,
+  coin, and supplies counters instead of duplicating them as inventory
+  quantities.
+- Added exporter coverage for generated worlds, empty-state handling, pending
+  encounters, and character/resource formatting.
+
 ## v0.7.3 - Structured inventory
 
 - Added rules-neutral inventory records with quantities, categories,

@@ -8,6 +8,16 @@
 
 ## Latest completed work
 
+Current `main` working tree includes an unreleased plain-text export milestone:
+
+- Added focused plain-text export formatting for active world summaries,
+  character sheets, and event logs.
+- Added simple Tkinter export actions for world, character, and event-log
+  `.txt` output.
+- Kept inventory exports descriptive while preserving food, water, torches,
+  coin, and supplies as separate counters.
+- Preserved save/load compatibility by avoiding schema changes.
+
 Version 0.7.3 adds a lightweight structured inventory:
 
 - Item records track category, quantity, description, tags, and rules-neutral
@@ -52,11 +62,12 @@ Version 0.7 hardened the data-driven generation foundation:
   Stealth.
 - Class-based resources and placeholder special abilities.
 - Structured inventory records and JSON-driven class starting gear.
+- Plain-text export for active world summaries, character sheets, and event logs.
 - Generic d20 checks with five outcome grades and exploration consequences.
 - Travel, searching, conversations, rest, retreat, dungeon room movement,
   resource use, time periods, discoveries, quest log, and persistent event log.
-- Tkinter list/detail views, character sheet, player-state display, save/load,
-  and data diagnostics.
+- Tkinter list/detail views, character sheet, player-state display, simple
+  export actions, save/load, and data diagnostics.
 - SQLite persistence with compatibility defaults for older save shapes.
 
 ## Name generation status
@@ -73,14 +84,17 @@ Version 0.7 hardened the data-driven generation foundation:
 ## Testing status
 
 - Test suite: `tests/test_core.py`
-- Current verification: 43 tests passing with
+- Current verification: 47 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 12 JSON table files parse with zero
   `TableLoader` warnings.
+- A Tkinter smoke test could not complete in this environment because the local
+  Python 3.11 install could not find a usable `init.tcl`.
 - `pytest` is not installed and is not required by the project.
 - Coverage includes dice, checks, names, cleanup/scrubbing, JSON validation,
   connected world generation, missing-data fallbacks, exploration, character
-  creation, normalized database rows, and older-save compatibility.
+  creation, exporter output, normalized database rows, and older-save
+  compatibility.
 
 ## Known issues and boundaries
 
@@ -94,10 +108,10 @@ Version 0.7 hardened the data-driven generation foundation:
 
 ## Next candidate goals
 
-1. Add export for worlds, characters, and event logs.
-2. Add more NPC dialogue leads and encounter-resolution variety.
-3. Add optional seed entry for reproducible generation.
-4. Add a small inventory-management dialog only when gameplay needs it.
+1. Add more NPC dialogue leads and encounter-resolution variety.
+2. Add optional seed entry for reproducible generation.
+3. Add a small inventory-management dialog only when gameplay needs it.
+4. Consider richer export options only after the plain-text flow settles.
 
 ## Important files and directories
 
