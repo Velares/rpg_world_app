@@ -159,6 +159,7 @@ class WorldTests(unittest.TestCase):
                 loaded.settlement.problem_target_id,
                 original.settlement.problem_target_id,
             )
+            self.assertEqual(loaded.player_state, original.player_state)
             counts = {}
             for table in (
                 "worlds", "settlements", "npcs", "locations", "dungeons",
@@ -239,6 +240,96 @@ class WorldTests(unittest.TestCase):
             )
             self.assertTrue(restored.adventure_hook.entity_id)
             self.assertTrue(restored.adventure_hook.key_npc_id)
+            state.close()
+
+    def test_version_02_player_state_defaults_to_playable(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 18)
+            world = state.generate_new_region()
+            data = world.to_dict()
+            for key in (
+                "current_location",
+                "current_room_id",
+                "wounds",
+                "discovered_room_ids",
+                "pending_encounter_id",
+                "action_log",
+                "turns_elapsed",
+            ):
+                data["player_state"].pop(key)
+            restored = type(world).from_dict(data)
+            self.assertEqual(restored.player_state.current_location, "town")
+            self.assertEqual(restored.player_state.wounds, 0)
+            self.assertEqual(restored.player_state.action_log, [])
+            state.close()
+
+
+class ExplorationTests(unittest.TestCase):
+    def make_state(self, folder: Path, seed: int = 1) -> GameState:
+        state = GameState(
+            TableLoader(TABLES),
+            Database(folder / "worlds.db"),
+            random.Random(seed),
+        )
+        state.generate_new_region()
+        return state
+
+    def test_travel_dungeon_movement_light_and_retreat(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 21)
+            player = state.world.player_state
+            state.travel("dungeon_entrance")
+            self.assertEqual(player.current_location, "dungeon_entrance")
+            state.explore_current_area()
+            self.assertEqual(player.current_location, "dungeon")
+            self.assertEqual(player.current_room_id, 1)
+            self.assertIn(1, player.discovered_room_ids)
+            self.assertEqual(player.torches, 5)
+            self.assertEqual(player.light_turns_remaining, 5)
+            first_exit = state.world.dungeon.rooms[0].exits[0]
+            state.move_room(first_exit)
+            self.assertEqual(player.current_room_id, first_exit)
+            self.assertIn(first_exit, player.discovered_room_ids)
+            self.assertEqual(player.light_turns_remaining, 4)
+            state.retreat()
+            self.assertEqual(player.current_location, "dungeon_entrance")
+            self.assertIsNone(player.current_room_id)
+            state.close()
+
+    def test_wilderness_signs_and_all_resolution_choices(self):
+        with tempfile.TemporaryDirectory() as temp:
+            for index, choice in enumerate(("avoid", "approach", "investigate", "retreat")):
+                state = self.make_state(Path(temp), 30 + index)
+                player = state.world.player_state
+                state.travel("wilderness")
+                encounter = state.world.wilderness.encounter_table[index]
+                player.pending_encounter_id = encounter.entity_id
+                result = state.resolve_encounter(choice)
+                self.assertTrue(result)
+                self.assertEqual(player.pending_encounter_id, "")
+                self.assertTrue(player.action_log)
+                state.close()
+
+    def test_search_talk_rest_consequences_and_save_load(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 44)
+            player = state.world.player_state
+            start_turns = player.turns_elapsed
+            self.assertIn("speak with", state.talk_to_npc())
+            self.assertGreater(player.turns_elapsed, start_turns)
+            state.search()
+            player.wounds = 2
+            player.food = 7
+            player.water = 7
+            state.rest()
+            self.assertGreaterEqual(player.wounds, 0)
+            self.assertGreaterEqual(player.supplies, 0)
+            self.assertGreaterEqual(player.food, 0)
+            self.assertGreaterEqual(player.water, 0)
+            world_id = state.save_world("Exploration Save")
+            snapshot = state.world.player_state
+            loaded = state.load_world(world_id)
+            self.assertEqual(loaded.player_state, snapshot)
             state.close()
 
 

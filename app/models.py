@@ -164,15 +164,22 @@ class Hex:
 
 @dataclass
 class PlayerState:
+    current_location: str = "town"
+    current_room_id: int | None = None
     supplies: int = 10
     torches: int = 6
     light_turns_remaining: int = 0
     food: int = 7
     water: int = 7
+    wounds: int = 0
     rest_risk: str = "Unknown"
     inventory: list[str] = field(default_factory=lambda: ["bedroll", "flint and steel"])
     quest_log: list[str] = field(default_factory=list)
     hexes: list[Hex] = field(default_factory=list)
+    discovered_room_ids: list[int] = field(default_factory=list)
+    pending_encounter_id: str = ""
+    action_log: list[str] = field(default_factory=list)
+    turns_elapsed: int = 0
 
 
 @dataclass
@@ -222,6 +229,14 @@ class World:
             Encounter(**item) for item in wilderness_data.get("encounter_table", [])
         ]
         player_data = data["player_state"]
+        # Version 0.3 exploration fields are defaulted so older saves remain playable.
+        player_data.setdefault("current_location", "town")
+        player_data.setdefault("current_room_id", None)
+        player_data.setdefault("wounds", 0)
+        player_data.setdefault("discovered_room_ids", [])
+        player_data.setdefault("pending_encounter_id", "")
+        player_data.setdefault("action_log", [])
+        player_data.setdefault("turns_elapsed", 0)
         player_data["hexes"] = [Hex(**item) for item in player_data.get("hexes", [])]
         npc_data = data.get("npcs", [])
         for item in npc_data:

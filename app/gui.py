@@ -56,6 +56,7 @@ class RPGWorldApp(tk.Tk):
         self.minsize(800, 520)
         self.protocol("WM_DELETE_WINDOW", self.on_close)
         self.status_var = tk.StringVar(value="Ready. Generate a region to begin.")
+        self.player_state_var = tk.StringVar(value="No active world.")
         self.selection_handler = None
         self._build()
         if self.state.tables.warnings:
@@ -81,7 +82,7 @@ class RPGWorldApp(tk.Tk):
         self.index_list.bind("<<ListboxSelect>>", self._on_index_selected)
         self.display_frame = ttk.Frame(container)
         self.display_frame.pack(side="left", fill="both", expand=True)
-        actions = [
+        navigation_actions = [
             ("Generate New Region", self.generate),
             ("Settlement Overview", self.view_settlement),
             ("NPC List", self.view_npcs),
@@ -95,8 +96,51 @@ class RPGWorldApp(tk.Tk):
             ("Load World", self.load_world),
             ("Clear Output", self.clear_output),
         ]
-        for text, command in actions:
-            ttk.Button(sidebar, text=text, command=command, width=24).pack(fill="x", pady=3)
+        for text, command in navigation_actions:
+            ttk.Button(sidebar, text=text, command=command, width=24).pack(fill="x", pady=2)
+
+        state_box = ttk.LabelFrame(self.display_frame, text="Player State", padding=7)
+        state_box.pack(fill="x", pady=(0, 7))
+        ttk.Label(
+            state_box,
+            textvariable=self.player_state_var,
+            anchor="w",
+            justify="left",
+        ).pack(fill="x")
+
+        # Exploration controls stay separate from the content browser so the
+        # established Version 0.2 navigation remains uncluttered.
+        action_box = ttk.LabelFrame(self.display_frame, text="Exploration Actions", padding=5)
+        action_box.pack(fill="x", pady=(0, 7))
+        gameplay_actions = [
+            ("Travel to Town", lambda: self.perform_action(lambda: self.state.travel("town"))),
+            (
+                "Travel to Wilderness",
+                lambda: self.perform_action(lambda: self.state.travel("wilderness")),
+            ),
+            (
+                "Travel to Dungeon",
+                lambda: self.perform_action(lambda: self.state.travel("dungeon_entrance")),
+            ),
+            ("Explore Current Area", lambda: self.perform_action(self.state.explore_current_area)),
+            ("Search", lambda: self.perform_action(self.state.search)),
+            ("Talk to NPC", lambda: self.perform_action(self.state.talk_to_npc)),
+            ("Move to Room", self.move_room),
+            ("Inspect Room", lambda: self.perform_action(self.state.inspect_room)),
+            ("Rest", lambda: self.perform_action(self.state.rest)),
+            ("Retreat", lambda: self.perform_action(self.state.retreat)),
+            ("Avoid Encounter", lambda: self.encounter_choice("avoid")),
+            ("Approach Encounter", lambda: self.encounter_choice("approach")),
+            ("Investigate Signs", lambda: self.encounter_choice("investigate")),
+            ("Retreat from Encounter", lambda: self.encounter_choice("retreat")),
+        ]
+        for index, (text, command) in enumerate(gameplay_actions):
+            row, column = divmod(index, 4)
+            ttk.Button(action_box, text=text, command=command).grid(
+                row=row, column=column, sticky="ew", padx=2, pady=2
+            )
+        for column in range(4):
+            action_box.columnconfigure(column, weight=1)
         self.output = tk.Text(
             self.display_frame,
             wrap="word",
@@ -148,10 +192,77 @@ class RPGWorldApp(tk.Tk):
             messagebox.showerror("RPG World App", str(exc), parent=self)
             self.status_var.set(str(exc))
 
+    def update_player_state(self) -> None:
+        if self.state.world is None:
+            self.player_state_var.set("No active world.")
+            return
+        player = self.state.world.player_state
+        room = f" / room {player.current_room_id}" if player.current_room_id else ""
+        light = (
+            f"{player.light_turns_remaining} turns, {player.torches} torches"
+            if player.light_turns_remaining
+            else f"unlit, {player.torches} torches"
+        )
+        self.player_state_var.set(
+            f"Location: {player.current_location}{room}    Wounds: {player.wounds}    "
+            f"Turns: {player.turns_elapsed}\n"
+            f"Supplies: {player.supplies}    Food: {player.food}    Water: {player.water}    "
+            f"Light: {light}\n"
+            f"Inventory: {', '.join(player.inventory) or 'empty'}"
+        )
+
+    def action_log_text(self) -> str:
+        world = self.state.require_world()
+        lines = ["EXPLORATION LOG", "===============", ""]
+        lines.extend(
+            f"{index}. {entry}" for index, entry in enumerate(world.player_state.action_log, 1)
+        )
+        if world.player_state.pending_encounter_id:
+            lines.extend(
+                [
+                    "",
+                    "DANGER IS PENDING",
+                    "Use Avoid, Approach, Investigate, or Retreat from Encounter.",
+                ]
+            )
+        return "\n".join(lines)
+
+    def perform_action(self, action) -> None:
+        def run():
+            message = action()
+            self.hide_index()
+            self.update_player_state()
+            self.show(self.action_log_text(), message)
+
+        self.guarded(run)
+
+    def encounter_choice(self, choice: str) -> None:
+        self.perform_action(lambda: self.state.resolve_encounter(choice))
+
+    def move_room(self) -> None:
+        def run():
+            room = self.state.exploration().current_room()
+            room_id = simpledialog.askinteger(
+                "Move to Room",
+                f"Current room: {room.room_id}\nAvailable exits: "
+                f"{', '.join(map(str, room.exits))}\n\nMove to room:",
+                parent=self,
+                minvalue=1,
+                maxvalue=len(self.state.require_world().dungeon.rooms),
+            )
+            if room_id is not None:
+                message = self.state.move_room(room_id)
+                self.hide_index()
+                self.update_player_state()
+                self.show(self.action_log_text(), message)
+
+        self.guarded(run)
+
     def generate(self) -> None:
         def action():
             world = self.state.generate_new_region()
             self.hide_index()
+            self.update_player_state()
             self.show(self.world_overview(), f"Generated {world.name}.")
 
         self.guarded(action)
@@ -340,6 +451,7 @@ class RPGWorldApp(tk.Tk):
             if dialog.selected_id is not None:
                 world = self.state.load_world(dialog.selected_id)
                 self.hide_index()
+                self.update_player_state()
                 self.show(self.world_overview(), f"Loaded {world.name}.")
 
         self.guarded(action)

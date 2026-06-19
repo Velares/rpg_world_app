@@ -1,6 +1,7 @@
 # RPG World App
 
-Version 0.2 is a local, single-player weird-fantasy starting-region generator.
+Version 0.3 is a local, single-player weird-fantasy starting-region generator
+with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
 emphasizes warning signs, avoidance, negotiation, preparation, morale, and
@@ -30,6 +31,12 @@ rooms, and encounters have selectable list-and-detail views in the GUI.
 Generated NPCs, locations, rooms, encounters, and adventure hooks also receive
 stable prefixed IDs. These ID-backed relationships survive save/load, while
 older saves are upgraded in memory when opened.
+
+Version 0.3 adds travel among town, wilderness, and dungeon; room movement;
+searching, conversation, rest, and retreat; wilderness warning signs with
+avoid/approach/investigate choices; dungeon light consumption; wounds and
+resource pressure; and a persistent action log. Combat remains abstract and
+danger can usually be scouted, negotiated with, avoided, or escaped.
 
 The database is created automatically at:
 
@@ -85,13 +92,11 @@ Tests cover dice formulas, JSON validity, generated counts and references,
 dungeon connectivity, SQLite child records, save/load reconstruction, and
 missing-table fallback behavior.
 
-## Version 0.2 boundaries
+## Version 0.3 boundaries
 
-This release is a generator and browser, not a full combat or exploration game.
-Supply, food, water, light, rest risk, inventory, quests, and axial hex records
-exist as expansion-ready player state. Visual maps, character creation, combat
-resolution, deterministic seed controls, multiplayer, and web/server features
-are intentionally deferred.
+This release has a lightweight exploration game loop, but not tactical combat.
+Visual maps, character creation, detailed combat resolution, deterministic seed
+controls, multiplayer, and web/server features are intentionally deferred.
 
 The domain and persistence layers do not depend on Tkinter, which keeps later
 migration to a web or server interface practical.

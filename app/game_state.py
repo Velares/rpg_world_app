@@ -4,6 +4,7 @@ import random
 from datetime import datetime
 
 from app.database import Database
+from app.exploration import ExplorationEngine
 from app.generators.adventure_generator import AdventureGenerator
 from app.generators.dungeon_generator import DungeonGenerator
 from app.generators.hex_generator import HexGenerator
@@ -70,8 +71,12 @@ class GameState:
             hex_generator.generate(-1, 1),
         ]
         player_state = PlayerState(
+            current_location="town",
             quest_log=[f"Investigate {hook.major_goal}"],
             hexes=hexes,
+            action_log=[
+                f"You begin in {settlement.name}. Rumors point toward {dungeon.name}."
+            ],
         )
         self.world = World(
             name=f"The {settlement.name} Region",
@@ -143,6 +148,36 @@ class GameState:
     def load_world(self, world_id: int) -> World:
         self.world = self.database.load_world(world_id)
         return self.world
+
+    def exploration(self) -> ExplorationEngine:
+        return ExplorationEngine(self.require_world(), self.rng)
+
+    def travel(self, destination: str) -> str:
+        return self.exploration().travel(destination)
+
+    def explore_current_area(self) -> str:
+        return self.exploration().explore()
+
+    def resolve_encounter(self, choice: str) -> str:
+        return self.exploration().resolve_encounter(choice)
+
+    def inspect_room(self) -> str:
+        return self.exploration().inspect_room()
+
+    def move_room(self, room_id: int) -> str:
+        return self.exploration().move_room(room_id)
+
+    def search(self) -> str:
+        return self.exploration().search()
+
+    def talk_to_npc(self) -> str:
+        return self.exploration().talk_to_npc()
+
+    def rest(self) -> str:
+        return self.exploration().rest()
+
+    def retreat(self) -> str:
+        return self.exploration().retreat()
 
     def close(self) -> None:
         self.database.close()
