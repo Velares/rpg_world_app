@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.3 is a local, single-player weird-fantasy starting-region generator
+Version 0.7 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -151,8 +151,8 @@ That module provides random first names, last names, full names, and batches of
 full names. NPC generation and the **Random Name** button in character creation
 use the same cached generator. If either cleaned file is missing, empty, or
 unreadable, the smaller editable JSON name tables remain as safe fallbacks.
-Name text files are ignored by Git so very large local datasets are not
-accidentally committed.
+The current repository tracks both raw and cleaned name datasets. Avoid
+duplicating these large lists in Python or JSON.
 
 If the source data contains replacement characters or obvious mojibake, scrub
 the cleaned files in place with:
