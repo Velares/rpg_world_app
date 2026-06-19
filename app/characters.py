@@ -4,9 +4,7 @@ from dataclasses import dataclass
 
 from app.models import PlayerCharacter, World
 from app.table_loader import TableLoader
-
-
-BONUS_NAMES = ("combat", "exploration", "social", "lore", "survival", "stealth")
+from app.table_schemas import BONUS_NAMES
 
 
 @dataclass(frozen=True)

@@ -5,6 +5,8 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 NAMES_DIR = PROJECT_ROOT / "data" / "names"
+RAW_FIRST_NAME_CANDIDATES = ("firstnames.txt", "raw_first_names.txt")
+RAW_LAST_NAME_CANDIDATES = ("surnames.txt", "raw_last_names.txt")
 
 
 def clean_name_file(input_path: Path, output_path: Path) -> int | None:
@@ -28,14 +30,23 @@ def clean_name_file(input_path: Path, output_path: Path) -> int | None:
     return len(names)
 
 
+def find_raw_name_file(names_dir: Path, candidates: tuple[str, ...]) -> Path:
+    """Prefer the first existing supported source filename."""
+    for filename in candidates:
+        path = names_dir / filename
+        if path.exists():
+            return path
+    return names_dir / candidates[0]
+
+
 def main() -> None:
     NAMES_DIR.mkdir(parents=True, exist_ok=True)
     clean_name_file(
-        NAMES_DIR / "firstnames.txt",
+        find_raw_name_file(NAMES_DIR, RAW_FIRST_NAME_CANDIDATES),
         NAMES_DIR / "first_names.txt",
     )
     clean_name_file(
-        NAMES_DIR / "surnames.txt",
+        find_raw_name_file(NAMES_DIR, RAW_LAST_NAME_CANDIDATES),
         NAMES_DIR / "last_names.txt",
     )
 

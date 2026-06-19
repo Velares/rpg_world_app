@@ -12,6 +12,10 @@ class NameDataError(RuntimeError):
 class NameGenerator:
     """Cached newline-delimited name loader for large plain-text datasets."""
 
+    # A process-wide cache avoids parsing and allocating the same very large
+    # local files again when GameState or tests create another generator.
+    _file_cache: dict[Path, tuple[tuple[int, int], tuple[str, ...]]] = {}
+
     def __init__(
         self,
         names_dir: Path,
@@ -21,29 +25,52 @@ class NameGenerator:
     ):
         self.names_dir = Path(names_dir)
         self.rng = rng or random.Random()
+        self.warnings: list[str] = []
         self._fallback_first_names = tuple(
             str(name).strip() for name in fallback_first_names if str(name).strip()
         )
         self._fallback_last_names = tuple(
             str(name).strip() for name in fallback_last_names if str(name).strip()
         )
-        # Files are loaded once per generator instance, not on each name request.
+        # Large files are read once per generator instance, never per generated
+        # name. Tuples keep the cached collection compact and immutable.
         self._first_names = self._load_names(
             self.names_dir / "first_names.txt",
             self._fallback_first_names,
+            "first",
         )
         self._last_names = self._load_names(
             self.names_dir / "last_names.txt",
             self._fallback_last_names,
+            "last",
         )
 
-    @staticmethod
-    def _load_names(path: Path, fallback: tuple[str, ...]) -> tuple[str, ...]:
-        if path.exists():
-            with path.open("r", encoding="utf-8", errors="ignore") as source:
-                names = tuple(line.strip() for line in source if line.strip())
-            if names:
-                return names
+    def _load_names(
+        self, path: Path, fallback: tuple[str, ...], label: str
+    ) -> tuple[str, ...]:
+        try:
+            if path.exists():
+                resolved = path.resolve()
+                stat = path.stat()
+                signature = (stat.st_mtime_ns, stat.st_size)
+                cached = self._file_cache.get(resolved)
+                if cached and cached[0] == signature:
+                    return cached[1]
+                names = []
+                with path.open("r", encoding="utf-8", errors="ignore") as source:
+                    for line in source:
+                        name = line.strip()
+                        if name:
+                            names.append(name)
+                if names:
+                    loaded = tuple(names)
+                    self._file_cache[resolved] = (signature, loaded)
+                    return loaded
+                self.warnings.append(f"Cleaned {label}-name file is empty: {path}")
+            else:
+                self.warnings.append(f"Cleaned {label}-name file is missing: {path}")
+        except OSError as exc:
+            self.warnings.append(f"Could not read {label}-name file {path}: {exc}")
         return fallback
 
     def _choose(self, names: tuple[str, ...], label: str) -> str:
@@ -67,3 +94,10 @@ class NameGenerator:
         if count < 0:
             raise ValueError("Name count cannot be negative.")
         return [self.full_name() for _ in range(count)]
+
+    def source_summary(self) -> str:
+        """Return a concise diagnostic suitable for a GUI or support report."""
+        return (
+            f"First names available: {len(self._first_names):,}\n"
+            f"Last names available: {len(self._last_names):,}"
+        )

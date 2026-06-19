@@ -14,7 +14,7 @@ from app.generators.npc_generator import NPCGenerator
 from app.generators.settlement_generator import SettlementGenerator
 from app.name_generator import NameDataError, NameGenerator
 from app.table_loader import TableLoader
-from tools.clean_names import clean_name_file
+from tools.clean_names import clean_name_file, find_raw_name_file
 from tools.scrub_names import is_suspicious_name, scrub_name_file
 
 
@@ -72,6 +72,26 @@ class NameTests(unittest.TestCase):
             self.assertIsNone(result)
             self.assertFalse((root / "output.txt").exists())
 
+    def test_cleanup_supports_current_and_legacy_raw_filenames(self):
+        with tempfile.TemporaryDirectory() as temp:
+            names_dir = Path(temp)
+            legacy = names_dir / "raw_first_names.txt"
+            legacy.write_text("Legacy\n", encoding="utf-8")
+            self.assertEqual(
+                find_raw_name_file(
+                    names_dir, ("firstnames.txt", "raw_first_names.txt")
+                ),
+                legacy,
+            )
+            current = names_dir / "firstnames.txt"
+            current.write_text("Current\n", encoding="utf-8")
+            self.assertEqual(
+                find_raw_name_file(
+                    names_dir, ("firstnames.txt", "raw_first_names.txt")
+                ),
+                current,
+            )
+
     def test_name_generator_produces_first_last_full_and_lists(self):
         with tempfile.TemporaryDirectory() as temp:
             names_dir = Path(temp)
@@ -112,6 +132,38 @@ class NameTests(unittest.TestCase):
             empty = NameGenerator(names_dir / "also_absent", random.Random(1))
             with self.assertRaises(NameDataError):
                 empty.first_name()
+
+    def test_name_generator_shares_cache_and_invalidates_changed_files(self):
+        with tempfile.TemporaryDirectory() as temp:
+            names_dir = Path(temp)
+            first_path = names_dir / "first_names.txt"
+            last_path = names_dir / "last_names.txt"
+            first_path.write_text("Asha\n", encoding="utf-8")
+            last_path.write_text("Crow\n", encoding="utf-8")
+            first = NameGenerator(names_dir, random.Random(1))
+            second = NameGenerator(names_dir, random.Random(2))
+            self.assertIs(first._first_names, second._first_names)
+            self.assertIs(first._last_names, second._last_names)
+
+            first_path.write_text("Bramble\n", encoding="utf-8")
+            refreshed = NameGenerator(names_dir, random.Random(3))
+            self.assertEqual(refreshed.first_name(), "Bramble")
+            self.assertIsNot(first._first_names, refreshed._first_names)
+
+    def test_empty_cleaned_name_files_use_fallbacks_with_warnings(self):
+        with tempfile.TemporaryDirectory() as temp:
+            names_dir = Path(temp)
+            (names_dir / "first_names.txt").write_text("", encoding="utf-8")
+            (names_dir / "last_names.txt").write_text("\n", encoding="utf-8")
+            generator = NameGenerator(
+                names_dir,
+                random.Random(1),
+                fallback_first_names=["Fallback"],
+                fallback_last_names=["Traveler"],
+            )
+            self.assertEqual(generator.full_name(), "Fallback Traveler")
+            self.assertEqual(len(generator.warnings), 2)
+            self.assertTrue(all("is empty" in item for item in generator.warnings))
 
     def test_npc_generator_uses_cleaned_text_names(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -165,6 +217,81 @@ class WorldTests(unittest.TestCase):
             for values in data.values():
                 self.assertIsInstance(values, list)
                 self.assertTrue(values)
+        self.assertEqual(TableLoader(TABLES).warnings, [])
+
+    def test_table_loader_filters_bad_entries_and_deduplicates_warnings(self):
+        with tempfile.TemporaryDirectory() as temp:
+            table_dir = Path(temp)
+            (table_dir / "custom.json").write_text(
+                json.dumps(
+                    {
+                        "results": [
+                            " usable ",
+                            "",
+                            12,
+                            {"value": " weighted ", "weight": 2},
+                            {"value": "bad weight", "weight": 0},
+                            {"weight": 1},
+                        ],
+                        "empty": [],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            loader = TableLoader(table_dir)
+            self.assertEqual(
+                loader.get("custom", "results"),
+                ["usable", {"value": "weighted", "weight": 2}],
+            )
+            before = len(loader.warnings)
+            loader.get("custom", "missing")
+            loader.get("custom", "missing")
+            self.assertEqual(len(loader.warnings), before + 1)
+            report = loader.validation_report()
+            self.assertIn("custom.json:results[1]", report)
+            self.assertIn("custom.json:empty must be a non-empty list", report)
+            self.assertIn("Missing table: custom.missing", report)
+
+    def test_invalid_class_data_uses_structural_fallback(self):
+        with tempfile.TemporaryDirectory() as temp:
+            table_dir = Path(temp)
+            (table_dir / "class_tables.json").write_text(
+                json.dumps(
+                    {
+                        "backgrounds": ["Wanderer"],
+                        "classes": [
+                            {
+                                "class_name": "Broken",
+                                "role_description": "Missing most required fields.",
+                                "bonuses": {},
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            loader = TableLoader(table_dir)
+            classes = CharacterFactory(loader).classes()
+            self.assertEqual(classes[0].class_name, "Explorer")
+            self.assertEqual(set(classes[0].bonuses), set(BONUS_NAMES))
+            self.assertTrue(
+                any("class_tables.json:classes[0]" in item for item in loader.warnings)
+            )
+
+    def test_missing_table_directory_can_still_generate_and_create_character(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            state = GameState(
+                TableLoader(root / "missing_tables"),
+                Database(root / "worlds.db"),
+                random.Random(11),
+            )
+            world = state.generate_new_region()
+            self.assertEqual(len(world.npcs), 10)
+            self.assertEqual(len(world.dungeon.rooms), 8)
+            character = state.create_character("Fallback Hero", "Explorer", "Wanderer")
+            self.assertEqual(character.name, "Fallback Hero")
+            state.close()
 
     def test_class_table_contains_rules_neutral_starter_classes(self):
         loader = TableLoader(TABLES)

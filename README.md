@@ -99,18 +99,38 @@ Simple lists choose entries uniformly. The loader also accepts weighted entries:
 ]
 ```
 
-Missing files, malformed JSON, empty categories, and missing category names are
-reported as warnings. A minimal fallback result prevents a missing optional
-table from crashing generation.
+The loader validates required files and categories when the app starts. Entries
+must be non-empty text, valid weighted text objects, or (for character classes)
+objects containing all required resource and bonus fields. Missing files,
+malformed JSON, invalid entries, empty categories, and missing category names
+are reported as warnings. Invalid entries are skipped, and small type-safe
+fallbacks prevent bad local data from crashing generation or character
+creation. Use **Data Diagnostics** in the GUI to inspect the complete report.
+
+When adding table data safely:
+
+1. Keep the JSON root as an object and every category as a non-empty list.
+2. Use non-blank strings or `{"value": "...", "weight": 1}` entries.
+3. Keep weights numeric and greater than zero.
+4. Preserve all six class bonus keys and use integer resource values.
+5. Run the full test command below before relying on the edited tables.
+
+Generator modules in `app/generators/` share `TableLoader` through the small
+`BaseGenerator` helper. Table content remains in JSON; Python modules coordinate
+selection and relationships without embedding normal setting content.
 
 ## Large name files
 
-Place newline-delimited raw personal names in:
+Place newline-delimited raw personal names in the current preferred filenames:
 
 ```text
-data/names/raw_first_names.txt
-data/names/raw_last_names.txt
+data/names/firstnames.txt
+data/names/surnames.txt
 ```
+
+The older filenames `raw_first_names.txt` and `raw_last_names.txt` are also
+accepted for compatibility. If both forms exist, the preferred filename above
+is used.
 
 Clean them from the project directory with:
 
@@ -126,11 +146,13 @@ data/names/first_names.txt
 data/names/last_names.txt
 ```
 
-The cleaned text files are loaded once when the app starts and used for NPC
-names and the **Random Name** button in character creation. If either cleaned
-file is missing or empty, the smaller editable JSON name tables remain as safe
-fallbacks. Name text files are ignored by Git so very large local datasets are
-not accidentally committed.
+The cleaned text files are read once and cached by `app/name_generator.py`.
+That module provides random first names, last names, full names, and batches of
+full names. NPC generation and the **Random Name** button in character creation
+use the same cached generator. If either cleaned file is missing, empty, or
+unreadable, the smaller editable JSON name tables remain as safe fallbacks.
+Name text files are ignored by Git so very large local datasets are not
+accidentally committed.
 
 If the source data contains replacement characters or obvious mojibake, scrub
 the cleaned files in place with:
@@ -152,14 +174,15 @@ From the project directory:
 python -m unittest discover -s tests -v
 ```
 
-Tests cover dice formulas, JSON validity, generated counts and references,
+Tests cover dice formulas, name cleanup and generation, schema-aware table
+validation, generation with missing data, generated counts and references,
 dungeon connectivity, SQLite child records, save/load reconstruction, and
-missing-table fallback behavior.
+older-save compatibility.
 
-## Version 0.3 boundaries
+## Current boundaries
 
-This release has a lightweight exploration game loop, but not tactical combat.
-Visual maps, character creation, detailed combat resolution, deterministic seed
+The app has a lightweight exploration game loop and character scaffold, but not
+tactical combat. Visual maps, detailed combat resolution, deterministic seed
 controls, multiplayer, and web/server features are intentionally deferred.
 
 The domain and persistence layers do not depend on Tkinter, which keeps later

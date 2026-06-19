@@ -142,8 +142,13 @@ class RPGWorldApp(tk.Tk):
         self.check_difficulty_var = tk.StringVar(value="Standard")
         self.selection_handler = None
         self._build()
-        if self.state.tables.warnings:
-            self.status_var.set(f"Loaded with {len(self.state.tables.warnings)} table warning(s).")
+        warning_count = len(self.state.tables.warnings) + len(
+            self.state.name_generator.warnings
+        )
+        if warning_count:
+            self.status_var.set(
+                f"Loaded with {warning_count} data warning(s); see Data Diagnostics."
+            )
 
     def _build(self) -> None:
         container = ttk.Frame(self, padding=10)
@@ -178,6 +183,7 @@ class RPGWorldApp(tk.Tk):
             ("Encounter List", self.view_encounters),
             ("Adventure Hook", self.view_hook),
             ("Event Log", self.view_event_log),
+            ("Data Diagnostics", self.view_data_diagnostics),
             ("Save World", self.save_world),
             ("Load World", self.load_world),
             ("Clear Output", self.clear_output),
@@ -738,6 +744,24 @@ class RPGWorldApp(tk.Tk):
         self.guarded(
             lambda: self.show(self.action_log_text(), "Viewing the persistent event log.")
         )
+
+    def view_data_diagnostics(self) -> None:
+        """Expose startup data problems without interrupting normal generation."""
+        reports = [
+            self.state.tables.validation_report(),
+            "",
+            "NAME DATA",
+            "=========",
+            self.state.name_generator.source_summary(),
+        ]
+        if self.state.name_generator.warnings:
+            reports.extend(
+                ["", *[f"- {warning}" for warning in self.state.name_generator.warnings]]
+            )
+        else:
+            reports.extend(["", "No name-data warnings."])
+        self.hide_index()
+        self.show("\n".join(reports), "Viewing generation data diagnostics.")
 
     def save_world(self) -> None:
         def action():
