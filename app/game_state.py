@@ -72,10 +72,20 @@ class GameState:
         ]
         player_state = PlayerState(
             current_location="town",
+            current_location_id=settlement.important_locations[0].entity_id,
             quest_log=[f"Investigate {hook.major_goal}"],
             hexes=hexes,
             action_log=[
-                f"You begin in {settlement.name}. Rumors point toward {dungeon.name}."
+                f"Day 1, Morning — You begin in {settlement.name}. A frightened rumor offers a lead, not an answer."
+            ],
+            event_log=[
+                f"Day 1, Morning — You begin in {settlement.name}. A frightened rumor offers a lead, not an answer."
+            ],
+            known_npc_ids=[npcs[0].entity_id],
+            known_location_ids=[settlement.important_locations[0].entity_id],
+            known_rumor_indices=[0],
+            leads=[
+                f"Ask {npcs[0].name} why travelers avoid the road toward {dungeon.name}."
             ],
         )
         self.world = World(
@@ -174,7 +184,16 @@ class GameState:
         return self.exploration().talk_to_npc()
 
     def rest(self) -> str:
-        return self.exploration().rest()
+        return self.exploration().rest("short")
+
+    def full_rest(self) -> str:
+        return self.exploration().rest("full")
+
+    def travel_to_location(self, location_id: str) -> str:
+        return self.exploration().travel_to_location(location_id)
+
+    def inspect_location(self) -> str:
+        return self.exploration().inspect_location()
 
     def retreat(self) -> str:
         return self.exploration().retreat()

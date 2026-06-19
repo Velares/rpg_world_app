@@ -249,18 +249,32 @@ class WorldTests(unittest.TestCase):
             data = world.to_dict()
             for key in (
                 "current_location",
+                "current_location_id",
                 "current_room_id",
+                "day",
+                "time_period",
+                "coin",
                 "wounds",
                 "discovered_room_ids",
                 "pending_encounter_id",
                 "action_log",
+                "event_log",
+                "known_npc_ids",
+                "known_location_ids",
+                "known_rumor_indices",
+                "known_threats",
+                "leads",
                 "turns_elapsed",
             ):
                 data["player_state"].pop(key)
             restored = type(world).from_dict(data)
             self.assertEqual(restored.player_state.current_location, "town")
+            self.assertEqual(restored.player_state.day, 1)
+            self.assertEqual(restored.player_state.time_period, "Morning")
+            self.assertEqual(restored.player_state.coin, 20)
             self.assertEqual(restored.player_state.wounds, 0)
             self.assertEqual(restored.player_state.action_log, [])
+            self.assertEqual(restored.player_state.event_log, [])
             state.close()
 
 
@@ -294,6 +308,59 @@ class ExplorationTests(unittest.TestCase):
             state.retreat()
             self.assertEqual(player.current_location, "dungeon_entrance")
             self.assertIsNone(player.current_room_id)
+            state.close()
+
+    def test_time_cycles_and_full_rest_reaches_next_day(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 22)
+            player = state.world.player_state
+            self.assertEqual((player.day, player.time_period), (1, "Morning"))
+            state.search()
+            self.assertEqual((player.day, player.time_period), (1, "Afternoon"))
+            state.talk_to_npc()
+            self.assertEqual((player.day, player.time_period), (1, "Evening"))
+            coin_before = player.coin
+            state.full_rest()
+            self.assertEqual((player.day, player.time_period), (2, "Morning"))
+            self.assertEqual(player.coin, coin_before - 2)
+            self.assertTrue(all("Day " in entry for entry in player.event_log))
+            state.close()
+
+    def test_initial_discovery_is_partial_and_investigation_expands_it(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 23)
+            world = state.world
+            player = world.player_state
+            self.assertLess(len(player.known_npc_ids), len(world.npcs))
+            self.assertLess(
+                len(player.known_location_ids), len(world.settlement.important_locations)
+            )
+            self.assertLess(
+                len(player.known_rumor_indices), len(world.settlement.rumors)
+            )
+            initial_events = len(player.event_log)
+            state.inspect_location()
+            state.talk_to_npc()
+            self.assertGreaterEqual(len(player.known_npc_ids), 1)
+            self.assertGreaterEqual(len(player.known_rumor_indices), 2)
+            self.assertTrue(player.leads)
+            self.assertGreater(len(player.event_log), initial_events)
+            self.assertTrue(any("Discovery:" in entry for entry in player.event_log))
+            state.close()
+
+    def test_travel_to_known_location_and_wilderness_search_discovers_threat(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 24)
+            world = state.world
+            player = world.player_state
+            location = world.settlement.important_locations[0]
+            state.travel_to_location(location.entity_id)
+            self.assertEqual(player.current_location_id, location.entity_id)
+            state.travel("wilderness")
+            known_before = len(player.known_threats)
+            state.search()
+            self.assertGreaterEqual(len(player.known_threats), known_before + 1)
+            self.assertTrue(player.leads)
             state.close()
 
     def test_wilderness_signs_and_all_resolution_choices(self):
@@ -330,6 +397,9 @@ class ExplorationTests(unittest.TestCase):
             snapshot = state.world.player_state
             loaded = state.load_world(world_id)
             self.assertEqual(loaded.player_state, snapshot)
+            self.assertTrue(loaded.player_state.event_log)
+            self.assertEqual(loaded.player_state.day, snapshot.day)
+            self.assertEqual(loaded.player_state.known_npc_ids, snapshot.known_npc_ids)
             state.close()
 
 

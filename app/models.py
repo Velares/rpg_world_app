@@ -165,12 +165,16 @@ class Hex:
 @dataclass
 class PlayerState:
     current_location: str = "town"
+    current_location_id: str = ""
     current_room_id: int | None = None
+    day: int = 1
+    time_period: str = "Morning"
     supplies: int = 10
     torches: int = 6
     light_turns_remaining: int = 0
     food: int = 7
     water: int = 7
+    coin: int = 20
     wounds: int = 0
     rest_risk: str = "Unknown"
     inventory: list[str] = field(default_factory=lambda: ["bedroll", "flint and steel"])
@@ -179,6 +183,12 @@ class PlayerState:
     discovered_room_ids: list[int] = field(default_factory=list)
     pending_encounter_id: str = ""
     action_log: list[str] = field(default_factory=list)
+    event_log: list[str] = field(default_factory=list)
+    known_npc_ids: list[str] = field(default_factory=list)
+    known_location_ids: list[str] = field(default_factory=list)
+    known_rumor_indices: list[int] = field(default_factory=list)
+    known_threats: list[str] = field(default_factory=list)
+    leads: list[str] = field(default_factory=list)
     turns_elapsed: int = 0
 
 
@@ -231,11 +241,21 @@ class World:
         player_data = data["player_state"]
         # Version 0.3 exploration fields are defaulted so older saves remain playable.
         player_data.setdefault("current_location", "town")
+        player_data.setdefault("current_location_id", "")
         player_data.setdefault("current_room_id", None)
+        player_data.setdefault("day", 1)
+        player_data.setdefault("time_period", "Morning")
+        player_data.setdefault("coin", 20)
         player_data.setdefault("wounds", 0)
         player_data.setdefault("discovered_room_ids", [])
         player_data.setdefault("pending_encounter_id", "")
         player_data.setdefault("action_log", [])
+        player_data.setdefault("event_log", list(player_data.get("action_log", [])))
+        player_data.setdefault("known_npc_ids", [])
+        player_data.setdefault("known_location_ids", [])
+        player_data.setdefault("known_rumor_indices", [])
+        player_data.setdefault("known_threats", [])
+        player_data.setdefault("leads", [])
         player_data.setdefault("turns_elapsed", 0)
         player_data["hexes"] = [Hex(**item) for item in player_data.get("hexes", [])]
         npc_data = data.get("npcs", [])

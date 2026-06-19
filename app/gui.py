@@ -92,6 +92,7 @@ class RPGWorldApp(tk.Tk):
             ("Wilderness Overview", self.view_wilderness),
             ("Encounter List", self.view_encounters),
             ("Adventure Hook", self.view_hook),
+            ("Event Log", self.view_event_log),
             ("Save World", self.save_world),
             ("Load World", self.load_world),
             ("Clear Output", self.clear_output),
@@ -113,7 +114,8 @@ class RPGWorldApp(tk.Tk):
         action_box = ttk.LabelFrame(self.display_frame, text="Exploration Actions", padding=5)
         action_box.pack(fill="x", pady=(0, 7))
         gameplay_actions = [
-            ("Travel to Town", lambda: self.perform_action(lambda: self.state.travel("town"))),
+            ("Return to Town", lambda: self.perform_action(lambda: self.state.travel("town"))),
+            ("Travel to Location", self.travel_to_location),
             (
                 "Travel to Wilderness",
                 lambda: self.perform_action(lambda: self.state.travel("wilderness")),
@@ -124,10 +126,12 @@ class RPGWorldApp(tk.Tk):
             ),
             ("Explore Current Area", lambda: self.perform_action(self.state.explore_current_area)),
             ("Search", lambda: self.perform_action(self.state.search)),
+            ("Inspect Location", lambda: self.perform_action(self.state.inspect_location)),
             ("Talk to NPC", lambda: self.perform_action(self.state.talk_to_npc)),
             ("Move to Room", self.move_room),
             ("Inspect Room", lambda: self.perform_action(self.state.inspect_room)),
-            ("Rest", lambda: self.perform_action(self.state.rest)),
+            ("Short Rest", lambda: self.perform_action(self.state.rest)),
+            ("Full Rest", lambda: self.perform_action(self.state.full_rest)),
             ("Retreat", lambda: self.perform_action(self.state.retreat)),
             ("Avoid Encounter", lambda: self.encounter_choice("avoid")),
             ("Approach Encounter", lambda: self.encounter_choice("approach")),
@@ -204,18 +208,22 @@ class RPGWorldApp(tk.Tk):
             else f"unlit, {player.torches} torches"
         )
         self.player_state_var.set(
-            f"Location: {player.current_location}{room}    Wounds: {player.wounds}    "
-            f"Turns: {player.turns_elapsed}\n"
+            f"Day {player.day}, {player.time_period}    Location: "
+            f"{player.current_location}{room}    Wounds: {player.wounds}\n"
             f"Supplies: {player.supplies}    Food: {player.food}    Water: {player.water}    "
-            f"Light: {light}\n"
-            f"Inventory: {', '.join(player.inventory) or 'empty'}"
+            f"Torches/Light: {light}    Coin: {player.coin}\n"
+            f"Inventory: {', '.join(player.inventory) or 'empty'}    "
+            f"Known: {len(player.known_npc_ids)} NPCs, "
+            f"{len(player.known_location_ids)} locations, "
+            f"{len(player.known_rumor_indices)} rumors, "
+            f"{len(player.discovered_room_ids)} rooms"
         )
 
     def action_log_text(self) -> str:
         world = self.state.require_world()
-        lines = ["EXPLORATION LOG", "===============", ""]
+        lines = ["EVENT LOG", "=========", ""]
         lines.extend(
-            f"{index}. {entry}" for index, entry in enumerate(world.player_state.action_log, 1)
+            f"{index}. {entry}" for index, entry in enumerate(world.player_state.event_log, 1)
         )
         if world.player_state.pending_encounter_id:
             lines.extend(
@@ -258,6 +266,34 @@ class RPGWorldApp(tk.Tk):
 
         self.guarded(run)
 
+    def travel_to_location(self) -> None:
+        def run():
+            world = self.state.require_world()
+            known = [
+                location
+                for location in world.settlement.important_locations
+                if location.entity_id in world.player_state.known_location_ids
+            ]
+            if not known:
+                raise RuntimeError("You have not discovered any town locations yet.")
+            prompt = "\n".join(
+                f"{index}. {location.name}" for index, location in enumerate(known, 1)
+            )
+            selection = simpledialog.askinteger(
+                "Travel to Location",
+                f"Known locations:\n{prompt}\n\nChoose a number:",
+                parent=self,
+                minvalue=1,
+                maxvalue=len(known),
+            )
+            if selection is not None:
+                message = self.state.travel_to_location(known[selection - 1].entity_id)
+                self.hide_index()
+                self.update_player_state()
+                self.show(self.action_log_text(), message)
+
+        self.guarded(run)
+
     def generate(self) -> None:
         def action():
             world = self.state.generate_new_region()
@@ -270,14 +306,15 @@ class RPGWorldApp(tk.Tk):
     def world_overview(self) -> str:
         world = self.state.require_world()
         settlement = world.settlement
+        threats = ", ".join(world.player_state.known_threats) or "Unknown"
         return "\n\n".join(
             [
                 f"{world.name.upper()}\n{'=' * len(world.name)}",
                 f"A {settlement.condition} {settlement.type} of {settlement.population} souls.",
-                f"Local threat: {world.local_threat}",
-                f"Nearby dungeon: {world.dungeon.name} ({world.dungeon.danger_level})",
+                f"Known threats: {threats}",
+                f"Lead: rumors point toward {world.dungeon.name}, but its truth is unknown.",
                 f"Wilderness: {world.wilderness.name} — {world.wilderness.terrain_type}",
-                f"Adventure: {world.adventure_hook.major_goal}",
+                f"Quest: {world.player_state.quest_log[0]}",
                 "Use the buttons at left to inspect the generated region.",
             ]
         )
@@ -287,9 +324,31 @@ class RPGWorldApp(tk.Tk):
             self.hide_index()
             settlement = self.state.require_world().settlement
             data = asdict(settlement)
-            text = block("Settlement", data, {"important_locations", "rumors"})
-            text += "\n\nRUMORS\n======\n" + "\n".join(
-                f"{i}. {rumor}" for i, rumor in enumerate(settlement.rumors, 1)
+            text = block(
+                "Settlement",
+                data,
+                {
+                    "important_locations",
+                    "rumors",
+                    "local_secret",
+                    "nearby_danger",
+                    "problem_connection",
+                    "problem_target_type",
+                    "problem_target_id",
+                },
+            )
+            known_rumors = [
+                settlement.rumors[index]
+                for index in self.state.require_world().player_state.known_rumor_indices
+                if index < len(settlement.rumors)
+            ]
+            text += "\n\nKNOWN RUMOR LEADS\n=================\n" + (
+                "\n".join(f"{i}. {rumor}" for i, rumor in enumerate(known_rumors, 1))
+                or "No rumors learned yet. Talk to people and investigate."
+            )
+            text += "\n\nACTIVE LEADS\n============\n" + (
+                "\n".join(f"- {lead}" for lead in self.state.require_world().player_state.leads)
+                or "No active leads."
             )
             self.show(text, f"Viewing {settlement.name}.")
 
@@ -297,7 +356,10 @@ class RPGWorldApp(tk.Tk):
 
     def view_npcs(self) -> None:
         def action():
-            npcs = self.state.require_world().npcs
+            world = self.state.require_world()
+            npcs = [
+                npc for npc in world.npcs if npc.entity_id in world.player_state.known_npc_ids
+            ]
             self.show_index(
                 "NPCs",
                 [f"{npc.name} — {npc.profession} [{npc.entity_id}]" for npc in npcs],
@@ -307,18 +369,32 @@ class RPGWorldApp(tk.Tk):
                 f"{index}. {npc.name} — {npc.profession} at {npc.location} [{npc.entity_id}]"
                 for index, npc in enumerate(npcs, 1)
             )
-            text += "\n\nSelect an NPC from the middle panel to inspect their full details."
+            text += (
+                "\n\nSelect a known NPC to inspect their details. "
+                "Conversations and investigation reveal more people."
+            )
             self.show(text, f"Viewing {len(npcs)} NPCs.")
 
         self.guarded(action)
 
     def view_npc_detail(self, index: int) -> None:
-        npc = self.state.require_world().npcs[index]
-        self.show(block(npc.name, asdict(npc)), f"Viewing NPC: {npc.name}.")
+        world = self.state.require_world()
+        known = [
+            npc for npc in world.npcs if npc.entity_id in world.player_state.known_npc_ids
+        ]
+        npc = known[index]
+        data = asdict(npc)
+        data["secret"] = "Unknown — conversation and corroboration may reveal it."
+        self.show(block(npc.name, data), f"Viewing NPC: {npc.name}.")
 
     def view_locations(self) -> None:
         def action():
-            locations = self.state.require_world().settlement.important_locations
+            world = self.state.require_world()
+            locations = [
+                location
+                for location in world.settlement.important_locations
+                if location.entity_id in world.player_state.known_location_ids
+            ]
             self.show_index(
                 "Locations",
                 [
@@ -339,8 +415,14 @@ class RPGWorldApp(tk.Tk):
 
     def view_location_detail(self, index: int) -> None:
         world = self.state.require_world()
-        location = world.settlement.important_locations[index]
+        known = [
+            location
+            for location in world.settlement.important_locations
+            if location.entity_id in world.player_state.known_location_ids
+        ]
+        location = known[index]
         data = asdict(location)
+        data["hidden_detail"] = "Unknown — inspect this location during play."
         if not data["associated_npcs"]:
             data["associated_npcs"] = [
                 npc.name for npc in world.npcs if npc.location == location.name
@@ -350,15 +432,28 @@ class RPGWorldApp(tk.Tk):
     def view_dungeon(self) -> None:
         def action():
             self.hide_index()
-            dungeon = self.state.require_world().dungeon
-            text = block("Dungeon", asdict(dungeon), {"rooms"})
+            world = self.state.require_world()
+            dungeon = world.dungeon
+            if world.player_state.discovered_room_ids:
+                text = block("Dungeon", asdict(dungeon), {"rooms"})
+            else:
+                text = (
+                    f"DUNGEON LEAD\n============\nName: {dungeon.name}\n"
+                    f"Entrance report: {dungeon.entrance_description}\n"
+                    "Theme, threats, rooms, and treasure remain unknown."
+                )
             self.show(text, f"Viewing {dungeon.name}.")
 
         self.guarded(action)
 
     def view_dungeon_rooms(self) -> None:
         def action():
-            rooms = self.state.require_world().dungeon.rooms
+            world = self.state.require_world()
+            rooms = [
+                room
+                for room in world.dungeon.rooms
+                if room.room_id in world.player_state.discovered_room_ids
+            ]
             self.show_index(
                 "Dungeon Rooms",
                 [f"{room.room_id}. {room.name} [{room.entity_id}]" for room in rooms],
@@ -375,7 +470,13 @@ class RPGWorldApp(tk.Tk):
         self.guarded(action)
 
     def view_room_detail(self, index: int) -> None:
-        room = self.state.require_world().dungeon.rooms[index]
+        world = self.state.require_world()
+        rooms = [
+            room
+            for room in world.dungeon.rooms
+            if room.room_id in world.player_state.discovered_room_ids
+        ]
+        room = rooms[index]
         self.show(
             block(f"Room {room.room_id}: {room.name}", asdict(room), {"room_id", "name"}),
             f"Viewing room {room.room_id}.",
@@ -392,7 +493,13 @@ class RPGWorldApp(tk.Tk):
 
     def view_encounters(self) -> None:
         def action():
-            encounters = self.state.require_world().wilderness.encounter_table
+            world = self.state.require_world()
+            encounters = [
+                encounter
+                for encounter in world.wilderness.encounter_table
+                if encounter.creature_or_npc in world.player_state.known_threats
+                or encounter.entity_id == world.player_state.pending_encounter_id
+            ]
             self.show_index(
                 "Encounters",
                 [
@@ -412,7 +519,14 @@ class RPGWorldApp(tk.Tk):
         self.guarded(action)
 
     def view_encounter_detail(self, index: int) -> None:
-        encounter = self.state.require_world().wilderness.encounter_table[index]
+        world = self.state.require_world()
+        encounters = [
+            encounter
+            for encounter in world.wilderness.encounter_table
+            if encounter.creature_or_npc in world.player_state.known_threats
+            or encounter.entity_id == world.player_state.pending_encounter_id
+        ]
+        encounter = encounters[index]
         self.show(
             block(f"Encounter {index + 1}", asdict(encounter)),
             f"Viewing encounter {index + 1}.",
@@ -427,6 +541,11 @@ class RPGWorldApp(tk.Tk):
             )
 
         self.guarded(action)
+
+    def view_event_log(self) -> None:
+        self.guarded(
+            lambda: self.show(self.action_log_text(), "Viewing the persistent event log.")
+        )
 
     def save_world(self) -> None:
         def action():

@@ -38,6 +38,14 @@ avoid/approach/investigate choices; dungeon light consumption; wounds and
 resource pressure; and a persistent action log. Combat remains abstract and
 danger can usually be scouted, negotiated with, avoided, or escaped.
 
+The expanded Version 0.3 loop tracks days across Morning, Afternoon, Evening,
+and Night. Generated people, locations, rumors, threats, and dungeon rooms begin
+partially hidden and enter the journal through conversations, inspection,
+searching, and exploration. Rumors create leads rather than revealing complete
+answers. The persistent event log records travel, discoveries, conversations,
+encounters, and rests. Food, water, torches, supplies, wounds, and coin are
+saved with the world.
+
 The database is created automatically at:
 
 ```text
