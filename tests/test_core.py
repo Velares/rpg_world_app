@@ -7,6 +7,7 @@ from pathlib import Path
 
 from app.database import Database
 from app.characters import BONUS_NAMES, CharacterFactory
+from app.checks import DIFFICULTIES
 from app.dice import morale_check, reaction_roll, roll
 from app.game_state import GameState
 from app.table_loader import TableLoader
@@ -363,6 +364,133 @@ class ExplorationTests(unittest.TestCase):
             state.retreat()
             self.assertEqual(player.current_location, "dungeon_entrance")
             self.assertIsNone(player.current_room_id)
+            state.close()
+
+
+class ActionCheckTests(unittest.TestCase):
+    def make_state(self, folder: Path, seed: int = 1) -> GameState:
+        state = GameState(
+            TableLoader(TABLES),
+            Database(folder / "worlds.db"),
+            random.Random(seed),
+        )
+        state.generate_new_region()
+        return state
+
+    def test_check_resolution_all_outcomes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 60)
+            cases = [
+                (1, "critical failure"),
+                (5, "failure"),
+                (10, "partial success"),
+                (12, "success"),
+                (17, "critical success"),
+            ]
+            for roll_result, expected in cases:
+                result = state.perform_check(
+                    "search_area",
+                    "Standard",
+                    roll_override=roll_result,
+                )
+                self.assertEqual(result.roll_result, roll_result)
+                self.assertEqual(result.difficulty_class, DIFFICULTIES["Standard"])
+                self.assertEqual(result.total, roll_result)
+                self.assertEqual(result.outcome, expected)
+                self.assertTrue(result.narrative_result)
+                self.assertTrue(result.consequence)
+            state.close()
+
+    def test_class_bonus_changes_check_total_and_outcome(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 61)
+            state.create_character(
+                "Brin Salt",
+                "Fighter",
+                state.character_backgrounds()[0],
+            )
+            result = state.perform_check(
+                "force_dangerous_action",
+                "Easy",
+                roll_override=6,
+            )
+            self.assertEqual(result.bonus_type, "combat")
+            self.assertEqual(result.bonus_used, 2)
+            self.assertEqual(result.total, 8)
+            self.assertEqual(result.outcome, "success")
+            self.assertIn("CHECK: Force Dangerous Action", state.world.player_state.event_log[-1])
+            state.close()
+
+    def test_all_consequences_apply_to_player_state(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 62)
+            player = state.world.player_state
+
+            turns = player.turns_elapsed
+            state.perform_check(
+                "search_area", roll_override=12, consequence_override="lose time"
+            )
+            self.assertEqual(player.turns_elapsed, turns + 2)
+
+            supplies = player.supplies
+            state.perform_check(
+                "search_area", roll_override=12, consequence_override="lose supplies"
+            )
+            self.assertLess(player.supplies, supplies)
+
+            wounds = player.wounds
+            state.perform_check(
+                "search_area", roll_override=12, consequence_override="gain wound"
+            )
+            self.assertEqual(player.wounds, wounds + 1)
+
+            attention = player.attention
+            state.perform_check(
+                "search_area", roll_override=12, consequence_override="attract attention"
+            )
+            self.assertEqual(player.attention, attention + 1)
+
+            leads = len(player.leads)
+            state.perform_check(
+                "search_area", roll_override=12, consequence_override="reveal clue"
+            )
+            self.assertGreater(len(player.leads), leads)
+
+            position = player.position
+            state.perform_check(
+                "search_area", roll_override=20, consequence_override="improve position"
+            )
+            self.assertEqual(player.position, position + 1)
+            state.perform_check(
+                "search_area", roll_override=5, consequence_override="worsen position"
+            )
+            self.assertEqual(player.position, position)
+            self.assertTrue(player.last_consequence)
+            state.close()
+
+    def test_check_state_and_character_survive_save_load(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 63)
+            character = state.create_character(
+                "Kest Mourn",
+                "Scholar",
+                state.character_backgrounds()[1],
+            )
+            state.travel("dungeon_entrance")
+            result = state.perform_check(
+                "read_ancient_markings",
+                "Hard",
+                roll_override=15,
+                consequence_override="reveal clue",
+            )
+            world_id = state.save_world("Check Save")
+            loaded = state.load_world(world_id)
+            self.assertEqual(loaded.player_state.character, character)
+            self.assertEqual(loaded.player_state.last_check, result)
+            self.assertEqual(
+                loaded.player_state.last_consequence,
+                result.consequence,
+            )
             state.close()
 
     def test_time_cycles_and_full_rest_reaches_next_day(self):

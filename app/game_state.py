@@ -5,6 +5,7 @@ from datetime import datetime
 
 from app.database import Database
 from app.characters import CharacterFactory
+from app.checks import ActionResolver
 from app.exploration import ExplorationEngine
 from app.generators.adventure_generator import AdventureGenerator
 from app.generators.dungeon_generator import DungeonGenerator
@@ -205,6 +206,20 @@ class GameState:
     def create_character(self, name: str, class_name: str, background: str):
         return CharacterFactory(self.tables).create(
             self.require_world(), name, class_name, background
+        )
+
+    def perform_check(
+        self,
+        action_key: str,
+        difficulty_name: str = "Standard",
+        roll_override: int | None = None,
+        consequence_override: str | None = None,
+    ):
+        return ActionResolver(self.require_world(), self.rng).resolve(
+            action_key,
+            difficulty_name,
+            roll_override=roll_override,
+            consequence_override=consequence_override,
         )
 
     def retreat(self) -> str:

@@ -176,6 +176,20 @@ class PlayerCharacter:
 
 
 @dataclass
+class CheckResult:
+    action_name: str
+    bonus_type: str
+    roll_result: int
+    bonus_used: int
+    total: int
+    difficulty_name: str
+    difficulty_class: int
+    outcome: str
+    narrative_result: str
+    consequence: str = ""
+
+
+@dataclass
 class PlayerState:
     character: PlayerCharacter | None = None
     current_location: str = "town"
@@ -203,6 +217,10 @@ class PlayerState:
     known_rumor_indices: list[int] = field(default_factory=list)
     known_threats: list[str] = field(default_factory=list)
     leads: list[str] = field(default_factory=list)
+    position: int = 0
+    attention: int = 0
+    last_consequence: str = ""
+    last_check: CheckResult | None = None
     turns_elapsed: int = 0
 
 
@@ -258,6 +276,11 @@ class World:
             player_data["character"] = PlayerCharacter(**character_data)
         else:
             player_data["character"] = None
+        check_data = player_data.get("last_check")
+        if isinstance(check_data, dict):
+            player_data["last_check"] = CheckResult(**check_data)
+        else:
+            player_data["last_check"] = None
         # Version 0.3 exploration fields are defaulted so older saves remain playable.
         player_data.setdefault("current_location", "town")
         player_data.setdefault("current_location_id", "")
@@ -275,6 +298,9 @@ class World:
         player_data.setdefault("known_rumor_indices", [])
         player_data.setdefault("known_threats", [])
         player_data.setdefault("leads", [])
+        player_data.setdefault("position", 0)
+        player_data.setdefault("attention", 0)
+        player_data.setdefault("last_consequence", "")
         player_data.setdefault("turns_elapsed", 0)
         player_data["hexes"] = [Hex(**item) for item in player_data.get("hexes", [])]
         npc_data = data.get("npcs", [])

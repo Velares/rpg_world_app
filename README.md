@@ -52,6 +52,13 @@ lore, survival, and stealth. The ten starter classes live in the editable
 `data/tables/class_tables.json` file. Special abilities remain placeholders so
 the eventual rules implementation can be SRD-friendly or replaced entirely.
 
+Version 0.5 adds a generic `1d20 + bonus vs difficulty` action resolver. Easy,
+Standard, Hard, and Severe checks use the character's combat, exploration,
+social, lore, survival, or stealth bonus. Outcomes range from critical failure
+to critical success and can cost time or supplies, inflict wounds, attract
+attention, reveal clues, or alter the character's position. This is still an
+exploration framework rather than a full combat ruleset.
+
 The database is created automatically at:
 
 ```text
@@ -71,6 +78,7 @@ database on its next launch.
 - `app/table_loader.py`: JSON loading, validation, and fallbacks
 - `app/dice.py`: dice formulas, reaction rolls, and morale checks
 - `app/characters.py`: rules-light class loading and character creation
+- `app/checks.py`: generic d20 checks, outcomes, and state consequences
 - `app/generators/`: focused procedural generators
 - `data/tables/`: editable generation content
 - `data/saves/`: local SQLite saves

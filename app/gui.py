@@ -130,6 +130,7 @@ class RPGWorldApp(tk.Tk):
         self.protocol("WM_DELETE_WINDOW", self.on_close)
         self.status_var = tk.StringVar(value="Ready. Generate a region to begin.")
         self.player_state_var = tk.StringVar(value="No active world.")
+        self.check_difficulty_var = tk.StringVar(value="Standard")
         self.selection_handler = None
         self._build()
         if self.state.tables.warnings:
@@ -220,6 +221,33 @@ class RPGWorldApp(tk.Tk):
             )
         for column in range(4):
             action_box.columnconfigure(column, weight=1)
+
+        check_box = ttk.LabelFrame(self.display_frame, text="Action Checks", padding=5)
+        check_box.pack(fill="x", pady=(0, 7))
+        ttk.Label(check_box, text="Difficulty").grid(row=0, column=0, padx=2, pady=2)
+        ttk.Combobox(
+            check_box,
+            textvariable=self.check_difficulty_var,
+            values=["Easy", "Standard", "Hard", "Severe"],
+            state="readonly",
+            width=10,
+        ).grid(row=0, column=1, sticky="ew", padx=2, pady=2)
+        check_actions = [
+            ("Search Area", "search_area"),
+            ("Sneak Past Danger", "sneak_past_danger"),
+            ("Read Markings", "read_ancient_markings"),
+            ("Negotiate", "negotiate_with_npc"),
+            ("Track Creature", "track_creature"),
+            ("Force Action", "force_dangerous_action"),
+        ]
+        for index, (text, action_key) in enumerate(check_actions, start=2):
+            ttk.Button(
+                check_box,
+                text=text,
+                command=lambda key=action_key: self.perform_check(key),
+            ).grid(row=0, column=index, sticky="ew", padx=2, pady=2)
+        for column in range(8):
+            check_box.columnconfigure(column, weight=1)
         self.output = tk.Text(
             self.display_frame,
             wrap="word",
@@ -297,7 +325,9 @@ class RPGWorldApp(tk.Tk):
             f"Known: {len(player.known_npc_ids)} NPCs, "
             f"{len(player.known_location_ids)} locations, "
             f"{len(player.known_rumor_indices)} rumors, "
-            f"{len(player.discovered_room_ids)} rooms"
+            f"{len(player.discovered_room_ids)} rooms\n"
+            f"Position: {player.position:+d}    Attention: {player.attention}    "
+            f"Last consequence: {player.last_consequence or 'None'}"
         )
 
     def action_log_text(self) -> str:
@@ -327,6 +357,30 @@ class RPGWorldApp(tk.Tk):
 
     def encounter_choice(self, choice: str) -> None:
         self.perform_action(lambda: self.state.resolve_encounter(choice))
+
+    def perform_check(self, action_key: str) -> None:
+        def run():
+            result = self.state.perform_check(
+                action_key, self.check_difficulty_var.get()
+            )
+            self.hide_index()
+            self.update_player_state()
+            self.show(self.check_result_text(result), result.outcome.title())
+
+        self.guarded(run)
+
+    @staticmethod
+    def check_result_text(result) -> str:
+        return (
+            f"{result.action_name.upper()}\n{'=' * len(result.action_name)}\n"
+            f"Roll: {result.roll_result}\n"
+            f"Bonus Used: {result.bonus_type.title()} {result.bonus_used:+d}\n"
+            f"Total: {result.total}\n"
+            f"Difficulty: {result.difficulty_name} (DC {result.difficulty_class})\n"
+            f"Outcome: {result.outcome.title()}\n\n"
+            f"NARRATIVE\n=========\n{result.narrative_result}\n\n"
+            f"CONSEQUENCE\n===========\n{result.consequence}"
+        )
 
     def move_room(self) -> None:
         def run():
