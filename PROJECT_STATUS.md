@@ -3,17 +3,22 @@
 ## Current version
 
 - Current tag: `v0.7.3`
+- Current development version on `main`: `v0.7.4`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
 
-Current `main` working tree includes an unreleased plain-text export milestone:
+Version 0.7.4 adds plain-text export and table-flexibility improvements:
 
 - Added focused plain-text export formatting for active world summaries,
   character sheets, and event logs.
 - Added simple Tkinter export actions for world, character, and event-log
   `.txt` output.
+- Confirmed editable JSON generation tables are not fixed `d30` tables and may
+  contain any practical non-empty number of entries.
+- Centralized weighted-entry handling through the standard table chooser used
+  by generators.
 - Kept inventory exports descriptive while preserving food, water, torches,
   coin, and supplies as separate counters.
 - Preserved save/load compatibility by avoiding schema changes.
@@ -63,6 +68,8 @@ Version 0.7 hardened the data-driven generation foundation:
 - Class-based resources and placeholder special abilities.
 - Structured inventory records and JSON-driven class starting gear.
 - Plain-text export for active world summaries, character sheets, and event logs.
+- Variable-size editable JSON generation tables, including categories larger
+  than 30 entries.
 - Generic d20 checks with five outcome grades and exploration consequences.
 - Travel, searching, conversations, rest, retreat, dungeon room movement,
   resource use, time periods, discoveries, quest log, and persistent event log.
@@ -84,7 +91,7 @@ Version 0.7 hardened the data-driven generation foundation:
 ## Testing status
 
 - Test suite: `tests/test_core.py`
-- Current verification: 47 tests passing with
+- Current verification: 52 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 12 JSON table files parse with zero
   `TableLoader` warnings.
@@ -93,8 +100,8 @@ Version 0.7 hardened the data-driven generation foundation:
 - `pytest` is not installed and is not required by the project.
 - Coverage includes dice, checks, names, cleanup/scrubbing, JSON validation,
   connected world generation, missing-data fallbacks, exploration, character
-  creation, exporter output, normalized database rows, and older-save
-  compatibility.
+  creation, exporter output, variable-size table selection, normalized
+  database rows, and older-save compatibility.
 
 ## Known issues and boundaries
 

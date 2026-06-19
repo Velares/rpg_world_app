@@ -354,13 +354,6 @@ class TableLoader:
 
     def choose(self, table_file: str, category: str, rng: random.Random) -> Any:
         values = self.get(table_file, category)
-        choice = rng.choice(values)
-        if isinstance(choice, dict) and "value" in choice:
-            return choice["value"]
-        return choice
-
-    def weighted_choice(self, table_file: str, category: str, rng: random.Random) -> Any:
-        values = self.get(table_file, category)
         if values and all(isinstance(item, dict) and "value" in item for item in values):
             return rng.choices(
                 [item["value"] for item in values],
@@ -368,3 +361,6 @@ class TableLoader:
                 k=1,
             )[0]
         return rng.choice(values)
+
+    def weighted_choice(self, table_file: str, category: str, rng: random.Random) -> Any:
+        return self.choose(table_file, category, rng)

@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.7.3 is a local, single-player weird-fantasy starting-region generator
+Version 0.7.4 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -68,6 +68,10 @@ active character sheet, and the persistent event log. Exported character text
 keeps inventory records and resource counters separate so food, water, torches,
 coin, and supplies are not duplicated as consumable inventory quantities.
 
+Editable JSON generation tables are also not fixed `d30` tables. Any practical
+non-empty category size works, including one-entry tables, categories shorter
+than 30 entries, categories longer than 30 entries, and weighted categories.
+
 Version 0.5 adds a generic `1d20 + bonus vs difficulty` action resolver. Easy,
 Standard, Hard, and Severe checks use the character's combat, exploration,
 social, lore, survival, or stealth bonus. Outcomes range from critical failure
@@ -108,6 +112,17 @@ database on its next launch.
 Each file in `data/tables` is a JSON object whose category values are non-empty
 lists. Add, remove, or rewrite list entries to change generated content without
 changing Python code. Files are loaded when the app starts.
+
+These editable JSON generation tables are not fixed `d30` tables. A category
+may contain any practical non-empty number of entries:
+
+- 1 entry works
+- fewer than 30 entries work
+- more than 30 entries work
+- weighted entries still work
+
+Generation code selects from the actual list length provided by the JSON data
+rather than assuming 30 rows or a fixed dice index.
 
 Simple lists choose entries uniformly. The loader also accepts weighted entries:
 

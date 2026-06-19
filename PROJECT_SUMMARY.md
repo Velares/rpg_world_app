@@ -13,10 +13,12 @@ older save data.
 ## Current Status
 
 - Tagged release: `v0.7.3`
+- Current development version on `main`: `v0.7.4`
 - Current branch: `main`
-- Current development state: `main` includes an unreleased plain-text export
-  milestone beyond `v0.7.3`
-- Latest commit: `08da18b` - `Add plain-text export actions`
+- Current development state: `main` includes the `v0.7.4` plain-text export
+  and flexible table-size milestone beyond `v0.7.3`
+- Latest completed commit before this docs/versioning pass: `08da18b` -
+  `Add plain-text export actions`
 
 Recent milestone completed:
 
@@ -24,6 +26,9 @@ Recent milestone completed:
 - Added plain-text export for the active character sheet
 - Added plain-text export for the persistent event log
 - Added simple Tkinter export actions for `.txt` output
+- Removed the remaining central fixed-size editable-table assumption so JSON
+  generation categories may contain any practical non-empty number of entries
+- Made weighted-entry selection work through the standard generator table path
 - Preserved save/load compatibility by avoiding schema changes
 - Kept food, water, torches, coin, and supplies as separate counters instead
   of duplicating them as inventory quantities
@@ -32,7 +37,7 @@ Recent milestone completed:
 
 Verified on the current milestone:
 
-- `python -m unittest discover -s tests -v` -> 47 tests passing
+- `python -m unittest discover -s tests -v` -> 52 tests passing
 - `python -m compileall .` -> passing
 - All files under `data/tables/` parse with zero unexpected `TableLoader`
   warnings
@@ -75,7 +80,9 @@ Environment note:
 - Added `app/exporters.py` for focused plain-text export formatting
 - Added `Export World`, `Export Character`, and `Export Event Log` buttons in
   the Tkinter interface
-- Added exporter tests and updated project documentation
+- Centralized flexible table selection in `TableLoader`
+- Added tests for one-entry, short, long, weighted, and malformed tables
+- Updated project documentation for `v0.7.4`
 
 ## What The Game Can Currently Do
 
@@ -160,6 +167,7 @@ Environment note:
 ### Diagnostics and editable content
 
 - Load generation data from editable JSON files
+- Allow editable generation categories with any practical non-empty size
 - Validate required table files and categories at startup
 - Skip malformed entries safely
 - Provide fallback generation data when local files are missing or invalid

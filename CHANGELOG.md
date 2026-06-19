@@ -3,17 +3,24 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
-## Unreleased - Plain-text export
+## v0.7.4 - Plain-text export and flexible table sizes
 
 - Added `app/exporters.py` for focused plain-text world, character, and event
   log export formatting.
 - Added simple Tkinter **Export World**, **Export Character**, and
   **Export Event Log** actions with `.txt` as the default save type.
+- Removed any remaining fixed-size generation-table assumption from the central
+  selection path so editable JSON categories may contain any non-empty
+  practical number of entries.
+- Made weighted-entry selection work through the standard table chooser used by
+  generators.
 - Kept export data rules-neutral and preserved separate food, water, torches,
   coin, and supplies counters instead of duplicating them as inventory
   quantities.
-- Added exporter coverage for generated worlds, empty-state handling, pending
-  encounters, and character/resource formatting.
+- Added regression coverage for generated worlds, empty-state handling, pending
+  encounters, character/resource formatting, one-entry tables, short tables,
+  tables larger than 30 entries, weighted tables, and malformed-table
+  fallbacks.
 
 ## v0.7.3 - Structured inventory
 

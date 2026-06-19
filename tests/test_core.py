@@ -353,6 +353,77 @@ class WorldTests(unittest.TestCase):
             self.assertIn("custom.json:empty must be a non-empty list", report)
             self.assertIn("Missing table: custom.missing", report)
 
+    def test_table_loader_choose_supports_single_entry_tables(self):
+        with tempfile.TemporaryDirectory() as temp:
+            table_dir = Path(temp)
+            (table_dir / "custom.json").write_text(
+                json.dumps({"results": ["only result"]}),
+                encoding="utf-8",
+            )
+            loader = TableLoader(table_dir)
+            rng = random.Random(5)
+            self.assertEqual(loader.get("custom", "results"), ["only result"])
+            self.assertEqual(loader.choose("custom", "results", rng), "only result")
+
+    def test_table_loader_choose_supports_short_tables_without_d30_assumptions(self):
+        with tempfile.TemporaryDirectory() as temp:
+            table_dir = Path(temp)
+            values = ["one", "two", "three"]
+            (table_dir / "custom.json").write_text(
+                json.dumps({"results": values}),
+                encoding="utf-8",
+            )
+            loader = TableLoader(table_dir)
+            rng = random.Random(7)
+            seen = {loader.choose("custom", "results", rng) for _ in range(200)}
+            self.assertEqual(seen, set(values))
+
+    def test_table_loader_choose_supports_tables_larger_than_thirty(self):
+        with tempfile.TemporaryDirectory() as temp:
+            table_dir = Path(temp)
+            values = [f"result_{index}" for index in range(40)]
+            (table_dir / "custom.json").write_text(
+                json.dumps({"results": values}),
+                encoding="utf-8",
+            )
+            loader = TableLoader(table_dir)
+            rng = random.Random(9)
+            seen = {loader.choose("custom", "results", rng) for _ in range(500)}
+            self.assertIn("result_39", seen)
+            self.assertTrue(seen.issubset(set(values)))
+
+    def test_table_loader_choose_honors_weighted_entries_larger_than_thirty(self):
+        with tempfile.TemporaryDirectory() as temp:
+            table_dir = Path(temp)
+            values = [{"value": f"common_{index}", "weight": 1} for index in range(35)]
+            values.append({"value": "very_rare_but_weighted", "weight": 500})
+            (table_dir / "custom.json").write_text(
+                json.dumps({"results": values}),
+                encoding="utf-8",
+            )
+            loader = TableLoader(table_dir)
+            rng = random.Random(11)
+            results = [loader.choose("custom", "results", rng) for _ in range(100)]
+            self.assertGreater(results.count("very_rare_but_weighted"), 60)
+            self.assertTrue(all(isinstance(item, str) for item in results))
+
+    def test_table_loader_uses_safe_fallback_for_unusable_entries(self):
+        with tempfile.TemporaryDirectory() as temp:
+            table_dir = Path(temp)
+            (table_dir / "settlement_tables.json").write_text(
+                json.dumps({"settlement_names_prefix": [""], "settlement_names_suffix": ["Rest"]}),
+                encoding="utf-8",
+            )
+            loader = TableLoader(table_dir)
+            self.assertEqual(loader.get("settlement_tables", "settlement_names_prefix"), ["Gloam"])
+            self.assertTrue(
+                any(
+                    "settlement_tables.json:settlement_names_prefix has no usable entries"
+                    in warning
+                    for warning in loader.warnings
+                )
+            )
+
     def test_invalid_class_data_uses_structural_fallback(self):
         with tempfile.TemporaryDirectory() as temp:
             table_dir = Path(temp)
