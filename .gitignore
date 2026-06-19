@@ -1,9 +1,9 @@
 __pycache__/
 *.py[cod]
 *.db
+!data/saves/worlds.db
 .pytest_cache/
 .venv/
 venv/
 .idea/
 .vscode/
-data/names/*.txt
