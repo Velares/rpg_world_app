@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.7 is a local, single-player weird-fantasy starting-region generator
+Version 0.7.2 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -191,3 +191,33 @@ controls, multiplayer, and web/server features are intentionally deferred.
 
 The domain and persistence layers do not depend on Tkinter, which keeps later
 migration to a web or server interface practical.
+
+## AI Agent Workflow
+
+This is a solo-developed project supported by AI coding agents. Atlas, Forge,
+Scribe, Windowwright, Keeper, Warden, Redline, and Ledger are named roles used
+to organize Codex work; they are not separate uncontrolled developers.
+
+The standard workflow is:
+
+1. **Atlas** plans the milestone.
+2. **Forge**, **Scribe**, **Windowwright**, or **Keeper** implements the
+   requested logic, data, interface, or persistence work.
+3. **Warden** runs tests, compilation, and data validation.
+4. **Redline** reviews the full diff for scope, quality, and compatibility.
+5. **Ledger** updates documentation and release notes.
+
+One Codex session may play several roles in sequence for a small change. Larger
+features should be split into separate prompts or milestones. This structure
+prevents chaotic edits, protects older saves, and keeps features testable.
+
+Example milestone: **"Add procedural towns."**
+
+- Atlas proposes the town system structure.
+- Forge implements the town generator and game-state model.
+- Scribe adds town name, shop, rumor, and government tables.
+- Keeper ensures towns save/load correctly and older saves still load.
+- Windowwright adds GUI display for towns.
+- Warden adds and runs tests.
+- Redline reviews the full diff.
+- Ledger updates README/changelog and prepares the release notes.

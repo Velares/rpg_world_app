@@ -3,7 +3,15 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
-## Unreleased — Player background profiles
+## v0.7.2 - AI agent workflow
+
+- Defined eight coordinated Codex roles for planning, logic, content, GUI,
+  persistence, validation, review, and release documentation.
+- Added a concise Plan -> Implement -> Test -> Review -> Document ->
+  Commit/Tag operating model.
+- Added the workflow and a procedural-town milestone example to the README.
+
+## v0.7.1 - Player background profiles
 
 - Added JSON-driven origin, formative event, personality trait, ideal, bond,
   and flaw generation for new player characters.

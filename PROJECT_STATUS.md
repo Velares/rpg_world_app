@@ -2,14 +2,17 @@
 
 ## Current version
 
-- Current tag: `v0.7.0`
+- Current tag: `v0.7.2`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
 
-Work after Version 0.7 adds JSON-driven player background and personality
-details while retaining `v0.7.0` as the current tag:
+Version 0.7.2 adds the coordinated AI agent workflow documented in `AGENTS.md`
+and `README.md`. Named roles cover planning, logic, content, GUI, persistence,
+validation, review, and release documentation.
+
+Version 0.7.1 added JSON-driven player background and personality details:
 
 - New characters receive a generated origin, formative event, personality
   trait, ideal, bond, and flaw.
@@ -100,6 +103,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - `data/saves/worlds.db` — current SQLite save database
 - `tools/` — name cleanup and corruption-scrubbing utilities
 - `tests/test_core.py` — automated test suite
+- `AGENTS.md` — named AI roles and coordinated operating model
 
 ## How to update this file
 
