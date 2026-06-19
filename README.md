@@ -103,6 +103,35 @@ Missing files, malformed JSON, empty categories, and missing category names are
 reported as warnings. A minimal fallback result prevents a missing optional
 table from crashing generation.
 
+## Large name files
+
+Place newline-delimited raw personal names in:
+
+```text
+data/names/raw_first_names.txt
+data/names/raw_last_names.txt
+```
+
+Clean them from the project directory with:
+
+```powershell
+python tools/clean_names.py
+```
+
+The tool trims blank lines and whitespace, applies title case, removes
+duplicates, sorts the results, and writes:
+
+```text
+data/names/first_names.txt
+data/names/last_names.txt
+```
+
+The cleaned text files are loaded once when the app starts and used for NPC
+names and the **Random Name** button in character creation. If either cleaned
+file is missing or empty, the smaller editable JSON name tables remain as safe
+fallbacks. Name text files are ignored by Git so very large local datasets are
+not accidentally committed.
+
 ## Tests
 
 From the project directory:

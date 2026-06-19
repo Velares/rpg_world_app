@@ -3,10 +3,17 @@ from __future__ import annotations
 from app.generators.common import BaseGenerator
 from app.ids import new_id
 from app.models import Location, NPC
+from app.name_generator import NameGenerator
 
 
 class NPCGenerator(BaseGenerator):
+    def __init__(self, tables, rng, name_generator: NameGenerator | None = None):
+        super().__init__(tables, rng)
+        self.name_generator = name_generator
+
     def generate_name(self) -> str:
+        if self.name_generator is not None:
+            return self.name_generator.full_name()
         category = self.rng.choice(["male_names", "female_names", "neutral_names"])
         return f"{self.pick('npc_tables', category)} {self.pick('npc_tables', 'surnames')}"
 

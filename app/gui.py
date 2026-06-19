@@ -48,7 +48,7 @@ class LoadDialog(tk.Toplevel):
 
 
 class CharacterDialog(tk.Toplevel):
-    def __init__(self, parent: tk.Misc, classes, backgrounds: list[str]):
+    def __init__(self, parent: tk.Misc, classes, backgrounds: list[str], random_name):
         super().__init__(parent)
         self.title("Create Character")
         self.geometry("520x430")
@@ -62,7 +62,16 @@ class CharacterDialog(tk.Toplevel):
         form.pack(fill="both", expand=True)
         ttk.Label(form, text="Name").pack(anchor="w")
         self.name_var = tk.StringVar()
-        ttk.Entry(form, textvariable=self.name_var).pack(fill="x", pady=(2, 10))
+        name_row = ttk.Frame(form)
+        name_row.pack(fill="x", pady=(2, 10))
+        ttk.Entry(name_row, textvariable=self.name_var).pack(
+            side="left", fill="x", expand=True
+        )
+        ttk.Button(
+            name_row,
+            text="Random Name",
+            command=lambda: self.name_var.set(random_name()),
+        ).pack(side="left", padx=(8, 0))
         ttk.Label(form, text="Class").pack(anchor="w")
         self.class_var = tk.StringVar(value=classes[0].class_name)
         class_box = ttk.Combobox(
@@ -445,6 +454,7 @@ class RPGWorldApp(tk.Tk):
                 self,
                 self.state.character_classes(),
                 self.state.character_backgrounds(),
+                self.state.random_full_name,
             )
             self.wait_window(dialog)
             if dialog.result:

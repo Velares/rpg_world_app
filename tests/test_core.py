@@ -10,7 +10,11 @@ from app.characters import BONUS_NAMES, CharacterFactory
 from app.checks import DIFFICULTIES
 from app.dice import morale_check, reaction_roll, roll
 from app.game_state import GameState
+from app.generators.npc_generator import NPCGenerator
+from app.generators.settlement_generator import SettlementGenerator
+from app.name_generator import NameDataError, NameGenerator
 from app.table_loader import TableLoader
+from tools.clean_names import clean_name_file
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,6 +46,84 @@ class DiceTests(unittest.TestCase):
         rng = random.Random(2)
         self.assertIsInstance(reaction_roll(rng), str)
         self.assertIsInstance(morale_check(7, rng), bool)
+
+
+class NameTests(unittest.TestCase):
+    def test_cleanup_removes_blanks_duplicates_sorts_and_title_cases(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            raw = root / "raw_names.txt"
+            cleaned = root / "nested" / "names.txt"
+            raw.write_bytes(
+                b"  alice  \nBOB\n\nAlice\nmary jane\ninvalid-\xff-name\n"
+            )
+            count = clean_name_file(raw, cleaned)
+            self.assertEqual(count, 4)
+            self.assertEqual(
+                cleaned.read_text(encoding="utf-8").splitlines(),
+                ["Alice", "Bob", "Invalid--Name", "Mary Jane"],
+            )
+
+    def test_cleanup_missing_input_reports_without_crashing(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            result = clean_name_file(root / "missing.txt", root / "output.txt")
+            self.assertIsNone(result)
+            self.assertFalse((root / "output.txt").exists())
+
+    def test_name_generator_produces_first_last_full_and_lists(self):
+        with tempfile.TemporaryDirectory() as temp:
+            names_dir = Path(temp)
+            (names_dir / "first_names.txt").write_text(
+                "Asha\nBram\n", encoding="utf-8"
+            )
+            (names_dir / "last_names.txt").write_text(
+                "Crow\nSalt\n", encoding="utf-8"
+            )
+            generator = NameGenerator(names_dir, random.Random(3))
+            self.assertIn(generator.first_name(), {"Asha", "Bram"})
+            self.assertIn(generator.last_name(), {"Crow", "Salt"})
+            first, last = generator.full_name().split()
+            self.assertIn(first, {"Asha", "Bram"})
+            self.assertIn(last, {"Crow", "Salt"})
+            names = generator.full_names(5)
+            self.assertEqual(len(names), 5)
+            self.assertTrue(all(len(name.split()) == 2 for name in names))
+
+    def test_name_generator_caches_files_and_handles_missing_data(self):
+        with tempfile.TemporaryDirectory() as temp:
+            names_dir = Path(temp)
+            first_path = names_dir / "first_names.txt"
+            last_path = names_dir / "last_names.txt"
+            first_path.write_text("Original\n", encoding="utf-8")
+            last_path.write_text("Surname\n", encoding="utf-8")
+            generator = NameGenerator(names_dir, random.Random(1))
+            first_path.write_text("Changed\n", encoding="utf-8")
+            self.assertEqual(generator.first_name(), "Original")
+
+            fallback = NameGenerator(
+                names_dir / "absent",
+                random.Random(1),
+                fallback_first_names=["Fallback"],
+                fallback_last_names=["Name"],
+            )
+            self.assertEqual(fallback.full_name(), "Fallback Name")
+            empty = NameGenerator(names_dir / "also_absent", random.Random(1))
+            with self.assertRaises(NameDataError):
+                empty.first_name()
+
+    def test_npc_generator_uses_cleaned_text_names(self):
+        with tempfile.TemporaryDirectory() as temp:
+            names_dir = Path(temp)
+            (names_dir / "first_names.txt").write_text("Textfirst\n", encoding="utf-8")
+            (names_dir / "last_names.txt").write_text("Textlast\n", encoding="utf-8")
+            rng = random.Random(7)
+            tables = TableLoader(TABLES)
+            generator = NameGenerator(names_dir, rng)
+            locations = SettlementGenerator(tables, rng).generate().important_locations
+            npcs = NPCGenerator(tables, rng, generator).generate(locations, 3)
+            self.assertTrue(all(npc.name == "Textfirst Textlast" or " the " in npc.name for npc in npcs))
+            self.assertTrue(npcs[0].name.startswith("Textfirst Textlast"))
 
 
 class WorldTests(unittest.TestCase):
@@ -191,6 +273,14 @@ class WorldTests(unittest.TestCase):
             self.assertTrue(
                 any("Sable Vey" in entry for entry in loaded.player_state.event_log)
             )
+            state.close()
+
+    def test_game_state_random_names_fall_back_without_cleaned_files(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 16)
+            generated = state.random_full_names(4)
+            self.assertEqual(len(generated), 4)
+            self.assertTrue(all(len(name.split()) >= 2 for name in generated))
             state.close()
 
     def test_save_load_round_trip_and_normalized_rows(self):

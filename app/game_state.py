@@ -14,6 +14,7 @@ from app.generators.npc_generator import NPCGenerator
 from app.generators.settlement_generator import SettlementGenerator
 from app.generators.wilderness_generator import WildernessGenerator
 from app.models import PlayerState, World
+from app.name_generator import NameGenerator
 from app.table_loader import TableLoader
 
 
@@ -28,10 +29,23 @@ class GameState:
         self.database = database
         self.rng = rng or random.Random()
         self.world: World | None = None
+        first_name_fallbacks = [
+            *self.tables.get("npc_tables", "male_names"),
+            *self.tables.get("npc_tables", "female_names"),
+            *self.tables.get("npc_tables", "neutral_names"),
+        ]
+        self.name_generator = NameGenerator(
+            self.tables.tables_dir.parent / "names",
+            self.rng,
+            fallback_first_names=first_name_fallbacks,
+            fallback_last_names=self.tables.get("npc_tables", "surnames"),
+        )
 
     def generate_new_region(self) -> World:
         settlement = SettlementGenerator(self.tables, self.rng).generate()
-        npcs = NPCGenerator(self.tables, self.rng).generate(settlement.important_locations, 10)
+        npcs = NPCGenerator(
+            self.tables, self.rng, self.name_generator
+        ).generate(settlement.important_locations, 10)
         # Build both sides of the NPC/location relationship for reliable inspection.
         npcs_by_location = {
             location.name: [npc for npc in npcs if npc.location == location.name]
@@ -207,6 +221,18 @@ class GameState:
         return CharacterFactory(self.tables).create(
             self.require_world(), name, class_name, background
         )
+
+    def random_first_name(self) -> str:
+        return self.name_generator.first_name()
+
+    def random_last_name(self) -> str:
+        return self.name_generator.last_name()
+
+    def random_full_name(self) -> str:
+        return self.name_generator.full_name()
+
+    def random_full_names(self, count: int) -> list[str]:
+        return self.name_generator.full_names(count)
 
     def perform_check(
         self,
