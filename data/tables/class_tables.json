@@ -1,0 +1,126 @@
+{
+  "backgrounds": [
+    "Disgraced Retainer",
+    "Caravan Survivor",
+    "Grave-Robber",
+    "Village Exile",
+    "Ruined Noble",
+    "Temple Runaway",
+    "Wilderness Foundling",
+    "Former Cultist",
+    "Debt-Bound Mercenary",
+    "Itinerant Performer"
+  ],
+  "classes": [
+    {
+      "class_name": "Fighter",
+      "role_description": "A hardened combatant who survives through discipline, armor, and threat assessment.",
+      "starting_supplies": 10,
+      "starting_food": 7,
+      "starting_water": 7,
+      "starting_torches": 5,
+      "starting_coin": 16,
+      "bonuses": {"combat": 2, "exploration": 0, "social": 0, "lore": 0, "survival": 1, "stealth": 0},
+      "special_ability_placeholder": "Combat discipline placeholder."
+    },
+    {
+      "class_name": "Thief",
+      "role_description": "A cautious infiltrator skilled at bypassing danger and noticing profitable weaknesses.",
+      "starting_supplies": 9,
+      "starting_food": 6,
+      "starting_water": 6,
+      "starting_torches": 5,
+      "starting_coin": 24,
+      "bonuses": {"combat": 0, "exploration": 1, "social": 1, "lore": 0, "survival": 0, "stealth": 2},
+      "special_ability_placeholder": "Cunning action placeholder."
+    },
+    {
+      "class_name": "Ranger",
+      "role_description": "A borderland hunter who reads tracks, weather, and the intentions of beasts.",
+      "starting_supplies": 12,
+      "starting_food": 9,
+      "starting_water": 8,
+      "starting_torches": 5,
+      "starting_coin": 12,
+      "bonuses": {"combat": 1, "exploration": 1, "social": 0, "lore": 0, "survival": 2, "stealth": 1},
+      "special_ability_placeholder": "Trailcraft placeholder."
+    },
+    {
+      "class_name": "Scholar",
+      "role_description": "A keeper of dangerous histories, dead languages, and inconvenient evidence.",
+      "starting_supplies": 8,
+      "starting_food": 6,
+      "starting_water": 6,
+      "starting_torches": 6,
+      "starting_coin": 20,
+      "bonuses": {"combat": -1, "exploration": 1, "social": 0, "lore": 2, "survival": 0, "stealth": 0},
+      "special_ability_placeholder": "Forbidden expertise placeholder."
+    },
+    {
+      "class_name": "Acolyte",
+      "role_description": "A temple-trained intermediary versed in rites, mercy, and supernatural obligations.",
+      "starting_supplies": 9,
+      "starting_food": 7,
+      "starting_water": 7,
+      "starting_torches": 6,
+      "starting_coin": 14,
+      "bonuses": {"combat": 0, "exploration": 0, "social": 1, "lore": 2, "survival": 0, "stealth": 0},
+      "special_ability_placeholder": "Ritual aid placeholder."
+    },
+    {
+      "class_name": "Occultist",
+      "role_description": "A practitioner who recognizes forbidden forces but is never entirely safe from them.",
+      "starting_supplies": 8,
+      "starting_food": 6,
+      "starting_water": 6,
+      "starting_torches": 7,
+      "starting_coin": 18,
+      "bonuses": {"combat": -1, "exploration": 1, "social": 0, "lore": 2, "survival": 0, "stealth": 1},
+      "special_ability_placeholder": "Unstable occult working placeholder."
+    },
+    {
+      "class_name": "Mercenary",
+      "role_description": "A practical sellsword accustomed to morale, logistics, and surviving bad employers.",
+      "starting_supplies": 11,
+      "starting_food": 8,
+      "starting_water": 7,
+      "starting_torches": 5,
+      "starting_coin": 22,
+      "bonuses": {"combat": 2, "exploration": 0, "social": 1, "lore": -1, "survival": 1, "stealth": 0},
+      "special_ability_placeholder": "Veteran's judgment placeholder."
+    },
+    {
+      "class_name": "Explorer",
+      "role_description": "A deliberate delver equipped for uncertain routes, difficult retreats, and careful mapping.",
+      "starting_supplies": 13,
+      "starting_food": 8,
+      "starting_water": 8,
+      "starting_torches": 8,
+      "starting_coin": 12,
+      "bonuses": {"combat": 0, "exploration": 2, "social": 0, "lore": 1, "survival": 1, "stealth": 0},
+      "special_ability_placeholder": "Expedition planning placeholder."
+    },
+    {
+      "class_name": "Bard",
+      "role_description": "A wandering performer who trades stories, reads a room, and turns rumor into opportunity.",
+      "starting_supplies": 8,
+      "starting_food": 6,
+      "starting_water": 6,
+      "starting_torches": 4,
+      "starting_coin": 26,
+      "bonuses": {"combat": 0, "exploration": 0, "social": 2, "lore": 1, "survival": 0, "stealth": 1},
+      "special_ability_placeholder": "Inspiring performance placeholder."
+    },
+    {
+      "class_name": "Mystic",
+      "role_description": "A contemplative wanderer trained to endure hardship and interpret uncanny signs.",
+      "starting_supplies": 9,
+      "starting_food": 7,
+      "starting_water": 7,
+      "starting_torches": 6,
+      "starting_coin": 10,
+      "bonuses": {"combat": 0, "exploration": 1, "social": 1, "lore": 1, "survival": 1, "stealth": 0},
+      "special_ability_placeholder": "Inner discipline placeholder."
+    }
+  ]
+}

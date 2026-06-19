@@ -163,7 +163,21 @@ class Hex:
 
 
 @dataclass
+class PlayerCharacter:
+    """Rules-light identity layer; bonuses are intentionally system-neutral."""
+
+    name: str
+    character_class: str
+    background: str
+    starting_supplies: int
+    bonuses: dict[str, int] = field(default_factory=dict)
+    role_description: str = ""
+    special_ability_placeholder: str = ""
+
+
+@dataclass
 class PlayerState:
+    character: PlayerCharacter | None = None
     current_location: str = "town"
     current_location_id: str = ""
     current_room_id: int | None = None
@@ -239,6 +253,11 @@ class World:
             Encounter(**item) for item in wilderness_data.get("encounter_table", [])
         ]
         player_data = data["player_state"]
+        character_data = player_data.get("character")
+        if isinstance(character_data, dict):
+            player_data["character"] = PlayerCharacter(**character_data)
+        else:
+            player_data["character"] = None
         # Version 0.3 exploration fields are defaulted so older saves remain playable.
         player_data.setdefault("current_location", "town")
         player_data.setdefault("current_location_id", "")

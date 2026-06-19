@@ -4,6 +4,7 @@ import random
 from datetime import datetime
 
 from app.database import Database
+from app.characters import CharacterFactory
 from app.exploration import ExplorationEngine
 from app.generators.adventure_generator import AdventureGenerator
 from app.generators.dungeon_generator import DungeonGenerator
@@ -194,6 +195,17 @@ class GameState:
 
     def inspect_location(self) -> str:
         return self.exploration().inspect_location()
+
+    def character_classes(self):
+        return CharacterFactory(self.tables).classes()
+
+    def character_backgrounds(self) -> list[str]:
+        return CharacterFactory(self.tables).backgrounds()
+
+    def create_character(self, name: str, class_name: str, background: str):
+        return CharacterFactory(self.tables).create(
+            self.require_world(), name, class_name, background
+        )
 
     def retreat(self) -> str:
         return self.exploration().retreat()

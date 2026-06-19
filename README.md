@@ -46,6 +46,12 @@ answers. The persistent event log records travel, discoveries, conversations,
 encounters, and rests. Food, water, torches, supplies, wounds, and coin are
 saved with the world.
 
+A lightweight, rules-neutral character scaffold supports name, class,
+background, starting resources, and bonuses for combat, exploration, social,
+lore, survival, and stealth. The ten starter classes live in the editable
+`data/tables/class_tables.json` file. Special abilities remain placeholders so
+the eventual rules implementation can be SRD-friendly or replaced entirely.
+
 The database is created automatically at:
 
 ```text
@@ -64,6 +70,7 @@ database on its next launch.
 - `app/database.py`: SQLite schema and persistence
 - `app/table_loader.py`: JSON loading, validation, and fallbacks
 - `app/dice.py`: dice formulas, reaction rolls, and morale checks
+- `app/characters.py`: rules-light class loading and character creation
 - `app/generators/`: focused procedural generators
 - `data/tables/`: editable generation content
 - `data/saves/`: local SQLite saves

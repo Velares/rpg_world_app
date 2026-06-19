@@ -47,6 +47,79 @@ class LoadDialog(tk.Toplevel):
             self.destroy()
 
 
+class CharacterDialog(tk.Toplevel):
+    def __init__(self, parent: tk.Misc, classes, backgrounds: list[str]):
+        super().__init__(parent)
+        self.title("Create Character")
+        self.geometry("520x430")
+        self.resizable(False, False)
+        self.transient(parent)
+        self.grab_set()
+        self.result: tuple[str, str, str] | None = None
+        self.classes = {item.class_name: item for item in classes}
+
+        form = ttk.Frame(self, padding=14)
+        form.pack(fill="both", expand=True)
+        ttk.Label(form, text="Name").pack(anchor="w")
+        self.name_var = tk.StringVar()
+        ttk.Entry(form, textvariable=self.name_var).pack(fill="x", pady=(2, 10))
+        ttk.Label(form, text="Class").pack(anchor="w")
+        self.class_var = tk.StringVar(value=classes[0].class_name)
+        class_box = ttk.Combobox(
+            form,
+            textvariable=self.class_var,
+            values=[item.class_name for item in classes],
+            state="readonly",
+        )
+        class_box.pack(fill="x", pady=(2, 10))
+        ttk.Label(form, text="Background").pack(anchor="w")
+        self.background_var = tk.StringVar(value=backgrounds[0])
+        ttk.Combobox(
+            form,
+            textvariable=self.background_var,
+            values=backgrounds,
+            state="readonly",
+        ).pack(fill="x", pady=(2, 10))
+        self.preview_var = tk.StringVar()
+        ttk.Label(
+            form,
+            textvariable=self.preview_var,
+            justify="left",
+            wraplength=480,
+        ).pack(fill="x", pady=10)
+        buttons = ttk.Frame(form)
+        buttons.pack(side="bottom", fill="x")
+        ttk.Button(buttons, text="Create", command=self.accept).pack(side="right")
+        ttk.Button(buttons, text="Cancel", command=self.destroy).pack(side="right", padx=8)
+        class_box.bind("<<ComboboxSelected>>", lambda _event: self.update_preview())
+        self.update_preview()
+
+    def update_preview(self) -> None:
+        definition = self.classes[self.class_var.get()]
+        bonuses = ", ".join(
+            f"{name.title()} {value:+d}" for name, value in definition.bonuses.items()
+        )
+        self.preview_var.set(
+            f"{definition.role_description}\n\n"
+            f"Starting resources: supplies {definition.starting_supplies}, "
+            f"food {definition.starting_food}, water {definition.starting_water}, "
+            f"torches {definition.starting_torches}, coin {definition.starting_coin}\n\n"
+            f"Bonuses: {bonuses}\n"
+            f"Ability placeholder: {definition.special_ability_placeholder}"
+        )
+
+    def accept(self) -> None:
+        if not self.name_var.get().strip():
+            messagebox.showwarning("Create Character", "Enter a character name.", parent=self)
+            return
+        self.result = (
+            self.name_var.get().strip(),
+            self.class_var.get(),
+            self.background_var.get(),
+        )
+        self.destroy()
+
+
 class RPGWorldApp(tk.Tk):
     def __init__(self, state: GameState):
         super().__init__()
@@ -84,6 +157,8 @@ class RPGWorldApp(tk.Tk):
         self.display_frame.pack(side="left", fill="both", expand=True)
         navigation_actions = [
             ("Generate New Region", self.generate),
+            ("Create Character", self.create_character),
+            ("Character Sheet", self.view_character),
             ("Settlement Overview", self.view_settlement),
             ("NPC List", self.view_npcs),
             ("Location List", self.view_locations),
@@ -201,6 +276,11 @@ class RPGWorldApp(tk.Tk):
             self.player_state_var.set("No active world.")
             return
         player = self.state.world.player_state
+        identity = (
+            f"{player.character.name}, {player.character.character_class}"
+            if player.character
+            else "No character created"
+        )
         room = f" / room {player.current_room_id}" if player.current_room_id else ""
         light = (
             f"{player.light_turns_remaining} turns, {player.torches} torches"
@@ -208,7 +288,8 @@ class RPGWorldApp(tk.Tk):
             else f"unlit, {player.torches} torches"
         )
         self.player_state_var.set(
-            f"Day {player.day}, {player.time_period}    Location: "
+            f"Character: {identity}    Day {player.day}, {player.time_period}\n"
+            f"Location: "
             f"{player.current_location}{room}    Wounds: {player.wounds}\n"
             f"Supplies: {player.supplies}    Food: {player.food}    Water: {player.water}    "
             f"Torches/Light: {light}    Coin: {player.coin}\n"
@@ -302,6 +383,53 @@ class RPGWorldApp(tk.Tk):
             self.show(self.world_overview(), f"Generated {world.name}.")
 
         self.guarded(action)
+
+    def create_character(self) -> None:
+        def action():
+            self.state.require_world()
+            dialog = CharacterDialog(
+                self,
+                self.state.character_classes(),
+                self.state.character_backgrounds(),
+            )
+            self.wait_window(dialog)
+            if dialog.result:
+                character = self.state.create_character(*dialog.result)
+                self.update_player_state()
+                self.show(
+                    self.character_sheet_text(),
+                    f"Created {character.name}, {character.character_class}.",
+                )
+
+        self.guarded(action)
+
+    def character_sheet_text(self) -> str:
+        player = self.state.require_world().player_state
+        character = player.character
+        if character is None:
+            return (
+                "NO PLAYER CHARACTER\n"
+                "===================\n"
+                "Use Create Character to choose a name, class, and background."
+            )
+        bonuses = "\n".join(
+            f"{name.title()}: {value:+d}" for name, value in character.bonuses.items()
+        )
+        return (
+            f"{character.name.upper()}\n{'=' * len(character.name)}\n"
+            f"Class: {character.character_class}\n"
+            f"Background: {character.background}\n"
+            f"Role: {character.role_description}\n"
+            f"Starting Supplies: {character.starting_supplies}\n\n"
+            f"BONUSES\n=======\n{bonuses}\n\n"
+            f"SPECIAL ABILITY PLACEHOLDER\n===========================\n"
+            f"{character.special_ability_placeholder}"
+        )
+
+    def view_character(self) -> None:
+        self.guarded(
+            lambda: self.show(self.character_sheet_text(), "Viewing character sheet.")
+        )
 
     def world_overview(self) -> str:
         world = self.state.require_world()

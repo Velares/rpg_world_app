@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 
 from app.database import Database
+from app.characters import BONUS_NAMES, CharacterFactory
 from app.dice import morale_check, reaction_roll, roll
 from app.game_state import GameState
 from app.table_loader import TableLoader
@@ -58,6 +59,32 @@ class WorldTests(unittest.TestCase):
             for values in data.values():
                 self.assertIsInstance(values, list)
                 self.assertTrue(values)
+
+    def test_class_table_contains_rules_neutral_starter_classes(self):
+        loader = TableLoader(TABLES)
+        factory = CharacterFactory(loader)
+        definitions = factory.classes()
+        self.assertEqual(
+            {item.class_name for item in definitions},
+            {
+                "Fighter",
+                "Thief",
+                "Ranger",
+                "Scholar",
+                "Acolyte",
+                "Occultist",
+                "Mercenary",
+                "Explorer",
+                "Bard",
+                "Mystic",
+            },
+        )
+        self.assertTrue(factory.backgrounds())
+        for definition in definitions:
+            self.assertEqual(set(definition.bonuses), set(BONUS_NAMES))
+            self.assertTrue(definition.role_description)
+            self.assertTrue(definition.special_ability_placeholder)
+            self.assertGreaterEqual(definition.starting_supplies, 0)
 
     def test_generated_world_contract(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -135,6 +162,33 @@ class WorldTests(unittest.TestCase):
                     any(reference in rumor for reference in generated_references)
                     for rumor in world.settlement.rumors
                 )
+            )
+            state.close()
+
+    def test_character_creation_applies_class_resources_and_survives_save(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 15)
+            world = state.generate_new_region()
+            definition = next(
+                item for item in state.character_classes() if item.class_name == "Ranger"
+            )
+            background = state.character_backgrounds()[0]
+            character = state.create_character("Sable Vey", "Ranger", background)
+            player = world.player_state
+            self.assertEqual(character.name, "Sable Vey")
+            self.assertEqual(character.character_class, "Ranger")
+            self.assertEqual(character.background, background)
+            self.assertEqual(set(character.bonuses), set(BONUS_NAMES))
+            self.assertEqual(player.supplies, definition.starting_supplies)
+            self.assertEqual(player.food, definition.starting_food)
+            self.assertEqual(player.water, definition.starting_water)
+            self.assertEqual(player.torches, definition.starting_torches)
+            self.assertEqual(player.coin, definition.starting_coin)
+            world_id = state.save_world("Character Save")
+            loaded = state.load_world(world_id)
+            self.assertEqual(loaded.player_state.character, character)
+            self.assertTrue(
+                any("Sable Vey" in entry for entry in loaded.player_state.event_log)
             )
             state.close()
 
@@ -275,6 +329,7 @@ class WorldTests(unittest.TestCase):
             self.assertEqual(restored.player_state.wounds, 0)
             self.assertEqual(restored.player_state.action_log, [])
             self.assertEqual(restored.player_state.event_log, [])
+            self.assertIsNone(restored.player_state.character)
             state.close()
 
 
