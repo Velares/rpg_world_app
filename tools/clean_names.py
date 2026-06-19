@@ -31,11 +31,11 @@ def clean_name_file(input_path: Path, output_path: Path) -> int | None:
 def main() -> None:
     NAMES_DIR.mkdir(parents=True, exist_ok=True)
     clean_name_file(
-        NAMES_DIR / "raw_first_names.txt",
+        NAMES_DIR / "firsrtnames.txt",
         NAMES_DIR / "first_names.txt",
     )
     clean_name_file(
-        NAMES_DIR / "raw_last_names.txt",
+        NAMES_DIR / "surnames.txt",
         NAMES_DIR / "last_names.txt",
     )
 
