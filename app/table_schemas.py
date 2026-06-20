@@ -213,6 +213,9 @@ FALLBACKS: dict[tuple[str, str], list[object]] = {
             "completion_text": "{task_name} is complete. You can re-enter the field with steadier footing.",
             "complication_text": "{task_name}: a setback costs time and forces slower recovery.",
             "tags": ["recovery", "fallback"],
+            "progress_outcomes": [],
+            "completion_outcomes": [],
+            "complication_outcomes": [],
         }
     ],
     ("item_tables", "item_definitions"): [

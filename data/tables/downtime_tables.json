@@ -22,7 +22,14 @@
       "progress_text": "{task_name}: {progress_days}/{total_days} days of notes and cross-reference work reveal a little more.",
       "completion_text": "{task_name} is complete. You now hold a clearer theory, warning, or ritual lead for later use.",
       "complication_text": "{task_name}: a source contradicts itself, costs more time, or hints at a risk you did not expect.",
-      "tags": ["research", "arcane"]
+      "tags": ["research", "arcane"],
+      "completion_outcomes": [
+        {
+          "kind": "quest_note",
+          "text": "Quest note: your {season} research links {rumor_text} to {dungeon_name}.",
+          "discover": "rumor"
+        }
+      ]
     },
     {
       "task_key": "learn_trade",
@@ -58,7 +65,27 @@
       "progress_text": "{task_name}: {progress_days}/{total_days} days of questions and comparisons narrow the truth.",
       "completion_text": "{task_name} is complete. The rumor is now grounded in firmer evidence or a sharper contradiction.",
       "complication_text": "{task_name}: someone notices your questions and starts steering you off course.",
-      "tags": ["investigation", "rumor"]
+      "tags": ["investigation", "rumor"],
+      "progress_outcomes": [
+        {
+          "kind": "lead",
+          "text": "Downtime lead: a witness points you toward {location_name} after hearing about {rumor_text}.",
+          "discover": "location"
+        }
+      ],
+      "completion_outcomes": [
+        {
+          "kind": "quest_note",
+          "text": "Quest note: {npc_name} ties the rumor to {threat_name} moving near {wilderness_name}.",
+          "discover": "npc"
+        }
+      ],
+      "complication_outcomes": [
+        {
+          "kind": "event",
+          "text": "Complication: your questions in {settlement_name} reach the wrong ears before nightfall."
+        }
+      ]
     },
     {
       "task_key": "build_relationship",
@@ -70,7 +97,14 @@
       "progress_text": "{task_name}: {progress_days}/{total_days} days of conversation and favors deepen familiarity.",
       "completion_text": "{task_name} is complete. A bond, ally, or dependable introduction has taken shape.",
       "complication_text": "{task_name}: a misunderstanding, rival, or local trouble strains the connection.",
-      "tags": ["social", "relationship"]
+      "tags": ["social", "relationship"],
+      "completion_outcomes": [
+        {
+          "kind": "lead",
+          "text": "Relationship lead: {npc_name} offers an introduction connected to {location_name}.",
+          "discover": "npc"
+        }
+      ]
     },
     {
       "task_key": "craft_or_repair",
@@ -82,7 +116,19 @@
       "progress_text": "{task_name}: {progress_days}/{total_days} days of measured work improve the result.",
       "completion_text": "{task_name} is complete. The project is usable, reinforced, or ready for field testing.",
       "complication_text": "{task_name}: missing parts or a flawed attempt force rework.",
-      "tags": ["craft", "repair"]
+      "tags": ["craft", "repair"],
+      "completion_outcomes": [
+        {
+          "kind": "inventory",
+          "text": "You finish a clue-marked kit tied to notes about {location_name}.",
+          "item_key": "downtime_note_bundle",
+          "item_name": "Downtime Note Bundle",
+          "item_category": "Quest",
+          "quantity": 1,
+          "description": "Practical notes and marked scraps gathered during downtime work.",
+          "tags": ["downtime", "clue", "notes"]
+        }
+      ]
     },
     {
       "task_key": "work_for_coin",
@@ -106,7 +152,18 @@
       "progress_text": "{task_name}: {progress_days}/{total_days} days of focused study reveal patterns.",
       "completion_text": "{task_name} is complete. Your notes now support a stronger plan or safer approach.",
       "complication_text": "{task_name}: the subject changes, hides itself, or leaves conflicting evidence behind.",
-      "tags": ["study", "preparation"]
+      "tags": ["study", "preparation"],
+      "completion_outcomes": [
+        {
+          "kind": "lead",
+          "text": "Downtime lead: your notes suggest {dungeon_room_name} and {threat_name} are linked.",
+          "discover": "threat"
+        },
+        {
+          "kind": "quest_note",
+          "text": "Quest note: a {season} review ties {wilderness_clue} to {lead_text}."
+        }
+      ]
     },
     {
       "task_key": "maintain_equipment",
@@ -118,7 +175,14 @@
       "progress_text": "{task_name}: {progress_days}/{total_days} days of maintenance restore order to your kit.",
       "completion_text": "{task_name} is complete. Your gear is cleaner, safer, and easier to trust.",
       "complication_text": "{task_name}: hidden wear, dampness, or missing parts force extra attention.",
-      "tags": ["equipment", "maintenance"]
+      "tags": ["equipment", "maintenance"],
+      "complication_outcomes": [
+        {
+          "kind": "supplies",
+          "text": "Complication: hidden wear around {inventory_item_name} costs you {amount} supply to put right.",
+          "amount": -1
+        }
+      ]
     }
   ]
 }

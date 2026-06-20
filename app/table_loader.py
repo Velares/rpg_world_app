@@ -322,6 +322,27 @@ class TableLoader:
                 self._warn(f"{location} duplicates task key {task_key!r}")
                 continue
             seen_keys.add(task_key.casefold())
+            progress_outcomes = self._validate_downtime_outcomes(
+                file_name,
+                category,
+                index,
+                "progress_outcomes",
+                item.get("progress_outcomes", []),
+            )
+            completion_outcomes = self._validate_downtime_outcomes(
+                file_name,
+                category,
+                index,
+                "completion_outcomes",
+                item.get("completion_outcomes", []),
+            )
+            complication_outcomes = self._validate_downtime_outcomes(
+                file_name,
+                category,
+                index,
+                "complication_outcomes",
+                item.get("complication_outcomes", []),
+            )
             clean.append(
                 {
                     "task_key": task_key,
@@ -334,8 +355,101 @@ class TableLoader:
                     "completion_text": item["completion_text"].strip(),
                     "complication_text": item["complication_text"].strip(),
                     "tags": [value.strip() for value in tags],
+                    "progress_outcomes": progress_outcomes,
+                    "completion_outcomes": completion_outcomes,
+                    "complication_outcomes": complication_outcomes,
                 }
             )
+        return clean
+
+    def _validate_downtime_outcomes(
+        self,
+        file_name: str,
+        category: str,
+        task_index: int,
+        field_name: str,
+        values: Any,
+    ) -> list[dict[str, Any]]:
+        if values is None:
+            return []
+        location = f"{file_name}:{category}[{task_index}].{field_name}"
+        if not isinstance(values, list):
+            self._warn(f"{location} must be a list")
+            return []
+        clean: list[dict[str, Any]] = []
+        valid_kinds = {"event", "lead", "quest_note", "coin", "supplies", "inventory"}
+        valid_discovers = {"npc", "location", "rumor", "threat"}
+        for index, item in enumerate(values):
+            entry_location = f"{location}[{index}]"
+            if not isinstance(item, dict):
+                self._warn(f"{entry_location} must be an object")
+                continue
+            kind = item.get("kind")
+            text = item.get("text")
+            if (
+                not isinstance(kind, str)
+                or kind not in valid_kinds
+                or not isinstance(text, str)
+                or not text.strip()
+            ):
+                self._warn(
+                    f"{entry_location} requires a supported kind and non-empty text"
+                )
+                continue
+            discover = item.get("discover")
+            if discover is not None and discover not in valid_discovers:
+                self._warn(f"{entry_location}.discover is not supported")
+                continue
+            normalized: dict[str, Any] = {
+                "kind": kind,
+                "text": text.strip(),
+            }
+            if discover is not None:
+                normalized["discover"] = discover
+            if kind in {"coin", "supplies"}:
+                amount = item.get("amount")
+                if (
+                    not isinstance(amount, int)
+                    or isinstance(amount, bool)
+                    or amount == 0
+                ):
+                    self._warn(f"{entry_location}.amount must be a non-zero integer")
+                    continue
+                normalized["amount"] = amount
+            if kind == "inventory":
+                item_key = item.get("item_key")
+                item_name = item.get("item_name")
+                item_category = item.get("item_category")
+                quantity = item.get("quantity", 1)
+                tags = item.get("tags", [])
+                if (
+                    not isinstance(item_key, str)
+                    or not item_key.strip()
+                    or not isinstance(item_name, str)
+                    or not item_name.strip()
+                    or item_category not in ITEM_CATEGORIES
+                    or not isinstance(quantity, int)
+                    or isinstance(quantity, bool)
+                    or quantity <= 0
+                    or not isinstance(tags, list)
+                    or any(not isinstance(tag, str) or not tag.strip() for tag in tags)
+                ):
+                    self._warn(
+                        f"{entry_location} requires item_key, item_name, item_category, "
+                        "positive quantity, and text tags"
+                    )
+                    continue
+                normalized.update(
+                    {
+                        "item_key": item_key.strip(),
+                        "item_name": item_name.strip(),
+                        "item_category": item_category,
+                        "quantity": quantity,
+                        "description": str(item.get("description", "")).strip(),
+                        "tags": [tag.strip() for tag in tags],
+                    }
+                )
+            clean.append(normalized)
         return clean
 
     def _validate_required_categories(self) -> None:

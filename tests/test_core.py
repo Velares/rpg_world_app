@@ -534,6 +534,56 @@ class WorldTests(unittest.TestCase):
                 any("downtime_tables.json:tasks[0]" in warning for warning in loader.warnings)
             )
 
+    def test_invalid_downtime_outcomes_are_filtered_without_dropping_task(self):
+        with tempfile.TemporaryDirectory() as temp:
+            table_dir = Path(temp)
+            (table_dir / "downtime_tables.json").write_text(
+                json.dumps(
+                    {
+                        "tasks": [
+                            {
+                                "task_key": "test_task",
+                                "name": "Test Task",
+                                "category": "study",
+                                "description": "A valid task with bad optional outcomes.",
+                                "default_duration_days": 2,
+                                "allowed_contexts": ["town"],
+                                "progress_text": "{task_name}: progress.",
+                                "completion_text": "{task_name}: complete.",
+                                "complication_text": "{task_name}: complication.",
+                                "tags": ["test"],
+                                "progress_outcomes": [{"kind": "lead"}],
+                                "completion_outcomes": "bad",
+                                "complication_outcomes": [
+                                    {
+                                        "kind": "inventory",
+                                        "text": "Broken inventory reward.",
+                                        "item_key": "",
+                                        "item_name": "Bad",
+                                        "item_category": "Quest",
+                                        "quantity": 0,
+                                        "tags": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            loader = TableLoader(table_dir)
+            tasks = loader.get("downtime_tables", "tasks")
+            self.assertEqual(tasks[0]["task_key"], "test_task")
+            self.assertEqual(tasks[0]["progress_outcomes"], [])
+            self.assertEqual(tasks[0]["completion_outcomes"], [])
+            self.assertEqual(tasks[0]["complication_outcomes"], [])
+            self.assertTrue(
+                any("progress_outcomes[0]" in warning for warning in loader.warnings)
+            )
+            self.assertTrue(
+                any(".completion_outcomes must be a list" in warning for warning in loader.warnings)
+            )
+
     def test_invalid_class_data_uses_structural_fallback(self):
         with tempfile.TemporaryDirectory() as temp:
             table_dir = Path(temp)
@@ -1002,6 +1052,24 @@ class WorldTests(unittest.TestCase):
             self.assertEqual(restored.player_state.character.age_years, 26)
             self.assertEqual(restored.player_state.age_days_accumulated, 0)
             self.assertIsNone(restored.player_state.active_downtime_task)
+            state.close()
+
+    def test_older_active_downtime_task_defaults_new_outcome_fields(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 20)
+            world = state.generate_new_region()
+            state.create_character("Old Task", "Ranger", state.character_backgrounds()[0])
+            state.start_downtime_task("train_skill")
+            data = world.to_dict()
+            task = data["player_state"]["active_downtime_task"]
+            task.pop("progress_outcomes", None)
+            task.pop("completion_outcomes", None)
+            task.pop("complication_outcomes", None)
+            restored = type(world).from_dict(data)
+            active = restored.player_state.active_downtime_task
+            self.assertEqual(active.progress_outcomes, [])
+            self.assertEqual(active.completion_outcomes, [])
+            self.assertEqual(active.complication_outcomes, [])
             state.close()
 
 
@@ -1489,6 +1557,101 @@ class CalendarAndDowntimeTests(unittest.TestCase):
             finally:
                 state.close()
 
+    def test_downtime_progress_can_add_location_aware_lead(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 102)
+            try:
+                state.create_character("Lead Finder", "Ranger", state.character_backgrounds()[0])
+                player = state.world.player_state
+                known_locations = len(player.known_location_ids)
+                state.start_downtime_task("investigate_rumor")
+                result = state.advance_downtime(1)
+                self.assertIn("Downtime lead:", result)
+                self.assertGreater(len(player.leads), 1)
+                self.assertGreaterEqual(len(player.known_location_ids), known_locations + 1)
+                self.assertTrue(any("Downtime lead:" in entry for entry in player.event_log))
+            finally:
+                state.close()
+
+    def test_downtime_completion_can_add_npc_or_quest_followup(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 103)
+            try:
+                state.create_character("Social Thread", "Ranger", state.character_backgrounds()[0])
+                player = state.world.player_state
+                known_npcs = len(player.known_npc_ids)
+                state.start_downtime_task("build_relationship")
+                result = state.advance_downtime(4)
+                self.assertIn("Relationship lead:", result)
+                self.assertIsNone(player.active_downtime_task)
+                self.assertGreaterEqual(len(player.known_npc_ids), known_npcs + 1)
+                self.assertTrue(any("Relationship lead:" in lead for lead in player.leads))
+            finally:
+                state.close()
+
+    def test_downtime_complication_can_apply_world_aware_resource_cost(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 104)
+            try:
+                state.create_character("Kit Keeper", "Ranger", state.character_backgrounds()[0])
+                player = state.world.player_state
+                supplies_before = player.supplies
+                state.start_downtime_task("maintain_equipment")
+                state.rng = random.Random(1)
+                result = state.advance_downtime(1)
+                self.assertIn("Complication:", result)
+                self.assertEqual(player.supplies, supplies_before - 1)
+                self.assertTrue(any("costs you -1 supply" in entry for entry in player.event_log))
+            finally:
+                state.close()
+
+    def test_downtime_without_new_outcome_fields_uses_safe_defaults(self):
+        with tempfile.TemporaryDirectory() as temp:
+            table_dir = Path(temp)
+            for path in TABLES.glob("*.json"):
+                if path.name == "downtime_tables.json":
+                    continue
+                (table_dir / path.name).write_text(
+                    path.read_text(encoding="utf-8"),
+                    encoding="utf-8",
+                )
+            (table_dir / "downtime_tables.json").write_text(
+                json.dumps(
+                    {
+                        "tasks": [
+                            {
+                                "task_key": "plain_task",
+                                "name": "Plain Task",
+                                "category": "study",
+                                "description": "Old-style task without optional outcomes.",
+                                "default_duration_days": 1,
+                                "allowed_contexts": ["town"],
+                                "progress_text": "{task_name}: progress.",
+                                "completion_text": "{task_name}: complete.",
+                                "complication_text": "{task_name}: complication.",
+                                "tags": ["plain"]
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            state = GameState(
+                TableLoader(table_dir),
+                Database(table_dir / "worlds.db"),
+                random.Random(1),
+            )
+            try:
+                world = state.generate_new_region()
+                state.create_character("Plain Worker", "Ranger", state.character_backgrounds()[0])
+                state.start_downtime_task("plain_task")
+                result = state.advance_downtime(1)
+                self.assertIn("Plain Task: progress.", result)
+                self.assertIn("Plain Task: complete.", result)
+                self.assertTrue(world.player_state.event_log)
+            finally:
+                state.close()
+
     def test_recovery_downtime_can_reduce_wounds(self):
         with tempfile.TemporaryDirectory() as temp:
             state = self.make_state(Path(temp), 100)
@@ -1515,6 +1678,20 @@ class CalendarAndDowntimeTests(unittest.TestCase):
                 self.assertIsNotNone(active)
                 self.assertEqual(active.task_key, "train_skill")
                 self.assertEqual(active.progress_days, 1)
+            finally:
+                state.close()
+
+    def test_downtime_outcomes_appear_in_event_log_export(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 105)
+            try:
+                state.create_character("Export Watcher", "Ranger", state.character_backgrounds()[0])
+                state.start_downtime_task("investigate_rumor")
+                state.advance_downtime(1)
+                exported = export_event_log_text(state.world)
+                self.assertIn("Downtime lead:", exported)
+                self.assertIn("Calendar:", exported)
+                self.assertIn("Downtime:", exported)
             finally:
                 state.close()
 

@@ -259,6 +259,9 @@ class ActiveDowntimeTask:
     completion_text: str = ""
     complication_text: str = ""
     tags: list[str] = field(default_factory=list)
+    progress_outcomes: list[dict[str, Any]] = field(default_factory=list)
+    completion_outcomes: list[dict[str, Any]] = field(default_factory=list)
+    complication_outcomes: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass
@@ -436,6 +439,9 @@ class World:
             downtime_data.setdefault("completion_text", "")
             downtime_data.setdefault("complication_text", "")
             downtime_data.setdefault("tags", [])
+            downtime_data.setdefault("progress_outcomes", [])
+            downtime_data.setdefault("completion_outcomes", [])
+            downtime_data.setdefault("complication_outcomes", [])
             player_data["active_downtime_task"] = ActiveDowntimeTask(**downtime_data)
         else:
             player_data["active_downtime_task"] = None

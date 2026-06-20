@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.7.8 is a local, single-player weird-fantasy starting-region generator
+Version 0.7.9 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -119,6 +119,15 @@ days, logging progress, and applying a few minimal completion effects such as
 recovery, coin, supplies, or new leads. This is a framework for future
 strategic play, not a complete subsystem.
 
+Downtime outcomes are now a little more world-aware without becoming a full
+faction, economy, crafting, or relationship system. Optional JSON-driven
+`progress_outcomes`, `completion_outcomes`, and `complication_outcomes` can
+reference the current settlement, season, known NPCs, locations, rumors,
+threats, dungeon clues, wilderness clues, quest notes, leads, and simple
+inventory context. These outcome hooks remain lightweight and mostly feed the
+existing event log, quest log, leads list, supplies/coin counters, or
+quest-flavored inventory clues.
+
 The database is created automatically at:
 
 ```text
@@ -177,6 +186,15 @@ Downtime tasks follow the same JSON-driven pattern. Add or edit task
 definitions in `data/tables/downtime_tables.json` to change the available
 strategic actions, their default durations, contexts, and log text without
 rewriting Python logic.
+
+Downtime tasks may also include optional world-aware consequence lists:
+
+- `progress_outcomes`
+- `completion_outcomes`
+- `complication_outcomes`
+
+Each outcome entry stays small and rules-neutral. Current supported kinds are
+`event`, `lead`, `quest_note`, `coin`, `supplies`, and `inventory`.
 
 Simple lists choose entries uniformly. The loader also accepts weighted entries:
 
@@ -266,7 +284,8 @@ Tests cover dice formulas, name cleanup and generation, character background
 profiles, structured inventory, schema-aware table validation, generation with
 missing data, generated counts and references, dungeon connectivity, SQLite
 child records, calendar and downtime flow, exporter output, save/load
-reconstruction, reproducible seed behavior, and older-save compatibility.
+reconstruction, reproducible seed behavior, downtime consequence outcomes, and
+older-save compatibility.
 
 Stress coverage now also exercises messy user behavior through the public game
 state API: actions before world generation, actions before character creation,

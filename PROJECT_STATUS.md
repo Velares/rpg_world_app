@@ -3,11 +3,24 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.7.8`
+- Current development version on `main`: `v0.7.9`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.7.9 expands world-aware downtime consequences on `main`:
+
+- Added optional JSON-driven downtime outcome lists for progress, completion,
+  and complication follow-up.
+- Made downtime outcomes capable of referencing current settlement, season,
+  known NPCs, locations, rumors, threats, dungeon clues, wilderness clues,
+  leads, and simple inventory context.
+- Kept the system rules-neutral by routing effects through existing leads,
+  quest notes, event logs, supplies/coin counters, and lightweight clue items
+  instead of adding full faction, economy, crafting, or relationship systems.
+- Preserved older-save compatibility by defaulting missing outcome fields on
+  loaded active downtime tasks.
 
 Version 0.7.8 adds optional seed control for reproducible generation on `main`:
 
@@ -127,6 +140,8 @@ Version 0.7 hardened the data-driven generation foundation:
   persistent event log.
 - Strategic downtime tasks for training, research, recovery, study, labor,
   relationship-building, repair, and maintenance.
+- World-aware downtime consequence hooks for leads, quest notes, resource
+  nudges, and clue-style inventory follow-up.
 - Simple character age tracking with narrative age bands.
 - Tkinter list/detail views, character sheet, player-state display, simple
   export actions, seed entry, downtime controls, save/load, and data
@@ -148,20 +163,20 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 79 tests passing with
+- Current verification: 86 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 14 JSON table files parse with zero
   `TableLoader` warnings.
-- A Tkinter smoke test was attempted again and still could not complete in this
-  environment because the local Python 3.11 install could not find a usable
+- No Tkinter smoke test was attempted for this milestone because GUI behavior
+  was unchanged, and the local Python 3.11 install still lacks a usable
   `init.tcl`.
 - `pytest` is not installed and is not required by the project.
 - Coverage includes dice, checks, names, cleanup/scrubbing, JSON validation,
   connected world generation, missing-data fallbacks, exploration, calendar
   rollovers, downtime flow, character creation, exporter output, variable-size
   table selection, interaction variety, normalized database rows, older-save
-  compatibility, reproducible seed behavior, and randomized/error-handling
-  stress scenarios.
+  compatibility, reproducible seed behavior, world-aware downtime outcomes,
+  and randomized/error-handling stress scenarios.
 
 ## Known issues and boundaries
 
@@ -175,14 +190,14 @@ Version 0.7 hardened the data-driven generation foundation:
 ## Next candidate goals
 
 1. Add a small inventory-management dialog only when gameplay needs it.
-2. Expand downtime consequences with more location, faction, and quest-aware
-   follow-up only if the lightweight framework proves useful in play.
-3. Design later character retirement so retired protagonists can remain in the
+2. Design later character retirement so retired protagonists can remain in the
    same world as NPCs after the calendar/downtime layer settles.
-4. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
+3. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
    available in the local environment.
-5. Consider a small seed-copy or seed-regenerate affordance only if players
+4. Consider a small seed-copy or seed-regenerate affordance only if players
    actually need more than the current single text entry.
+5. Consider a small downtime recap view only if players need clearer review of
+   accumulated leads, quest notes, and clue items.
 
 ## Important files and directories
 

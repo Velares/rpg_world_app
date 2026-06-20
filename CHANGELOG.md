@@ -3,6 +3,24 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.7.9 - World-aware downtime consequences
+
+- Expanded `data/tables/downtime_tables.json` with optional
+  `progress_outcomes`, `completion_outcomes`, and `complication_outcomes`
+  entries for lightweight world-aware downtime follow-up.
+- Added downtime consequence handling that can create leads, add quest notes,
+  spend or recover small resources, and add quest-flavored clue items while
+  routing text through the existing event log.
+- Added world-aware template context for downtime text so outcomes can mention
+  the current settlement, season, known NPCs, locations, rumors, threats,
+  dungeon clues, wilderness clues, and character details without adding new
+  heavy subsystems.
+- Preserved older-save compatibility by defaulting new downtime outcome fields
+  on loaded active tasks.
+- Added regression coverage for downtime consequence progress, completion,
+  complication handling, malformed outcome validation, old-save downtime task
+  defaults, fallback behavior, and export visibility.
+
 ## v0.7.8 - Optional seed control for reproducible generation
 
 - Added optional text-seed support to `app/game_state.py` so the same seed can
