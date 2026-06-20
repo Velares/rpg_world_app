@@ -148,6 +148,10 @@ class GameState:
         append_timeline_entry(
             self.world.player_state,
             f"You begin in {settlement.name}. A frightened rumor offers a lead, not an answer.",
+            action_type="world_start",
+            location_context="town",
+            location_id=settlement.important_locations[0].entity_id,
+            location_name=settlement.name,
         )
         return self.world
 

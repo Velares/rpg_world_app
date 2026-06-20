@@ -1,0 +1,32 @@
+{
+  "deeper_backstories": [
+    "They survived an older crisis that left debts still unpaid.",
+    "Their family history is tangled with an oath nobody admits publicly.",
+    "They once failed someone important and are trying to avoid repeating it."
+  ],
+  "personal_motives": [
+    "They want security without surrendering local influence.",
+    "They hope to turn the region's danger into leverage before someone else does.",
+    "They want one unresolved wrong quietly corrected."
+  ],
+  "hidden_pressures": [
+    "A private obligation is narrowing their choices.",
+    "Someone is quietly demanding more from them than they can safely admit.",
+    "They are holding together a fragile arrangement that could break suddenly."
+  ],
+  "relationship_to_player": [
+    "They see you as useful, worrying, and increasingly hard to ignore.",
+    "They trust your competence more than your judgment.",
+    "They treat you like the kind of ally who can fix a problem or worsen it."
+  ],
+  "ongoing_threads": [
+    "Their future choices keep brushing against your unfinished work.",
+    "They have become a recurring source of leads, caution, and leverage.",
+    "Their private concerns are starting to overlap with the region's wider trouble."
+  ],
+  "prominence_notes": [
+    "They now matter often enough to shape later leads and decisions.",
+    "They have become one of the region's recurring human fault lines.",
+    "They are no longer just local color; they are part of the campaign's ongoing thread."
+  ]
+}

@@ -14,6 +14,7 @@ from app.exporters import (
     inventory_item_text,
 )
 from app.game_state import GameState
+from app.timeline import format_summary_timeline, format_verbose_timeline
 
 
 def label(text: str) -> str:
@@ -205,6 +206,8 @@ class RPGWorldApp(tk.Tk):
             ("Encounter List", self.view_encounters),
             ("Adventure Hook", self.view_hook),
             ("Event Log", self.view_event_log),
+            ("Journal Summary", self.view_timeline_summary),
+            ("Verbose Timeline", self.view_verbose_timeline),
             ("Export Event Log", self.export_event_log),
             ("Export World", self.export_world),
             ("Data Diagnostics", self.view_data_diagnostics),
@@ -626,7 +629,20 @@ class RPGWorldApp(tk.Tk):
         npc = known[index]
         data = asdict(npc)
         data["secret"] = "Unknown — conversation and corroboration may reveal it."
-        self.show(block(npc.name, data), f"Viewing NPC: {npc.name}.")
+        text = block(npc.name, data)
+        if npc.prominent:
+            text += (
+                "\n\nPROMINENT NPC DETAILS\n=====================\n"
+                f"Deeper Backstory: {npc.deeper_backstory or 'Not recorded'}\n"
+                f"Personal Motive: {npc.personal_motive or 'Not recorded'}\n"
+                f"Hidden Pressure: {npc.hidden_pressure or 'Not recorded'}\n"
+                f"Relationship to Player: {npc.relationship_to_player or 'Not recorded'}\n"
+                f"Ongoing Thread: {npc.ongoing_thread or 'Not recorded'}\n"
+                f"Prominence Notes: {npc.prominence_notes or 'Not recorded'}\n"
+                f"Recent Interaction Notes:\n"
+                f"{chr(10).join(f'- {note}' for note in npc.recent_interaction_notes) or '- None'}"
+            )
+        self.show(text, f"Viewing NPC: {npc.name}.")
 
     def view_locations(self) -> None:
         def action():
@@ -786,6 +802,22 @@ class RPGWorldApp(tk.Tk):
     def view_event_log(self) -> None:
         self.guarded(
             lambda: self.show(self.action_log_text(), "Viewing the persistent event log.")
+        )
+
+    def view_timeline_summary(self) -> None:
+        self.guarded(
+            lambda: self.show(
+                format_summary_timeline(self.state.require_world()),
+                "Viewing the journal summary.",
+            )
+        )
+
+    def view_verbose_timeline(self) -> None:
+        self.guarded(
+            lambda: self.show(
+                format_verbose_timeline(self.state.require_world()),
+                "Viewing the verbose timeline.",
+            )
         )
 
     def _default_export_name(self, stem: str) -> str:

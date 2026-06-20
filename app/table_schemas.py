@@ -121,6 +121,14 @@ REQUIRED_CATEGORIES: dict[str, tuple[str, ...]] = {
         "useful_information",
         "possible_services",
     ),
+    "npc_depth_tables": (
+        "deeper_backstories",
+        "personal_motives",
+        "hidden_pressures",
+        "relationship_to_player",
+        "ongoing_threads",
+        "prominence_notes",
+    ),
     "settlement_tables": (
         "settlement_names_prefix",
         "settlement_names_suffix",
@@ -260,6 +268,24 @@ FALLBACKS: dict[tuple[str, str], list[object]] = {
     ("npc_tables", "female_names"): ["Nameless"],
     ("npc_tables", "neutral_names"): ["Nameless"],
     ("npc_tables", "surnames"): ["Wanderer"],
+    ("npc_depth_tables", "deeper_backstories"): [
+        "They carry an old debt from before the current troubles sharpened."
+    ],
+    ("npc_depth_tables", "personal_motives"): [
+        "They want to protect their place in the settlement without drawing open blame."
+    ],
+    ("npc_depth_tables", "hidden_pressures"): [
+        "A private obligation keeps twisting their public choices."
+    ],
+    ("npc_depth_tables", "relationship_to_player"): [
+        "They treat you as a useful but unsettling ally."
+    ],
+    ("npc_depth_tables", "ongoing_threads"): [
+        "Their future choices keep crossing your unfinished business."
+    ],
+    ("npc_depth_tables", "prominence_notes"): [
+        "They now matter often enough to reshape later leads and choices."
+    ],
     ("settlement_tables", "settlement_names_prefix"): ["Gloam"],
     ("settlement_tables", "settlement_names_suffix"): ["rest"],
     ("settlement_tables", "settlement_types"): ["village"],

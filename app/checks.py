@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from app.calendar import advance_time, format_timeline_prefix
 from app.interaction_text import choose_interaction_text
 from app.models import CheckResult, World
+from app.timeline import add_timeline_entry
 from app.table_loader import TableLoader
 
 
@@ -246,3 +247,10 @@ class ActionResolver:
         )
         player.action_log.append(entry)
         player.event_log.append(entry)
+        add_timeline_entry(
+            player,
+            result.narrative_result,
+            action_type="check",
+            location_context=player.current_location,
+            resource_impact=result.consequence,
+        )

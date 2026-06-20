@@ -3,6 +3,7 @@ from __future__ import annotations
 from app.calendar import age_band, format_calendar
 from app.downtime import DowntimeEngine
 from app.models import InventoryItem, World
+from app.timeline import format_summary_timeline, format_verbose_timeline
 
 
 def inventory_item_text(item: InventoryItem, detailed: bool = False) -> str:
@@ -37,6 +38,7 @@ def export_world_summary(world: World | None) -> str:
         for index in player.known_rumor_indices
         if index < len(settlement.rumors)
     ]
+    prominent_npcs = [npc for npc in world.npcs if npc.prominent]
     return (
         f"{world.name.upper()}\n{'=' * len(world.name)}\n"
         f"Created: {world.created_at}\n"
@@ -66,7 +68,13 @@ def export_world_summary(world: World | None) -> str:
         f"{_numbered_lines(known_rumors) or 'No rumors learned yet.'}\n\n"
         f"ACTIVE LEADS\n"
         f"============\n"
-        f"{_bulleted_lines(player.leads) or 'No active leads.'}"
+        f"{_bulleted_lines(player.leads) or 'No active leads.'}\n\n"
+        f"JOURNAL SUMMARY\n"
+        f"===============\n"
+        f"{_body_only(format_summary_timeline(world))}\n\n"
+        f"PROMINENT NPCS\n"
+        f"==============\n"
+        f"{_prominent_npc_lines(prominent_npcs)}"
     )
 
 
@@ -91,6 +99,11 @@ def export_character_text(world: World | None) -> str:
     inventory = "\n".join(
         f"- {inventory_item_text(item, detailed=True)}" for item in player.inventory
     ) or "- Empty"
+    recent_actions = [
+        entry.result_text
+        for entry in player.timeline_entries
+        if entry.action_type in {"travel", "explore", "search", "talk", "encounter", "downtime"}
+    ]
     return (
         f"{character.name.upper()}\n{'=' * len(character.name)}\n"
         f"Class: {character.character_class}\n"
@@ -128,7 +141,13 @@ def export_character_text(world: World | None) -> str:
         f"{bonuses}\n\n"
         f"SPECIAL ABILITY PLACEHOLDER\n"
         f"===========================\n"
-        f"{character.special_ability_placeholder}"
+        f"{character.special_ability_placeholder}\n\n"
+        f"RECENT MAJOR ACTIONS\n"
+        f"====================\n"
+        f"{_bulleted_lines(recent_actions[-5:]) or 'No major actions recorded yet.'}\n\n"
+        f"JOURNAL SUMMARY\n"
+        f"===============\n"
+        f"{_body_only(format_summary_timeline(world))}"
     )
 
 
@@ -163,6 +182,18 @@ def export_event_log_text(world: World | None) -> str:
                 "Use Avoid, Approach, Investigate, or Retreat from Encounter.",
             ]
         )
+    lines.extend(
+        [
+            "",
+            "TIMELINE SUMMARY",
+            "================",
+            _body_only(format_summary_timeline(world)),
+            "",
+            "VERBOSE TIMELINE",
+            "================",
+            _body_only(format_verbose_timeline(world)),
+        ]
+    )
     return "\n".join(lines)
 
 
@@ -176,3 +207,27 @@ def _numbered_lines(values: list[str]) -> str:
 
 def _seed_text(world: World) -> str:
     return world.generation_seed or "Random / not recorded"
+
+
+def _body_only(text: str) -> str:
+    lines = text.splitlines()
+    if len(lines) <= 3:
+        return text
+    return "\n".join(lines[4:]).strip() or text
+
+
+def _prominent_npc_lines(npcs) -> str:
+    if not npcs:
+        return "No prominent recurring NPCs yet."
+    lines = []
+    for npc in npcs:
+        lines.append(
+            f"- {npc.name}: {npc.prominence_notes or 'Recurring figure.'}"
+        )
+        if npc.relationship_to_player:
+            lines.append(f"  Relationship: {npc.relationship_to_player}")
+        if npc.ongoing_thread:
+            lines.append(f"  Ongoing Thread: {npc.ongoing_thread}")
+        if npc.recent_interaction_notes:
+            lines.append(f"  Recent Note: {npc.recent_interaction_notes[-1]}")
+    return "\n".join(lines)

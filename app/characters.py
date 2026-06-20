@@ -112,5 +112,7 @@ class CharacterFactory:
             player,
             f"{character.name}, a {character.character_class} with the "
             f"{character.background} background, takes up the region's unfinished business.",
+            action_type="character",
+            npc_name=character.name,
         )
         return character

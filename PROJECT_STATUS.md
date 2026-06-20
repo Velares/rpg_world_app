@@ -3,11 +3,29 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.7.9`
+- Current development version on `main`: `v0.8.0`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.8.0 adds timeline logging and prominent recurring NPC support on
+`main`:
+
+- Added structured timeline entries alongside the older immediate event log so
+  actions can be reviewed in both verbose and summary form.
+- Logged travel, exploration, searching, inspection, conversation, encounters,
+  downtime, checks, and world-start activity with calendar/time and lightweight
+  NPC/location/lead references.
+- Added recurring-NPC tracking with interaction counts, recent interaction
+  notes, and a simple prominence trigger after repeated meaningful contact.
+- Added placeholder deeper recurring-NPC fields backed by editable JSON text
+  tables so richer personal notes can grow without hard-coding content in
+  Python.
+- Extended plain-text exports and the GUI text views with journal summary,
+  verbose timeline, and prominent-NPC details.
+- Preserved older-save compatibility by defaulting missing timeline and
+  recurring-NPC fields on load.
 
 Version 0.7.9 expands world-aware downtime consequences on `main`:
 
@@ -142,10 +160,14 @@ Version 0.7 hardened the data-driven generation foundation:
   relationship-building, repair, and maintenance.
 - World-aware downtime consequence hooks for leads, quest notes, resource
   nudges, and clue-style inventory follow-up.
+- Structured timeline logging with verbose and summary views.
+- Recurring-NPC tracking with prominence after repeated meaningful
+  interactions.
+- Placeholder recurring-NPC depth notes driven by editable JSON tables.
 - Simple character age tracking with narrative age bands.
 - Tkinter list/detail views, character sheet, player-state display, simple
-  export actions, seed entry, downtime controls, save/load, and data
-  diagnostics.
+  export actions, seed entry, downtime controls, journal/timeline views,
+  save/load, and data diagnostics.
 - SQLite persistence with compatibility defaults for older save shapes.
 
 ## Name generation status
@@ -163,20 +185,21 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 86 tests passing with
+- Current verification: 91 tests passing with
   `python -m unittest discover -s tests -v`.
-- `python -m compileall .` passes, and all 14 JSON table files parse with zero
+- `python -m compileall .` passes, and all 15 JSON table files parse with zero
   `TableLoader` warnings.
-- No Tkinter smoke test was attempted for this milestone because GUI behavior
-  was unchanged, and the local Python 3.11 install still lacks a usable
-  `init.tcl`.
+- No Tkinter smoke test was completed for this milestone because the local
+  Python 3.11 install still lacks a usable `init.tcl`, so GUI-facing behavior
+  was validated indirectly through public state and exporter tests instead.
 - `pytest` is not installed and is not required by the project.
 - Coverage includes dice, checks, names, cleanup/scrubbing, JSON validation,
   connected world generation, missing-data fallbacks, exploration, calendar
   rollovers, downtime flow, character creation, exporter output, variable-size
   table selection, interaction variety, normalized database rows, older-save
   compatibility, reproducible seed behavior, world-aware downtime outcomes,
-  and randomized/error-handling stress scenarios.
+  timeline logging, recurring-NPC promotion, and randomized/error-handling
+  stress scenarios.
 
 ## Known issues and boundaries
 
@@ -189,15 +212,16 @@ Version 0.7 hardened the data-driven generation foundation:
 
 ## Next candidate goals
 
-1. Add a small inventory-management dialog only when gameplay needs it.
+1. Add a compact journal recap or filtered timeline view only if players need
+   easier browsing than the current summary and verbose text output.
 2. Design later character retirement so retired protagonists can remain in the
    same world as NPCs after the calendar/downtime layer settles.
 3. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
    available in the local environment.
 4. Consider a small seed-copy or seed-regenerate affordance only if players
    actually need more than the current single text entry.
-5. Consider a small downtime recap view only if players need clearer review of
-   accumulated leads, quest notes, and clue items.
+5. Deepen recurring NPCs with optional world-aware quest hooks before
+   considering any broader relationship or faction system.
 
 ## Important files and directories
 
@@ -206,6 +230,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - `app/models.py` - dataclasses and older-save compatibility
 - `app/calendar.py` - shared date, time, and aging helpers
 - `app/downtime.py` - strategic downtime task engine
+- `app/timeline.py` - structured timeline logging and recurring-NPC helpers
 - `app/gui.py` - Tkinter interface
 - `app/database.py` - SQLite persistence
 - `app/table_loader.py`, `app/table_schemas.py` - data validation and fallbacks
@@ -216,6 +241,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - `data/tables/` - editable JSON content
 - `data/tables/interaction_tables.json` - dialogue, encounter, and action text
 - `data/tables/downtime_tables.json` - editable downtime task definitions
+- `data/tables/npc_depth_tables.json` - recurring-NPC placeholder depth text
 - `data/names/` - raw and cleaned name datasets
 - `data/tables/item_tables.json` - item definitions and starting gear
 - `data/saves/worlds.db` - current SQLite save database

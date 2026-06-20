@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.7.9 is a local, single-player weird-fantasy starting-region generator
+Version 0.8.0 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -28,7 +28,8 @@ world to SQLite. **Load World** opens a list of prior saves. **Export World**,
 **Export Character**, and **Export Event Log** write plain-text `.txt` files
 for the current active data. When a world is active, **Start Downtime** and
 **Advance Downtime** provide a minimal strategic-play entry point for long-term
-tasks.
+tasks. **Journal Summary** and **Verbose Timeline** show condensed and
+action-by-action campaign logging without replacing the older event log.
 
 Version 0.2 adds explicit links among town problems, NPCs, locations, rumors,
 the dungeon, wilderness signs, and the adventure hook. NPCs, locations, dungeon
@@ -128,6 +129,24 @@ inventory context. These outcome hooks remain lightweight and mostly feed the
 existing event log, quest log, leads list, supplies/coin counters, or
 quest-flavored inventory clues.
 
+Version 0.8.0 adds a reusable timeline and recurring-NPC framework on top of
+the existing event log. The immediate event log still records play in plain
+text, but the app now also stores structured timeline entries with calendar
+date, action type, location context, and lightweight NPC/location/lead
+references. Those entries power both the new verbose timeline view and a simple
+journal-style summary.
+
+NPC conversations now track repeated interaction counts. After a few
+meaningful talks with the same NPC, they become a prominent recurring figure.
+Prominent NPCs receive lightweight placeholder depth such as a deeper
+backstory, personal motive, hidden pressure, relationship note, ongoing
+thread, and recent interaction notes. These details remain generic and
+rules-neutral for now.
+
+Plain-text exports now include the current journal summary, verbose timeline
+sections where appropriate, and prominent recurring NPC notes. Older saves
+still load safely when timeline or NPC-prominence fields are missing.
+
 The database is created automatically at:
 
 ```text
@@ -153,11 +172,13 @@ database on its next launch.
 - `app/downtime.py`: strategic downtime task engine
 - `app/interaction_text.py`: interaction template formatting helpers
 - `app/exporters.py`: plain-text export formatting helpers
+- `app/timeline.py`: structured timeline logging and recurring-NPC helpers
 - `app/checks.py`: generic d20 checks, outcomes, and state consequences
 - `app/generators/`: focused procedural generators
 - `data/tables/`: editable generation content
 - `data/tables/interaction_tables.json`: dialogue, encounter, and action text
 - `data/tables/downtime_tables.json`: downtime task definitions
+- `data/tables/npc_depth_tables.json`: placeholder recurring-NPC depth text
 - `data/saves/`: local SQLite saves
 - `tests/`: standard-library unit tests
 
@@ -195,6 +216,11 @@ Downtime tasks may also include optional world-aware consequence lists:
 
 Each outcome entry stays small and rules-neutral. Current supported kinds are
 `event`, `lead`, `quest_note`, `coin`, `supplies`, and `inventory`.
+
+Recurring-NPC placeholder depth follows the same JSON-driven pattern. Edit
+`data/tables/npc_depth_tables.json` to expand generic backstory, motive,
+pressure, relationship, and ongoing-thread text without hard-coding larger
+lists into Python.
 
 Simple lists choose entries uniformly. The loader also accepts weighted entries:
 
@@ -284,15 +310,15 @@ Tests cover dice formulas, name cleanup and generation, character background
 profiles, structured inventory, schema-aware table validation, generation with
 missing data, generated counts and references, dungeon connectivity, SQLite
 child records, calendar and downtime flow, exporter output, save/load
-reconstruction, reproducible seed behavior, downtime consequence outcomes, and
-older-save compatibility.
+reconstruction, reproducible seed behavior, downtime consequence outcomes,
+timeline logging, recurring-NPC promotion, and older-save compatibility.
 
 Stress coverage now also exercises messy user behavior through the public game
 state API: actions before world generation, actions before character creation,
 repeated searches/talk/rest/retreat/save/load/export sequences, illogical
 encounter and downtime choices, corrupt calendar-like save data, malformed
-table data, and a deterministic randomized action sequence with invariant
-checks after every step.
+table data, malformed timeline/NPC state, and a deterministic randomized action
+sequence with invariant checks after every step.
 
 Minimal guard behavior added for this coverage:
 

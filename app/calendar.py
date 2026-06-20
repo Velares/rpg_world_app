@@ -52,10 +52,13 @@ def format_timeline_prefix(player) -> str:
     )
 
 
-def append_timeline_entry(player, message: str) -> str:
+def append_timeline_entry(player, message: str, **timeline_kwargs) -> str:
     entry = f"{format_timeline_prefix(player)} - {message}"
     player.action_log.append(entry)
     player.event_log.append(entry)
+    from app.timeline import add_timeline_entry
+
+    add_timeline_entry(player, message, **timeline_kwargs)
     return entry
 
 

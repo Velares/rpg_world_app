@@ -62,6 +62,8 @@ class DowntimeEngine:
         append_timeline_entry(
             self.player,
             f"Downtime begins: {active.name}. {active.description}",
+            action_type="downtime",
+            downtime_ref=active.name,
         )
         return f"Started downtime task: {active.name}."
 
@@ -83,7 +85,12 @@ class DowntimeEngine:
             days=days,
             remaining=remaining,
         )
-        append_timeline_entry(self.player, progress_message)
+        append_timeline_entry(
+            self.player,
+            progress_message,
+            action_type="downtime",
+            downtime_ref=active.name,
+        )
 
         parts = [progress_message]
         progress_outcome = self._apply_outcome(
@@ -101,7 +108,12 @@ class DowntimeEngine:
                 days=days,
                 remaining=remaining,
             )
-            append_timeline_entry(self.player, complication)
+            append_timeline_entry(
+                self.player,
+                complication,
+                action_type="downtime",
+                downtime_ref=active.name,
+            )
             parts.append(complication)
             complication_outcome = self._apply_outcome(
                 active.complication_outcomes,
@@ -130,7 +142,12 @@ class DowntimeEngine:
                 if effect_note
                 else completion
             )
-            append_timeline_entry(self.player, full_completion)
+            append_timeline_entry(
+                self.player,
+                full_completion,
+                action_type="downtime",
+                downtime_ref=active.name,
+            )
             parts.append(full_completion)
             if outcome_note:
                 parts.append(outcome_note)
@@ -211,7 +228,12 @@ class DowntimeEngine:
                     quest_related=True,
                 )
             )
-        append_timeline_entry(self.player, text)
+        append_timeline_entry(
+            self.player,
+            text,
+            action_type="downtime",
+            downtime_ref=active.name,
+        )
         return text
 
     def _context(

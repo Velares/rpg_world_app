@@ -3,6 +3,29 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.8.0 - Timeline logging and prominent NPC framework
+
+- Added `app/timeline.py` plus compatibility-safe `TimelineEntry` and NPC
+  interaction fields so play can be recorded in both action-by-action and
+  summary-friendly form without removing the existing event log.
+- Wired exploration actions, downtime progress, checks, character creation,
+  and world start-up into the structured timeline layer with calendar, action,
+  location, and lightweight reference metadata.
+- Added recurring-NPC promotion after repeated meaningful interactions,
+  including placeholder deeper backstory, motive, pressure, relationship,
+  ongoing-thread, and recent-note fields.
+- Added `data/tables/npc_depth_tables.json` so recurring-NPC placeholder depth
+  text remains JSON-driven and editable rather than hard-coded as large prose
+  lists.
+- Expanded plain-text exports and the Tkinter text UI with journal summary,
+  verbose timeline, and prominent-NPC detail views while keeping GUI changes
+  minimal.
+- Preserved older-save compatibility by defaulting missing timeline entries,
+  NPC prominence fields, and recurring-note lists on load.
+- Added regression and stress coverage for timeline formatting, repeated NPC
+  conversations, recurring-NPC promotion, export visibility, and malformed or
+  missing timeline/NPC save data.
+
 ## v0.7.9 - World-aware downtime consequences
 
 - Expanded `data/tables/downtime_tables.json` with optional

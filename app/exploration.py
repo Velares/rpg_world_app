@@ -6,6 +6,7 @@ from app.calendar import advance_time, append_timeline_entry
 from app.interaction_text import choose_interaction_text
 from app.models import DungeonRoom, Encounter, NPC, World
 from app.table_loader import TableLoader
+from app.timeline import record_npc_interaction
 
 
 class ExplorationEngine:
@@ -20,8 +21,8 @@ class ExplorationEngine:
     def player(self):
         return self.world.player_state
 
-    def log(self, message: str) -> str:
-        append_timeline_entry(self.player, message)
+    def log(self, message: str, **timeline_kwargs) -> str:
+        append_timeline_entry(self.player, message, **timeline_kwargs)
         return message
 
     def _advance_time(self, periods: int = 1) -> None:
@@ -46,7 +47,7 @@ class ExplorationEngine:
         if value in collection:
             return False
         collection.append(value)
-        self.log(f"Discovery: {message}")
+        self.log(f"Discovery: {message}", action_type="discovery")
         return True
 
     def _add_lead(self, lead: str) -> None:
@@ -75,7 +76,11 @@ class ExplorationEngine:
         if player.light_turns_remaining <= 0 and player.torches > 0:
             player.torches -= 1
             player.light_turns_remaining = 6
-            self.log("A torch is lit. Its smoke coils toward passages with no wind.")
+            self.log(
+                "A torch is lit. Its smoke coils toward passages with no wind.",
+                action_type="resource",
+                resource_impact="Torch lit",
+            )
         if player.light_turns_remaining > 0:
             player.light_turns_remaining -= 1
 
@@ -101,7 +106,11 @@ class ExplorationEngine:
             player.current_location = "wilderness"
             player.current_room_id = None
             consequence = "You are driven into a worse position in the wilderness."
-        return self.log(f"{reason} {consequence}")
+        return self.log(
+            f"{reason} {consequence}",
+            action_type="resource",
+            resource_impact=consequence,
+        )
 
     def travel(self, destination: str) -> str:
         if destination not in {"town", "wilderness", "dungeon_entrance"}:
@@ -125,7 +134,13 @@ class ExplorationEngine:
                 f" On the road you find warning signs: {encounter.what_player_notices_first} "
                 "You may avoid, approach, investigate, or retreat."
             )
-        return self.log(message)
+        return self.log(
+            message,
+            action_type="travel",
+            location_context=destination,
+            location_name=names[destination],
+            resource_impact="supplies -1, water -1",
+        )
 
     def travel_to_location(self, location_id: str) -> str:
         location = next(
@@ -147,7 +162,13 @@ class ExplorationEngine:
             location.entity_id,
             f"location: {location.name}",
         )
-        return self.log(f"You travel across town to {location.name}. {location.public_description}")
+        return self.log(
+            f"You travel across town to {location.name}. {location.public_description}",
+            action_type="travel",
+            location_context="town",
+            location_id=location.entity_id,
+            location_name=location.name,
+        )
 
     def explore(self) -> str:
         player = self.player
@@ -176,7 +197,11 @@ class ExplorationEngine:
             return self.log(
                 f"You explore {location.name}. {location.public_description} "
                 f"Its keeper is {location.owner_or_keeper}. "
-                f"{self._interaction('town_explore_discovery', location=location.name, owner=location.owner_or_keeper)}"
+                f"{self._interaction('town_explore_discovery', location=location.name, owner=location.owner_or_keeper)}",
+                action_type="explore",
+                location_context="town",
+                location_id=location.entity_id,
+                location_name=location.name,
             )
         if player.current_location == "wilderness":
             return self._explore_wilderness()
@@ -192,7 +217,10 @@ class ExplorationEngine:
             )
             return self.log(
                 f"You enter {self.world.dungeon.name}. "
-                f"{self.world.dungeon.rooms[0].what_player_notices_first}"
+                f"{self.world.dungeon.rooms[0].what_player_notices_first}",
+                action_type="explore",
+                location_context="dungeon",
+                location_name=self.world.dungeon.name,
             )
         if player.current_location == "dungeon":
             return self.inspect_room()
@@ -204,19 +232,28 @@ class ExplorationEngine:
             encounter = self.pending_encounter()
             return self.log(
                 f"The signs persist: {encounter.signs_or_foreshadowing} "
-                "Choose avoid, approach, investigate, or retreat."
+                "Choose avoid, approach, investigate, or retreat.",
+                action_type="explore",
+                location_context="wilderness",
+                npc_name=encounter.creature_or_npc,
             )
         if self.rng.random() < 0.55:
             encounter = self.rng.choice(self.world.wilderness.encounter_table)
             self.player.pending_encounter_id = encounter.entity_id
             return self.log(
                 f"You find warning signs before the danger: {encounter.what_player_notices_first} "
-                f"{encounter.signs_or_foreshadowing} Choose avoid, approach, investigate, or retreat."
+                f"{encounter.signs_or_foreshadowing} Choose avoid, approach, investigate, or retreat.",
+                action_type="explore",
+                location_context="wilderness",
+                npc_name=encounter.creature_or_npc,
             )
         return self.log(
             f"You scout {self.world.wilderness.name} without immediate contact. "
             f"You mark {self.world.wilderness.dominant_feature} as a useful landmark. "
-            f"{self._interaction('wilderness_explore_discovery', feature=self.world.wilderness.dominant_feature)}"
+            f"{self._interaction('wilderness_explore_discovery', feature=self.world.wilderness.dominant_feature)}",
+            action_type="explore",
+            location_context="wilderness",
+            location_name=self.world.wilderness.name,
         )
 
     def pending_encounter(self) -> Encounter:
@@ -356,7 +393,13 @@ class ExplorationEngine:
             raise ValueError("Choose avoid, approach, investigate, or retreat.")
         player.pending_encounter_id = ""
         if not already_logged:
-            self.log(result)
+            self.log(
+                result,
+                action_type="encounter",
+                location_context=player.current_location,
+                npc_name=encounter.creature_or_npc,
+                resource_impact=player.last_consequence or "",
+            )
         return result
 
     def current_room(self) -> DungeonRoom:
@@ -375,7 +418,11 @@ class ExplorationEngine:
         return self.log(
             f"Room {room.room_id}, {room.name}: {room.description} "
             f"First impression: {room.what_player_notices_first} "
-            f"Visible exits: {', '.join(map(str, room.exits))}."
+            f"Visible exits: {', '.join(map(str, room.exits))}.",
+            action_type="inspect",
+            location_context="dungeon",
+            location_id=room.entity_id,
+            location_name=room.name,
         )
 
     def move_room(self, room_id: int) -> str:
@@ -394,7 +441,11 @@ class ExplorationEngine:
             )
         return self.log(
             f"You move to room {room_id}, {destination.name}. "
-            f"{destination.what_player_notices_first}"
+            f"{destination.what_player_notices_first}",
+            action_type="travel",
+            location_context="dungeon",
+            location_id=destination.entity_id,
+            location_name=destination.name,
         )
 
     def search(self) -> str:
@@ -417,7 +468,12 @@ class ExplorationEngine:
                 return self.log(
                     f"You search cautiously and find {room.clue}. Danger detected: "
                     f"{room.trap_or_hazard}. Preparation: {room.preparation_that_helps}. "
-                    f"{self._interaction('search_discovery', clue=room.clue, hazard=room.trap_or_hazard)}"
+                    f"{self._interaction('search_discovery', clue=room.clue, hazard=room.trap_or_hazard)}",
+                    action_type="search",
+                    location_context="dungeon",
+                    location_id=room.entity_id,
+                    location_name=room.name,
+                    lead_ref=room.clue,
                 )
             return self._hardship(f"Searching triggers {room.trap_or_hazard}.")
         if player.current_location == "wilderness":
@@ -439,7 +495,10 @@ class ExplorationEngine:
             return self.log(
                 f"You find {self.world.wilderness.resources}, but note the hazard: "
                 f"{self.world.wilderness.travel_hazards}. "
-                f"{self._interaction('search_discovery', resource=self.world.wilderness.resources)}"
+                f"{self._interaction('search_discovery', resource=self.world.wilderness.resources)}",
+                action_type="search",
+                location_context="wilderness",
+                location_name=self.world.wilderness.name,
             )
         if player.current_location == "town":
             location = self._current_or_random_location()
@@ -448,11 +507,20 @@ class ExplorationEngine:
             )
             return self.log(
                 f"A search around {location.name} reveals: {location.hidden_detail}. "
-                f"{self._interaction('search_discovery', clue=location.hidden_detail, location=location.name)}"
+                f"{self._interaction('search_discovery', clue=location.hidden_detail, location=location.name)}",
+                action_type="search",
+                location_context="town",
+                location_id=location.entity_id,
+                location_name=location.name,
+                lead_ref=location.hidden_detail,
             )
         return self.log(
             f"You search the entrance and find signs: {self.world.dungeon.entrance_description}. "
-            f"{self._interaction('search_discovery', clue=self.world.dungeon.entrance_description)}"
+            f"{self._interaction('search_discovery', clue=self.world.dungeon.entrance_description)}",
+            action_type="search",
+            location_context="dungeon_entrance",
+            location_name=self.world.dungeon.name,
+            lead_ref=self.world.dungeon.entrance_description,
         )
 
     def talk_to_npc(self) -> str:
@@ -485,11 +553,37 @@ class ExplorationEngine:
             self._add_lead(
                 f"Investigate the rumor learned from {npc.name} at {npc.location}: {rumor}"
             )
-        return self.log(
+        note = f"Conversation at {npc.location}"
+        prominence_message = record_npc_interaction(
+            self.world,
+            npc,
+            note,
+            self.rng,
+            self.tables,
+        )
+        result = self.log(
             f"You speak with {npc.name} at {npc.location}. Attitude: "
             f"{npc.attitude_toward_player}. They reveal: {npc.useful_information}. "
-            f"Possible service: {npc.possible_service}. {dialogue_text}{rumor_text}"
+            f"Possible service: {npc.possible_service}. {dialogue_text}{rumor_text}",
+            action_type="talk",
+            location_context="town",
+            npc_id=npc.entity_id,
+            npc_name=npc.name,
+            location_id=location.entity_id,
+            location_name=location.name,
+            lead_ref=rumor if rumor_text else "",
         )
+        if prominence_message:
+            self.log(
+                prominence_message,
+                action_type="npc_prominence",
+                location_context="town",
+                npc_id=npc.entity_id,
+                npc_name=npc.name,
+                location_id=location.entity_id,
+                location_name=location.name,
+            )
+        return result
 
     def inspect_location(self) -> str:
         if self.player.current_location != "town":
@@ -509,7 +603,12 @@ class ExplorationEngine:
         return self.log(
             f"You inspect {location.name}. Publicly: {location.public_description} "
             f"Closer study suggests: {location.hidden_detail}. "
-            f"{self._interaction('inspect_discovery', location=location.name, clue=location.hidden_detail)}"
+            f"{self._interaction('inspect_discovery', location=location.name, clue=location.hidden_detail)}",
+            action_type="inspect",
+            location_context="town",
+            location_id=location.entity_id,
+            location_name=location.name,
+            lead_ref=location.hidden_detail,
         )
 
     def _npc_dialogue_lead(self, npc: NPC, location) -> str:
@@ -630,7 +729,10 @@ class ExplorationEngine:
             else "steady your nerves"
         )
         return self.log(
-            f"You take a {rest_type} rest, consume food and water, and {recovery}."
+            f"You take a {rest_type} rest, consume food and water, and {recovery}.",
+            action_type="rest",
+            location_context=player.current_location,
+            resource_impact=f"food -{cost}, water -{cost}",
         )
 
     def retreat(self) -> str:
@@ -642,8 +744,17 @@ class ExplorationEngine:
             self._spend_turn(supplies=1, water=0)
             return self.log(
                 f"You retreat to the entrance. {self.world.dungeon.rooms[0].retreat_option} "
-                f"{self._interaction('retreat_consequences', location=self.world.dungeon.name)}"
+                f"{self._interaction('retreat_consequences', location=self.world.dungeon.name)}",
+                action_type="retreat",
+                location_context="dungeon_entrance",
+                location_name=self.world.dungeon.name,
+                resource_impact="supplies -1",
             )
         if player.current_location in {"wilderness", "dungeon_entrance"}:
             return self.travel("town")
-        return self.log("You are already within the relative safety of town.")
+        return self.log(
+            "You are already within the relative safety of town.",
+            action_type="retreat",
+            location_context="town",
+            location_name=self.world.settlement.name,
+        )

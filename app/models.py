@@ -41,6 +41,18 @@ class NPC:
     danger_level: str
     entity_id: str = ""
     location_id: str = ""
+    interaction_count: int = 0
+    first_interacted_date: str = ""
+    last_interacted_date: str = ""
+    prominence_score: int = 0
+    prominent: bool = False
+    deeper_backstory: str = ""
+    personal_motive: str = ""
+    hidden_pressure: str = ""
+    relationship_to_player: str = ""
+    ongoing_thread: str = ""
+    prominence_notes: str = ""
+    recent_interaction_notes: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -265,6 +277,23 @@ class ActiveDowntimeTask:
 
 
 @dataclass
+class TimelineEntry:
+    day: int
+    time_period: str
+    action_type: str
+    result_text: str
+    location_context: str = ""
+    npc_id: str = ""
+    npc_name: str = ""
+    location_id: str = ""
+    location_name: str = ""
+    quest_ref: str = ""
+    lead_ref: str = ""
+    downtime_ref: str = ""
+    resource_impact: str = ""
+
+
+@dataclass
 class PlayerState:
     character: PlayerCharacter | None = None
     current_location: str = "town"
@@ -299,6 +328,7 @@ class PlayerState:
     turns_elapsed: int = 0
     age_days_accumulated: int = 0
     active_downtime_task: ActiveDowntimeTask | None = None
+    timeline_entries: list[TimelineEntry] = field(default_factory=list)
 
     def inventory_item(self, item_key_or_name: str) -> InventoryItem | None:
         needle = item_key_or_name.casefold()
@@ -479,6 +509,13 @@ class World:
             player_data["age_days_accumulated"] = 0
         else:
             player_data["age_days_accumulated"] = max(0, player_data["age_days_accumulated"])
+        timeline_data = player_data.get("timeline_entries", [])
+        if isinstance(timeline_data, list):
+            player_data["timeline_entries"] = [
+                TimelineEntry(**item) for item in timeline_data if isinstance(item, dict)
+            ]
+        else:
+            player_data["timeline_entries"] = []
         inventory_data = player_data.get("inventory")
         if inventory_data is None:
             player_data["inventory"] = default_inventory()
@@ -509,6 +546,21 @@ class World:
         for item in npc_data:
             item.setdefault("entity_id", new_id("npc"))
             item.setdefault("location_id", "")
+            item.setdefault("interaction_count", 0)
+            item.setdefault("first_interacted_date", "")
+            item.setdefault("last_interacted_date", "")
+            item.setdefault("prominence_score", 0)
+            item.setdefault("prominent", False)
+            item.setdefault("deeper_backstory", "")
+            item.setdefault("personal_motive", "")
+            item.setdefault("hidden_pressure", "")
+            item.setdefault("relationship_to_player", "")
+            item.setdefault("ongoing_thread", "")
+            item.setdefault("prominence_notes", "")
+            notes = item.get("recent_interaction_notes", [])
+            item["recent_interaction_notes"] = [
+                str(note) for note in notes if isinstance(note, str) and note
+            ]
         hook_data = data["adventure_hook"]
         hook_data.setdefault("entity_id", new_id("hook"))
         hook_data.setdefault("key_npc_id", "")

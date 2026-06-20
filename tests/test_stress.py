@@ -74,6 +74,14 @@ class StressTests(unittest.TestCase):
             self.assertGreater(item.quantity, 0)
         self.assertTrue(all(isinstance(entry, str) for entry in player.event_log))
         self.assertTrue(all(isinstance(entry, str) for entry in player.action_log))
+        self.assertIsInstance(player.timeline_entries, list)
+        for entry in player.timeline_entries:
+            self.assertIsInstance(entry.day, int)
+            self.assertGreaterEqual(entry.day, 1)
+            self.assertIn(entry.time_period, TIME_PERIODS)
+            self.assertIsInstance(entry.action_type, str)
+            self.assertTrue(entry.action_type)
+            self.assertIsInstance(entry.result_text, str)
         self.assertIsInstance(player.quest_log, list)
         self.assertIsInstance(player.leads, list)
         self.assertTrue(all(isinstance(value, str) for value in player.known_npc_ids))
@@ -85,6 +93,14 @@ class StressTests(unittest.TestCase):
         self.assertTrue(
             player.pending_encounter_id == "" or player.pending_encounter_id in valid_encounters
         )
+        for npc in world.npcs:
+            self.assertIsInstance(npc.interaction_count, int)
+            self.assertGreaterEqual(npc.interaction_count, 0)
+            self.assertIsInstance(npc.prominence_score, int)
+            self.assertGreaterEqual(npc.prominence_score, 0)
+            self.assertIsInstance(npc.prominent, bool)
+            self.assertIsInstance(npc.recent_interaction_notes, list)
+            self.assertTrue(all(isinstance(note, str) for note in npc.recent_interaction_notes))
         if player.current_room_id is not None:
             valid_rooms = {room.room_id for room in world.dungeon.rooms}
             self.assertIn(player.current_room_id, valid_rooms)
@@ -240,6 +256,10 @@ class StressTests(unittest.TestCase):
             loaded_data["player_state"]["character"] = None
             loaded_data["player_state"].pop("active_downtime_task", None)
             loaded_data["player_state"].pop("age_days_accumulated", None)
+            loaded_data["player_state"].pop("timeline_entries", None)
+            for npc in loaded_data["npcs"]:
+                npc.pop("prominent", None)
+                npc.pop("recent_interaction_notes", None)
             restored = type(loaded).from_dict(loaded_data)
             state.world = restored
             self.assertIn("NO PLAYER CHARACTER", export_character_text(state.world))

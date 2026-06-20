@@ -23,6 +23,11 @@ from app.generators.settlement_generator import SettlementGenerator
 from app.models import InventoryItem, PlayerState
 from app.name_generator import NameDataError, NameGenerator
 from app.table_loader import TableLoader
+from app.timeline import (
+    PROMINENT_NPC_THRESHOLD,
+    format_summary_timeline,
+    format_verbose_timeline,
+)
 from tools.clean_names import clean_name_file, find_raw_name_file
 from tools.scrub_names import is_suspicious_name, scrub_name_file
 
@@ -1692,6 +1697,134 @@ class CalendarAndDowntimeTests(unittest.TestCase):
                 self.assertIn("Downtime lead:", exported)
                 self.assertIn("Calendar:", exported)
                 self.assertIn("Downtime:", exported)
+            finally:
+                state.close()
+
+
+class TimelineAndNpcTests(unittest.TestCase):
+    def make_state(self, folder: Path, seed: int = 1) -> GameState:
+        state = GameState(
+            TableLoader(TABLES),
+            Database(folder / "worlds.db"),
+            random.Random(seed),
+        )
+        state.generate_new_region("timeline-seed")
+        return state
+
+    def test_timeline_formatters_handle_empty_state(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 106)
+            try:
+                world = state.world
+                world.player_state.timeline_entries.clear()
+                summary = format_summary_timeline(world)
+                verbose = format_verbose_timeline(world)
+                self.assertIn("No timeline activity has been summarized yet.", summary)
+                self.assertIn("No structured timeline entries recorded yet.", verbose)
+            finally:
+                state.close()
+
+    def test_talking_repeatedly_promotes_npc_to_prominent(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 107)
+            try:
+                player = state.world.player_state
+                first_known = state.world.npcs[0]
+                for npc in state.world.npcs[1:]:
+                    npc.location_id = "other_location"
+                player.current_location = "town"
+                player.current_location_id = first_known.location_id
+                for _ in range(PROMINENT_NPC_THRESHOLD):
+                    state.talk_to_npc()
+                    player.current_location = "town"
+                    player.current_location_id = first_known.location_id
+                npc = next(item for item in state.world.npcs if item.entity_id == first_known.entity_id)
+                self.assertTrue(npc.prominent)
+                self.assertGreaterEqual(npc.interaction_count, PROMINENT_NPC_THRESHOLD)
+                self.assertTrue(npc.deeper_backstory)
+                self.assertTrue(npc.personal_motive)
+                self.assertTrue(npc.recent_interaction_notes)
+                self.assertTrue(
+                    any(
+                        entry.action_type == "npc_prominence" and entry.npc_id == npc.entity_id
+                        for entry in player.timeline_entries
+                    )
+                )
+            finally:
+                state.close()
+
+    def test_timeline_entries_capture_action_metadata(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 108)
+            try:
+                state.search()
+                state.talk_to_npc()
+                state.travel("wilderness")
+                player = state.world.player_state
+                action_types = {entry.action_type for entry in player.timeline_entries}
+                self.assertIn("search", action_types)
+                self.assertIn("talk", action_types)
+                self.assertIn("travel", action_types)
+                self.assertTrue(any(entry.location_context for entry in player.timeline_entries))
+                verbose = format_verbose_timeline(state.world)
+                self.assertIn("VERBOSE TIMELINE", verbose)
+                self.assertIn("SEARCH", verbose)
+            finally:
+                state.close()
+
+    def test_exports_include_timeline_and_prominent_npc_sections(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 109)
+            try:
+                state.create_character("Journal Keeper", "Ranger", state.character_backgrounds()[0])
+                first_known = state.world.npcs[0]
+                for npc in state.world.npcs[1:]:
+                    npc.location_id = "other_location"
+                state.world.player_state.current_location = "town"
+                state.world.player_state.current_location_id = first_known.location_id
+                for _ in range(PROMINENT_NPC_THRESHOLD):
+                    state.talk_to_npc()
+                    state.world.player_state.current_location = "town"
+                    state.world.player_state.current_location_id = first_known.location_id
+                world_text = export_world_summary(state.world)
+                character_text = export_character_text(state.world)
+                event_text = export_event_log_text(state.world)
+                self.assertIn("JOURNAL SUMMARY", world_text)
+                self.assertIn("PROMINENT NPCS", world_text)
+                self.assertIn("RECENT MAJOR ACTIONS", character_text)
+                self.assertIn("TIMELINE SUMMARY", event_text)
+                self.assertIn("VERBOSE TIMELINE", event_text)
+            finally:
+                state.close()
+
+    def test_older_save_defaults_missing_timeline_and_prominence_fields(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 110)
+            try:
+                data = state.world.to_dict()
+                data["player_state"].pop("timeline_entries", None)
+                npc = data["npcs"][0]
+                for key in (
+                    "interaction_count",
+                    "first_interacted_date",
+                    "last_interacted_date",
+                    "prominence_score",
+                    "prominent",
+                    "deeper_backstory",
+                    "personal_motive",
+                    "hidden_pressure",
+                    "relationship_to_player",
+                    "ongoing_thread",
+                    "prominence_notes",
+                    "recent_interaction_notes",
+                ):
+                    npc.pop(key, None)
+                restored = type(state.world).from_dict(data)
+                restored_npc = restored.npcs[0]
+                self.assertEqual(restored.player_state.timeline_entries, [])
+                self.assertFalse(restored_npc.prominent)
+                self.assertEqual(restored_npc.interaction_count, 0)
+                self.assertEqual(restored_npc.recent_interaction_notes, [])
             finally:
                 state.close()
 
