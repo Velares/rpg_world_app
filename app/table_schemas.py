@@ -36,6 +36,7 @@ REQUIRED_CATEGORIES: dict[str, tuple[str, ...]] = {
         "noncombat_paths",
     ),
     "class_tables": ("backgrounds", "classes"),
+    "downtime_tables": ("tasks",),
     "item_tables": ("item_definitions", "common_loadout", "class_loadouts"),
     "interaction_tables": (
         "npc_dialogue_rumor",
@@ -200,6 +201,20 @@ DEFAULT_CHARACTER_CLASS = {
 FALLBACKS: dict[tuple[str, str], list[object]] = {
     ("class_tables", "backgrounds"): ["Wanderer"],
     ("class_tables", "classes"): [DEFAULT_CHARACTER_CLASS],
+    ("downtime_tables", "tasks"): [
+        {
+            "task_key": "recover_from_injury",
+            "name": "Recover from Injury",
+            "category": "recovery",
+            "description": "Set aside time to heal, reorganize, and recover your nerve.",
+            "default_duration_days": 3,
+            "allowed_contexts": ["town", "any"],
+            "progress_text": "{task_name}: {progress_days}/{total_days} recovery days completed.",
+            "completion_text": "{task_name} is complete. You can re-enter the field with steadier footing.",
+            "complication_text": "{task_name}: a setback costs time and forces slower recovery.",
+            "tags": ["recovery", "fallback"],
+        }
+    ],
     ("item_tables", "item_definitions"): [
         {
             "item_key": "basic_gear",

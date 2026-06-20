@@ -73,6 +73,8 @@ class TableLoader:
                 return self._validate_loadout_entries(file_name, category, values)
             if category == "class_loadouts":
                 return self._validate_class_loadouts(file_name, category, values)
+        if file_name == "downtime_tables.json" and category == "tasks":
+            return self._validate_downtime_tasks(file_name, category, values)
 
         clean: list[Any] = []
         for index, item in enumerate(values):
@@ -270,6 +272,70 @@ class TableLoader:
                 name: bonuses[name] for name in BONUS_NAMES
             }
             clean.append(normalized)
+        return clean
+
+    def _validate_downtime_tasks(
+        self, file_name: str, category: str, values: list[Any]
+    ) -> list[dict[str, Any]]:
+        clean: list[dict[str, Any]] = []
+        seen_keys: set[str] = set()
+        for index, item in enumerate(values):
+            location = f"{file_name}:{category}[{index}]"
+            if not isinstance(item, dict):
+                self._warn(f"{location} must be an object")
+                continue
+            required_text = (
+                "task_key",
+                "name",
+                "category",
+                "description",
+                "progress_text",
+                "completion_text",
+                "complication_text",
+            )
+            if any(
+                not isinstance(item.get(field), str) or not item[field].strip()
+                for field in required_text
+            ):
+                self._warn(f"{location} is missing a required non-empty text field")
+                continue
+            duration = item.get("default_duration_days")
+            contexts = item.get("allowed_contexts", [])
+            tags = item.get("tags", [])
+            if (
+                not isinstance(duration, int)
+                or isinstance(duration, bool)
+                or duration <= 0
+                or not isinstance(contexts, list)
+                or not contexts
+                or any(not isinstance(value, str) or not value.strip() for value in contexts)
+                or not isinstance(tags, list)
+                or any(not isinstance(value, str) or not value.strip() for value in tags)
+            ):
+                self._warn(
+                    f"{location} requires a positive duration plus text "
+                    "allowed_contexts and tags lists"
+                )
+                continue
+            task_key = item["task_key"].strip()
+            if task_key.casefold() in seen_keys:
+                self._warn(f"{location} duplicates task key {task_key!r}")
+                continue
+            seen_keys.add(task_key.casefold())
+            clean.append(
+                {
+                    "task_key": task_key,
+                    "name": item["name"].strip(),
+                    "category": item["category"].strip(),
+                    "description": item["description"].strip(),
+                    "default_duration_days": duration,
+                    "allowed_contexts": [value.strip() for value in contexts],
+                    "progress_text": item["progress_text"].strip(),
+                    "completion_text": item["completion_text"].strip(),
+                    "complication_text": item["complication_text"].strip(),
+                    "tags": [value.strip() for value in tags],
+                }
+            )
         return clean
 
     def _validate_required_categories(self) -> None:

@@ -3,11 +3,26 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.7.5`
+- Current development version on `main`: `v0.7.6`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.7.6 adds a calendar, aging, and strategic-downtime framework on
+`main`:
+
+- Added a shared weird-fantasy calendar layer with year, season, day, and time
+  period derived from the existing playable turn structure.
+- Centralized tactical time advancement so exploration, travel, checks, rests,
+  retreat, and downtime all move through the same calendar logic.
+- Added JSON-driven downtime task definitions plus a lightweight one-task
+  strategic-play loop for starting, advancing, completing, and complicating
+  long-term work.
+- Added simple character aging in years with narrative age bands and safe
+  defaults for older saves.
+- Kept the framework rules-neutral and avoided full skill, spell, crafting,
+  economy, or relationship subsystems.
 
 Version 0.7.5 expands dialogue and encounter variety on `main`:
 
@@ -86,9 +101,13 @@ Version 0.7 hardened the data-driven generation foundation:
   interaction tables.
 - Generic d20 checks with five outcome grades and exploration consequences.
 - Travel, searching, conversations, rest, retreat, dungeon room movement,
-  resource use, time periods, discoveries, quest log, and persistent event log.
+  resource use, a shared calendar/time model, discoveries, quest log, and
+  persistent event log.
+- Strategic downtime tasks for training, research, recovery, study, labor,
+  relationship-building, repair, and maintenance.
+- Simple character age tracking with narrative age bands.
 - Tkinter list/detail views, character sheet, player-state display, simple
-  export actions, save/load, and data diagnostics.
+  export actions, downtime controls, save/load, and data diagnostics.
 - SQLite persistence with compatibility defaults for older save shapes.
 
 ## Name generation status
@@ -105,17 +124,18 @@ Version 0.7 hardened the data-driven generation foundation:
 ## Testing status
 
 - Test suite: `tests/test_core.py`
-- Current verification: 57 tests passing with
+- Current verification: 67 tests passing with
   `python -m unittest discover -s tests -v`.
-- `python -m compileall .` passes, and all 13 JSON table files parse with zero
+- `python -m compileall .` passes, and all 14 JSON table files parse with zero
   `TableLoader` warnings.
 - A Tkinter smoke test could not complete in this environment because the local
   Python 3.11 install could not find a usable `init.tcl`.
 - `pytest` is not installed and is not required by the project.
 - Coverage includes dice, checks, names, cleanup/scrubbing, JSON validation,
-  connected world generation, missing-data fallbacks, exploration, character
-  creation, exporter output, variable-size table selection, interaction
-  variety, normalized database rows, and older-save compatibility.
+  connected world generation, missing-data fallbacks, exploration, calendar
+  rollovers, downtime flow, character creation, exporter output, variable-size
+  table selection, interaction variety, normalized database rows, and
+  older-save compatibility.
 
 ## Known issues and boundaries
 
@@ -131,15 +151,18 @@ Version 0.7 hardened the data-driven generation foundation:
 
 1. Add optional seed entry for reproducible generation.
 2. Add a small inventory-management dialog only when gameplay needs it.
-3. Consider richer export options only after the plain-text flow settles.
-4. Expand location, faction, and quest-specific consequences only if the
-   added narrative range starts to feel repetitive.
+3. Expand downtime consequences with more location, faction, and quest-aware
+   follow-up only if the lightweight framework proves useful in play.
+4. Design later character retirement so retired protagonists can remain in the
+   same world as NPCs after the calendar/downtime layer settles.
 
 ## Important files and directories
 
 - `main.py` - application entry point
 - `app/game_state.py` - generation coordination and active world
 - `app/models.py` - dataclasses and older-save compatibility
+- `app/calendar.py` - shared date, time, and aging helpers
+- `app/downtime.py` - strategic downtime task engine
 - `app/gui.py` - Tkinter interface
 - `app/database.py` - SQLite persistence
 - `app/table_loader.py`, `app/table_schemas.py` - data validation and fallbacks
@@ -149,6 +172,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - `app/generators/` - focused procedural generators
 - `data/tables/` - editable JSON content
 - `data/tables/interaction_tables.json` - dialogue, encounter, and action text
+- `data/tables/downtime_tables.json` - editable downtime task definitions
 - `data/names/` - raw and cleaned name datasets
 - `data/tables/item_tables.json` - item definitions and starting gear
 - `data/saves/worlds.db` - current SQLite save database

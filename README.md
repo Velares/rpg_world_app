@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.7.4 is a local, single-player weird-fantasy starting-region generator
+Version 0.7.6 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -25,6 +25,8 @@ Click **Generate New Region**, then use the viewing buttons to inspect the
 region. **Save World** writes the active world to SQLite. **Load World** opens a
 list of prior saves. **Export World**, **Export Character**, and
 **Export Event Log** write plain-text `.txt` files for the current active data.
+When a world is active, **Start Downtime** and **Advance Downtime** provide a
+minimal strategic-play entry point for long-term tasks.
 
 Version 0.2 adds explicit links among town problems, NPCs, locations, rumors,
 the dungeon, wilderness signs, and the adventure hook. NPCs, locations, dungeon
@@ -68,6 +70,20 @@ active character sheet, and the persistent event log. Exported character text
 keeps inventory records and resource counters separate so food, water, torches,
 coin, and supplies are not duplicated as consumable inventory quantities.
 
+The current working tree also adds a simple weird-fantasy calendar and
+strategic downtime framework on top of the existing tactical loop. Local
+actions still advance through Morning, Afternoon, Evening, and Night, but
+those turns now map to an in-world calendar with year, season, and day. The
+same framework also supports long-term downtime tasks such as training,
+research, recovery, relationship-building, maintenance, and rumor
+investigation without introducing full skill, spell, crafting, or economy
+systems.
+
+Characters now track a simple age in years plus a narrative age band. Time
+passing through normal play and downtime can eventually advance age, but the
+effects remain light and rules-neutral. Older saves still load safely with
+default age and downtime state.
+
 Conversation, searching, exploring, inspecting, retreating, and wilderness
 encounter resolution now produce more varied narrative results while staying
 rules-neutral. The text for these interaction outcomes is editable through
@@ -83,6 +99,14 @@ social, lore, survival, or stealth bonus. Outcomes range from critical failure
 to critical success and can cost time or supplies, inflict wounds, attract
 attention, reveal clues, or alter the character's position. This is still an
 exploration framework rather than a full combat ruleset.
+
+Strategic downtime remains intentionally lightweight. The JSON-driven task
+definitions in `data/tables/downtime_tables.json` describe duration, context,
+progress text, completion text, complication text, and tags. The current
+implementation supports starting one active task at a time, advancing it by
+days, logging progress, and applying a few minimal completion effects such as
+recovery, coin, supplies, or new leads. This is a framework for future
+strategic play, not a complete subsystem.
 
 The database is created automatically at:
 
@@ -105,12 +129,15 @@ database on its next launch.
 - `app/characters.py`: rules-light class loading and character creation
 - `app/character_profiles.py`: JSON-driven personal background details
 - `app/inventory.py`: item catalog and class starting-loadout construction
+- `app/calendar.py`: shared calendar, aging, and timeline helpers
+- `app/downtime.py`: strategic downtime task engine
 - `app/interaction_text.py`: interaction template formatting helpers
 - `app/exporters.py`: plain-text export formatting helpers
 - `app/checks.py`: generic d20 checks, outcomes, and state consequences
 - `app/generators/`: focused procedural generators
 - `data/tables/`: editable generation content
 - `data/tables/interaction_tables.json`: dialogue, encounter, and action text
+- `data/tables/downtime_tables.json`: downtime task definitions
 - `data/saves/`: local SQLite saves
 - `tests/`: standard-library unit tests
 
@@ -134,6 +161,11 @@ rather than assuming 30 rows or a fixed dice index.
 Interaction text follows the same pattern. Dialogue lead variety and encounter
 resolution flavor live in editable JSON categories, so the narrative range can
 grow without moving large prose lists into Python code.
+
+Downtime tasks follow the same JSON-driven pattern. Add or edit task
+definitions in `data/tables/downtime_tables.json` to change the available
+strategic actions, their default durations, contexts, and log text without
+rewriting Python logic.
 
 Simple lists choose entries uniformly. The loader also accepts weighted entries:
 
@@ -222,13 +254,20 @@ python -m unittest discover -s tests -v
 Tests cover dice formulas, name cleanup and generation, character background
 profiles, structured inventory, schema-aware table validation, generation with
 missing data, generated counts and references, dungeon connectivity, SQLite
-child records, save/load reconstruction, and older-save compatibility.
+child records, calendar and downtime flow, exporter output, save/load
+reconstruction, and older-save compatibility.
 
 ## Current boundaries
 
-The app has a lightweight exploration game loop and character scaffold, but not
-tactical combat. Visual maps, detailed combat resolution, deterministic seed
-controls, multiplayer, and web/server features are intentionally deferred.
+The app has a lightweight exploration game loop, calendar/downtime framework,
+and character scaffold, but not tactical combat. Visual maps, detailed combat
+resolution, deterministic seed controls, multiplayer, and web/server features
+are intentionally deferred.
+
+Future direction: a player character may eventually retire and remain in the
+same generated world as an NPC. That should build on the existing world and NPC
+structures in a later milestone rather than being folded into the first-pass
+calendar/downtime implementation.
 
 The domain and persistence layers do not depend on Tkinter, which keeps later
 migration to a web or server interface practical.

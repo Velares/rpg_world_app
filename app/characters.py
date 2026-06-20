@@ -3,6 +3,7 @@ from __future__ import annotations
 import random
 from dataclasses import dataclass
 
+from app.calendar import append_timeline_entry
 from app.character_profiles import CharacterProfileGenerator
 from app.inventory import InventoryCatalog
 from app.models import PlayerCharacter, World
@@ -94,6 +95,7 @@ class CharacterFactory:
             ideal=profile.ideal,
             bond=profile.bond,
             flaw=profile.flaw,
+            age_years=self.rng.randint(18, 60),
         )
         player = world.player_state
         player.character = character
@@ -106,11 +108,9 @@ class CharacterFactory:
             definition.class_name
         ):
             player.ensure_inventory_item(item)
-        entry = (
-            f"Day {player.day}, {player.time_period} — {character.name}, a "
-            f"{character.character_class} with the {character.background} background, "
-            "takes up the region's unfinished business."
+        append_timeline_entry(
+            player,
+            f"{character.name}, a {character.character_class} with the "
+            f"{character.background} background, takes up the region's unfinished business.",
         )
-        player.action_log.append(entry)
-        player.event_log.append(entry)
         return character

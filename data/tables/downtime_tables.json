@@ -1,0 +1,124 @@
+{
+  "tasks": [
+    {
+      "task_key": "train_skill",
+      "name": "Train a Skill",
+      "category": "training",
+      "description": "Practice a demanding discipline until your movements and judgment become more reliable.",
+      "default_duration_days": 5,
+      "allowed_contexts": ["town"],
+      "progress_text": "{task_name}: {progress_days}/{total_days} days of drills and repetition are behind you.",
+      "completion_text": "{task_name} is complete. You feel readier for the next practical test.",
+      "complication_text": "{task_name}: a poor lesson, injury scare, or missing mentor slows progress.",
+      "tags": ["training", "skill"]
+    },
+    {
+      "task_key": "research_spell",
+      "name": "Research a Spell",
+      "category": "research",
+      "description": "Study forbidden notes, symbols, and secondhand reports without turning this into a full spell system.",
+      "default_duration_days": 6,
+      "allowed_contexts": ["town"],
+      "progress_text": "{task_name}: {progress_days}/{total_days} days of notes and cross-reference work reveal a little more.",
+      "completion_text": "{task_name} is complete. You now hold a clearer theory, warning, or ritual lead for later use.",
+      "complication_text": "{task_name}: a source contradicts itself, costs more time, or hints at a risk you did not expect.",
+      "tags": ["research", "arcane"]
+    },
+    {
+      "task_key": "learn_trade",
+      "name": "Learn a Trade",
+      "category": "trade",
+      "description": "Apprentice yourself briefly to pick up practical labor, etiquette, and local working knowledge.",
+      "default_duration_days": 5,
+      "allowed_contexts": ["town"],
+      "progress_text": "{task_name}: {progress_days}/{total_days} days of repetitive work start to build confidence.",
+      "completion_text": "{task_name} is complete. You come away with better local understanding and a usable contact.",
+      "complication_text": "{task_name}: tools break, a patron argues over terms, or the work proves harder than expected.",
+      "tags": ["trade", "social"]
+    },
+    {
+      "task_key": "recover_from_injury",
+      "name": "Recover from Injury",
+      "category": "recovery",
+      "description": "Rest, eat, and accept careful treatment while your body and nerves catch up with recent danger.",
+      "default_duration_days": 3,
+      "allowed_contexts": ["town", "dungeon_entrance"],
+      "progress_text": "{task_name}: {progress_days}/{total_days} days of recovery have passed.",
+      "completion_text": "{task_name} is complete. You are steadier and better prepared to return to the field.",
+      "complication_text": "{task_name}: pain, cost, or restless fear makes recovery slower than planned.",
+      "tags": ["recovery", "injury"]
+    },
+    {
+      "task_key": "investigate_rumor",
+      "name": "Investigate a Rumor",
+      "category": "investigation",
+      "description": "Follow a lead through taverns, shrines, ledgers, and half-trusted witnesses.",
+      "default_duration_days": 4,
+      "allowed_contexts": ["town", "wilderness"],
+      "progress_text": "{task_name}: {progress_days}/{total_days} days of questions and comparisons narrow the truth.",
+      "completion_text": "{task_name} is complete. The rumor is now grounded in firmer evidence or a sharper contradiction.",
+      "complication_text": "{task_name}: someone notices your questions and starts steering you off course.",
+      "tags": ["investigation", "rumor"]
+    },
+    {
+      "task_key": "build_relationship",
+      "name": "Build a Relationship",
+      "category": "social",
+      "description": "Spend deliberate time building trust with an NPC, group, or local household.",
+      "default_duration_days": 4,
+      "allowed_contexts": ["town"],
+      "progress_text": "{task_name}: {progress_days}/{total_days} days of conversation and favors deepen familiarity.",
+      "completion_text": "{task_name} is complete. A bond, ally, or dependable introduction has taken shape.",
+      "complication_text": "{task_name}: a misunderstanding, rival, or local trouble strains the connection.",
+      "tags": ["social", "relationship"]
+    },
+    {
+      "task_key": "craft_or_repair",
+      "name": "Craft or Repair Something",
+      "category": "craft",
+      "description": "Patch, alter, or assemble something useful without adding a full crafting ruleset.",
+      "default_duration_days": 3,
+      "allowed_contexts": ["town"],
+      "progress_text": "{task_name}: {progress_days}/{total_days} days of measured work improve the result.",
+      "completion_text": "{task_name} is complete. The project is usable, reinforced, or ready for field testing.",
+      "complication_text": "{task_name}: missing parts or a flawed attempt force rework.",
+      "tags": ["craft", "repair"]
+    },
+    {
+      "task_key": "work_for_coin",
+      "name": "Work for Coin",
+      "category": "labor",
+      "description": "Take honest or dubious temporary work to keep your purse from running dry.",
+      "default_duration_days": 3,
+      "allowed_contexts": ["town"],
+      "progress_text": "{task_name}: {progress_days}/{total_days} days of labor earn a little standing and pay.",
+      "completion_text": "{task_name} is complete. You finish the contract and leave with wages or leverage.",
+      "complication_text": "{task_name}: an employer delays payment or asks for more than first promised.",
+      "tags": ["coin", "labor"]
+    },
+    {
+      "task_key": "study_target",
+      "name": "Study a Location, Faction, or Monster",
+      "category": "study",
+      "description": "Review fragments, tracks, old stories, and practical reports to prepare for future action.",
+      "default_duration_days": 4,
+      "allowed_contexts": ["town", "wilderness", "dungeon_entrance"],
+      "progress_text": "{task_name}: {progress_days}/{total_days} days of focused study reveal patterns.",
+      "completion_text": "{task_name} is complete. Your notes now support a stronger plan or safer approach.",
+      "complication_text": "{task_name}: the subject changes, hides itself, or leaves conflicting evidence behind.",
+      "tags": ["study", "preparation"]
+    },
+    {
+      "task_key": "maintain_equipment",
+      "name": "Maintain Equipment",
+      "category": "maintenance",
+      "description": "Sort, clean, patch, and secure the gear you depend on between expeditions.",
+      "default_duration_days": 2,
+      "allowed_contexts": ["town", "dungeon_entrance", "wilderness"],
+      "progress_text": "{task_name}: {progress_days}/{total_days} days of maintenance restore order to your kit.",
+      "completion_text": "{task_name} is complete. Your gear is cleaner, safer, and easier to trust.",
+      "complication_text": "{task_name}: hidden wear, dampness, or missing parts force extra attention.",
+      "tags": ["equipment", "maintenance"]
+    }
+  ]
+}

@@ -3,6 +3,7 @@ from __future__ import annotations
 import random
 from dataclasses import dataclass
 
+from app.calendar import advance_time, format_timeline_prefix
 from app.interaction_text import choose_interaction_text
 from app.models import CheckResult, World
 from app.table_loader import TableLoader
@@ -215,15 +216,7 @@ class ActionResolver:
         return clue
 
     def _advance_time(self) -> None:
-        periods = ["Morning", "Afternoon", "Evening", "Night"]
-        player = self.player
-        index = periods.index(player.time_period)
-        if index == len(periods) - 1:
-            player.day += 1
-            player.time_period = periods[0]
-        else:
-            player.time_period = periods[index + 1]
-        player.turns_elapsed += 1
+        advance_time(self.player, 1)
 
     def _validate_context(self, action_key: str) -> None:
         location = self.player.current_location
@@ -244,7 +237,7 @@ class ActionResolver:
     def _log(self, result: CheckResult) -> None:
         player = self.player
         entry = (
-            f"Day {player.day}, {player.time_period} — CHECK: {result.action_name} "
+            f"{format_timeline_prefix(player)} - CHECK: {result.action_name} "
             f"[{result.bonus_type.title()}] d20 {result.roll_result} "
             f"{result.bonus_used:+d} = {result.total} vs "
             f"{result.difficulty_name} DC {result.difficulty_class}: "

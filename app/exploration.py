@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 
+from app.calendar import advance_time, append_timeline_entry
 from app.interaction_text import choose_interaction_text
 from app.models import DungeonRoom, Encounter, NPC, World
 from app.table_loader import TableLoader
@@ -20,22 +21,11 @@ class ExplorationEngine:
         return self.world.player_state
 
     def log(self, message: str) -> str:
-        entry = f"Day {self.player.day}, {self.player.time_period} — {message}"
-        self.player.action_log.append(entry)
-        self.player.event_log.append(entry)
+        append_timeline_entry(self.player, message)
         return message
 
     def _advance_time(self, periods: int = 1) -> None:
-        periods_of_day = ["Morning", "Afternoon", "Evening", "Night"]
-        player = self.player
-        for _ in range(periods):
-            index = periods_of_day.index(player.time_period)
-            if index == len(periods_of_day) - 1:
-                player.day += 1
-                player.time_period = periods_of_day[0]
-            else:
-                player.time_period = periods_of_day[index + 1]
-            player.turns_elapsed += 1
+        advance_time(self.player, periods)
 
     def _spend_turn(
         self,
@@ -60,7 +50,7 @@ class ExplorationEngine:
         return True
 
     def _add_lead(self, lead: str) -> None:
-        self._discover(self.player.leads, lead, f"New lead — {lead}")
+        self._discover(self.player.leads, lead, f"New lead - {lead}")
 
     def _interaction(self, category: str, **context) -> str:
         merged = {

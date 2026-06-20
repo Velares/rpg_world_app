@@ -3,6 +3,25 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.7.6 - Calendar, aging, and downtime framework
+
+- Added `app/calendar.py` to centralize campaign date formatting, time
+  advancement, age-band labeling, and long-term aging updates.
+- Added `data/tables/downtime_tables.json` plus schema-aware validation and
+  fallbacks for JSON-driven downtime task definitions.
+- Added `app/downtime.py` and one-active-task support for starting,
+  progressing, completing, and occasionally complicating strategic downtime.
+- Wired exploration actions, travel, rest, retreat, and generic action checks
+  into the shared calendar/time helper so tactical play advances time
+  consistently.
+- Added simple character age tracking, age bands, downtime summaries, and
+  calendar information to player-state display and plain-text exports.
+- Preserved save/load compatibility with defaults for older characters and
+  player-state saves that predate calendar-aging-downtime fields.
+- Added regression coverage for calendar initialization, rollovers, downtime
+  loading/fallbacks, task progress/completion, age advancement, exports, and
+  save compatibility.
+
 ## v0.7.5 - Dialogue leads and encounter variety
 
 - Added `data/tables/interaction_tables.json` for JSON-driven dialogue leads,

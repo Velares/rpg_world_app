@@ -5,6 +5,8 @@ from dataclasses import asdict
 from pathlib import Path
 from tkinter import filedialog, messagebox, simpledialog, ttk
 
+from app.calendar import age_band, format_calendar
+from app.downtime import DowntimeEngine
 from app.exporters import (
     export_character_text,
     export_event_log_text,
@@ -235,6 +237,8 @@ class RPGWorldApp(tk.Tk):
             ("Inspect Room", lambda: self.perform_action(self.state.inspect_room)),
             ("Short Rest", lambda: self.perform_action(self.state.rest)),
             ("Full Rest", lambda: self.perform_action(self.state.full_rest)),
+            ("Start Downtime", self.start_downtime),
+            ("Advance Downtime", self.advance_downtime),
             ("Retreat", lambda: self.perform_action(self.state.retreat)),
             ("Avoid Encounter", lambda: self.encounter_choice("avoid")),
             ("Approach Encounter", lambda: self.encounter_choice("approach")),
@@ -332,7 +336,8 @@ class RPGWorldApp(tk.Tk):
             return
         player = self.state.world.player_state
         identity = (
-            f"{player.character.name}, {player.character.character_class}"
+            f"{player.character.name}, {player.character.character_class}, "
+            f"age {player.character.age_years} ({age_band(player.character.age_years)})"
             if player.character
             else "No character created"
         )
@@ -343,11 +348,14 @@ class RPGWorldApp(tk.Tk):
             else f"unlit, {player.torches} torches"
         )
         self.player_state_var.set(
-            f"Character: {identity}    Day {player.day}, {player.time_period}\n"
+            f"Character: {identity}\n"
+            f"Calendar: {format_calendar(player.day, player.time_period)}    "
+            f"Day {player.day}, {player.time_period}\n"
             f"Location: "
             f"{player.current_location}{room}    Wounds: {player.wounds}\n"
             f"Supplies: {player.supplies}    Food: {player.food}    Water: {player.water}    "
             f"Torches/Light: {light}    Coin: {player.coin}\n"
+            f"Downtime: {DowntimeEngine.summarize(player.active_downtime_task)}\n"
             f"Inventory: "
             f"{', '.join(inventory_item_text(item) for item in player.inventory) or 'empty'}\n"
             f"Known: {len(player.known_npc_ids)} NPCs, "
@@ -438,6 +446,48 @@ class RPGWorldApp(tk.Tk):
             )
             if selection is not None:
                 message = self.state.travel_to_location(known[selection - 1].entity_id)
+                self.hide_index()
+                self.update_player_state()
+                self.show(self.action_log_text(), message)
+
+        self.guarded(run)
+
+    def start_downtime(self) -> None:
+        def run():
+            tasks = self.state.available_downtime_tasks()
+            if not tasks:
+                raise RuntimeError("No downtime tasks are available from the current location.")
+            prompt = "\n".join(
+                f"{index}. {task['name']} ({task['default_duration_days']} days)"
+                for index, task in enumerate(tasks, 1)
+            )
+            selection = simpledialog.askinteger(
+                "Start Downtime",
+                f"Available downtime tasks:\n{prompt}\n\nChoose a number:",
+                parent=self,
+                minvalue=1,
+                maxvalue=len(tasks),
+            )
+            if selection is not None:
+                message = self.state.start_downtime_task(tasks[selection - 1]["task_key"])
+                self.hide_index()
+                self.update_player_state()
+                self.show(self.action_log_text(), message)
+
+        self.guarded(run)
+
+    def advance_downtime(self) -> None:
+        def run():
+            days = simpledialog.askinteger(
+                "Advance Downtime",
+                "Advance downtime by how many days?",
+                parent=self,
+                minvalue=1,
+                maxvalue=30,
+                initialvalue=1,
+            )
+            if days is not None:
+                message = self.state.advance_downtime(days)
                 self.hide_index()
                 self.update_player_state()
                 self.show(self.action_log_text(), message)

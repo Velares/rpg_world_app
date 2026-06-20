@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from app.calendar import age_band, format_calendar
+from app.downtime import DowntimeEngine
 from app.models import InventoryItem, World
 
 
@@ -38,6 +40,8 @@ def export_world_summary(world: World | None) -> str:
     return (
         f"{world.name.upper()}\n{'=' * len(world.name)}\n"
         f"Created: {world.created_at}\n"
+        f"Calendar: {format_calendar(player.day, player.time_period)}\n"
+        f"Downtime: {DowntimeEngine.summarize(player.active_downtime_task)}\n"
         f"Settlement: {settlement.name} ({settlement.type})\n"
         f"Condition: {settlement.condition}\n"
         f"Population: {settlement.population}\n"
@@ -90,6 +94,10 @@ def export_character_text(world: World | None) -> str:
         f"{character.name.upper()}\n{'=' * len(character.name)}\n"
         f"Class: {character.character_class}\n"
         f"Background: {character.background}\n"
+        f"Age: {character.age_years}\n"
+        f"Age Band: {age_band(character.age_years)}\n"
+        f"Current Calendar: {format_calendar(player.day, player.time_period)}\n"
+        f"Downtime: {DowntimeEngine.summarize(player.active_downtime_task)}\n"
         f"Role: {character.role_description}\n"
         f"Starting Supplies: {character.starting_supplies}\n\n"
         f"BACKGROUND DETAILS\n"
@@ -130,7 +138,14 @@ def export_event_log_text(world: World | None) -> str:
             "Generate or load a world first."
         )
     player = world.player_state
-    lines = ["EVENT LOG", "=========", ""]
+    lines = [
+        "EVENT LOG",
+        "=========",
+        "",
+        f"Calendar: {format_calendar(player.day, player.time_period)}",
+        f"Downtime: {DowntimeEngine.summarize(player.active_downtime_task)}",
+        "",
+    ]
     if player.event_log:
         lines.extend(
             f"{index}. {entry}" for index, entry in enumerate(player.event_log, 1)

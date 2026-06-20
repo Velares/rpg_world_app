@@ -179,6 +179,7 @@ class PlayerCharacter:
     ideal: str = ""
     bond: str = ""
     flaw: str = ""
+    age_years: int = 26
 
 
 @dataclass
@@ -246,6 +247,21 @@ class CheckResult:
 
 
 @dataclass
+class ActiveDowntimeTask:
+    task_key: str
+    name: str
+    category: str
+    description: str = ""
+    required_days: int = 1
+    progress_days: int = 0
+    allowed_contexts: list[str] = field(default_factory=list)
+    progress_text: str = ""
+    completion_text: str = ""
+    complication_text: str = ""
+    tags: list[str] = field(default_factory=list)
+
+
+@dataclass
 class PlayerState:
     character: PlayerCharacter | None = None
     current_location: str = "town"
@@ -278,6 +294,8 @@ class PlayerState:
     last_consequence: str = ""
     last_check: CheckResult | None = None
     turns_elapsed: int = 0
+    age_days_accumulated: int = 0
+    active_downtime_task: ActiveDowntimeTask | None = None
 
     def inventory_item(self, item_key_or_name: str) -> InventoryItem | None:
         needle = item_key_or_name.casefold()
@@ -394,6 +412,7 @@ class World:
                 "flaw",
             ):
                 character_data.setdefault(field_name, "")
+            character_data.setdefault("age_years", 26)
             player_data["character"] = PlayerCharacter(**character_data)
         else:
             player_data["character"] = None
@@ -402,6 +421,19 @@ class World:
             player_data["last_check"] = CheckResult(**check_data)
         else:
             player_data["last_check"] = None
+        downtime_data = player_data.get("active_downtime_task")
+        if isinstance(downtime_data, dict):
+            downtime_data.setdefault("description", "")
+            downtime_data.setdefault("required_days", 1)
+            downtime_data.setdefault("progress_days", 0)
+            downtime_data.setdefault("allowed_contexts", [])
+            downtime_data.setdefault("progress_text", "")
+            downtime_data.setdefault("completion_text", "")
+            downtime_data.setdefault("complication_text", "")
+            downtime_data.setdefault("tags", [])
+            player_data["active_downtime_task"] = ActiveDowntimeTask(**downtime_data)
+        else:
+            player_data["active_downtime_task"] = None
         # Version 0.3 exploration fields are defaulted so older saves remain playable.
         player_data.setdefault("current_location", "town")
         player_data.setdefault("current_location_id", "")
@@ -423,6 +455,7 @@ class World:
         player_data.setdefault("attention", 0)
         player_data.setdefault("last_consequence", "")
         player_data.setdefault("turns_elapsed", 0)
+        player_data.setdefault("age_days_accumulated", 0)
         inventory_data = player_data.get("inventory")
         if inventory_data is None:
             player_data["inventory"] = default_inventory()

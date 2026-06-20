@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from app.calendar import age_band, calendar_date
 from app.database import Database
 from app.characters import BONUS_NAMES, CharacterFactory
 from app.character_profiles import CharacterProfileGenerator
@@ -326,6 +327,12 @@ class WorldTests(unittest.TestCase):
         self.assertTrue(loader.get("interaction_tables", "encounter_approach_trade"))
         self.assertTrue(loader.get("interaction_tables", "check_success_additions"))
 
+    def test_downtime_tables_load_expected_task_definitions(self):
+        loader = TableLoader(TABLES)
+        tasks = loader.get("downtime_tables", "tasks")
+        self.assertTrue(any(task["task_key"] == "train_skill" for task in tasks))
+        self.assertTrue(any(task["task_key"] == "recover_from_injury" for task in tasks))
+
     def test_table_loader_filters_bad_entries_and_deduplicates_warnings(self):
         with tempfile.TemporaryDirectory() as temp:
             table_dir = Path(temp)
@@ -428,6 +435,36 @@ class WorldTests(unittest.TestCase):
                     in warning
                     for warning in loader.warnings
                 )
+            )
+
+    def test_malformed_downtime_tables_use_safe_fallback(self):
+        with tempfile.TemporaryDirectory() as temp:
+            table_dir = Path(temp)
+            (table_dir / "downtime_tables.json").write_text(
+                json.dumps(
+                    {
+                        "tasks": [
+                            {
+                                "task_key": "broken",
+                                "name": "",
+                                "category": "study",
+                                "default_duration_days": 0,
+                                "allowed_contexts": [],
+                                "progress_text": "",
+                                "completion_text": "",
+                                "complication_text": "",
+                                "tags": [],
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            loader = TableLoader(table_dir)
+            tasks = loader.get("downtime_tables", "tasks")
+            self.assertEqual(tasks[0]["task_key"], "recover_from_injury")
+            self.assertTrue(
+                any("downtime_tables.json:tasks[0]" in warning for warning in loader.warnings)
             )
 
     def test_invalid_class_data_uses_structural_fallback(self):
@@ -885,6 +922,21 @@ class WorldTests(unittest.TestCase):
             self.assertIsNone(restored.player_state.character)
             state.close()
 
+    def test_older_character_and_player_state_get_age_and_downtime_defaults(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 19)
+            world = state.generate_new_region()
+            state.create_character("Nera Vale", "Scholar", state.character_backgrounds()[0])
+            data = world.to_dict()
+            data["player_state"]["character"].pop("age_years")
+            data["player_state"].pop("age_days_accumulated", None)
+            data["player_state"].pop("active_downtime_task", None)
+            restored = type(world).from_dict(data)
+            self.assertEqual(restored.player_state.character.age_years, 26)
+            self.assertEqual(restored.player_state.age_days_accumulated, 0)
+            self.assertIsNone(restored.player_state.active_downtime_task)
+            state.close()
+
 
 class ExporterTests(unittest.TestCase):
     def make_state(self, folder: Path, seed: int = 1) -> GameState:
@@ -900,6 +952,8 @@ class ExporterTests(unittest.TestCase):
             world = state.generate_new_region()
             text = export_world_summary(world)
             self.assertIn(world.name.upper(), text)
+            self.assertIn("Calendar:", text)
+            self.assertIn("Downtime:", text)
             self.assertIn("KNOWN CONTACTS AND LEADS", text)
             self.assertIn("RUMOR LEADS", text)
             self.assertIn("ACTIVE LEADS", text)
@@ -936,6 +990,9 @@ class ExporterTests(unittest.TestCase):
                     quantity=2,
                 )
                 text = export_character_text(world)
+                self.assertIn("Age:", text)
+                self.assertIn("Age Band:", text)
+                self.assertIn("Current Calendar:", text)
                 self.assertIn("Trail Rations x2 (Supply) [consumable]", text)
                 self.assertIn("RESOURCES", text)
                 self.assertIn("Food: 9", text)
@@ -955,6 +1012,8 @@ class ExporterTests(unittest.TestCase):
             world.player_state.event_log = []
             text = export_event_log_text(world)
             self.assertIn("No events recorded yet.", text)
+            self.assertIn("Calendar:", text)
+            self.assertIn("Downtime:", text)
             world.player_state.pending_encounter_id = "enc_test"
             text = export_event_log_text(world)
             self.assertIn("DANGER IS PENDING", text)
@@ -1270,6 +1329,103 @@ class ActionCheckTests(unittest.TestCase):
                 self.assertIn(message, exported)
             finally:
                 state.close()
+
+
+class CalendarAndDowntimeTests(unittest.TestCase):
+    def make_state(self, folder: Path, seed: int = 1) -> GameState:
+        state = GameState(
+            TableLoader(TABLES),
+            Database(folder / "worlds.db"),
+            random.Random(seed),
+        )
+        state.generate_new_region()
+        return state
+
+    def test_calendar_initialization_uses_weird_fantasy_season_labels(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 96)
+            current = calendar_date(
+                state.world.player_state.day,
+                state.world.player_state.time_period,
+            )
+            self.assertEqual(current.year, 1000)
+            self.assertEqual(current.season, "Thaw")
+            self.assertEqual(current.day_of_season, 1)
+            self.assertEqual(current.time_period, "Morning")
+            state.close()
+
+    def test_calendar_rolls_from_one_season_to_the_next(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 97)
+            player = state.world.player_state
+            player.day = 30
+            player.time_period = "Night"
+            state.search()
+            current = calendar_date(player.day, player.time_period)
+            self.assertEqual((player.day, player.time_period), (31, "Morning"))
+            self.assertEqual(current.season, "Emberwake")
+            self.assertEqual(current.day_of_season, 1)
+            state.close()
+
+    def test_age_band_labels_cover_expected_ranges(self):
+        self.assertEqual(age_band(20), "Young Adult")
+        self.assertEqual(age_band(30), "Adult")
+        self.assertEqual(age_band(50), "Seasoned")
+        self.assertEqual(age_band(70), "Elder")
+        self.assertEqual(age_band(90), "Ancient")
+
+    def test_age_increases_after_enough_calendar_time_passes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 98)
+            state.create_character("Iven Gloam", "Ranger", state.character_backgrounds()[0])
+            player = state.world.player_state
+            initial_age = player.character.age_years
+            state.start_downtime_task("study_target")
+            state.advance_downtime(120)
+            self.assertEqual(player.character.age_years, initial_age + 1)
+            self.assertEqual(player.age_days_accumulated, 0)
+            state.close()
+
+    def test_starting_advancing_and_completing_downtime_updates_state(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 99)
+            player = state.world.player_state
+            start_day = player.day
+            message = state.start_downtime_task("work_for_coin")
+            self.assertIn("Started downtime task", message)
+            self.assertIsNotNone(player.active_downtime_task)
+            coin_before = player.coin
+            result = state.advance_downtime(3)
+            self.assertIn("work", result.lower())
+            self.assertIsNone(player.active_downtime_task)
+            self.assertEqual(player.day, start_day + 3)
+            self.assertGreater(player.coin, coin_before)
+            self.assertTrue(any("Downtime begins:" in entry for entry in player.event_log))
+            self.assertTrue(any("Work for Coin" in entry for entry in player.event_log))
+            state.close()
+
+    def test_recovery_downtime_can_reduce_wounds(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 100)
+            player = state.world.player_state
+            player.wounds = 2
+            state.start_downtime_task("recover_from_injury")
+            state.advance_downtime(3)
+            self.assertEqual(player.wounds, 1)
+            state.close()
+
+    def test_active_downtime_task_survives_save_and_load(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 101)
+            state.start_downtime_task("train_skill")
+            state.advance_downtime(1)
+            world_id = state.save_world("Downtime Save")
+            loaded = state.load_world(world_id)
+            active = loaded.player_state.active_downtime_task
+            self.assertIsNotNone(active)
+            self.assertEqual(active.task_key, "train_skill")
+            self.assertEqual(active.progress_days, 1)
+            state.close()
 
 
 if __name__ == "__main__":

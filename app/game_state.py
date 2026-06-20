@@ -3,9 +3,11 @@ from __future__ import annotations
 import random
 from datetime import datetime
 
+from app.calendar import append_timeline_entry
 from app.database import Database
 from app.characters import CharacterFactory
 from app.checks import ActionResolver
+from app.downtime import DowntimeEngine
 from app.exploration import ExplorationEngine
 from app.generators.adventure_generator import AdventureGenerator
 from app.generators.dungeon_generator import DungeonGenerator
@@ -91,12 +93,6 @@ class GameState:
             current_location_id=settlement.important_locations[0].entity_id,
             quest_log=[f"Investigate {hook.major_goal}"],
             hexes=hexes,
-            action_log=[
-                f"Day 1, Morning — You begin in {settlement.name}. A frightened rumor offers a lead, not an answer."
-            ],
-            event_log=[
-                f"Day 1, Morning — You begin in {settlement.name}. A frightened rumor offers a lead, not an answer."
-            ],
             known_npc_ids=[npcs[0].entity_id],
             known_location_ids=[settlement.important_locations[0].entity_id],
             known_rumor_indices=[0],
@@ -114,6 +110,10 @@ class GameState:
             local_threat=settlement.nearby_danger,
             player_state=player_state,
             created_at=datetime.now().astimezone().isoformat(timespec="seconds"),
+        )
+        append_timeline_entry(
+            self.world.player_state,
+            f"You begin in {settlement.name}. A frightened rumor offers a lead, not an answer.",
         )
         return self.world
 
@@ -177,6 +177,9 @@ class GameState:
 
     def exploration(self) -> ExplorationEngine:
         return ExplorationEngine(self.require_world(), self.rng, self.tables)
+
+    def downtime(self) -> DowntimeEngine:
+        return DowntimeEngine(self.require_world(), self.tables, self.rng)
 
     def travel(self, destination: str) -> str:
         return self.exploration().travel(destination)
@@ -265,6 +268,15 @@ class GameState:
 
     def retreat(self) -> str:
         return self.exploration().retreat()
+
+    def available_downtime_tasks(self) -> list[dict]:
+        return self.downtime().available_tasks()
+
+    def start_downtime_task(self, task_key: str) -> str:
+        return self.downtime().start_task(task_key)
+
+    def advance_downtime(self, days: int = 1) -> str:
+        return self.downtime().advance_task(days)
 
     def close(self) -> None:
         self.database.close()

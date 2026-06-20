@@ -13,14 +13,27 @@ older save data.
 ## Current Status
 
 - Tagged release: `v0.7.3`
-- Current development version on `main`: `v0.7.5`
+- Current development version on `main`: `v0.7.6`
 - Current branch: `main`
-- Current development state: `main` includes the `v0.7.5` dialogue and
-  encounter-variety milestone beyond the tagged `v0.7.3` release
-- Latest completed commit before this docs/versioning pass: `a697acc` -
-  `Prepare v0.7.4 export and table flexibility update`
+- Current development state: `main` includes the `v0.7.6` calendar, aging,
+  and downtime milestone beyond the tagged `v0.7.3` release
+- Latest completed commit before this docs/versioning pass: `ac9977f` -
+  `Prepare v0.7.5 dialogue and encounter variety update`
 
 Recent milestone completed:
+
+- Added a shared weird-fantasy calendar layer with year, season, day, and
+  time-period tracking built on the existing exploration loop
+- Added JSON-driven downtime task definitions and a lightweight one-task
+  strategic-play framework for starting, advancing, completing, and
+  complicating long-term work
+- Added simple character aging in years with narrative age bands and safe
+  defaults for older saves
+- Added minimal Tkinter downtime actions plus calendar, age, and downtime
+  information in the player-state and export views
+- Preserved save/load compatibility by defaulting new fields for older saves
+
+Previous completed milestone:
 
 - Added a dedicated JSON-driven interaction-text table for NPC dialogue leads,
   encounter outcomes, and action flavor text
@@ -49,7 +62,7 @@ Previous completed milestone:
 
 Verified on the current milestone:
 
-- `python -m unittest discover -s tests -v` -> 57 tests passing
+- `python -m unittest discover -s tests -v` -> 67 tests passing
 - `python -m compileall .` -> passing
 - All files under `data/tables/` parse with zero unexpected `TableLoader`
   warnings
@@ -86,6 +99,18 @@ Environment note:
 - Hardened JSON-driven content loading and validation
 - Added diagnostics and fallbacks for malformed or missing generation data
 - Added cached large name-file loading
+
+### v0.7.6
+
+- Added `app/calendar.py` for shared calendar, aging, and timeline helpers
+- Added `app/downtime.py` plus `data/tables/downtime_tables.json` for
+  strategic downtime tasks
+- Centralized time advancement across exploration, checks, rests, and
+  downtime
+- Added age tracking, age bands, downtime summaries, and calendar output to
+  exports and player-state views
+- Added regression tests for calendar rollovers, downtime progress, aging,
+  export visibility, and older-save defaults
 
 ### v0.7.5
 
@@ -132,6 +157,7 @@ Environment note:
   Combat, Exploration, Social, Lore, Survival, and Stealth
 - Generate descriptive profile details:
   origin, formative event, personality trait, ideal, bond, and flaw
+- Track a simple character age in years with a narrative age band
 
 ### Inventory and resources
 
@@ -160,6 +186,8 @@ Environment note:
 - Retreat from danger
 - Track days and time periods:
   Morning, Afternoon, Evening, and Night
+- Map tactical time into an in-world calendar with year, season, day, and time
+  period
 - Track discovered people, locations, rumors, threats, and rooms over time
 
 ### Action checks and consequences
@@ -181,6 +209,16 @@ Environment note:
 - See more varied narrative resolutions such as negotiated outcomes, trade,
   help, odd omens, failed-forward complications, and costly successes
 - Emphasize scouting, negotiation, caution, and escape over tactical combat
+
+### Strategic downtime
+
+- Start one active downtime task at a time
+- Advance downtime by days instead of individual tactical turns
+- Use JSON-driven task definitions for training, research, recovery, study,
+  labor, repair, maintenance, rumor work, and relationship-building
+- Log downtime starts, progress, complications, and completion in the event log
+- Apply a few light completion effects such as recovery, coin, supplies, or
+  new leads without introducing a full subsystem
 
 ### Persistence, logs, and exports
 
@@ -216,7 +254,8 @@ Intentionally not implemented yet:
 ## Next Candidate Goals
 
 1. Add optional seed entry for reproducible generation.
-2. Add a small inventory-management dialog only when gameplay needs it.
-3. Consider richer export options only after the plain-text flow settles.
-4. Expand location, faction, and quest-specific consequences only if the
-   added narrative range starts to feel repetitive.
+2. Expand downtime consequences with more location, faction, and quest-aware
+   follow-up only if the lightweight framework proves useful in play.
+3. Add a small inventory-management dialog only when gameplay needs it.
+4. Design later character retirement so retired protagonists can remain in the
+   same world as NPCs after the calendar/downtime layer settles.
