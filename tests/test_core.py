@@ -17,6 +17,16 @@ from app.exporters import (
     export_world_summary,
 )
 from app.game_state import GameState
+from app.gui import (
+    ADVENTURE_MODE,
+    DEFAULT_GUI_MODE,
+    TOWN_MODE,
+    action_check_labels,
+    format_world_recap,
+    mode_gameplay_labels,
+    mode_sidebar_labels,
+    shared_action_labels,
+)
 from app.inventory import InventoryCatalog
 from app.key_npcs import KEY_NPC_THRESHOLD, RELATIONSHIP_STATES
 from app.generators.npc_generator import NPCGenerator
@@ -1963,6 +1973,60 @@ class TimelineAndNpcTests(unittest.TestCase):
                 self.assertEqual(relationship.relationship_state, "ally")
                 self.assertIsInstance(relationship.affinity_score, int)
                 self.assertEqual(relationship.recent_event_notes, [])
+            finally:
+                state.close()
+
+
+class GuiHelperTests(unittest.TestCase):
+    def make_state(self, folder: Path, seed: int = 1) -> GameState:
+        state = GameState(
+            TableLoader(TABLES),
+            Database(folder / "worlds.db"),
+            random.Random(seed),
+        )
+        state.generate_new_region("gui-mode-seed")
+        return state
+
+    def test_mode_helper_labels_match_town_and_adventure_split(self):
+        self.assertEqual(DEFAULT_GUI_MODE, TOWN_MODE)
+        self.assertIn("Create Character", mode_sidebar_labels(TOWN_MODE))
+        self.assertIn("Settlement Overview", mode_sidebar_labels(TOWN_MODE))
+        self.assertIn("Generate New Region", mode_sidebar_labels(ADVENTURE_MODE))
+        self.assertIn("Dungeon Overview", mode_sidebar_labels(ADVENTURE_MODE))
+        self.assertIn("Start Downtime", mode_gameplay_labels(TOWN_MODE))
+        self.assertIn("Travel to Wilderness", mode_gameplay_labels(ADVENTURE_MODE))
+        self.assertIn("Journal / World Recap", shared_action_labels())
+        self.assertIn("Export Event Log", shared_action_labels())
+        self.assertIn("Search Area", action_check_labels())
+        with self.assertRaises(ValueError):
+            mode_sidebar_labels("Campfire Mode")
+
+    def test_world_recap_handles_missing_world(self):
+        text = format_world_recap(None)
+        self.assertIn("WORLD RECAP", text)
+        self.assertIn("Generate or load a world first.", text)
+
+    def test_world_recap_surfaces_current_state_summary(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 117)
+            try:
+                state.create_character("Recap Watcher", "Ranger", state.character_backgrounds()[0])
+                world = state.world
+                npc = world.npcs[0]
+                npc.is_key_npc = True
+                npc.faction_tag = "local_traders"
+                npc.key_npc_reason = "They have become central to local intrigue."
+                world.faction_status_notes["local_traders"] = "stable"
+                world.player_state.event_log.append("A market whisper points back to the shrine.")
+                text = format_world_recap(world)
+                self.assertIn("Seed: gui-mode-seed", text)
+                self.assertIn("Character: Recap Watcher, Ranger", text)
+                self.assertIn("ACTIVE LEADS", text)
+                self.assertIn("QUEST NOTES", text)
+                self.assertIn("KEY NPCS", text)
+                self.assertIn(npc.name, text)
+                self.assertIn("local_traders: stable", text)
+                self.assertIn("JOURNAL SUMMARY", text)
             finally:
                 state.close()
 

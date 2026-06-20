@@ -3,6 +3,26 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.8.2 - GUI mode split and journal recap
+
+- Split the Tkinter action layout into two primary modes: `Town Mode` for
+  social, recovery, downtime, and management play, plus `Adventure Mode` for
+  travel, exploration, encounter-facing actions, and field checks.
+- Added shared cross-mode actions for viewing the character, opening the new
+  journal/world recap, saving, loading, exporting logs/worlds/characters, and
+  viewing diagnostics without duplicating gameplay logic.
+- Added a plain-text `Journal / World Recap` view that highlights the current
+  calendar, character, location, downtime, resources, leads, quest notes,
+  clues, key NPCs, faction notes, recent events, and journal summary in one
+  place.
+- Kept public action handlers guarded so hidden or mode-specific buttons are
+  not the only protection against missing world, missing character, or other
+  invalid state.
+- Deferred larger simulated-time controls for a future milestone to keep the
+  GUI split small and reviewable.
+- Added non-Tk helper coverage for GUI mode routing and recap formatting,
+  bringing the validated suite to 100 passing `unittest` tests.
+
 ## v0.8.1 - Key NPC and faction-interaction phase framework
 
 - Added lightweight key-NPC promotion after highly prominent recurring NPCs

@@ -14,7 +14,86 @@ from app.exporters import (
     inventory_item_text,
 )
 from app.game_state import GameState
+from app.models import World
 from app.timeline import format_summary_timeline, format_verbose_timeline
+
+
+TOWN_MODE = "Town Mode"
+ADVENTURE_MODE = "Adventure Mode"
+GUI_MODES = (TOWN_MODE, ADVENTURE_MODE)
+DEFAULT_GUI_MODE = TOWN_MODE
+
+MODE_SIDEBAR_ACTIONS = {
+    TOWN_MODE: (
+        "Create Character",
+        "Settlement Overview",
+        "NPC List",
+        "Location List",
+        "Journal Summary",
+    ),
+    ADVENTURE_MODE: (
+        "Generate New Region",
+        "Wilderness Overview",
+        "Dungeon Overview",
+        "Dungeon Rooms",
+        "Encounter List",
+        "Adventure Hook",
+        "Verbose Timeline",
+    ),
+}
+
+MODE_GAMEPLAY_ACTIONS = {
+    TOWN_MODE: (
+        "Talk / Socialize",
+        "Inspect Town / Current Location",
+        "Search Town / Look for Leads",
+        "Rest / Recover",
+        "Full Rest",
+        "Start Downtime",
+        "Advance Downtime",
+    ),
+    ADVENTURE_MODE: (
+        "Return to Town",
+        "Travel to Location",
+        "Travel to Wilderness",
+        "Travel to Dungeon",
+        "Explore Current Area",
+        "Search",
+        "Inspect Location",
+        "Talk to NPC",
+        "Move to Room",
+        "Inspect Room",
+        "Short Rest",
+        "Full Rest",
+        "Retreat",
+        "Avoid Encounter",
+        "Approach Encounter",
+        "Investigate Signs",
+        "Retreat from Encounter",
+    ),
+}
+
+SHARED_ACTIONS = (
+    "View Character",
+    "Journal / World Recap",
+    "Event Log",
+    "Export Event Log",
+    "Export World",
+    "Export Character",
+    "Save World",
+    "Load World",
+    "Data Diagnostics",
+    "Clear Output",
+)
+
+ACTION_CHECKS = (
+    ("Search Area", "search_area"),
+    ("Sneak Past Danger", "sneak_past_danger"),
+    ("Read Markings", "read_ancient_markings"),
+    ("Negotiate", "negotiate_with_npc"),
+    ("Track Creature", "track_creature"),
+    ("Force Action", "force_dangerous_action"),
+)
 
 
 def label(text: str) -> str:
@@ -29,6 +108,149 @@ def block(title: str, values: dict, skip: set[str] | None = None) -> str:
             continue
         lines.append(f"{label(key)}: {value}")
     return "\n".join(lines)
+
+
+def shared_action_labels() -> tuple[str, ...]:
+    return SHARED_ACTIONS
+
+
+def mode_sidebar_labels(mode: str) -> tuple[str, ...]:
+    if mode not in MODE_SIDEBAR_ACTIONS:
+        raise ValueError(f"Unknown GUI mode: {mode}")
+    return MODE_SIDEBAR_ACTIONS[mode]
+
+
+def mode_gameplay_labels(mode: str) -> tuple[str, ...]:
+    if mode not in MODE_GAMEPLAY_ACTIONS:
+        raise ValueError(f"Unknown GUI mode: {mode}")
+    return MODE_GAMEPLAY_ACTIONS[mode]
+
+
+def action_check_labels() -> tuple[str, ...]:
+    return tuple(label for label, _key in ACTION_CHECKS)
+
+
+def format_world_recap(world: World | None) -> str:
+    if world is None:
+        return (
+            "WORLD RECAP\n"
+            "===========\n"
+            "Generate or load a world first."
+        )
+    player = world.player_state
+    character = player.character
+    character_line = (
+        f"{character.name}, {character.character_class}, age {character.age_years} "
+        f"({age_band(character.age_years)})"
+        if character
+        else "No character created yet."
+    )
+    location_line = player.current_location
+    if player.current_room_id is not None:
+        location_line += f" / room {player.current_room_id}"
+    known_rumors = [
+        world.settlement.rumors[index]
+        for index in player.known_rumor_indices
+        if index < len(world.settlement.rumors)
+    ]
+    key_npcs = [npc for npc in world.npcs if npc.is_key_npc][:5]
+    prominent_npcs = [
+        npc for npc in world.npcs if npc.prominent and not npc.is_key_npc
+    ][:5]
+    recent_events = player.event_log[-5:]
+    faction_notes = [
+        f"{tag}: {status}" for tag, status in sorted(world.faction_status_notes.items())
+    ]
+    summary_lines = _body_lines(format_summary_timeline(world))
+    return "\n".join(
+        [
+            "WORLD RECAP",
+            "===========",
+            f"Seed: {world.generation_seed or 'Random / not recorded'}",
+            f"Calendar: {format_calendar(player.day, player.time_period)}",
+            f"Character: {character_line}",
+            f"Current Location: {location_line}",
+            f"Settlement: {world.settlement.name}",
+            f"Downtime: {DowntimeEngine.summarize(player.active_downtime_task)}",
+            "",
+            "RESOURCES",
+            "=========",
+            (
+                f"Supplies {player.supplies} | Food {player.food} | Water {player.water} | "
+                f"Torches {player.torches} | Coin {player.coin} | Wounds {player.wounds}"
+            ),
+            "",
+            "ACTIVE LEADS",
+            "============",
+            _bulleted_or_fallback(player.leads, "No active leads."),
+            "",
+            "QUEST NOTES",
+            "===========",
+            _bulleted_or_fallback(player.quest_log, "No quest notes recorded."),
+            "",
+            "KNOWN CLUES AND THREATS",
+            "=======================",
+            _bulleted_or_fallback(
+                [
+                    *known_rumors[:3],
+                    *player.known_threats[:3],
+                ],
+                "No clues or threats recorded yet.",
+            ),
+            "",
+            "KEY NPCS",
+            "========",
+            _bulleted_or_fallback(
+                [
+                    f"{npc.name} [{npc.faction_tag}] - {npc.key_npc_reason or 'Important contact.'}"
+                    for npc in key_npcs
+                ],
+                "No key NPCs yet.",
+            ),
+            "",
+            "OTHER PROMINENT NPCS",
+            "====================",
+            _bulleted_or_fallback(
+                [
+                    f"{npc.name} - {npc.prominence_notes or 'Recurring figure.'}"
+                    for npc in prominent_npcs
+                ],
+                "No additional prominent NPCs yet.",
+            ),
+            "",
+            "FACTION AND RELATIONSHIP NOTES",
+            "==============================",
+            _bulleted_or_fallback(
+                faction_notes,
+                "No faction or relationship notes recorded yet.",
+            ),
+            "",
+            "RECENT IMPORTANT EVENTS",
+            "=======================",
+            _numbered_or_fallback(recent_events, "No recent events recorded yet."),
+            "",
+            "JOURNAL SUMMARY",
+            "===============",
+            "\n".join(summary_lines) or "No timeline activity has been summarized yet.",
+        ]
+    )
+
+
+def _body_lines(text: str) -> list[str]:
+    lines = text.splitlines()
+    if len(lines) <= 4:
+        return lines
+    return lines[4:] or lines
+
+
+def _bulleted_or_fallback(values: list[str], fallback: str) -> str:
+    return "\n".join(f"- {value}" for value in values if value) or fallback
+
+
+def _numbered_or_fallback(values: list[str], fallback: str) -> str:
+    return "\n".join(
+        f"{index}. {value}" for index, value in enumerate((value for value in values if value), 1)
+    ) or fallback
 
 
 class LoadDialog(tk.Toplevel):
@@ -153,6 +375,7 @@ class RPGWorldApp(tk.Tk):
         self.player_state_var = tk.StringVar(value="No active world.")
         self.check_difficulty_var = tk.StringVar(value="Standard")
         self.seed_var = tk.StringVar(value="")
+        self.mode_var = tk.StringVar(value=DEFAULT_GUI_MODE)
         self.selection_handler = None
         self._build()
         warning_count = len(self.state.tables.warnings) + len(
@@ -177,6 +400,25 @@ class RPGWorldApp(tk.Tk):
             justify="left",
             wraplength=180,
         ).pack(anchor="w", pady=(4, 0))
+        mode_box = ttk.LabelFrame(sidebar, text="Play Mode", padding=6)
+        mode_box.pack(fill="x", pady=(0, 8))
+        ttk.Label(mode_box, textvariable=self.mode_var, anchor="center").pack(fill="x")
+        toggle_row = ttk.Frame(mode_box)
+        toggle_row.pack(fill="x", pady=(6, 0))
+        ttk.Button(
+            toggle_row,
+            text=TOWN_MODE,
+            command=lambda: self.set_mode(TOWN_MODE),
+        ).pack(side="left", fill="x", expand=True, padx=(0, 4))
+        ttk.Button(
+            toggle_row,
+            text=ADVENTURE_MODE,
+            command=lambda: self.set_mode(ADVENTURE_MODE),
+        ).pack(side="left", fill="x", expand=True)
+        self.mode_sidebar_frame = ttk.LabelFrame(sidebar, text="Mode Views", padding=4)
+        self.mode_sidebar_frame.pack(fill="x", pady=(0, 8))
+        self.shared_sidebar_frame = ttk.LabelFrame(sidebar, text="Shared Actions", padding=4)
+        self.shared_sidebar_frame.pack(fill="x", pady=(0, 8))
         # Version 0.2 adds a lightweight record browser between navigation
         # and the detail pane. It is reused for NPCs, locations, rooms, and encounters.
         self.index_frame = ttk.Frame(container)
@@ -192,31 +434,30 @@ class RPGWorldApp(tk.Tk):
         self.index_list.bind("<<ListboxSelect>>", self._on_index_selected)
         self.display_frame = ttk.Frame(container)
         self.display_frame.pack(side="left", fill="both", expand=True)
-        navigation_actions = [
-            ("Generate New Region", self.generate),
-            ("Create Character", self.create_character),
-            ("Character Sheet", self.view_character),
-            ("Export Character", self.export_character),
-            ("Settlement Overview", self.view_settlement),
-            ("NPC List", self.view_npcs),
-            ("Location List", self.view_locations),
-            ("Dungeon Overview", self.view_dungeon),
-            ("Dungeon Rooms", self.view_dungeon_rooms),
-            ("Wilderness Overview", self.view_wilderness),
-            ("Encounter List", self.view_encounters),
-            ("Adventure Hook", self.view_hook),
-            ("Event Log", self.view_event_log),
-            ("Journal Summary", self.view_timeline_summary),
-            ("Verbose Timeline", self.view_verbose_timeline),
-            ("Export Event Log", self.export_event_log),
-            ("Export World", self.export_world),
-            ("Data Diagnostics", self.view_data_diagnostics),
-            ("Save World", self.save_world),
-            ("Load World", self.load_world),
-            ("Clear Output", self.clear_output),
-        ]
-        for text, command in navigation_actions:
-            ttk.Button(sidebar, text=text, command=command, width=24).pack(fill="x", pady=2)
+        self.sidebar_command_map = {
+            "Generate New Region": self.generate,
+            "Create Character": self.create_character,
+            "View Character": self.view_character,
+            "Settlement Overview": self.view_settlement,
+            "NPC List": self.view_npcs,
+            "Location List": self.view_locations,
+            "Dungeon Overview": self.view_dungeon,
+            "Dungeon Rooms": self.view_dungeon_rooms,
+            "Wilderness Overview": self.view_wilderness,
+            "Encounter List": self.view_encounters,
+            "Adventure Hook": self.view_hook,
+            "Event Log": self.view_event_log,
+            "Journal / World Recap": self.view_world_recap,
+            "Journal Summary": self.view_timeline_summary,
+            "Verbose Timeline": self.view_verbose_timeline,
+            "Export Event Log": self.export_event_log,
+            "Export World": self.export_world,
+            "Export Character": self.export_character,
+            "Data Diagnostics": self.view_data_diagnostics,
+            "Save World": self.save_world,
+            "Load World": self.load_world,
+            "Clear Output": self.clear_output,
+        }
 
         state_box = ttk.LabelFrame(self.display_frame, text="Player State", padding=7)
         state_box.pack(fill="x", pady=(0, 7))
@@ -229,69 +470,59 @@ class RPGWorldApp(tk.Tk):
 
         # Exploration controls stay separate from the content browser so the
         # established Version 0.2 navigation remains uncluttered.
-        action_box = ttk.LabelFrame(self.display_frame, text="Exploration Actions", padding=5)
-        action_box.pack(fill="x", pady=(0, 7))
-        gameplay_actions = [
-            ("Return to Town", lambda: self.perform_action(lambda: self.state.travel("town"))),
-            ("Travel to Location", self.travel_to_location),
-            (
-                "Travel to Wilderness",
-                lambda: self.perform_action(lambda: self.state.travel("wilderness")),
+        self.gameplay_command_map = {
+            "Talk / Socialize": lambda: self.perform_action(self.state.talk_to_npc),
+            "Inspect Town / Current Location": lambda: self.perform_action(
+                self.state.inspect_location
             ),
-            (
-                "Travel to Dungeon",
-                lambda: self.perform_action(lambda: self.state.travel("dungeon_entrance")),
+            "Search Town / Look for Leads": lambda: self.perform_action(self.state.search),
+            "Rest / Recover": lambda: self.perform_action(self.state.rest),
+            "Start Downtime": self.start_downtime,
+            "Advance Downtime": self.advance_downtime,
+            "Return to Town": lambda: self.perform_action(lambda: self.state.travel("town")),
+            "Travel to Location": self.travel_to_location,
+            "Travel to Wilderness": lambda: self.perform_action(
+                lambda: self.state.travel("wilderness")
             ),
-            ("Explore Current Area", lambda: self.perform_action(self.state.explore_current_area)),
-            ("Search", lambda: self.perform_action(self.state.search)),
-            ("Inspect Location", lambda: self.perform_action(self.state.inspect_location)),
-            ("Talk to NPC", lambda: self.perform_action(self.state.talk_to_npc)),
-            ("Move to Room", self.move_room),
-            ("Inspect Room", lambda: self.perform_action(self.state.inspect_room)),
-            ("Short Rest", lambda: self.perform_action(self.state.rest)),
-            ("Full Rest", lambda: self.perform_action(self.state.full_rest)),
-            ("Start Downtime", self.start_downtime),
-            ("Advance Downtime", self.advance_downtime),
-            ("Retreat", lambda: self.perform_action(self.state.retreat)),
-            ("Avoid Encounter", lambda: self.encounter_choice("avoid")),
-            ("Approach Encounter", lambda: self.encounter_choice("approach")),
-            ("Investigate Signs", lambda: self.encounter_choice("investigate")),
-            ("Retreat from Encounter", lambda: self.encounter_choice("retreat")),
-        ]
-        for index, (text, command) in enumerate(gameplay_actions):
-            row, column = divmod(index, 4)
-            ttk.Button(action_box, text=text, command=command).grid(
-                row=row, column=column, sticky="ew", padx=2, pady=2
-            )
-        for column in range(4):
-            action_box.columnconfigure(column, weight=1)
+            "Travel to Dungeon": lambda: self.perform_action(
+                lambda: self.state.travel("dungeon_entrance")
+            ),
+            "Explore Current Area": lambda: self.perform_action(self.state.explore_current_area),
+            "Search": lambda: self.perform_action(self.state.search),
+            "Inspect Location": lambda: self.perform_action(self.state.inspect_location),
+            "Talk to NPC": lambda: self.perform_action(self.state.talk_to_npc),
+            "Move to Room": self.move_room,
+            "Inspect Room": lambda: self.perform_action(self.state.inspect_room),
+            "Short Rest": lambda: self.perform_action(self.state.rest),
+            "Full Rest": lambda: self.perform_action(self.state.full_rest),
+            "Retreat": lambda: self.perform_action(self.state.retreat),
+            "Avoid Encounter": lambda: self.encounter_choice("avoid"),
+            "Approach Encounter": lambda: self.encounter_choice("approach"),
+            "Investigate Signs": lambda: self.encounter_choice("investigate"),
+            "Retreat from Encounter": lambda: self.encounter_choice("retreat"),
+        }
+        self.mode_action_box = ttk.LabelFrame(
+            self.display_frame, text=f"{DEFAULT_GUI_MODE} Actions", padding=5
+        )
+        self.mode_action_box.pack(fill="x", pady=(0, 7))
 
-        check_box = ttk.LabelFrame(self.display_frame, text="Action Checks", padding=5)
-        check_box.pack(fill="x", pady=(0, 7))
-        ttk.Label(check_box, text="Difficulty").grid(row=0, column=0, padx=2, pady=2)
+        self.check_box = ttk.LabelFrame(self.display_frame, text="Action Checks", padding=5)
+        ttk.Label(self.check_box, text="Difficulty").grid(row=0, column=0, padx=2, pady=2)
         ttk.Combobox(
-            check_box,
+            self.check_box,
             textvariable=self.check_difficulty_var,
             values=["Easy", "Standard", "Hard", "Severe"],
             state="readonly",
             width=10,
         ).grid(row=0, column=1, sticky="ew", padx=2, pady=2)
-        check_actions = [
-            ("Search Area", "search_area"),
-            ("Sneak Past Danger", "sneak_past_danger"),
-            ("Read Markings", "read_ancient_markings"),
-            ("Negotiate", "negotiate_with_npc"),
-            ("Track Creature", "track_creature"),
-            ("Force Action", "force_dangerous_action"),
-        ]
-        for index, (text, action_key) in enumerate(check_actions, start=2):
+        for index, (text, action_key) in enumerate(ACTION_CHECKS, start=2):
             ttk.Button(
-                check_box,
+                self.check_box,
                 text=text,
                 command=lambda key=action_key: self.perform_check(key),
             ).grid(row=0, column=index, sticky="ew", padx=2, pady=2)
         for column in range(8):
-            check_box.columnconfigure(column, weight=1)
+            self.check_box.columnconfigure(column, weight=1)
         self.output = tk.Text(
             self.display_frame,
             wrap="word",
@@ -307,6 +538,59 @@ class RPGWorldApp(tk.Tk):
         ttk.Label(self, textvariable=self.status_var, anchor="w", padding=(10, 5)).pack(
             fill="x", side="bottom"
         )
+        self._render_sidebar_actions()
+        self._render_mode_actions()
+
+    @staticmethod
+    def _clear_children(frame: ttk.Frame) -> None:
+        for child in frame.winfo_children():
+            child.destroy()
+
+    def _render_sidebar_actions(self) -> None:
+        self._clear_children(self.mode_sidebar_frame)
+        self._clear_children(self.shared_sidebar_frame)
+        for text in mode_sidebar_labels(self.mode_var.get()):
+            ttk.Button(
+                self.mode_sidebar_frame,
+                text=text,
+                command=self.sidebar_command_map[text],
+                width=24,
+            ).pack(fill="x", pady=2)
+        for text in shared_action_labels():
+            ttk.Button(
+                self.shared_sidebar_frame,
+                text=text,
+                command=self.sidebar_command_map[text],
+                width=24,
+            ).pack(fill="x", pady=2)
+
+    def _render_mode_actions(self) -> None:
+        mode = self.mode_var.get()
+        self._clear_children(self.mode_action_box)
+        self.mode_action_box.configure(text=f"{mode} Actions")
+        for index, text in enumerate(mode_gameplay_labels(mode)):
+            row, column = divmod(index, 4)
+            ttk.Button(
+                self.mode_action_box,
+                text=text,
+                command=self.gameplay_command_map[text],
+            ).grid(row=row, column=column, sticky="ew", padx=2, pady=2)
+        for column in range(4):
+            self.mode_action_box.columnconfigure(column, weight=1)
+        if mode == ADVENTURE_MODE:
+            if not self.check_box.winfo_ismapped():
+                self.check_box.pack(fill="x", pady=(0, 7), before=self.output)
+        else:
+            self.check_box.pack_forget()
+
+    def set_mode(self, mode: str) -> None:
+        if mode not in GUI_MODES:
+            self.status_var.set(f"Unknown mode: {mode}")
+            return
+        self.mode_var.set(mode)
+        self._render_sidebar_actions()
+        self._render_mode_actions()
+        self.status_var.set(f"Switched to {mode}.")
 
     def show(self, text: str, status: str = "Ready.") -> None:
         self.output.delete("1.0", "end")
@@ -811,6 +1095,10 @@ class RPGWorldApp(tk.Tk):
         self.guarded(
             lambda: self.show(self.action_log_text(), "Viewing the persistent event log.")
         )
+
+    def view_world_recap(self) -> None:
+        self.hide_index()
+        self.show(format_world_recap(self.state.world), "Viewing the journal and world recap.")
 
     def view_timeline_summary(self) -> None:
         self.guarded(

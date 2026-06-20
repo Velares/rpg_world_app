@@ -3,11 +3,30 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.1`
+- Current development version on `main`: `v0.8.2`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.8.2 reorganizes the GUI into clearer play modes on `main`:
+
+- Split the Tkinter action layout into `Town Mode` and `Adventure Mode` so
+  settlement-management actions no longer compete with travel/exploration
+  controls in one crowded button stack.
+- Added shared actions across both modes for character viewing, journal recap,
+  save/load, export, and diagnostics while preserving the older event-log,
+  timeline, downtime, key-NPC, and export systems behind the same guarded game
+  state handlers.
+- Added a `Journal / World Recap` text view that summarizes the current
+  calendar, character, location, downtime, resources, leads, quest notes,
+  clues, key NPCs, faction notes, recent events, and journal summary in one
+  place.
+- Kept the change GUI-focused and deferred any broader simulated-time controls
+  so the milestone stayed small and reviewable.
+- Added non-Tk helper coverage for mode action lists and recap formatting,
+  raising the validated `unittest` count to 100 while the local `init.tcl`
+  limitation still blocks a true Tk root smoke test.
 
 Version 0.8.1 adds key NPC and faction-interaction framework support on
 `main`:
@@ -186,8 +205,9 @@ Version 0.7 hardened the data-driven generation foundation:
 - Coarse-grained faction/NPC interaction phase with lightweight status notes.
 - Simple character age tracking with narrative age bands.
 - Tkinter list/detail views, character sheet, player-state display, simple
-  export actions, seed entry, downtime controls, journal/timeline views,
-  save/load, and data diagnostics.
+  export actions, seed entry, `Town Mode` / `Adventure Mode` action groups,
+  downtime controls, journal/timeline views, recap view, save/load, and data
+  diagnostics.
 - SQLite persistence with compatibility defaults for older save shapes.
 
 ## Name generation status
@@ -205,13 +225,14 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 97 tests passing with
+- Current verification: 100 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.
 - No Tkinter smoke test was completed for this milestone because the local
-  Python 3.11 install still lacks a usable `init.tcl`, so GUI-facing behavior
-  was validated indirectly through public state and exporter tests instead.
+  Python 3.11 install still lacks a usable `init.tcl`; an attempted Tk root
+  creation still fails for that reason, so GUI-facing behavior was validated
+  indirectly through public state and helper tests instead.
 - `pytest` is not installed and is not required by the project.
 - Coverage includes dice, checks, names, cleanup/scrubbing, JSON validation,
   connected world generation, missing-data fallbacks, exploration, calendar
@@ -233,9 +254,9 @@ Version 0.7 hardened the data-driven generation foundation:
 
 ## Next candidate goals
 
-1. Add a compact journal recap or filtered timeline/key-NPC view only if
-   players need easier browsing than the current summary and verbose text
-   output.
+1. Add a small simulated-time helper or preset-driven town-side fast-forward
+   flow only if it can reuse the current calendar/downtime framework without
+   bloating the GUI.
 2. Design later character retirement so retired protagonists can remain in the
    same world as NPCs after the calendar/downtime layer settles.
 3. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes

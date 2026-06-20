@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.8.1 is a local, single-player weird-fantasy starting-region generator
+Version 0.8.2 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -28,8 +28,14 @@ world to SQLite. **Load World** opens a list of prior saves. **Export World**,
 **Export Character**, and **Export Event Log** write plain-text `.txt` files
 for the current active data. When a world is active, **Start Downtime** and
 **Advance Downtime** provide a minimal strategic-play entry point for long-term
-tasks. **Journal Summary** and **Verbose Timeline** show condensed and
-action-by-action campaign logging without replacing the older event log.
+tasks. The GUI now splits actions into **Town Mode** and **Adventure Mode** so
+recovery, social, downtime, and management play stay separate from travel,
+exploration, encounter-facing actions, and field checks. **Journal / World
+Recap** gathers the current calendar, character, location, downtime,
+resources, leads, quest notes, key NPC notes, faction notes, recent events,
+and journal summary into one text view. **Journal Summary** and
+**Verbose Timeline** still show condensed and action-by-action campaign
+logging without replacing the older event log.
 
 Version 0.2 adds explicit links among town problems, NPCs, locations, rumors,
 the dungeon, wilderness signs, and the adventure hook. NPCs, locations, dungeon
@@ -163,6 +169,31 @@ World exports now include key NPCs, relationship records, and simple
 faction-status notes when present. NPC detail views also show key-NPC metadata
 without adding a separate faction screen. Older saves still load safely when
 key-NPC, relationship, or faction-phase fields are missing.
+
+Version 0.8.2 focuses on usability rather than a new subsystem. `Town Mode`
+groups character creation, settlement views, location and NPC browsing, social
+actions, rest, and downtime. `Adventure Mode` groups world generation, travel,
+wilderness and dungeon inspection, encounter-facing choices, retreat, and
+action checks. Shared actions such as save/load, character viewing, recap,
+exports, and diagnostics remain available in both modes.
+
+Current GUI mode split:
+
+- `Town Mode`: Create Character, Settlement Overview, NPC List, Location List,
+  Journal Summary, Talk/Socialize, Inspect Town/Current Location, Search Town,
+  Rest/Recover, Full Rest, Start Downtime, and Advance Downtime.
+- `Adventure Mode`: Generate New Region, Wilderness Overview, Dungeon
+  Overview, Dungeon Rooms, Encounter List, Adventure Hook, Verbose Timeline,
+  Return to Town, Travel, Explore, Search, Inspect, Talk, Move to Room,
+  Inspect Room, Rest, Retreat, encounter choices, and action checks.
+- Shared in both modes: View Character, Journal / World Recap, Event Log,
+  Export Event Log, Export World, Export Character, Save World, Load World,
+  Data Diagnostics, plus the always-visible player state, seed field, status,
+  and output panel.
+
+Simulated-time or fast-forward controls were intentionally deferred in this
+milestone. The current calendar, downtime, and faction-phase foundations remain
+available for a later small follow-up once the GUI split has settled.
 
 The database is created automatically at:
 
@@ -336,7 +367,8 @@ missing data, generated counts and references, dungeon connectivity, SQLite
 child records, calendar and downtime flow, exporter output, save/load
 reconstruction, reproducible seed behavior, downtime consequence outcomes,
 timeline logging, recurring-NPC promotion, key-NPC promotion, relationship
-records, faction-phase behavior, and older-save compatibility.
+records, faction-phase behavior, GUI mode helper routing, recap formatting,
+and older-save compatibility.
 
 Stress coverage now also exercises messy user behavior through the public game
 state API: actions before world generation, actions before character creation,
@@ -350,6 +382,9 @@ Minimal guard behavior added for this coverage:
 - downtime now requires a created character
 - invalid loaded calendar fields fall back safely
 - invalid public inventory quantities raise clear `ValueError` messages
+- mode-specific GUI layouts still route through the same guarded public
+  handlers, so hidden buttons are not the only protection against invalid
+  state
 
 ## Current boundaries
 
