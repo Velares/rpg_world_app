@@ -2,15 +2,18 @@ from __future__ import annotations
 
 import random
 
+from app.interaction_text import choose_interaction_text
 from app.models import DungeonRoom, Encounter, NPC, World
+from app.table_loader import TableLoader
 
 
 class ExplorationEngine:
     """Small stateful action engine for Version 0.3's abstract exploration loop."""
 
-    def __init__(self, world: World, rng: random.Random):
+    def __init__(self, world: World, rng: random.Random, tables: TableLoader):
         self.world = world
         self.rng = rng
+        self.tables = tables
 
     @property
     def player(self):
@@ -58,6 +61,24 @@ class ExplorationEngine:
 
     def _add_lead(self, lead: str) -> None:
         self._discover(self.player.leads, lead, f"New lead — {lead}")
+
+    def _interaction(self, category: str, **context) -> str:
+        merged = {
+            "settlement": self.world.settlement.name,
+            "dungeon": self.world.dungeon.name,
+            "wilderness": self.world.wilderness.name,
+            "threat": self.world.local_threat,
+            "artifact": self.world.adventure_hook.artifact_or_relic,
+            "hook_npc": self.world.adventure_hook.key_npc,
+            "problem": self.world.settlement.local_problem,
+        }
+        merged.update(context)
+        return choose_interaction_text(
+            self.tables,
+            self.rng,
+            category,
+            **merged,
+        )
 
     def _consume_light(self) -> None:
         player = self.player
@@ -164,7 +185,8 @@ class ExplorationEngine:
                 self._discover(player.known_npc_ids, owner.entity_id, f"NPC: {owner.name}")
             return self.log(
                 f"You explore {location.name}. {location.public_description} "
-                f"Its keeper is {location.owner_or_keeper}."
+                f"Its keeper is {location.owner_or_keeper}. "
+                f"{self._interaction('town_explore_discovery', location=location.name, owner=location.owner_or_keeper)}"
             )
         if player.current_location == "wilderness":
             return self._explore_wilderness()
@@ -203,7 +225,8 @@ class ExplorationEngine:
             )
         return self.log(
             f"You scout {self.world.wilderness.name} without immediate contact. "
-            f"You mark {self.world.wilderness.dominant_feature} as a useful landmark."
+            f"You mark {self.world.wilderness.dominant_feature} as a useful landmark. "
+            f"{self._interaction('wilderness_explore_discovery', feature=self.world.wilderness.dominant_feature)}"
         )
 
     def pending_encounter(self) -> Encounter:
@@ -226,11 +249,25 @@ class ExplorationEngine:
         already_logged = False
         if choice == "avoid":
             self._spend_turn(supplies=1, water=0)
-            result = f"You avoid {encounter.creature_or_npc}: {encounter.how_to_avoid}"
+            if self.rng.random() < 0.4:
+                result = self._interaction(
+                    "encounter_costly_success",
+                    threat=encounter.creature_or_npc,
+                    reward=encounter.reward_or_clue,
+                )
+            else:
+                result = self._interaction(
+                    "encounter_avoid_success",
+                    threat=encounter.creature_or_npc,
+                    avoidance=encounter.how_to_avoid,
+                )
         elif choice == "retreat":
             player.current_location = "town"
             self._spend_turn(supplies=1, water=1)
-            result = f"You retreat to {self.world.settlement.name} before the danger closes."
+            result = (
+                f"You retreat to {self.world.settlement.name} before the danger closes. "
+                f"{self._interaction('retreat_consequences', threat=encounter.creature_or_npc)}"
+            )
         elif choice == "investigate":
             self._spend_turn()
             if self.rng.random() < 0.7:
@@ -250,13 +287,36 @@ class ExplorationEngine:
                 self._add_lead(
                     f"Compare {encounter.reward_or_clue} with evidence in {self.world.dungeon.name}."
                 )
-                result = (
-                    f"Careful scouting reveals: {encounter.reward_or_clue}. "
-                    f"Preparation that helps: {encounter.preparation_that_helps}"
-                )
+                if self.rng.random() < 0.3:
+                    result = (
+                        f"{self._interaction('encounter_investigate_follow', threat=encounter.creature_or_npc)} "
+                        f"{self._interaction('encounter_strange_omen', threat=encounter.creature_or_npc)}"
+                    )
+                else:
+                    result = self._interaction(
+                        "encounter_investigate_success",
+                        threat=encounter.creature_or_npc,
+                        reward=encounter.reward_or_clue,
+                        preparation=encounter.preparation_that_helps,
+                    )
             else:
-                result = self._hardship("Your investigation exposes you.", severe=False)
-                already_logged = True
+                if self.rng.random() < 0.4:
+                    player.attention += 1
+                    self._discover(
+                        player.known_threats,
+                        encounter.creature_or_npc,
+                        f"threat or faction: {encounter.creature_or_npc}",
+                    )
+                    self._add_lead(
+                        f"Recover from the failed approach to {encounter.creature_or_npc} by studying {encounter.reward_or_clue}."
+                    )
+                    result = (
+                        f"{self._interaction('encounter_failed_forward', threat=encounter.creature_or_npc)} "
+                        f"{self._interaction('encounter_strange_omen', threat=encounter.creature_or_npc)}"
+                    )
+                else:
+                    result = self._hardship("Your investigation exposes you.", severe=False)
+                    already_logged = True
         elif choice == "approach":
             self._spend_turn()
             if self.rng.random() < 0.55:
@@ -265,15 +325,43 @@ class ExplorationEngine:
                     encounter.creature_or_npc,
                     f"contact: {encounter.creature_or_npc}",
                 )
-                result = (
-                    f"You approach without drawing steel. {encounter.how_to_negotiate} "
-                    f"Reaction: {encounter.reaction_roll_result}"
+                result = self._interaction(
+                    self.rng.choice(
+                        (
+                            "encounter_approach_success",
+                            "encounter_approach_trade",
+                            "encounter_approach_help",
+                        )
+                    ),
+                    threat=encounter.creature_or_npc,
+                    negotiate=encounter.how_to_negotiate,
+                    reaction=encounter.reaction_roll_result,
+                    reward=encounter.reward_or_clue,
+                    intent=encounter.intent,
+                )
+                self._add_lead(
+                    f"Learn what {encounter.creature_or_npc} really wants near {self.world.wilderness.name}."
                 )
             else:
-                result = self._hardship(
-                    f"The approach to {encounter.creature_or_npc} goes badly.", severe=True
-                )
-                already_logged = True
+                if self.rng.random() < 0.35:
+                    player.attention += 1
+                    self._discover(
+                        player.known_threats,
+                        encounter.creature_or_npc,
+                        f"contact: {encounter.creature_or_npc}",
+                    )
+                    self._add_lead(
+                        f"Follow up after the failed approach to {encounter.creature_or_npc}."
+                    )
+                    result = self._interaction(
+                        "encounter_failed_forward",
+                        threat=encounter.creature_or_npc,
+                    )
+                else:
+                    result = self._hardship(
+                        f"The approach to {encounter.creature_or_npc} goes badly.", severe=True
+                    )
+                    already_logged = True
         else:
             raise ValueError("Choose avoid, approach, investigate, or retreat.")
         player.pending_encounter_id = ""
@@ -338,7 +426,8 @@ class ExplorationEngine:
                 )
                 return self.log(
                     f"You search cautiously and find {room.clue}. Danger detected: "
-                    f"{room.trap_or_hazard}. Preparation: {room.preparation_that_helps}"
+                    f"{room.trap_or_hazard}. Preparation: {room.preparation_that_helps}. "
+                    f"{self._interaction('search_discovery', clue=room.clue, hazard=room.trap_or_hazard)}"
                 )
             return self._hardship(f"Searching triggers {room.trap_or_hazard}.")
         if player.current_location == "wilderness":
@@ -359,15 +448,22 @@ class ExplorationEngine:
                 )
             return self.log(
                 f"You find {self.world.wilderness.resources}, but note the hazard: "
-                f"{self.world.wilderness.travel_hazards}."
+                f"{self.world.wilderness.travel_hazards}. "
+                f"{self._interaction('search_discovery', resource=self.world.wilderness.resources)}"
             )
         if player.current_location == "town":
             location = self._current_or_random_location()
             self._discover(
                 player.known_location_ids, location.entity_id, f"location: {location.name}"
             )
-            return self.log(f"A search around {location.name} reveals: {location.hidden_detail}")
-        return self.log(f"You search the entrance and find signs: {self.world.dungeon.entrance_description}")
+            return self.log(
+                f"A search around {location.name} reveals: {location.hidden_detail}. "
+                f"{self._interaction('search_discovery', clue=location.hidden_detail, location=location.name)}"
+            )
+        return self.log(
+            f"You search the entrance and find signs: {self.world.dungeon.entrance_description}. "
+            f"{self._interaction('search_discovery', clue=self.world.dungeon.entrance_description)}"
+        )
 
     def talk_to_npc(self) -> str:
         if self.player.current_location != "town":
@@ -377,6 +473,7 @@ class ExplorationEngine:
         npc: NPC = self.rng.choice(candidates or self.world.npcs)
         self._spend_turn(supplies=0, water=0)
         self._discover(self.player.known_npc_ids, npc.entity_id, f"NPC: {npc.name}")
+        dialogue_text = self._npc_dialogue_lead(npc, location)
         unknown_rumors = [
             index
             for index in range(len(self.world.settlement.rumors))
@@ -385,22 +482,23 @@ class ExplorationEngine:
         rumor_text = ""
         if unknown_rumors:
             rumor_index = self.rng.choice(unknown_rumors)
+            rumor = self.world.settlement.rumors[rumor_index]
             self._discover(
                 self.player.known_rumor_indices,
                 rumor_index,
-                f"rumor: {self.world.settlement.rumors[rumor_index]}",
+                f"rumor: {rumor}",
             )
             rumor_text = (
-                f" They offer a lead: {self.world.settlement.rumors[rumor_index]} "
+                f" {self._interaction('npc_dialogue_rumor', npc=npc.name, location=npc.location, rumor=rumor)} "
                 "It still needs corroboration."
             )
             self._add_lead(
-                f"Investigate the rumor learned from {npc.name} at {npc.location}."
+                f"Investigate the rumor learned from {npc.name} at {npc.location}: {rumor}"
             )
         return self.log(
             f"You speak with {npc.name} at {npc.location}. Attitude: "
             f"{npc.attitude_toward_player}. They reveal: {npc.useful_information}. "
-            f"Possible service: {npc.possible_service}.{rumor_text}"
+            f"Possible service: {npc.possible_service}. {dialogue_text}{rumor_text}"
         )
 
     def inspect_location(self) -> str:
@@ -420,8 +518,75 @@ class ExplorationEngine:
         self._add_lead(f"Determine whether {location.hidden_detail} connects to the local threat.")
         return self.log(
             f"You inspect {location.name}. Publicly: {location.public_description} "
-            f"Closer study suggests: {location.hidden_detail}"
+            f"Closer study suggests: {location.hidden_detail}. "
+            f"{self._interaction('inspect_discovery', location=location.name, clue=location.hidden_detail)}"
         )
+
+    def _npc_dialogue_lead(self, npc: NPC, location) -> str:
+        encounter = self.rng.choice(self.world.wilderness.encounter_table)
+        room = self.rng.choice(self.world.dungeon.rooms)
+        lead_type = self.rng.choice(
+            (
+                "warning",
+                "request",
+                "secret",
+                "local_trouble",
+                "faction_hint",
+                "dungeon_clue",
+                "wilderness_clue",
+                "trade_lead",
+                "personal_oddity",
+            )
+        )
+        context = {
+            "npc": npc.name,
+            "location": location.name,
+            "service": npc.possible_service,
+            "info": npc.useful_information,
+            "secret": npc.secret,
+            "appearance": npc.appearance,
+            "personality": npc.personality,
+            "fear": npc.fear,
+            "reward": encounter.reward_or_clue,
+            "resource": self.world.wilderness.resources,
+            "room": room.name,
+            "threat": encounter.creature_or_npc,
+            "preparation": encounter.preparation_that_helps,
+            "reaction": encounter.reaction_roll_result,
+            "intent": encounter.intent,
+            "avoidance": encounter.how_to_avoid,
+            "negotiate": encounter.how_to_negotiate,
+            "rumor": self.rng.choice(self.world.settlement.rumors),
+        }
+        if lead_type == "warning":
+            lead = f"Test {npc.name}'s warning about {encounter.creature_or_npc} near {self.world.wilderness.name}."
+            category = "npc_dialogue_warning"
+        elif lead_type == "request":
+            lead = f"Decide whether to help {npc.name} before {self.world.settlement.local_problem} worsens."
+            category = "npc_dialogue_request"
+        elif lead_type == "secret":
+            lead = f"Corroborate {npc.name}'s secret: {npc.secret}."
+            category = "npc_dialogue_secret"
+        elif lead_type == "local_trouble":
+            lead = f"Trace how {self.world.settlement.local_problem} connects to the wider threat."
+            category = "npc_dialogue_local_trouble"
+        elif lead_type == "faction_hint":
+            lead = f"Find who benefits if attention turns away from {self.world.adventure_hook.artifact_or_relic}."
+            category = "npc_dialogue_faction_hint"
+        elif lead_type == "dungeon_clue":
+            lead = f"Search {self.world.dungeon.name} for proof related to {room.clue}."
+            category = "npc_dialogue_dungeon_clue"
+        elif lead_type == "wilderness_clue":
+            lead = f"Follow signs in {self.world.wilderness.name} tied to {encounter.creature_or_npc}."
+            category = "npc_dialogue_wilderness_clue"
+        elif lead_type == "trade_lead":
+            lead = f"Use {npc.name}'s trade lead to learn who is redirecting local goods."
+            category = "npc_dialogue_trade_lead"
+        else:
+            lead = f"Remember the odd detail {npc.name} shared and compare it with later evidence."
+            category = "npc_dialogue_personal_oddity"
+        self._add_lead(lead)
+        return self._interaction(category, **context)
 
     def _current_or_random_location(self):
         location = next(
@@ -486,7 +651,8 @@ class ExplorationEngine:
             player.pending_encounter_id = ""
             self._spend_turn(supplies=1, water=0)
             return self.log(
-                f"You retreat to the entrance. {self.world.dungeon.rooms[0].retreat_option}"
+                f"You retreat to the entrance. {self.world.dungeon.rooms[0].retreat_option} "
+                f"{self._interaction('retreat_consequences', location=self.world.dungeon.name)}"
             )
         if player.current_location in {"wilderness", "dungeon_entrance"}:
             return self.travel("town")

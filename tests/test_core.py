@@ -320,6 +320,12 @@ class WorldTests(unittest.TestCase):
                 self.assertTrue(values)
         self.assertEqual(TableLoader(TABLES).warnings, [])
 
+    def test_interaction_tables_load_expected_categories(self):
+        loader = TableLoader(TABLES)
+        self.assertTrue(loader.get("interaction_tables", "npc_dialogue_warning"))
+        self.assertTrue(loader.get("interaction_tables", "encounter_approach_trade"))
+        self.assertTrue(loader.get("interaction_tables", "check_success_additions"))
+
     def test_table_loader_filters_bad_entries_and_deduplicates_warnings(self):
         with tempfile.TemporaryDirectory() as temp:
             table_dir = Path(temp)
@@ -987,6 +993,39 @@ class ExplorationTests(unittest.TestCase):
             self.assertIsNone(player.current_room_id)
             state.close()
 
+    def test_talk_to_npc_varies_and_adds_leads(self):
+        with tempfile.TemporaryDirectory() as temp:
+            messages = set()
+            for seed in (71, 72, 73, 74):
+                state = self.make_state(Path(temp), seed)
+                try:
+                    player = state.world.player_state
+                    initial_leads = len(player.leads)
+                    message = state.talk_to_npc()
+                    messages.add(message)
+                    self.assertGreater(len(player.leads), initial_leads)
+                    self.assertIn(message, player.event_log[-1])
+                finally:
+                    state.close()
+            self.assertGreater(len(messages), 1)
+
+    def test_encounter_resolution_varies_across_seeded_runs(self):
+        with tempfile.TemporaryDirectory() as temp:
+            results = set()
+            for seed in (81, 82, 83, 84, 85):
+                state = self.make_state(Path(temp), seed)
+                try:
+                    player = state.world.player_state
+                    state.travel("wilderness")
+                    encounter = state.world.wilderness.encounter_table[0]
+                    player.pending_encounter_id = encounter.entity_id
+                    result = state.resolve_encounter("approach")
+                    results.add(result)
+                    self.assertIn(result, player.event_log[-1])
+                finally:
+                    state.close()
+            self.assertGreater(len(results), 1)
+
 
 class ActionCheckTests(unittest.TestCase):
     def make_state(self, folder: Path, seed: int = 1) -> GameState:
@@ -1021,6 +1060,22 @@ class ActionCheckTests(unittest.TestCase):
                 self.assertTrue(result.narrative_result)
                 self.assertTrue(result.consequence)
             state.close()
+
+    def test_check_narration_varies_across_seeded_runs(self):
+        with tempfile.TemporaryDirectory() as temp:
+            narratives = set()
+            for seed in (91, 92, 93, 94):
+                state = self.make_state(Path(temp), seed)
+                try:
+                    result = state.perform_check(
+                        "search_area",
+                        "Standard",
+                        roll_override=12,
+                    )
+                    narratives.add(result.narrative_result)
+                finally:
+                    state.close()
+            self.assertGreater(len(narratives), 1)
 
     def test_class_bonus_changes_check_total_and_outcome(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -1205,6 +1260,16 @@ class ActionCheckTests(unittest.TestCase):
             self.assertEqual(loaded.player_state.day, snapshot.day)
             self.assertEqual(loaded.player_state.known_npc_ids, snapshot.known_npc_ids)
             state.close()
+
+    def test_event_log_export_includes_new_interaction_text(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 95)
+            try:
+                message = state.talk_to_npc()
+                exported = export_event_log_text(state.world)
+                self.assertIn(message, exported)
+            finally:
+                state.close()
 
 
 if __name__ == "__main__":

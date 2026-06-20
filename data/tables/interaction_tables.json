@@ -1,0 +1,147 @@
+{
+  "npc_dialogue_rumor": [
+    "{npc} lowers their voice and repeats a rumor worth testing: {rumor}",
+    "{npc} treats it as common gossip, but the implication is sharp: {rumor}",
+    "{npc} insists the town is pretending not to notice this: {rumor}"
+  ],
+  "npc_dialogue_warning": [
+    "{npc} offers a warning: whatever stalks {wilderness} is tied to {threat}.",
+    "{npc} warns you not to trust the easy path toward {dungeon}; {threat} has made it too quiet.",
+    "{npc} says the safest mistake is still safer than ignoring signs around {wilderness}."
+  ],
+  "npc_dialogue_request": [
+    "{npc} asks for capable help before {problem} turns the whole district against itself.",
+    "{npc} wants proof, not heroics, and asks you to bring back something that confirms the truth.",
+    "{npc} asks you to look into a matter quietly before the council hears the wrong version."
+  ],
+  "npc_dialogue_secret": [
+    "{npc} hints that one secret matters more than any oath in town: {secret}.",
+    "{npc} admits there is a private truth behind the public trouble: {secret}.",
+    "{npc} only says enough to make the silence dangerous: {secret}."
+  ],
+  "npc_dialogue_local_trouble": [
+    "{npc} ties today's trouble directly to the settlement's fear: {problem}.",
+    "{npc} says every argument in {settlement} eventually circles back to this: {problem}.",
+    "{npc} thinks the town is misreading the first sign of a bigger problem: {problem}."
+  ],
+  "npc_dialogue_faction_hint": [
+    "{npc} points toward a quiet faction struggle hiding behind ordinary business.",
+    "{npc} suggests someone powerful benefits whenever talk turns away from {artifact}.",
+    "{npc} hints that the people profiting from {problem} are not the people being blamed."
+  ],
+  "npc_dialogue_dungeon_clue": [
+    "{npc} believes the best clue lies inside {dungeon}, not in any town testimony.",
+    "{npc} says {dungeon} keeps answering the wrong question too clearly to ignore.",
+    "{npc} thinks the route to understanding starts with what was hidden in {dungeon}."
+  ],
+  "npc_dialogue_wilderness_clue": [
+    "{npc} says the real trail starts in {wilderness}, where even the harmless signs were arranged.",
+    "{npc} insists the wilderness clue matters because it points to intent, not just danger.",
+    "{npc} says anyone watching {wilderness} closely would notice the pattern sooner or later."
+  ],
+  "npc_dialogue_trade_lead": [
+    "{npc} mentions a trade lead: someone is paying too well for ordinary goods and asking no safe questions.",
+    "{npc} says {service} is suddenly harder to find because someone upstream is redirecting supplies.",
+    "{npc} thinks a market exchange may reveal more than a shrine confession."
+  ],
+  "npc_dialogue_personal_oddity": [
+    "{npc} shares a personal oddity that may matter later: {appearance}.",
+    "{npc} reveals a habit that others dismiss but you should remember: {fear}.",
+    "{npc} offers a detail too specific to be meaningless: {personality}."
+  ],
+  "encounter_avoid_success": [
+    "You avoid {threat} by following the safer pattern: {avoidance}",
+    "You slip past {threat} without proving you were ever there. {avoidance}",
+    "You deny {threat} a clean sighting and keep moving. {avoidance}"
+  ],
+  "encounter_approach_success": [
+    "You negotiate a tense distance with {threat}. {negotiate} Reaction: {reaction}",
+    "You approach openly enough to be understood and cautiously enough to survive. {negotiate}",
+    "You make contact without drawing steel, and {threat} gives you a moment to speak. {negotiate}"
+  ],
+  "encounter_approach_trade": [
+    "A trade settles the moment for now: {reward} changes hands and both sides step back.",
+    "You trade information and caution instead of blows; {threat} values the exchange more than pride.",
+    "The encounter turns into a hard bargain, and {reward} becomes the price of safer passage."
+  ],
+  "encounter_approach_help": [
+    "You offer practical help rather than dominance, and {threat} pauses long enough to accept it.",
+    "Aid buys a narrow peace: helping with {intent} shifts the tone of the encounter.",
+    "You solve one immediate problem for {threat}, which is enough to prevent escalation."
+  ],
+  "encounter_investigate_success": [
+    "Careful investigation reveals {reward}. Preparation that helps: {preparation}",
+    "You study the scene instead of rushing it and uncover {reward}.",
+    "Your caution pays off; the signs resolve into a usable clue: {reward}"
+  ],
+  "encounter_investigate_follow": [
+    "You follow the signs farther than comfort allows and learn where the trail really wants you to go.",
+    "Investigation turns into a pursuit of meaning, and the trail now points beyond the first clue.",
+    "You follow the disturbance instead of the obvious track, and the pattern becomes clearer."
+  ],
+  "encounter_failed_forward": [
+    "The contact goes badly, but not uselessly; you are forced back with one hard-won lead.",
+    "You lose control of the moment, yet still carry away something worth following.",
+    "The encounter turns against you, but the retreat leaves behind a clue you can still use."
+  ],
+  "encounter_costly_success": [
+    "You come away with a success that still costs you breathing room and supplies.",
+    "The problem yields, but only after exacting a practical price.",
+    "You succeed narrowly enough that the cost will matter later."
+  ],
+  "encounter_strange_omen": [
+    "A strange omen lingers after the encounter, as if something else was observing both sides.",
+    "The scene leaves behind an omen too deliberate to dismiss.",
+    "You leave with the sense that the encounter was only the surface of a stranger pattern."
+  ],
+  "search_discovery": [
+    "The search also reveals a detail someone hoped would stay ordinary.",
+    "You notice evidence of intent, not just disorder.",
+    "What you find matters because it suggests purpose behind the scene."
+  ],
+  "inspect_discovery": [
+    "Close study turns suspicion into a workable lead.",
+    "The place gives up one detail too deliberate to ignore.",
+    "Inspection reveals the mark of planning rather than accident."
+  ],
+  "town_explore_discovery": [
+    "The streets do not hide their mood well; people are already adjusting to the trouble.",
+    "Something about the place feels rehearsed, as if the locals expect the wrong question.",
+    "You get the sense that the town knows more than it can safely say aloud."
+  ],
+  "wilderness_explore_discovery": [
+    "Even without direct contact, the land feels recently interpreted by something intelligent.",
+    "The route teaches you more about caution than speed.",
+    "You find no immediate confrontation, but the silence is organized rather than empty."
+  ],
+  "retreat_consequences": [
+    "The withdrawal preserves your options, but it also concedes the next move.",
+    "Retreat buys time at the cost of initiative.",
+    "You leave alive and observant, which is not the same thing as leaving unchanged."
+  ],
+  "check_critical_failure_additions": [
+    "The mistake teaches the environment how to punish you next.",
+    "You confirm the danger's advantage more clearly than your own.",
+    "The failure leaves the situation more exposed and less forgiving."
+  ],
+  "check_failure_additions": [
+    "You do not leave empty-handed, but what you learn is mostly about resistance.",
+    "The attempt fails in a way that narrows later options.",
+    "You understand the obstacle better, though not on favorable terms."
+  ],
+  "check_partial_success_additions": [
+    "The gain is real, but so is the immediate cost.",
+    "You get enough to proceed, not enough to feel safe.",
+    "Progress comes with a price that cannot be mistaken for victory."
+  ],
+  "check_success_additions": [
+    "The result gives you a cleaner next question to ask.",
+    "You gain clarity without pretending the danger is gone.",
+    "What you learn now should matter in the next difficult choice."
+  ],
+  "check_critical_success_additions": [
+    "You also seize an advantage that should survive the moment.",
+    "The result shifts the balance of initiative in your favor.",
+    "You gain both clarity and leverage for what comes next."
+  ]
+}

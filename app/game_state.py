@@ -176,7 +176,7 @@ class GameState:
         return self.world
 
     def exploration(self) -> ExplorationEngine:
-        return ExplorationEngine(self.require_world(), self.rng)
+        return ExplorationEngine(self.require_world(), self.rng, self.tables)
 
     def travel(self, destination: str) -> str:
         return self.exploration().travel(destination)
@@ -256,7 +256,7 @@ class GameState:
         roll_override: int | None = None,
         consequence_override: str | None = None,
     ):
-        return ActionResolver(self.require_world(), self.rng).resolve(
+        return ActionResolver(self.require_world(), self.rng, self.tables).resolve(
             action_key,
             difficulty_name,
             roll_override=roll_override,

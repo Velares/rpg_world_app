@@ -1,13 +1,25 @@
-# RPG World App — Project Status
+# RPG World App - Project Status
 
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.7.4`
+- Current development version on `main`: `v0.7.5`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.7.5 expands dialogue and encounter variety on `main`:
+
+- Added a dedicated `interaction_tables.json` file for JSON-driven dialogue
+  leads, encounter outcomes, and interaction flavor text.
+- Expanded NPC conversation leads with more varied warning, request, secret,
+  trade, clue, and oddity results.
+- Expanded encounter-resolution variety for avoid, approach, investigate, and
+  retreat without introducing tactical combat or a heavier ruleset.
+- Added table-driven flavor to searching, inspecting, exploring, retreating,
+  and generic d20 action-check narration.
+- Preserved save/load compatibility by avoiding schema changes.
 
 Version 0.7.4 adds plain-text export and table-flexibility improvements:
 
@@ -70,6 +82,8 @@ Version 0.7 hardened the data-driven generation foundation:
 - Plain-text export for active world summaries, character sheets, and event logs.
 - Variable-size editable JSON generation tables, including categories larger
   than 30 entries.
+- Richer NPC dialogue leads and encounter-resolution variety driven by JSON
+  interaction tables.
 - Generic d20 checks with five outcome grades and exploration consequences.
 - Travel, searching, conversations, rest, retreat, dungeon room movement,
   resource use, time periods, discoveries, quest log, and persistent event log.
@@ -91,17 +105,17 @@ Version 0.7 hardened the data-driven generation foundation:
 ## Testing status
 
 - Test suite: `tests/test_core.py`
-- Current verification: 52 tests passing with
+- Current verification: 57 tests passing with
   `python -m unittest discover -s tests -v`.
-- `python -m compileall .` passes, and all 12 JSON table files parse with zero
+- `python -m compileall .` passes, and all 13 JSON table files parse with zero
   `TableLoader` warnings.
 - A Tkinter smoke test could not complete in this environment because the local
   Python 3.11 install could not find a usable `init.tcl`.
 - `pytest` is not installed and is not required by the project.
 - Coverage includes dice, checks, names, cleanup/scrubbing, JSON validation,
   connected world generation, missing-data fallbacks, exploration, character
-  creation, exporter output, variable-size table selection, normalized
-  database rows, and older-save compatibility.
+  creation, exporter output, variable-size table selection, interaction
+  variety, normalized database rows, and older-save compatibility.
 
 ## Known issues and boundaries
 
@@ -115,29 +129,32 @@ Version 0.7 hardened the data-driven generation foundation:
 
 ## Next candidate goals
 
-1. Add more NPC dialogue leads and encounter-resolution variety.
-2. Add optional seed entry for reproducible generation.
-3. Add a small inventory-management dialog only when gameplay needs it.
-4. Consider richer export options only after the plain-text flow settles.
+1. Add optional seed entry for reproducible generation.
+2. Add a small inventory-management dialog only when gameplay needs it.
+3. Consider richer export options only after the plain-text flow settles.
+4. Expand location, faction, and quest-specific consequences only if the
+   added narrative range starts to feel repetitive.
 
 ## Important files and directories
 
-- `main.py` — application entry point
-- `app/game_state.py` — generation coordination and active world
-- `app/models.py` — dataclasses and older-save compatibility
-- `app/gui.py` — Tkinter interface
-- `app/database.py` — SQLite persistence
-- `app/table_loader.py`, `app/table_schemas.py` — data validation and fallbacks
-- `app/name_generator.py` — cached large-file name generation
-- `app/inventory.py` — item catalog and class starting loadouts
-- `app/generators/` — focused procedural generators
-- `data/tables/` — editable JSON content
-- `data/names/` — raw and cleaned name datasets
-- `data/tables/item_tables.json` — item definitions and starting gear
-- `data/saves/worlds.db` — current SQLite save database
-- `tools/` — name cleanup and corruption-scrubbing utilities
-- `tests/test_core.py` — automated test suite
-- `AGENTS.md` — named AI roles and coordinated operating model
+- `main.py` - application entry point
+- `app/game_state.py` - generation coordination and active world
+- `app/models.py` - dataclasses and older-save compatibility
+- `app/gui.py` - Tkinter interface
+- `app/database.py` - SQLite persistence
+- `app/table_loader.py`, `app/table_schemas.py` - data validation and fallbacks
+- `app/interaction_text.py` - interaction template formatting helpers
+- `app/name_generator.py` - cached large-file name generation
+- `app/inventory.py` - item catalog and class starting loadouts
+- `app/generators/` - focused procedural generators
+- `data/tables/` - editable JSON content
+- `data/tables/interaction_tables.json` - dialogue, encounter, and action text
+- `data/names/` - raw and cleaned name datasets
+- `data/tables/item_tables.json` - item definitions and starting gear
+- `data/saves/worlds.db` - current SQLite save database
+- `tools/` - name cleanup and corruption-scrubbing utilities
+- `tests/test_core.py` - automated test suite
+- `AGENTS.md` - named AI roles and coordinated operating model
 
 ## How to update this file
 

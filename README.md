@@ -68,6 +68,11 @@ active character sheet, and the persistent event log. Exported character text
 keeps inventory records and resource counters separate so food, water, torches,
 coin, and supplies are not duplicated as consumable inventory quantities.
 
+Conversation, searching, exploring, inspecting, retreating, and wilderness
+encounter resolution now produce more varied narrative results while staying
+rules-neutral. The text for these interaction outcomes is editable through
+JSON tables rather than hard-coded bulk prose.
+
 Editable JSON generation tables are also not fixed `d30` tables. Any practical
 non-empty category size works, including one-entry tables, categories shorter
 than 30 entries, categories longer than 30 entries, and weighted categories.
@@ -100,10 +105,12 @@ database on its next launch.
 - `app/characters.py`: rules-light class loading and character creation
 - `app/character_profiles.py`: JSON-driven personal background details
 - `app/inventory.py`: item catalog and class starting-loadout construction
+- `app/interaction_text.py`: interaction template formatting helpers
 - `app/exporters.py`: plain-text export formatting helpers
 - `app/checks.py`: generic d20 checks, outcomes, and state consequences
 - `app/generators/`: focused procedural generators
 - `data/tables/`: editable generation content
+- `data/tables/interaction_tables.json`: dialogue, encounter, and action text
 - `data/saves/`: local SQLite saves
 - `tests/`: standard-library unit tests
 
@@ -123,6 +130,10 @@ may contain any practical non-empty number of entries:
 
 Generation code selects from the actual list length provided by the JSON data
 rather than assuming 30 rows or a fixed dice index.
+
+Interaction text follows the same pattern. Dialogue lead variety and encounter
+resolution flavor live in editable JSON categories, so the narrative range can
+grow without moving large prose lists into Python code.
 
 Simple lists choose entries uniformly. The loader also accepts weighted entries:
 

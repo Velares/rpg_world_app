@@ -13,14 +13,26 @@ older save data.
 ## Current Status
 
 - Tagged release: `v0.7.3`
-- Current development version on `main`: `v0.7.4`
+- Current development version on `main`: `v0.7.5`
 - Current branch: `main`
-- Current development state: `main` includes the `v0.7.4` plain-text export
-  and flexible table-size milestone beyond `v0.7.3`
-- Latest completed commit before this docs/versioning pass: `08da18b` -
-  `Add plain-text export actions`
+- Current development state: `main` includes the `v0.7.5` dialogue and
+  encounter-variety milestone beyond the tagged `v0.7.3` release
+- Latest completed commit before this docs/versioning pass: `a697acc` -
+  `Prepare v0.7.4 export and table flexibility update`
 
 Recent milestone completed:
+
+- Added a dedicated JSON-driven interaction-text table for NPC dialogue leads,
+  encounter outcomes, and action flavor text
+- Expanded NPC conversations with more varied warnings, requests, secrets,
+  trade leads, local trouble, clue, and oddity results
+- Expanded encounter resolution for avoid, approach, investigate, and retreat
+  so outcomes feel more varied while staying rules-neutral
+- Added table-driven flavor to searching, inspecting, exploring, retreating,
+  and generic d20 action-check narration
+- Preserved save/load compatibility by avoiding schema changes
+
+Previous completed milestone:
 
 - Added plain-text export for the active world summary
 - Added plain-text export for the active character sheet
@@ -37,7 +49,7 @@ Recent milestone completed:
 
 Verified on the current milestone:
 
-- `python -m unittest discover -s tests -v` -> 52 tests passing
+- `python -m unittest discover -s tests -v` -> 57 tests passing
 - `python -m compileall .` -> passing
 - All files under `data/tables/` parse with zero unexpected `TableLoader`
   warnings
@@ -75,7 +87,18 @@ Environment note:
 - Added diagnostics and fallbacks for malformed or missing generation data
 - Added cached large name-file loading
 
-### Current unreleased changes on `main`
+### v0.7.5
+
+- Added `app/interaction_text.py` for table-driven interaction-text formatting
+- Added `data/tables/interaction_tables.json` for dialogue leads, encounter
+  outcomes, and action-check flavor text
+- Expanded NPC talk, searching, inspecting, exploring, retreating, and generic
+  action checks with more varied event-log narration
+- Expanded encounter resolution with more avoid, approach, investigate, and
+  failed-forward style outcomes
+- Added regression tests for interaction variety and export compatibility
+
+### v0.7.4
 
 - Added `app/exporters.py` for focused plain-text export formatting
 - Added `Export World`, `Export Character`, and `Export Event Log` buttons in
@@ -130,6 +153,8 @@ Environment note:
 - Inspect town locations
 - Inspect dungeon rooms
 - Talk to NPCs
+- Receive varied NPC dialogue leads such as rumors, warnings, requests,
+  secrets, faction hints, trade leads, and personal oddities
 - Move between dungeon rooms through connected exits
 - Take short rests and full rests
 - Retreat from danger
@@ -153,6 +178,8 @@ Environment note:
 - Surface wilderness warning signs before full danger
 - Resolve encounter choices through:
   avoid, approach, investigate, and retreat
+- See more varied narrative resolutions such as negotiated outcomes, trade,
+  help, odd omens, failed-forward complications, and costly successes
 - Emphasize scouting, negotiation, caution, and escape over tactical combat
 
 ### Persistence, logs, and exports
@@ -188,7 +215,8 @@ Intentionally not implemented yet:
 
 ## Next Candidate Goals
 
-1. Add more NPC dialogue leads and encounter-resolution variety.
-2. Add optional seed entry for reproducible generation.
-3. Add a small inventory-management dialog only when gameplay needs it.
-4. Consider richer export options only after the plain-text flow settles.
+1. Add optional seed entry for reproducible generation.
+2. Add a small inventory-management dialog only when gameplay needs it.
+3. Consider richer export options only after the plain-text flow settles.
+4. Expand location, faction, and quest-specific consequences only if the
+   added narrative range starts to feel repetitive.

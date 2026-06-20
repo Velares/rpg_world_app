@@ -3,7 +3,9 @@ from __future__ import annotations
 import random
 from dataclasses import dataclass
 
+from app.interaction_text import choose_interaction_text
 from app.models import CheckResult, World
+from app.table_loader import TableLoader
 
 
 DIFFICULTIES = {
@@ -46,9 +48,10 @@ COMMON_CHECKS = {
 class ActionResolver:
     """Rules-light d20 resolution that can be replaced without changing world generation."""
 
-    def __init__(self, world: World, rng: random.Random):
+    def __init__(self, world: World, rng: random.Random, tables: TableLoader):
         self.world = world
         self.rng = rng
+        self.tables = tables
 
     @property
     def player(self):
@@ -143,14 +146,31 @@ class ActionResolver:
 
     def _narrative(self, definition: ActionCheckDefinition, outcome: str) -> str:
         if outcome == "critical failure":
-            return "The attempt exposes you to exactly the danger preparation was meant to avoid."
-        if outcome == "failure":
-            return "The evidence resists you, and the situation grows less forgiving."
-        if outcome == "partial success":
-            return f"{definition.success_text} The price becomes clear immediately."
-        if outcome == "success":
-            return definition.success_text
-        return f"{definition.success_text} You also gain leverage for what comes next."
+            base = "The attempt exposes you to exactly the danger preparation was meant to avoid."
+            category = "check_critical_failure_additions"
+        elif outcome == "failure":
+            base = "The evidence resists you, and the situation grows less forgiving."
+            category = "check_failure_additions"
+        elif outcome == "partial success":
+            base = f"{definition.success_text} The price becomes clear immediately."
+            category = "check_partial_success_additions"
+        elif outcome == "success":
+            base = definition.success_text
+            category = "check_success_additions"
+        else:
+            base = f"{definition.success_text} You also gain leverage for what comes next."
+            category = "check_critical_success_additions"
+        addition = choose_interaction_text(
+            self.tables,
+            self.rng,
+            category,
+            settlement=self.world.settlement.name,
+            dungeon=self.world.dungeon.name,
+            wilderness=self.world.wilderness.name,
+            clue=self.world.adventure_hook.first_clue,
+            action_name=definition.action_name,
+        )
+        return f"{base} {addition}"
 
     def _apply_consequence(self, consequence: str, outcome: str) -> str:
         player = self.player

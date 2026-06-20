@@ -3,6 +3,23 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.7.5 - Dialogue leads and encounter variety
+
+- Added `data/tables/interaction_tables.json` for JSON-driven dialogue leads,
+  encounter-resolution variety, action-check flavor text, and related
+  interaction narration.
+- Expanded NPC conversation results with more varied lead styles such as
+  warnings, requests, secrets, trade leads, local trouble, and personal
+  oddities.
+- Expanded encounter outcomes so avoiding, approaching, investigating, and
+  retreating can resolve through more varied narrative results while staying
+  rules-neutral.
+- Added table-driven flavor to searching, inspecting, exploring, retreating,
+  and generic d20 action-check narration.
+- Added regression coverage for interaction table loading, NPC talk variety,
+  encounter variety, check-narration variety, and event-log export
+  compatibility.
+
 ## v0.7.4 - Plain-text export and flexible table sizes
 
 - Added `app/exporters.py` for focused plain-text world, character, and event
