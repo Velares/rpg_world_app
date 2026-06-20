@@ -368,6 +368,7 @@ class World:
     local_threat: str
     player_state: PlayerState
     created_at: str
+    generation_seed: str | None = None
     world_id: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
@@ -515,6 +516,7 @@ class World:
             local_threat=data["local_threat"],
             player_state=PlayerState(**player_data),
             created_at=data["created_at"],
+            generation_seed=data.get("generation_seed"),
             world_id=data.get("world_id"),
         )
         world.repair_relationship_ids()

@@ -33,6 +33,9 @@ class StressTests(unittest.TestCase):
             return
         world = state.world
         player = world.player_state
+        self.assertTrue(
+            world.generation_seed is None or isinstance(world.generation_seed, str)
+        )
         self.assertIsNotNone(world.settlement)
         self.assertIsNotNone(world.dungeon)
         self.assertIsNotNone(world.wilderness)

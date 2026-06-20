@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import random
 from datetime import datetime
 
@@ -29,8 +30,28 @@ class GameState:
     ):
         self.tables = tables
         self.database = database
-        self.rng = rng or random.Random()
+        self._default_rng = rng or random.Random()
+        self.rng = self._default_rng
         self.world: World | None = None
+        self.active_seed: str | None = None
+        self._refresh_name_generator()
+
+    @staticmethod
+    def normalize_seed(seed: str | None) -> str | None:
+        if seed is None:
+            return None
+        text = str(seed).strip()
+        return text or None
+
+    @classmethod
+    def seed_value(cls, seed: str) -> int:
+        normalized = cls.normalize_seed(seed)
+        if normalized is None:
+            raise ValueError("Seed text is required.")
+        digest = hashlib.sha256(normalized.encode("utf-8")).digest()
+        return int.from_bytes(digest[:8], "big", signed=False)
+
+    def _refresh_name_generator(self) -> None:
         first_name_fallbacks = [
             *self.tables.get("npc_tables", "male_names"),
             *self.tables.get("npc_tables", "female_names"),
@@ -43,7 +64,19 @@ class GameState:
             fallback_last_names=self.tables.get("npc_tables", "surnames"),
         )
 
-    def generate_new_region(self) -> World:
+    def set_seed(self, seed: str | None) -> str | None:
+        normalized = self.normalize_seed(seed)
+        self.active_seed = normalized
+        self.rng = (
+            random.Random(self.seed_value(normalized))
+            if normalized is not None
+            else self._default_rng
+        )
+        self._refresh_name_generator()
+        return self.active_seed
+
+    def generate_new_region(self, seed: str | None = None) -> World:
+        self.set_seed(seed)
         settlement = SettlementGenerator(self.tables, self.rng).generate()
         npcs = NPCGenerator(
             self.tables, self.rng, self.name_generator
@@ -110,6 +143,7 @@ class GameState:
             local_threat=settlement.nearby_danger,
             player_state=player_state,
             created_at=datetime.now().astimezone().isoformat(timespec="seconds"),
+            generation_seed=self.active_seed,
         )
         append_timeline_entry(
             self.world.player_state,
@@ -173,6 +207,7 @@ class GameState:
 
     def load_world(self, world_id: int) -> World:
         self.world = self.database.load_world(world_id)
+        self.active_seed = self.world.generation_seed
         return self.world
 
     def exploration(self) -> ExplorationEngine:

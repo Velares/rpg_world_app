@@ -3,11 +3,22 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.7.7`
+- Current development version on `main`: `v0.7.8`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.7.8 adds optional seed control for reproducible generation on `main`:
+
+- Added optional text seed entry to the GUI and matching `GameState`
+  generation support for reproducible starting-world creation.
+- Scoped deterministic generation to the initial world-building flow while
+  leaving blank-seed play in normal random mode.
+- Stored the generation seed in world data so saved worlds and plain-text
+  exports can report it when known.
+- Added regression coverage for same-seed matching, different-seed divergence,
+  text seed handling, save/load compatibility, and export seed lines.
 
 Version 0.7.7 adds stress/error-handling test coverage on `main`:
 
@@ -104,6 +115,7 @@ Version 0.7 hardened the data-driven generation foundation:
   Stealth.
 - Class-based resources and placeholder special abilities.
 - Structured inventory records and JSON-driven class starting gear.
+- Optional text-seed control for reproducible world generation.
 - Plain-text export for active world summaries, character sheets, and event logs.
 - Variable-size editable JSON generation tables, including categories larger
   than 30 entries.
@@ -117,7 +129,8 @@ Version 0.7 hardened the data-driven generation foundation:
   relationship-building, repair, and maintenance.
 - Simple character age tracking with narrative age bands.
 - Tkinter list/detail views, character sheet, player-state display, simple
-  export actions, downtime controls, save/load, and data diagnostics.
+  export actions, seed entry, downtime controls, save/load, and data
+  diagnostics.
 - SQLite persistence with compatibility defaults for older save shapes.
 
 ## Name generation status
@@ -135,24 +148,25 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 74 tests passing with
+- Current verification: 79 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 14 JSON table files parse with zero
   `TableLoader` warnings.
-- A Tkinter smoke test could not complete in this environment because the local
-  Python 3.11 install could not find a usable `init.tcl`.
+- A Tkinter smoke test was attempted again and still could not complete in this
+  environment because the local Python 3.11 install could not find a usable
+  `init.tcl`.
 - `pytest` is not installed and is not required by the project.
 - Coverage includes dice, checks, names, cleanup/scrubbing, JSON validation,
   connected world generation, missing-data fallbacks, exploration, calendar
   rollovers, downtime flow, character creation, exporter output, variable-size
   table selection, interaction variety, normalized database rows, older-save
-  compatibility, and randomized/error-handling stress scenarios.
+  compatibility, reproducible seed behavior, and randomized/error-handling
+  stress scenarios.
 
 ## Known issues and boundaries
 
 - Tactical combat, visual maps, full equipment rules, leveling, and spell
   systems are intentionally not implemented.
-- The app has no deterministic seed control in the GUI.
 - The large name datasets and mutable `data/saves/worlds.db` are tracked, making
   the repository larger and causing save activity to modify a versioned file.
 - Tests use `unittest`; `pytest` is optional and not a project dependency.
@@ -160,14 +174,15 @@ Version 0.7 hardened the data-driven generation foundation:
 
 ## Next candidate goals
 
-1. Add optional seed entry for reproducible generation.
-2. Add a small inventory-management dialog only when gameplay needs it.
-3. Expand downtime consequences with more location, faction, and quest-aware
+1. Add a small inventory-management dialog only when gameplay needs it.
+2. Expand downtime consequences with more location, faction, and quest-aware
    follow-up only if the lightweight framework proves useful in play.
-4. Design later character retirement so retired protagonists can remain in the
+3. Design later character retirement so retired protagonists can remain in the
    same world as NPCs after the calendar/downtime layer settles.
-5. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
+4. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
    available in the local environment.
+5. Consider a small seed-copy or seed-regenerate affordance only if players
+   actually need more than the current single text entry.
 
 ## Important files and directories
 

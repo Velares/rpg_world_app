@@ -3,6 +3,21 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.7.8 - Optional seed control for reproducible generation
+
+- Added optional text-seed support to `app/game_state.py` so the same seed can
+  recreate the same generated starting world when the code and local data are
+  unchanged.
+- Added a small Tkinter generation-seed entry field and surfaced the active
+  seed in the player-state display and world overview.
+- Stored the seed on generated world data without changing the SQLite schema,
+  so saves without a seed still load safely and newer saves can report it.
+- Added seed lines to plain-text world, character, and event-log exports when
+  a generated world records one.
+- Added regression coverage for text seeds, same-seed reproducibility,
+  different-seed divergence, save/load seed persistence, export seed output,
+  and missing-seed older-save compatibility.
+
 ## v0.7.7 - Stress and error-handling coverage
 
 - Added `tests/test_stress.py` for no-world, no-character, repeated-action,

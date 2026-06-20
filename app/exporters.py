@@ -40,6 +40,7 @@ def export_world_summary(world: World | None) -> str:
     return (
         f"{world.name.upper()}\n{'=' * len(world.name)}\n"
         f"Created: {world.created_at}\n"
+        f"Seed: {_seed_text(world)}\n"
         f"Calendar: {format_calendar(player.day, player.time_period)}\n"
         f"Downtime: {DowntimeEngine.summarize(player.active_downtime_task)}\n"
         f"Settlement: {settlement.name} ({settlement.type})\n"
@@ -94,6 +95,7 @@ def export_character_text(world: World | None) -> str:
         f"{character.name.upper()}\n{'=' * len(character.name)}\n"
         f"Class: {character.character_class}\n"
         f"Background: {character.background}\n"
+        f"Seed: {_seed_text(world)}\n"
         f"Age: {character.age_years}\n"
         f"Age Band: {age_band(character.age_years)}\n"
         f"Current Calendar: {format_calendar(player.day, player.time_period)}\n"
@@ -142,6 +144,7 @@ def export_event_log_text(world: World | None) -> str:
         "EVENT LOG",
         "=========",
         "",
+        f"Seed: {_seed_text(world)}",
         f"Calendar: {format_calendar(player.day, player.time_period)}",
         f"Downtime: {DowntimeEngine.summarize(player.active_downtime_task)}",
         "",
@@ -169,3 +172,7 @@ def _bulleted_lines(values: list[str]) -> str:
 
 def _numbered_lines(values: list[str]) -> str:
     return "\n".join(f"{index}. {value}" for index, value in enumerate(values, 1))
+
+
+def _seed_text(world: World) -> str:
+    return world.generation_seed or "Random / not recorded"

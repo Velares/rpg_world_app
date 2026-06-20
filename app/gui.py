@@ -151,6 +151,7 @@ class RPGWorldApp(tk.Tk):
         self.status_var = tk.StringVar(value="Ready. Generate a region to begin.")
         self.player_state_var = tk.StringVar(value="No active world.")
         self.check_difficulty_var = tk.StringVar(value="Standard")
+        self.seed_var = tk.StringVar(value="")
         self.selection_handler = None
         self._build()
         warning_count = len(self.state.tables.warnings) + len(
@@ -166,6 +167,15 @@ class RPGWorldApp(tk.Tk):
         container.pack(fill="both", expand=True)
         sidebar = ttk.Frame(container)
         sidebar.pack(side="left", fill="y", padx=(0, 10))
+        seed_box = ttk.LabelFrame(sidebar, text="Generation Seed", padding=6)
+        seed_box.pack(fill="x", pady=(0, 8))
+        ttk.Entry(seed_box, textvariable=self.seed_var).pack(fill="x")
+        ttk.Label(
+            seed_box,
+            text="Leave blank for normal random generation.",
+            justify="left",
+            wraplength=180,
+        ).pack(anchor="w", pady=(4, 0))
         # Version 0.2 adds a lightweight record browser between navigation
         # and the detail pane. It is reused for NPCs, locations, rooms, and encounters.
         self.index_frame = ttk.Frame(container)
@@ -349,6 +359,7 @@ class RPGWorldApp(tk.Tk):
         )
         self.player_state_var.set(
             f"Character: {identity}\n"
+            f"Seed: {self.state.active_seed or 'Random / not recorded'}\n"
             f"Calendar: {format_calendar(player.day, player.time_period)}    "
             f"Day {player.day}, {player.time_period}\n"
             f"Location: "
@@ -496,7 +507,8 @@ class RPGWorldApp(tk.Tk):
 
     def generate(self) -> None:
         def action():
-            world = self.state.generate_new_region()
+            world = self.state.generate_new_region(self.seed_var.get())
+            self.seed_var.set(world.generation_seed or "")
             self.hide_index()
             self.update_player_state()
             self.show(self.world_overview(), f"Generated {world.name}.")
@@ -538,6 +550,7 @@ class RPGWorldApp(tk.Tk):
         return "\n\n".join(
             [
                 f"{world.name.upper()}\n{'=' * len(world.name)}",
+                f"Seed: {world.generation_seed or 'Random / not recorded'}",
                 f"A {settlement.condition} {settlement.type} of {settlement.population} souls.",
                 f"Known threats: {threats}",
                 f"Lead: rumors point toward {world.dungeon.name}, but its truth is unknown.",
@@ -895,6 +908,7 @@ class RPGWorldApp(tk.Tk):
             self.wait_window(dialog)
             if dialog.selected_id is not None:
                 world = self.state.load_world(dialog.selected_id)
+                self.seed_var.set(world.generation_seed or "")
                 self.hide_index()
                 self.update_player_state()
                 self.show(self.world_overview(), f"Loaded {world.name}.")

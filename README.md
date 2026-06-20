@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.7.6 is a local, single-player weird-fantasy starting-region generator
+Version 0.7.8 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -22,11 +22,13 @@ python main.py
 ```
 
 Click **Generate New Region**, then use the viewing buttons to inspect the
-region. **Save World** writes the active world to SQLite. **Load World** opens a
-list of prior saves. **Export World**, **Export Character**, and
-**Export Event Log** write plain-text `.txt` files for the current active data.
-When a world is active, **Start Downtime** and **Advance Downtime** provide a
-minimal strategic-play entry point for long-term tasks.
+region. The optional **Generation Seed** field accepts any text string; leave
+it blank to keep normal random generation. **Save World** writes the active
+world to SQLite. **Load World** opens a list of prior saves. **Export World**,
+**Export Character**, and **Export Event Log** write plain-text `.txt` files
+for the current active data. When a world is active, **Start Downtime** and
+**Advance Downtime** provide a minimal strategic-play entry point for long-term
+tasks.
 
 Version 0.2 adds explicit links among town problems, NPCs, locations, rumors,
 the dungeon, wilderness signs, and the adventure hook. NPCs, locations, dungeon
@@ -68,7 +70,16 @@ the exploration loop already consumes those values directly.
 The app also supports plain-text export for the active world summary, the
 active character sheet, and the persistent event log. Exported character text
 keeps inventory records and resource counters separate so food, water, torches,
-coin, and supplies are not duplicated as consumable inventory quantities.
+coin, and supplies are not duplicated as consumable inventory quantities. When
+the current world was generated from a seed, exports also include that seed for
+support reports and reproducible sharing.
+
+World generation now supports optional reproducible seeds. The same seed should
+recreate the same generated starting world when the code version, JSON tables,
+and cleaned name data are also the same. Different seeds generally produce
+different settlements, NPCs, locations, dungeon details, wilderness content,
+and hook combinations. Seed control is intentionally scoped to generated world
+setup rather than every later player action or future code revision.
 
 The current working tree also adds a simple weird-fantasy calendar and
 strategic downtime framework on top of the existing tactical loop. Local
@@ -255,7 +266,7 @@ Tests cover dice formulas, name cleanup and generation, character background
 profiles, structured inventory, schema-aware table validation, generation with
 missing data, generated counts and references, dungeon connectivity, SQLite
 child records, calendar and downtime flow, exporter output, save/load
-reconstruction, and older-save compatibility.
+reconstruction, reproducible seed behavior, and older-save compatibility.
 
 Stress coverage now also exercises messy user behavior through the public game
 state API: actions before world generation, actions before character creation,
@@ -274,8 +285,7 @@ Minimal guard behavior added for this coverage:
 
 The app has a lightweight exploration game loop, calendar/downtime framework,
 and character scaffold, but not tactical combat. Visual maps, detailed combat
-resolution, deterministic seed controls, multiplayer, and web/server features
-are intentionally deferred.
+resolution, multiplayer, and web/server features are intentionally deferred.
 
 Future direction: a player character may eventually retire and remain in the
 same generated world as an NPC. That should build on the existing world and NPC

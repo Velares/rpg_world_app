@@ -333,6 +333,73 @@ class WorldTests(unittest.TestCase):
         self.assertTrue(any(task["task_key"] == "train_skill" for task in tasks))
         self.assertTrue(any(task["task_key"] == "recover_from_injury" for task in tasks))
 
+    def test_generate_new_region_accepts_text_seed_and_records_it(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 1)
+            world = state.generate_new_region("gloam-harbor")
+            self.assertEqual(world.generation_seed, "gloam-harbor")
+            self.assertEqual(state.active_seed, "gloam-harbor")
+            state.close()
+
+    def test_same_seed_generates_same_key_world_fields(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state_a = self.make_state(Path(temp), 2)
+            state_b = self.make_state(Path(temp), 999)
+            try:
+                world_a = state_a.generate_new_region("shared-seed")
+                world_b = state_b.generate_new_region("shared-seed")
+                self.assertEqual(world_a.settlement.name, world_b.settlement.name)
+                self.assertEqual(
+                    [npc.name for npc in world_a.npcs[:3]],
+                    [npc.name for npc in world_b.npcs[:3]],
+                )
+                self.assertEqual(
+                    [location.name for location in world_a.settlement.important_locations[:3]],
+                    [location.name for location in world_b.settlement.important_locations[:3]],
+                )
+                self.assertEqual(world_a.dungeon.name, world_b.dungeon.name)
+                self.assertEqual(world_a.wilderness.name, world_b.wilderness.name)
+                self.assertEqual(world_a.adventure_hook.major_goal, world_b.adventure_hook.major_goal)
+            finally:
+                state_a.close()
+                state_b.close()
+
+    def test_different_seeds_generally_change_world_fields(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 3)
+            try:
+                first = state.generate_new_region("first-seed")
+                second = state.generate_new_region("second-seed")
+                key_fields_a = (
+                    first.settlement.name,
+                    first.npcs[0].name,
+                    first.dungeon.name,
+                    first.wilderness.name,
+                    first.adventure_hook.major_goal,
+                )
+                key_fields_b = (
+                    second.settlement.name,
+                    second.npcs[0].name,
+                    second.dungeon.name,
+                    second.wilderness.name,
+                    second.adventure_hook.major_goal,
+                )
+                self.assertNotEqual(key_fields_a, key_fields_b)
+            finally:
+                state.close()
+
+    def test_older_save_without_seed_loads_safely(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 4)
+            try:
+                world = state.generate_new_region("legacy-check")
+                data = world.to_dict()
+                data.pop("generation_seed", None)
+                restored = type(world).from_dict(data)
+                self.assertIsNone(restored.generation_seed)
+            finally:
+                state.close()
+
     def test_table_loader_filters_bad_entries_and_deduplicates_warnings(self):
         with tempfile.TemporaryDirectory() as temp:
             table_dir = Path(temp)
@@ -949,9 +1016,10 @@ class ExporterTests(unittest.TestCase):
     def test_world_export_contains_summary_sections(self):
         with tempfile.TemporaryDirectory() as temp:
             state = self.make_state(Path(temp), 70)
-            world = state.generate_new_region()
+            world = state.generate_new_region("world-export-seed")
             text = export_world_summary(world)
             self.assertIn(world.name.upper(), text)
+            self.assertIn("Seed: world-export-seed", text)
             self.assertIn("Calendar:", text)
             self.assertIn("Downtime:", text)
             self.assertIn("KNOWN CONTACTS AND LEADS", text)
@@ -972,7 +1040,7 @@ class ExporterTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             state = self.make_state(Path(temp), 72)
             try:
-                world = state.generate_new_region()
+                world = state.generate_new_region("character-export-seed")
                 state.create_character(
                     "Tarin Vale",
                     "Ranger",
@@ -990,6 +1058,7 @@ class ExporterTests(unittest.TestCase):
                     quantity=2,
                 )
                 text = export_character_text(world)
+                self.assertIn("Seed: character-export-seed", text)
                 self.assertIn("Age:", text)
                 self.assertIn("Age Band:", text)
                 self.assertIn("Current Calendar:", text)
@@ -1008,9 +1077,10 @@ class ExporterTests(unittest.TestCase):
         self.assertIn("NO ACTIVE WORLD", export_event_log_text(None))
         with tempfile.TemporaryDirectory() as temp:
             state = self.make_state(Path(temp), 73)
-            world = state.generate_new_region()
+            world = state.generate_new_region("event-export-seed")
             world.player_state.event_log = []
             text = export_event_log_text(world)
+            self.assertIn("Seed: event-export-seed", text)
             self.assertIn("No events recorded yet.", text)
             self.assertIn("Calendar:", text)
             self.assertIn("Downtime:", text)
@@ -1018,6 +1088,18 @@ class ExporterTests(unittest.TestCase):
             text = export_event_log_text(world)
             self.assertIn("DANGER IS PENDING", text)
             state.close()
+
+    def test_seed_survives_save_and_load(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 74)
+            try:
+                state.generate_new_region("save-seed")
+                world_id = state.save_world("Seed Save")
+                loaded = state.load_world(world_id)
+                self.assertEqual(loaded.generation_seed, "save-seed")
+                self.assertEqual(state.active_seed, "save-seed")
+            finally:
+                state.close()
 
 
 class ExplorationTests(unittest.TestCase):
