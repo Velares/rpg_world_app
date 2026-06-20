@@ -39,6 +39,7 @@ def export_world_summary(world: World | None) -> str:
         if index < len(settlement.rumors)
     ]
     prominent_npcs = [npc for npc in world.npcs if npc.prominent]
+    key_npcs = [npc for npc in world.npcs if npc.is_key_npc]
     return (
         f"{world.name.upper()}\n{'=' * len(world.name)}\n"
         f"Created: {world.created_at}\n"
@@ -74,7 +75,16 @@ def export_world_summary(world: World | None) -> str:
         f"{_body_only(format_summary_timeline(world))}\n\n"
         f"PROMINENT NPCS\n"
         f"==============\n"
-        f"{_prominent_npc_lines(prominent_npcs)}"
+        f"{_prominent_npc_lines(prominent_npcs)}\n\n"
+        f"KEY NPCS AND RELATIONSHIPS\n"
+        f"==========================\n"
+        f"{_key_npc_lines(key_npcs)}\n\n"
+        f"RELATIONSHIP RECORDS\n"
+        f"====================\n"
+        f"{_relationship_lines(world)}\n\n"
+        f"FACTION STATUS NOTES\n"
+        f"====================\n"
+        f"{_faction_status_lines(world)}"
     )
 
 
@@ -231,3 +241,43 @@ def _prominent_npc_lines(npcs) -> str:
         if npc.recent_interaction_notes:
             lines.append(f"  Recent Note: {npc.recent_interaction_notes[-1]}")
     return "\n".join(lines)
+
+
+def _key_npc_lines(npcs) -> str:
+    if not npcs:
+        return "No key NPCs yet."
+    lines = []
+    for npc in npcs:
+        lines.append(
+            f"- {npc.name} [{npc.faction_tag}]: {npc.key_npc_reason or 'No recorded reason.'}"
+        )
+        if npc.key_npc_notes:
+            lines.append(f"  Notes: {npc.key_npc_notes}")
+    return "\n".join(lines)
+
+
+def _relationship_lines(world: World) -> str:
+    if not world.npc_relationships:
+        return "No key-NPC relationships recorded yet."
+    npc_names = {npc.entity_id: npc.name for npc in world.npcs}
+    lines = []
+    for relationship in world.npc_relationships:
+        name_a = npc_names.get(relationship.npc_a_id, relationship.npc_a_id)
+        name_b = npc_names.get(relationship.npc_b_id, relationship.npc_b_id)
+        lines.append(
+            f"- {name_a} / {name_b}: {relationship.relationship_state} "
+            f"(score {relationship.affinity_score:+d})"
+        )
+        if relationship.reason_text:
+            lines.append(f"  Reason: {relationship.reason_text}")
+        if relationship.recent_event_notes:
+            lines.append(f"  Recent: {relationship.recent_event_notes[-1]}")
+    return "\n".join(lines)
+
+
+def _faction_status_lines(world: World) -> str:
+    if not world.faction_status_notes:
+        return "No faction status notes recorded yet."
+    return "\n".join(
+        f"- {tag}: {status}" for tag, status in sorted(world.faction_status_notes.items())
+    )

@@ -3,6 +3,27 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.8.1 - Key NPC and faction-interaction phase framework
+
+- Added lightweight key-NPC promotion after highly prominent recurring NPCs
+  reach a higher threshold, with key-NPC dates, reasons, notes, and placeholder
+  faction tags.
+- Added compatibility-safe key-NPC relationship records between promoted NPCs,
+  including deduplicated pair storage, relationship state, affinity score,
+  timestamps, reason text, and recent event notes.
+- Added a small faction/NPC interaction phase that can run after downtime
+  completion and day-boundary travel or rest, producing concise event-log and
+  structured-timeline entries without introducing a full faction simulator.
+- Added editable `data/tables/key_npc_tables.json` for key-NPC promotion text
+  and lightweight ally/at-odds/neutral phase-event phrasing.
+- Expanded plain-text exports and NPC detail views to surface key NPCs,
+  relationship records, and lightweight faction-status notes where available.
+- Preserved older-save compatibility by defaulting missing key-NPC fields,
+  relationship records, faction-status notes, and phase metadata on load.
+- Added regression and stress coverage for key-NPC thresholds, relationship
+  creation and deduplication, malformed relationship recovery, phase no-op and
+  event behavior, export visibility, and older-save compatibility.
+
 ## v0.8.0 - Timeline logging and prominent NPC framework
 
 - Added `app/timeline.py` plus compatibility-safe `TimelineEntry` and NPC

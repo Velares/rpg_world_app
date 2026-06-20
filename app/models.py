@@ -53,6 +53,11 @@ class NPC:
     ongoing_thread: str = ""
     prominence_notes: str = ""
     recent_interaction_notes: list[str] = field(default_factory=list)
+    is_key_npc: bool = False
+    key_npc_since: str = ""
+    key_npc_reason: str = ""
+    key_npc_notes: str = ""
+    faction_tag: str = "unknown"
 
 
 @dataclass
@@ -294,6 +299,18 @@ class TimelineEntry:
 
 
 @dataclass
+class NpcRelationship:
+    npc_a_id: str
+    npc_b_id: str
+    relationship_state: str = "neutral"
+    affinity_score: int = 0
+    first_established_date: str = ""
+    last_checked_date: str = ""
+    reason_text: str = ""
+    recent_event_notes: list[str] = field(default_factory=list)
+
+
+@dataclass
 class PlayerState:
     character: PlayerCharacter | None = None
     current_location: str = "town"
@@ -401,6 +418,9 @@ class World:
     local_threat: str
     player_state: PlayerState
     created_at: str
+    npc_relationships: list[NpcRelationship] = field(default_factory=list)
+    faction_status_notes: dict[str, str] = field(default_factory=dict)
+    last_key_npc_phase_day: int = 0
     generation_seed: str | None = None
     world_id: int | None = None
 
@@ -557,6 +577,11 @@ class World:
             item.setdefault("relationship_to_player", "")
             item.setdefault("ongoing_thread", "")
             item.setdefault("prominence_notes", "")
+            item.setdefault("is_key_npc", False)
+            item.setdefault("key_npc_since", "")
+            item.setdefault("key_npc_reason", "")
+            item.setdefault("key_npc_notes", "")
+            item.setdefault("faction_tag", "unknown")
             notes = item.get("recent_interaction_notes", [])
             item["recent_interaction_notes"] = [
                 str(note) for note in notes if isinstance(note, str) and note
@@ -564,6 +589,27 @@ class World:
         hook_data = data["adventure_hook"]
         hook_data.setdefault("entity_id", new_id("hook"))
         hook_data.setdefault("key_npc_id", "")
+        relationship_data = data.get("npc_relationships", [])
+        relationships: list[NpcRelationship] = []
+        if isinstance(relationship_data, list):
+            for item in relationship_data:
+                if not isinstance(item, dict):
+                    continue
+                item.setdefault("npc_a_id", "")
+                item.setdefault("npc_b_id", "")
+                item.setdefault("relationship_state", "neutral")
+                item.setdefault("affinity_score", 0)
+                item.setdefault("first_established_date", "")
+                item.setdefault("last_checked_date", "")
+                item.setdefault("reason_text", "")
+                notes = item.get("recent_event_notes", [])
+                item["recent_event_notes"] = [
+                    str(note) for note in notes if isinstance(note, str) and note
+                ]
+                relationships.append(NpcRelationship(**item))
+        faction_status_notes = data.get("faction_status_notes", {})
+        if not isinstance(faction_status_notes, dict):
+            faction_status_notes = {}
         world = cls(
             name=data["name"],
             settlement=Settlement(**settlement_data),
@@ -574,10 +620,23 @@ class World:
             local_threat=data["local_threat"],
             player_state=PlayerState(**player_data),
             created_at=data["created_at"],
+            npc_relationships=relationships,
+            faction_status_notes={
+                str(key): str(value)
+                for key, value in faction_status_notes.items()
+                if key and value
+            },
+            last_key_npc_phase_day=(
+                data.get("last_key_npc_phase_day", 0)
+                if isinstance(data.get("last_key_npc_phase_day", 0), int)
+                and not isinstance(data.get("last_key_npc_phase_day", 0), bool)
+                else 0
+            ),
             generation_seed=data.get("generation_seed"),
             world_id=data.get("world_id"),
         )
         world.repair_relationship_ids()
+        world.normalize_relationship_records()
         return world
 
     def repair_relationship_ids(self) -> None:
@@ -638,3 +697,25 @@ class World:
             else:
                 encounter.foreshadows_type = "local_threat"
                 encounter.foreshadows_id = f"threat:{self.settlement.name}"
+
+    def normalize_relationship_records(self) -> None:
+        valid_states = {"ally", "at_odds", "neutral", "unknown"}
+        deduped: dict[tuple[str, str], NpcRelationship] = {}
+        for relationship in self.npc_relationships:
+            if not relationship.npc_a_id or not relationship.npc_b_id:
+                continue
+            pair = tuple(sorted((relationship.npc_a_id, relationship.npc_b_id)))
+            relationship.npc_a_id, relationship.npc_b_id = pair
+            if relationship.relationship_state not in valid_states:
+                relationship.relationship_state = "neutral"
+            if not isinstance(relationship.affinity_score, int) or isinstance(
+                relationship.affinity_score, bool
+            ):
+                relationship.affinity_score = 0
+            relationship.recent_event_notes = [
+                str(note)
+                for note in relationship.recent_event_notes
+                if isinstance(note, str) and note
+            ]
+            deduped[pair] = relationship
+        self.npc_relationships = list(deduped.values())

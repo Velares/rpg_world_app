@@ -1,0 +1,27 @@
+{
+  "key_npc_reasons": [
+    "{npc} now sits close enough to the trouble around {settlement_name} that other powers must account for them.",
+    "{npc} has become too influential in {settlement_name} to remain a background figure.",
+    "{npc} now stands where local leads, threats, and obligations begin to meet."
+  ],
+  "key_npc_notes": [
+    "{npc} carries enough influence to redirect rumors and opportunities.",
+    "{npc} has become a hinge point for local tensions and cooperation.",
+    "{npc} now matters often enough that future events may gather around them."
+  ],
+  "ally_phase_events": [
+    "Word spreads that {npc_a} and {npc_b} are quietly coordinating matters in {settlement_name}.",
+    "Several locals remark that {npc_a} and {npc_b} seem to be moving in step lately.",
+    "{npc_a} and {npc_b} are said to be sharing information before anyone else hears it."
+  ],
+  "at_odds_phase_events": [
+    "Rumors suggest {npc_a} and {npc_b} are working against one another in {settlement_name}.",
+    "A dispute tied to {npc_a} and {npc_b} leaves the settlement watching for the next misstep.",
+    "People whisper that {npc_a} and {npc_b} are pulling local affairs in opposite directions."
+  ],
+  "neutral_phase_events": [
+    "A cautious meeting between {npc_a} and {npc_b} changes little openly, but people in {settlement_name} take note.",
+    "{npc_a} and {npc_b} are seen exchanging guarded words without showing their full intent.",
+    "Nothing obvious comes of the latest contact between {npc_a} and {npc_b}, though the mood around them shifts."
+  ]
+}

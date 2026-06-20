@@ -10,6 +10,7 @@ from app.characters import CharacterFactory
 from app.checks import ActionResolver
 from app.downtime import DowntimeEngine
 from app.exploration import ExplorationEngine
+from app.key_npcs import run_key_npc_interaction_phase
 from app.generators.adventure_generator import AdventureGenerator
 from app.generators.dungeon_generator import DungeonGenerator
 from app.generators.hex_generator import HexGenerator
@@ -316,6 +317,11 @@ class GameState:
 
     def advance_downtime(self, days: int = 1) -> str:
         return self.downtime().advance_task(days)
+
+    def run_key_npc_interaction_phase(self, trigger: str = "manual") -> str:
+        return run_key_npc_interaction_phase(
+            self.require_world(), self.rng, self.tables, trigger=trigger
+        )
 
     def close(self) -> None:
         self.database.close()

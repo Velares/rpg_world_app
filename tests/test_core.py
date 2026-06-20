@@ -18,6 +18,7 @@ from app.exporters import (
 )
 from app.game_state import GameState
 from app.inventory import InventoryCatalog
+from app.key_npcs import KEY_NPC_THRESHOLD, RELATIONSHIP_STATES
 from app.generators.npc_generator import NPCGenerator
 from app.generators.settlement_generator import SettlementGenerator
 from app.models import InventoryItem, PlayerState
@@ -1825,6 +1826,143 @@ class TimelineAndNpcTests(unittest.TestCase):
                 self.assertFalse(restored_npc.prominent)
                 self.assertEqual(restored_npc.interaction_count, 0)
                 self.assertEqual(restored_npc.recent_interaction_notes, [])
+            finally:
+                state.close()
+
+    def test_npc_becomes_key_at_threshold_only_once(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 111)
+            try:
+                player = state.world.player_state
+                first_known = state.world.npcs[0]
+                for npc in state.world.npcs[1:]:
+                    npc.location_id = "other_location"
+                player.current_location = "town"
+                player.current_location_id = first_known.location_id
+                for _ in range(KEY_NPC_THRESHOLD):
+                    state.talk_to_npc()
+                    player.current_location = "town"
+                    player.current_location_id = first_known.location_id
+                npc = next(item for item in state.world.npcs if item.entity_id == first_known.entity_id)
+                self.assertTrue(npc.is_key_npc)
+                first_since = npc.key_npc_since
+                first_reason = npc.key_npc_reason
+                state.talk_to_npc()
+                self.assertEqual(npc.key_npc_since, first_since)
+                self.assertEqual(npc.key_npc_reason, first_reason)
+                self.assertEqual(
+                    sum(1 for entry in player.timeline_entries if entry.action_type == "key_npc"),
+                    1,
+                )
+            finally:
+                state.close()
+
+    def test_relationship_records_created_when_multiple_key_npcs_exist(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 112)
+            try:
+                from app.key_npcs import promote_key_npc_if_needed
+
+                for npc in state.world.npcs[:2]:
+                    npc.prominence_score = KEY_NPC_THRESHOLD
+                    npc.prominent = True
+                    promote_key_npc_if_needed(state.world, npc, state.rng, state.tables)
+                self.assertEqual(len(state.world.npc_relationships), 1)
+                relationship = state.world.npc_relationships[0]
+                self.assertIn(relationship.relationship_state, RELATIONSHIP_STATES)
+                self.assertEqual(
+                    {relationship.npc_a_id, relationship.npc_b_id},
+                    {state.world.npcs[0].entity_id, state.world.npcs[1].entity_id},
+                )
+                state.run_key_npc_interaction_phase()
+                self.assertEqual(len(state.world.npc_relationships), 1)
+            finally:
+                state.close()
+
+    def test_key_npc_phase_noops_with_zero_or_one_key_npc(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 113)
+            try:
+                self.assertEqual(state.run_key_npc_interaction_phase(), "")
+                npc = state.world.npcs[0]
+                npc.is_key_npc = True
+                npc.faction_tag = "independent"
+                self.assertEqual(state.run_key_npc_interaction_phase(), "")
+            finally:
+                state.close()
+
+    def test_key_npc_phase_creates_event_and_updates_status(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 114)
+            try:
+                npc_a, npc_b = state.world.npcs[:2]
+                for npc in (npc_a, npc_b):
+                    npc.is_key_npc = True
+                    npc.prominent = True
+                    npc.faction_tag = "local_traders"
+                state.world.normalize_relationship_records()
+                state.world.npc_relationships = []
+                state.world.last_key_npc_phase_day = 0
+                player = state.world.player_state
+                from app.key_npcs import ensure_relationship_record
+
+                relationship = ensure_relationship_record(state.world, npc_a, npc_b, state.rng)
+                relationship.relationship_state = "ally"
+                state.rng = random.Random(1)
+                player.day = 3
+                result = state.run_key_npc_interaction_phase()
+                self.assertTrue(result)
+                self.assertIn("coordin", result.lower())
+                self.assertTrue(any(entry.action_type == "faction_phase" for entry in player.timeline_entries))
+                self.assertTrue(state.world.faction_status_notes)
+            finally:
+                state.close()
+
+    def test_older_save_defaults_missing_key_npc_and_relationship_fields(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 115)
+            try:
+                data = state.world.to_dict()
+                data.pop("npc_relationships", None)
+                data.pop("faction_status_notes", None)
+                data.pop("last_key_npc_phase_day", None)
+                npc = data["npcs"][0]
+                for key in ("is_key_npc", "key_npc_since", "key_npc_reason", "key_npc_notes", "faction_tag"):
+                    npc.pop(key, None)
+                restored = type(state.world).from_dict(data)
+                self.assertEqual(restored.npc_relationships, [])
+                self.assertEqual(restored.faction_status_notes, {})
+                self.assertEqual(restored.last_key_npc_phase_day, 0)
+                self.assertFalse(restored.npcs[0].is_key_npc)
+                self.assertEqual(restored.npcs[0].faction_tag, "unknown")
+            finally:
+                state.close()
+
+    def test_malformed_relationship_state_recovers_safely(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 116)
+            try:
+                data = state.world.to_dict()
+                data["npc_relationships"] = [
+                    {
+                        "npc_a_id": state.world.npcs[0].entity_id,
+                        "npc_b_id": state.world.npcs[1].entity_id,
+                        "relationship_state": "chaotic",
+                        "affinity_score": "bad",
+                        "recent_event_notes": [1, "usable note"],
+                    },
+                    {
+                        "npc_a_id": state.world.npcs[1].entity_id,
+                        "npc_b_id": state.world.npcs[0].entity_id,
+                        "relationship_state": "ally",
+                    },
+                ]
+                restored = type(state.world).from_dict(data)
+                self.assertEqual(len(restored.npc_relationships), 1)
+                relationship = restored.npc_relationships[0]
+                self.assertEqual(relationship.relationship_state, "ally")
+                self.assertIsInstance(relationship.affinity_score, int)
+                self.assertEqual(relationship.recent_event_notes, [])
             finally:
                 state.close()
 

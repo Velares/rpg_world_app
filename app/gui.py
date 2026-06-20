@@ -642,6 +642,14 @@ class RPGWorldApp(tk.Tk):
                 f"Recent Interaction Notes:\n"
                 f"{chr(10).join(f'- {note}' for note in npc.recent_interaction_notes) or '- None'}"
             )
+        if npc.is_key_npc:
+            text += (
+                "\n\nKEY NPC DETAILS\n===============\n"
+                f"Faction Tag: {npc.faction_tag or 'unknown'}\n"
+                f"Key Since: {npc.key_npc_since or 'Not recorded'}\n"
+                f"Reason: {npc.key_npc_reason or 'Not recorded'}\n"
+                f"Notes: {npc.key_npc_notes or 'Not recorded'}"
+            )
         self.show(text, f"Viewing NPC: {npc.name}.")
 
     def view_locations(self) -> None:

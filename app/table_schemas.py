@@ -38,6 +38,13 @@ REQUIRED_CATEGORIES: dict[str, tuple[str, ...]] = {
     "class_tables": ("backgrounds", "classes"),
     "downtime_tables": ("tasks",),
     "item_tables": ("item_definitions", "common_loadout", "class_loadouts"),
+    "key_npc_tables": (
+        "key_npc_reasons",
+        "key_npc_notes",
+        "ally_phase_events",
+        "at_odds_phase_events",
+        "neutral_phase_events",
+    ),
     "interaction_tables": (
         "npc_dialogue_rumor",
         "npc_dialogue_warning",
@@ -242,6 +249,21 @@ FALLBACKS: dict[tuple[str, str], list[object]] = {
     ],
     ("item_tables", "common_loadout"): [
         {"item_key": "basic_gear", "quantity": 1}
+    ],
+    ("key_npc_tables", "key_npc_reasons"): [
+        "{npc} now sits close enough to the region's trouble that other powers must account for them."
+    ],
+    ("key_npc_tables", "key_npc_notes"): [
+        "{npc} carries enough influence to alter rumors, opportunities, and local tensions."
+    ],
+    ("key_npc_tables", "ally_phase_events"): [
+        "Word spreads that {npc_a} and {npc_b} are quietly coordinating matters in {settlement_name}."
+    ],
+    ("key_npc_tables", "at_odds_phase_events"): [
+        "Rumors suggest {npc_a} and {npc_b} are working against one another in {settlement_name}."
+    ],
+    ("key_npc_tables", "neutral_phase_events"): [
+        "A cautious meeting between {npc_a} and {npc_b} changes little openly, but people in {settlement_name} take note."
     ],
     ("item_tables", "class_loadouts"): [
         {"class_name": "Explorer", "items": []}

@@ -4,6 +4,7 @@ import random
 from dataclasses import asdict
 
 from app.calendar import advance_days, append_timeline_entry, calendar_date
+from app.key_npcs import run_key_npc_interaction_phase
 from app.models import ActiveDowntimeTask, InventoryItem, World
 from app.table_loader import TableLoader
 
@@ -152,6 +153,11 @@ class DowntimeEngine:
             if outcome_note:
                 parts.append(outcome_note)
             self.player.active_downtime_task = None
+            phase_message = run_key_npc_interaction_phase(
+                self.world, self.rng, self.tables, trigger="downtime"
+            )
+            if phase_message:
+                parts.append(phase_message)
         return " ".join(parts)
 
     @staticmethod

@@ -99,8 +99,20 @@ class StressTests(unittest.TestCase):
             self.assertIsInstance(npc.prominence_score, int)
             self.assertGreaterEqual(npc.prominence_score, 0)
             self.assertIsInstance(npc.prominent, bool)
+            self.assertIsInstance(npc.is_key_npc, bool)
+            self.assertIsInstance(npc.faction_tag, str)
             self.assertIsInstance(npc.recent_interaction_notes, list)
             self.assertTrue(all(isinstance(note, str) for note in npc.recent_interaction_notes))
+        self.assertIsInstance(world.npc_relationships, list)
+        seen_pairs = set()
+        for relationship in world.npc_relationships:
+            pair = tuple(sorted((relationship.npc_a_id, relationship.npc_b_id)))
+            self.assertEqual(pair, (relationship.npc_a_id, relationship.npc_b_id))
+            self.assertNotIn(pair, seen_pairs)
+            seen_pairs.add(pair)
+            self.assertIn(relationship.relationship_state, {"ally", "at_odds", "neutral", "unknown"})
+            self.assertIsInstance(relationship.recent_event_notes, list)
+        self.assertIsInstance(world.faction_status_notes, dict)
         if player.current_room_id is not None:
             valid_rooms = {room.room_id for room in world.dungeon.rooms}
             self.assertIn(player.current_room_id, valid_rooms)
@@ -257,9 +269,13 @@ class StressTests(unittest.TestCase):
             loaded_data["player_state"].pop("active_downtime_task", None)
             loaded_data["player_state"].pop("age_days_accumulated", None)
             loaded_data["player_state"].pop("timeline_entries", None)
+            loaded_data.pop("npc_relationships", None)
+            loaded_data.pop("faction_status_notes", None)
             for npc in loaded_data["npcs"]:
                 npc.pop("prominent", None)
                 npc.pop("recent_interaction_notes", None)
+                npc.pop("is_key_npc", None)
+                npc.pop("faction_tag", None)
             restored = type(loaded).from_dict(loaded_data)
             state.world = restored
             self.assertIn("NO PLAYER CHARACTER", export_character_text(state.world))

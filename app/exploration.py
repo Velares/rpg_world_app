@@ -4,6 +4,7 @@ import random
 
 from app.calendar import advance_time, append_timeline_entry
 from app.interaction_text import choose_interaction_text
+from app.key_npcs import run_key_npc_interaction_phase
 from app.models import DungeonRoom, Encounter, NPC, World
 from app.table_loader import TableLoader
 from app.timeline import record_npc_interaction
@@ -120,6 +121,7 @@ class ExplorationEngine:
         player.current_room_id = None
         player.current_location_id = ""
         player.current_location = destination
+        start_day = player.day
         self._spend_turn(supplies=1, water=1)
         names = {
             "town": self.world.settlement.name,
@@ -134,13 +136,20 @@ class ExplorationEngine:
                 f" On the road you find warning signs: {encounter.what_player_notices_first} "
                 "You may avoid, approach, investigate, or retreat."
             )
-        return self.log(
+        result = self.log(
             message,
             action_type="travel",
             location_context=destination,
             location_name=names[destination],
             resource_impact="supplies -1, water -1",
         )
+        if player.day > start_day:
+            phase_message = run_key_npc_interaction_phase(
+                self.world, self.rng, self.tables, trigger="travel"
+            )
+            if phase_message:
+                result = f"{result} {phase_message}"
+        return result
 
     def travel_to_location(self, location_id: str) -> str:
         location = next(
@@ -554,7 +563,7 @@ class ExplorationEngine:
                 f"Investigate the rumor learned from {npc.name} at {npc.location}: {rumor}"
             )
         note = f"Conversation at {npc.location}"
-        prominence_message = record_npc_interaction(
+        transition_messages = record_npc_interaction(
             self.world,
             npc,
             note,
@@ -573,16 +582,22 @@ class ExplorationEngine:
             location_name=location.name,
             lead_ref=rumor if rumor_text else "",
         )
-        if prominence_message:
-            self.log(
-                prominence_message,
-                action_type="npc_prominence",
-                location_context="town",
-                npc_id=npc.entity_id,
-                npc_name=npc.name,
-                location_id=location.entity_id,
-                location_name=location.name,
-            )
+        if transition_messages:
+            for transition_message in transition_messages.splitlines():
+                action_type = (
+                    "key_npc"
+                    if "key figure" in transition_message
+                    else "npc_prominence"
+                )
+                self.log(
+                    transition_message,
+                    action_type=action_type,
+                    location_context="town",
+                    npc_id=npc.entity_id,
+                    npc_name=npc.name,
+                    location_id=location.entity_id,
+                    location_name=location.name,
+                )
         return result
 
     def inspect_location(self) -> str:
@@ -692,6 +707,7 @@ class ExplorationEngine:
         player = self.player
         if rest_type not in {"short", "full"}:
             raise ValueError("Rest must be short or full.")
+        start_day = player.day
         if rest_type == "full" and player.current_location == "town":
             lodging_cost = 2
             if player.coin < lodging_cost:
@@ -728,12 +744,19 @@ class ExplorationEngine:
             if recovered
             else "steady your nerves"
         )
-        return self.log(
+        result = self.log(
             f"You take a {rest_type} rest, consume food and water, and {recovery}.",
             action_type="rest",
             location_context=player.current_location,
             resource_impact=f"food -{cost}, water -{cost}",
         )
+        if player.day > start_day:
+            phase_message = run_key_npc_interaction_phase(
+                self.world, self.rng, self.tables, trigger="rest"
+            )
+            if phase_message:
+                result = f"{result} {phase_message}"
+        return result
 
     def retreat(self) -> str:
         player = self.player

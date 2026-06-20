@@ -4,6 +4,7 @@ import random
 from collections import Counter
 
 from app.calendar import calendar_date, format_calendar
+from app.key_npcs import KEY_NPC_THRESHOLD, promote_key_npc_if_needed
 from app.models import NPC, TimelineEntry, World
 from app.table_loader import TableLoader
 
@@ -128,7 +129,17 @@ def format_summary_timeline(world: World | None) -> str:
         entry.result_text
         for entry in entries
         if entry.action_type
-        in {"travel", "explore", "talk", "encounter", "downtime", "quest", "npc_prominence"}
+        in {
+            "travel",
+            "explore",
+            "talk",
+            "encounter",
+            "downtime",
+            "quest",
+            "npc_prominence",
+            "key_npc",
+            "faction_phase",
+        }
     ]
     lines.extend(["", "Recent Major Activity", "---------------------"])
     lines.extend(f"- {text}" for text in major[-5:]) if major else lines.append("- None yet.")
@@ -142,6 +153,15 @@ def format_summary_timeline(world: World | None) -> str:
             )
     else:
         lines.append("- None yet.")
+    key_npcs = [npc for npc in world.npcs if npc.is_key_npc]
+    lines.extend(["", "Key NPCs", "--------"])
+    if key_npcs:
+        for npc in key_npcs:
+            lines.append(
+                f"- {npc.name}: {npc.faction_tag}, key since {npc.key_npc_since or 'unknown'}"
+            )
+    else:
+        lines.append("- None yet.")
     return "\n".join(lines)
 
 
@@ -152,6 +172,7 @@ def record_npc_interaction(
     rng: random.Random,
     tables: TableLoader,
 ) -> str:
+    messages: list[str] = []
     npc.interaction_count = max(0, int(npc.interaction_count)) + 1
     npc.prominence_score = max(0, int(npc.prominence_score)) + 1
     current_date = format_calendar(world.player_state.day, world.player_state.time_period)
@@ -160,18 +181,20 @@ def record_npc_interaction(
     npc.last_interacted_date = current_date
     npc.recent_interaction_notes.append(f"{current_date} - {note}")
     npc.recent_interaction_notes = npc.recent_interaction_notes[-RECENT_NPC_NOTES_LIMIT:]
-    if npc.prominent:
-        return ""
-    if npc.interaction_count < PROMINENT_NPC_THRESHOLD:
-        return ""
-    npc.prominent = True
-    npc.deeper_backstory = _choose_depth_text(tables, rng, "deeper_backstories")
-    npc.personal_motive = _choose_depth_text(tables, rng, "personal_motives")
-    npc.hidden_pressure = _choose_depth_text(tables, rng, "hidden_pressures")
-    npc.relationship_to_player = _choose_depth_text(tables, rng, "relationship_to_player")
-    npc.ongoing_thread = _choose_depth_text(tables, rng, "ongoing_threads")
-    npc.prominence_notes = _choose_depth_text(tables, rng, "prominence_notes")
-    return f"{npc.name} has become a prominent recurring figure. {npc.prominence_notes}"
+    if not npc.prominent and npc.interaction_count >= PROMINENT_NPC_THRESHOLD:
+        npc.prominent = True
+        npc.deeper_backstory = _choose_depth_text(tables, rng, "deeper_backstories")
+        npc.personal_motive = _choose_depth_text(tables, rng, "personal_motives")
+        npc.hidden_pressure = _choose_depth_text(tables, rng, "hidden_pressures")
+        npc.relationship_to_player = _choose_depth_text(tables, rng, "relationship_to_player")
+        npc.ongoing_thread = _choose_depth_text(tables, rng, "ongoing_threads")
+        npc.prominence_notes = _choose_depth_text(tables, rng, "prominence_notes")
+        messages.append(
+            f"{npc.name} has become a prominent recurring figure. {npc.prominence_notes}"
+        )
+    if npc.prominence_score >= KEY_NPC_THRESHOLD:
+        messages.extend(promote_key_npc_if_needed(world, npc, rng, tables))
+    return "\n".join(messages)
 
 
 def _choose_depth_text(tables: TableLoader, rng: random.Random, category: str) -> str:

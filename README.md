@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.8.0 is a local, single-player weird-fantasy starting-region generator
+Version 0.8.1 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -147,6 +147,23 @@ Plain-text exports now include the current journal summary, verbose timeline
 sections where appropriate, and prominent recurring NPC notes. Older saves
 still load safely when timeline or NPC-prominence fields are missing.
 
+Version 0.8.1 adds a lightweight key-NPC and faction-interaction phase
+framework. Once a recurring NPC becomes prominent enough, they can be promoted
+to a key NPC with a key date, reason, notes, and a simple placeholder faction
+tag. Key NPCs are then compared against one another to create lightweight
+relationship records such as ally, at odds, neutral, or unknown.
+
+The new relationship phase is intentionally small and rules-neutral. It can run
+after downtime completion and after travel or rest when a new day begins. Phase
+results produce concise event-log and timeline entries, along with small follow
+ups such as leads, quest notes, or lightweight faction-status notes. This is a
+foundation for later world dynamics, not a full faction simulator.
+
+World exports now include key NPCs, relationship records, and simple
+faction-status notes when present. NPC detail views also show key-NPC metadata
+without adding a separate faction screen. Older saves still load safely when
+key-NPC, relationship, or faction-phase fields are missing.
+
 The database is created automatically at:
 
 ```text
@@ -170,6 +187,7 @@ database on its next launch.
 - `app/inventory.py`: item catalog and class starting-loadout construction
 - `app/calendar.py`: shared calendar, aging, and timeline helpers
 - `app/downtime.py`: strategic downtime task engine
+- `app/key_npcs.py`: key-NPC promotion and faction-phase helpers
 - `app/interaction_text.py`: interaction template formatting helpers
 - `app/exporters.py`: plain-text export formatting helpers
 - `app/timeline.py`: structured timeline logging and recurring-NPC helpers
@@ -178,6 +196,7 @@ database on its next launch.
 - `data/tables/`: editable generation content
 - `data/tables/interaction_tables.json`: dialogue, encounter, and action text
 - `data/tables/downtime_tables.json`: downtime task definitions
+- `data/tables/key_npc_tables.json`: key-NPC and relationship-phase text
 - `data/tables/npc_depth_tables.json`: placeholder recurring-NPC depth text
 - `data/saves/`: local SQLite saves
 - `tests/`: standard-library unit tests
@@ -221,6 +240,11 @@ Recurring-NPC placeholder depth follows the same JSON-driven pattern. Edit
 `data/tables/npc_depth_tables.json` to expand generic backstory, motive,
 pressure, relationship, and ongoing-thread text without hard-coding larger
 lists into Python.
+
+Key-NPC promotion and relationship-phase text also follow the JSON-driven
+pattern. Edit `data/tables/key_npc_tables.json` to tune promotion reasons,
+key-NPC notes, and lightweight ally/at-odds/neutral event phrasing without
+rewriting Python logic.
 
 Simple lists choose entries uniformly. The loader also accepts weighted entries:
 
@@ -311,14 +335,15 @@ profiles, structured inventory, schema-aware table validation, generation with
 missing data, generated counts and references, dungeon connectivity, SQLite
 child records, calendar and downtime flow, exporter output, save/load
 reconstruction, reproducible seed behavior, downtime consequence outcomes,
-timeline logging, recurring-NPC promotion, and older-save compatibility.
+timeline logging, recurring-NPC promotion, key-NPC promotion, relationship
+records, faction-phase behavior, and older-save compatibility.
 
 Stress coverage now also exercises messy user behavior through the public game
 state API: actions before world generation, actions before character creation,
 repeated searches/talk/rest/retreat/save/load/export sequences, illogical
 encounter and downtime choices, corrupt calendar-like save data, malformed
-table data, malformed timeline/NPC state, and a deterministic randomized action
-sequence with invariant checks after every step.
+table data, malformed timeline/NPC/key-NPC state, and a deterministic
+randomized action sequence with invariant checks after every step.
 
 Minimal guard behavior added for this coverage:
 

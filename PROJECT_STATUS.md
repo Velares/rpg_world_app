@@ -3,11 +3,29 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.0`
+- Current development version on `main`: `v0.8.1`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.8.1 adds key NPC and faction-interaction framework support on
+`main`:
+
+- Promoted highly prominent recurring NPCs into key NPCs with key dates,
+  reasons, notes, and lightweight placeholder faction tags.
+- Added deduplicated relationship records between key NPC pairs with ally,
+  at-odds, neutral, or unknown states plus lightweight affinity and event-note
+  tracking.
+- Added a small faction/NPC interaction phase that can trigger after downtime
+  completion and day-boundary travel or rest, feeding concise results into the
+  event log and structured timeline.
+- Added editable key-NPC text tables for promotion reasons, notes, and
+  relationship-phase event phrasing.
+- Extended exports and NPC detail views to surface key NPCs, relationship
+  records, and lightweight faction-status notes.
+- Preserved older-save compatibility by defaulting missing key-NPC,
+  relationship, faction-status, and phase-metadata fields on load.
 
 Version 0.8.0 adds timeline logging and prominent recurring NPC support on
 `main`:
@@ -164,6 +182,8 @@ Version 0.7 hardened the data-driven generation foundation:
 - Recurring-NPC tracking with prominence after repeated meaningful
   interactions.
 - Placeholder recurring-NPC depth notes driven by editable JSON tables.
+- Key-NPC promotion and lightweight inter-NPC relationship tracking.
+- Coarse-grained faction/NPC interaction phase with lightweight status notes.
 - Simple character age tracking with narrative age bands.
 - Tkinter list/detail views, character sheet, player-state display, simple
   export actions, seed entry, downtime controls, journal/timeline views,
@@ -185,9 +205,9 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 91 tests passing with
+- Current verification: 97 tests passing with
   `python -m unittest discover -s tests -v`.
-- `python -m compileall .` passes, and all 15 JSON table files parse with zero
+- `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.
 - No Tkinter smoke test was completed for this milestone because the local
   Python 3.11 install still lacks a usable `init.tcl`, so GUI-facing behavior
@@ -198,8 +218,9 @@ Version 0.7 hardened the data-driven generation foundation:
   rollovers, downtime flow, character creation, exporter output, variable-size
   table selection, interaction variety, normalized database rows, older-save
   compatibility, reproducible seed behavior, world-aware downtime outcomes,
-  timeline logging, recurring-NPC promotion, and randomized/error-handling
-  stress scenarios.
+  timeline logging, recurring-NPC promotion, key-NPC promotion, relationship
+  records, faction-phase behavior, and randomized/error-handling stress
+  scenarios.
 
 ## Known issues and boundaries
 
@@ -212,16 +233,17 @@ Version 0.7 hardened the data-driven generation foundation:
 
 ## Next candidate goals
 
-1. Add a compact journal recap or filtered timeline view only if players need
-   easier browsing than the current summary and verbose text output.
+1. Add a compact journal recap or filtered timeline/key-NPC view only if
+   players need easier browsing than the current summary and verbose text
+   output.
 2. Design later character retirement so retired protagonists can remain in the
    same world as NPCs after the calendar/downtime layer settles.
 3. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
    available in the local environment.
 4. Consider a small seed-copy or seed-regenerate affordance only if players
    actually need more than the current single text entry.
-5. Deepen recurring NPCs with optional world-aware quest hooks before
-   considering any broader relationship or faction system.
+5. Deepen key NPCs with optional world-aware quest hooks before considering
+   any broader relationship or faction system.
 
 ## Important files and directories
 
@@ -230,6 +252,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - `app/models.py` - dataclasses and older-save compatibility
 - `app/calendar.py` - shared date, time, and aging helpers
 - `app/downtime.py` - strategic downtime task engine
+- `app/key_npcs.py` - key-NPC promotion and faction-phase helpers
 - `app/timeline.py` - structured timeline logging and recurring-NPC helpers
 - `app/gui.py` - Tkinter interface
 - `app/database.py` - SQLite persistence
@@ -241,6 +264,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - `data/tables/` - editable JSON content
 - `data/tables/interaction_tables.json` - dialogue, encounter, and action text
 - `data/tables/downtime_tables.json` - editable downtime task definitions
+- `data/tables/key_npc_tables.json` - key-NPC and relationship-phase text
 - `data/tables/npc_depth_tables.json` - recurring-NPC placeholder depth text
 - `data/names/` - raw and cleaned name datasets
 - `data/tables/item_tables.json` - item definitions and starting gear
