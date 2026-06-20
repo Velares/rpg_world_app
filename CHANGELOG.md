@@ -3,6 +3,22 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.7.7 - Stress and error-handling coverage
+
+- Added `tests/test_stress.py` for no-world, no-character, repeated-action,
+  illogical-sequence, old-save, corrupt-data, and deterministic randomized
+  stress coverage.
+- Added invariant checks around player state, calendar fields, resources,
+  inventory, event logs, and pending encounter references after messy action
+  sequences.
+- Hardened calendar compatibility so invalid loaded `day`, `time_period`, and
+  `age_days_accumulated` values fall back safely instead of breaking later time
+  advancement.
+- Tightened public inventory helpers so non-integer add/remove quantities fail
+  with clear `ValueError` messages.
+- Guarded downtime start/advance behind player-character creation to prevent
+  illogical strategic actions before identity setup exists.
+
 ## v0.7.6 - Calendar, aging, and downtime framework
 
 - Added `app/calendar.py` to centralize campaign date formatting, time

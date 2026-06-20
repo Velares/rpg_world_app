@@ -13,14 +13,26 @@ older save data.
 ## Current Status
 
 - Tagged release: `v0.7.3`
-- Current development version on `main`: `v0.7.6`
+- Current development version on `main`: `v0.7.7`
 - Current branch: `main`
-- Current development state: `main` includes the `v0.7.6` calendar, aging,
-  and downtime milestone beyond the tagged `v0.7.3` release
-- Latest completed commit before this docs/versioning pass: `ac9977f` -
-  `Prepare v0.7.5 dialogue and encounter variety update`
+- Current development state: `main` includes the `v0.7.7` stress and
+  error-handling milestone beyond the tagged `v0.7.3` release
+- Latest completed commit before this docs/versioning pass: `61a8d6d` -
+  `Prepare v0.7.6 calendar and downtime framework update`
 
 Recent milestone completed:
+
+- Added focused stress and illogical-action regression coverage in
+  `tests/test_stress.py`
+- Added invariant checks around calendar fields, resources, inventory,
+  event logs, and pending encounter references after randomized action
+  sequences
+- Hardened invalid loaded calendar fields so bad day/time values recover
+  safely instead of breaking later turns
+- Tightened public inventory quantity validation and downtime precondition
+  guards with minimal code changes driven by tests
+
+Previous completed milestone:
 
 - Added a shared weird-fantasy calendar layer with year, season, day, and
   time-period tracking built on the existing exploration loop
@@ -62,7 +74,7 @@ Previous completed milestone:
 
 Verified on the current milestone:
 
-- `python -m unittest discover -s tests -v` -> 67 tests passing
+- `python -m unittest discover -s tests -v` -> 74 tests passing
 - `python -m compileall .` -> passing
 - All files under `data/tables/` parse with zero unexpected `TableLoader`
   warnings
@@ -99,6 +111,15 @@ Environment note:
 - Hardened JSON-driven content loading and validation
 - Added diagnostics and fallbacks for malformed or missing generation data
 - Added cached large name-file loading
+
+### v0.7.7
+
+- Added `tests/test_stress.py` for no-world, no-character, repeated-action,
+  illogical-sequence, corrupt-data, old-save, and deterministic randomized
+  stress coverage
+- Added invariant checks after messy public action sequences
+- Hardened loaded calendar defaults and public inventory quantity validation
+- Guarded downtime start/advance behind character creation
 
 ### v0.7.6
 
@@ -220,6 +241,15 @@ Environment note:
 - Apply a few light completion effects such as recovery, coin, supplies, or
   new leads without introducing a full subsystem
 
+### Stress handling
+
+- Safely reject actions before world generation where public API preconditions
+  are missing
+- Safely reject downtime actions before character creation
+- Tolerate repeated searches, saves, loads, exports, rests, retreats, and
+  randomized action ordering without corrupting core state
+- Recover from malformed loaded calendar/time fields with compatibility defaults
+
 ### Persistence, logs, and exports
 
 - Save worlds to SQLite
@@ -259,3 +289,5 @@ Intentionally not implemented yet:
 3. Add a small inventory-management dialog only when gameplay needs it.
 4. Design later character retirement so retired protagonists can remain in the
    same world as NPCs after the calendar/downtime layer settles.
+5. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
+   available.

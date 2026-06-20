@@ -322,6 +322,8 @@ class PlayerState:
         else:
             new_item = InventoryItem(**asdict(item))
         amount = new_item.quantity if quantity is None else quantity
+        if not isinstance(amount, int) or isinstance(amount, bool):
+            raise ValueError("Inventory quantity must be a whole number.")
         if amount <= 0:
             raise ValueError("Inventory quantity must be positive.")
         existing = self.inventory_item(new_item.item_key)
@@ -341,6 +343,8 @@ class PlayerState:
         return self.inventory[-1]
 
     def remove_inventory_item(self, item_key_or_name: str, quantity: int = 1) -> int:
+        if not isinstance(quantity, int) or isinstance(quantity, bool):
+            raise ValueError("Removal quantity must be a whole number.")
         if quantity <= 0:
             raise ValueError("Removal quantity must be positive.")
         item = self.inventory_item(item_key_or_name)
@@ -456,6 +460,18 @@ class World:
         player_data.setdefault("last_consequence", "")
         player_data.setdefault("turns_elapsed", 0)
         player_data.setdefault("age_days_accumulated", 0)
+        if not isinstance(player_data["day"], int) or isinstance(player_data["day"], bool):
+            player_data["day"] = 1
+        else:
+            player_data["day"] = max(1, player_data["day"])
+        if player_data["time_period"] not in ("Morning", "Afternoon", "Evening", "Night"):
+            player_data["time_period"] = "Morning"
+        if not isinstance(player_data["age_days_accumulated"], int) or isinstance(
+            player_data["age_days_accumulated"], bool
+        ):
+            player_data["age_days_accumulated"] = 0
+        else:
+            player_data["age_days_accumulated"] = max(0, player_data["age_days_accumulated"])
         inventory_data = player_data.get("inventory")
         if inventory_data is None:
             player_data["inventory"] = default_inventory()

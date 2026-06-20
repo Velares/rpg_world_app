@@ -30,6 +30,8 @@ class DowntimeEngine:
         return tasks
 
     def start_task(self, task_key: str) -> str:
+        if self.player.character is None:
+            raise RuntimeError("Create a character before starting downtime.")
         if self.player.active_downtime_task is not None:
             active = self.player.active_downtime_task
             raise RuntimeError(
@@ -63,6 +65,8 @@ class DowntimeEngine:
     def advance_task(self, days: int = 1) -> str:
         if days <= 0:
             raise ValueError("Downtime must advance by at least one day.")
+        if self.player.character is None:
+            raise RuntimeError("Create a character before advancing downtime.")
         active = self.player.active_downtime_task
         if active is None:
             raise RuntimeError("Start a downtime task first.")

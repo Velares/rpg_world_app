@@ -3,11 +3,21 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.7.6`
+- Current development version on `main`: `v0.7.7`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.7.7 adds stress/error-handling test coverage on `main`:
+
+- Added focused stress coverage for messy button ordering, repeated actions,
+  illogical gameplay sequences, old-save action paths, and corrupt local data.
+- Added deterministic randomized action-sequence testing with invariant checks
+  after every step.
+- Hardened loaded calendar defaults so invalid day/time values recover safely.
+- Tightened inventory quantity validation and downtime precondition guards with
+  minimal code changes driven by tests.
 
 Version 0.7.6 adds a calendar, aging, and strategic-downtime framework on
 `main`:
@@ -124,7 +134,8 @@ Version 0.7 hardened the data-driven generation foundation:
 ## Testing status
 
 - Test suite: `tests/test_core.py`
-- Current verification: 67 tests passing with
+- Additional stress suite: `tests/test_stress.py`
+- Current verification: 74 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 14 JSON table files parse with zero
   `TableLoader` warnings.
@@ -134,8 +145,8 @@ Version 0.7 hardened the data-driven generation foundation:
 - Coverage includes dice, checks, names, cleanup/scrubbing, JSON validation,
   connected world generation, missing-data fallbacks, exploration, calendar
   rollovers, downtime flow, character creation, exporter output, variable-size
-  table selection, interaction variety, normalized database rows, and
-  older-save compatibility.
+  table selection, interaction variety, normalized database rows, older-save
+  compatibility, and randomized/error-handling stress scenarios.
 
 ## Known issues and boundaries
 
@@ -155,6 +166,8 @@ Version 0.7 hardened the data-driven generation foundation:
    follow-up only if the lightweight framework proves useful in play.
 4. Design later character retirement so retired protagonists can remain in the
    same world as NPCs after the calendar/downtime layer settles.
+5. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
+   available in the local environment.
 
 ## Important files and directories
 
@@ -178,6 +191,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - `data/saves/worlds.db` - current SQLite save database
 - `tools/` - name cleanup and corruption-scrubbing utilities
 - `tests/test_core.py` - automated test suite
+- `tests/test_stress.py` - stress and illogical-action regression coverage
 - `AGENTS.md` - named AI roles and coordinated operating model
 
 ## How to update this file

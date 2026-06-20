@@ -27,6 +27,7 @@ class CalendarDate:
 
 def calendar_date(day: int, time_period: str) -> CalendarDate:
     safe_day = max(1, int(day))
+    safe_period = time_period if time_period in TIME_PERIODS else TIME_PERIODS[0]
     day_index = safe_day - 1
     year = CAMPAIGN_START_YEAR + (day_index // DAYS_PER_YEAR)
     season_index = (day_index % DAYS_PER_YEAR) // DAYS_PER_SEASON
@@ -36,7 +37,7 @@ def calendar_date(day: int, time_period: str) -> CalendarDate:
         year=year,
         season=SEASONS[season_index],
         day_of_season=day_of_season,
-        time_period=time_period,
+        time_period=safe_period,
     )
 
 
@@ -73,6 +74,8 @@ def age_band(age_years: int) -> str:
 def advance_time(player, periods: int = 1) -> None:
     if periods <= 0:
         return
+    if player.time_period not in TIME_PERIODS:
+        player.time_period = TIME_PERIODS[0]
     for _ in range(periods):
         index = TIME_PERIODS.index(player.time_period)
         if index == len(TIME_PERIODS) - 1:

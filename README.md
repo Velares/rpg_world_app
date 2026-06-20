@@ -257,6 +257,19 @@ missing data, generated counts and references, dungeon connectivity, SQLite
 child records, calendar and downtime flow, exporter output, save/load
 reconstruction, and older-save compatibility.
 
+Stress coverage now also exercises messy user behavior through the public game
+state API: actions before world generation, actions before character creation,
+repeated searches/talk/rest/retreat/save/load/export sequences, illogical
+encounter and downtime choices, corrupt calendar-like save data, malformed
+table data, and a deterministic randomized action sequence with invariant
+checks after every step.
+
+Minimal guard behavior added for this coverage:
+
+- downtime now requires a created character
+- invalid loaded calendar fields fall back safely
+- invalid public inventory quantities raise clear `ValueError` messages
+
 ## Current boundaries
 
 The app has a lightweight exploration game loop, calendar/downtime framework,

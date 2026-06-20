@@ -1389,43 +1389,52 @@ class CalendarAndDowntimeTests(unittest.TestCase):
     def test_starting_advancing_and_completing_downtime_updates_state(self):
         with tempfile.TemporaryDirectory() as temp:
             state = self.make_state(Path(temp), 99)
-            player = state.world.player_state
-            start_day = player.day
-            message = state.start_downtime_task("work_for_coin")
-            self.assertIn("Started downtime task", message)
-            self.assertIsNotNone(player.active_downtime_task)
-            coin_before = player.coin
-            result = state.advance_downtime(3)
-            self.assertIn("work", result.lower())
-            self.assertIsNone(player.active_downtime_task)
-            self.assertEqual(player.day, start_day + 3)
-            self.assertGreater(player.coin, coin_before)
-            self.assertTrue(any("Downtime begins:" in entry for entry in player.event_log))
-            self.assertTrue(any("Work for Coin" in entry for entry in player.event_log))
-            state.close()
+            try:
+                state.create_character("Downtime Worker", "Ranger", state.character_backgrounds()[0])
+                player = state.world.player_state
+                start_day = player.day
+                message = state.start_downtime_task("work_for_coin")
+                self.assertIn("Started downtime task", message)
+                self.assertIsNotNone(player.active_downtime_task)
+                coin_before = player.coin
+                result = state.advance_downtime(3)
+                self.assertIn("work", result.lower())
+                self.assertIsNone(player.active_downtime_task)
+                self.assertEqual(player.day, start_day + 3)
+                self.assertGreater(player.coin, coin_before)
+                self.assertTrue(any("Downtime begins:" in entry for entry in player.event_log))
+                self.assertTrue(any("Work for Coin" in entry for entry in player.event_log))
+            finally:
+                state.close()
 
     def test_recovery_downtime_can_reduce_wounds(self):
         with tempfile.TemporaryDirectory() as temp:
             state = self.make_state(Path(temp), 100)
-            player = state.world.player_state
-            player.wounds = 2
-            state.start_downtime_task("recover_from_injury")
-            state.advance_downtime(3)
-            self.assertEqual(player.wounds, 1)
-            state.close()
+            try:
+                state.create_character("Recovering Scout", "Ranger", state.character_backgrounds()[0])
+                player = state.world.player_state
+                player.wounds = 2
+                state.start_downtime_task("recover_from_injury")
+                state.advance_downtime(3)
+                self.assertEqual(player.wounds, 1)
+            finally:
+                state.close()
 
     def test_active_downtime_task_survives_save_and_load(self):
         with tempfile.TemporaryDirectory() as temp:
             state = self.make_state(Path(temp), 101)
-            state.start_downtime_task("train_skill")
-            state.advance_downtime(1)
-            world_id = state.save_world("Downtime Save")
-            loaded = state.load_world(world_id)
-            active = loaded.player_state.active_downtime_task
-            self.assertIsNotNone(active)
-            self.assertEqual(active.task_key, "train_skill")
-            self.assertEqual(active.progress_days, 1)
-            state.close()
+            try:
+                state.create_character("Patient Student", "Scholar", state.character_backgrounds()[0])
+                state.start_downtime_task("train_skill")
+                state.advance_downtime(1)
+                world_id = state.save_world("Downtime Save")
+                loaded = state.load_world(world_id)
+                active = loaded.player_state.active_downtime_task
+                self.assertIsNotNone(active)
+                self.assertEqual(active.task_key, "train_skill")
+                self.assertEqual(active.progress_days, 1)
+            finally:
+                state.close()
 
 
 if __name__ == "__main__":
