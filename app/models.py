@@ -290,6 +290,7 @@ class LeadRecord:
     status: str = "active"
     suggested_action: str = ""
     category: str = "other"
+    last_updated_day: int = 0
 
 
 @dataclass
@@ -568,6 +569,13 @@ class World:
                     item.setdefault("status", "active")
                     item.setdefault("suggested_action", item.get("text", ""))
                     item.setdefault("category", "other")
+                    item.setdefault("last_updated_day", 0)
+                    if not isinstance(item["last_updated_day"], int) or isinstance(
+                        item["last_updated_day"], bool
+                    ):
+                        item["last_updated_day"] = 0
+                    else:
+                        item["last_updated_day"] = max(0, item["last_updated_day"])
                     if item["text"]:
                         lead_records.append(LeadRecord(**item))
         legacy_leads = player_data.get("leads", [])

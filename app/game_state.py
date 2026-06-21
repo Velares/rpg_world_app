@@ -17,7 +17,7 @@ from app.generators.hex_generator import HexGenerator
 from app.generators.npc_generator import NPCGenerator
 from app.generators.settlement_generator import SettlementGenerator
 from app.generators.wilderness_generator import WildernessGenerator
-from app.leads import add_lead
+from app.leads import add_lead, follow_lead, open_leads
 from app.models import InventoryItem, PlayerState, World
 from app.name_generator import NameGenerator
 from app.table_loader import TableLoader
@@ -325,6 +325,12 @@ class GameState:
 
     def advance_downtime(self, days: int = 1) -> str:
         return self.downtime().advance_task(days)
+
+    def open_leads(self):
+        return open_leads(self.require_world().player_state)
+
+    def follow_open_lead(self, index: int = 0) -> str:
+        return follow_lead(self.require_world(), self.rng, index=index)
 
     def run_key_npc_interaction_phase(self, trigger: str = "manual") -> str:
         return run_key_npc_interaction_phase(

@@ -3,11 +3,31 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.3`
+- Current development version on `main`: `v0.8.4`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.8.4 adds lightweight lead follow-up and resolution on `main`:
+
+- Added small status helpers so lead threads can advance among open,
+  corroborated, resolved, failed, and stale states without becoming a full
+  quest system.
+- Added a shared follow-lead gameplay action that advances time and turns an
+  open lead into a concrete result such as a corroborated clue, a resolved
+  thread, a resource-costing exploration step, a new contact, or a fresh
+  follow-up lead.
+- Added recent lead-change formatting so summaries and exports can show both
+  unresolved leads and recently advanced threads.
+- Added a minimal Tkinter `Follow Open Lead` action and recap/output updates so
+  the player can act on current leads without a large GUI rewrite.
+- Preserved older-save compatibility by defaulting new lead-update metadata
+  and safely reconstructing legacy string leads.
+- Added regression coverage for lead-status transitions, follow-lead behavior,
+  recap/export visibility, GUI action labels, and updated stress invariants,
+  bringing the validated `unittest` count to 108 while the local `init.tcl`
+  limitation still blocks a true Tk root smoke test.
 
 Version 0.8.3 improves immediate usability and next-step guidance on `main`:
 
@@ -210,6 +230,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - Optional text-seed control for reproducible world generation.
 - Plain-text export for active world summaries, character sheets, and event logs.
 - Lightweight structured lead tracking with grouped suggested next actions.
+- Lightweight lead follow-up and status resolution without a full quest system.
 - Variable-size editable JSON generation tables, including categories larger
   than 30 entries.
 - Richer NPC dialogue leads and encounter-resolution variety driven by JSON
@@ -250,7 +271,7 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 106 tests passing with
+- Current verification: 108 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.

@@ -5,7 +5,11 @@ from collections import Counter
 
 from app.calendar import calendar_date, format_calendar
 from app.key_npcs import KEY_NPC_THRESHOLD, promote_key_npc_if_needed
-from app.leads import format_open_leads, format_suggested_next_actions
+from app.leads import (
+    format_open_leads,
+    format_recent_lead_changes,
+    format_suggested_next_actions,
+)
 from app.models import NPC, TimelineEntry, World
 from app.table_loader import TableLoader
 
@@ -136,6 +140,7 @@ def format_summary_timeline(world: World | None) -> str:
             "talk",
             "encounter",
             "downtime",
+            "lead",
             "quest",
             "npc_prominence",
             "key_npc",
@@ -156,6 +161,12 @@ def format_summary_timeline(world: World | None) -> str:
         lines.append("- None yet.")
     else:
         lines.extend(next_actions_text.splitlines())
+    lines.extend(["", "Recent Lead Changes", "-------------------"])
+    recent_changes_text = format_recent_lead_changes(world)
+    if recent_changes_text == "No recently advanced leads.":
+        lines.append("- None yet.")
+    else:
+        lines.extend(recent_changes_text.splitlines())
     prominent = [npc for npc in world.npcs if npc.prominent]
     lines.extend(["", "Prominent NPCs", "--------------"])
     if prominent:

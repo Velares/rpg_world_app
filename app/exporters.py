@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from app.calendar import age_band, format_calendar
 from app.downtime import DowntimeEngine
-from app.leads import format_open_leads, format_suggested_next_actions
+from app.leads import (
+    format_open_leads,
+    format_recent_lead_changes,
+    format_suggested_next_actions,
+)
 from app.models import InventoryItem, World
 from app.timeline import format_summary_timeline, format_verbose_timeline
 
@@ -71,6 +75,9 @@ def export_world_summary(world: World | None) -> str:
         f"OPEN LEADS\n"
         f"==========\n"
         f"{format_open_leads(world)}\n\n"
+        f"RECENT LEAD CHANGES\n"
+        f"===================\n"
+        f"{format_recent_lead_changes(world)}\n\n"
         f"SUGGESTED NEXT ACTIONS\n"
         f"======================\n"
         f"{format_suggested_next_actions(world)}\n\n"
@@ -162,6 +169,9 @@ def export_character_text(world: World | None) -> str:
         f"OPEN LEADS\n"
         f"==========\n"
         f"{format_open_leads(world)}\n\n"
+        f"RECENT LEAD CHANGES\n"
+        f"===================\n"
+        f"{format_recent_lead_changes(world)}\n\n"
         f"JOURNAL SUMMARY\n"
         f"===============\n"
         f"{_body_only(format_summary_timeline(world))}"
@@ -205,6 +215,10 @@ def export_event_log_text(world: World | None) -> str:
             "OPEN LEADS",
             "==========",
             format_open_leads(world),
+            "",
+            "RECENT LEAD CHANGES",
+            "===================",
+            format_recent_lead_changes(world),
             "",
             "TIMELINE SUMMARY",
             "================",

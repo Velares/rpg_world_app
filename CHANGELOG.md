@@ -3,6 +3,26 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.8.4 - lead follow-up and resolution
+
+- Added lightweight lead-status advancement helpers so lead threads can move
+  among open, corroborated, resolved, failed, and stale states without adding
+  a larger quest system.
+- Added a shared follow-lead gameplay action that advances time and turns an
+  open lead into a concrete result such as a corroborated clue, a resolved
+  thread, a resource-costing exploration step, a new NPC contact, or a
+  follow-up lead.
+- Added recent lead-change formatting so summaries and exports can show not
+  only unresolved leads but also which threads were recently corroborated,
+  resolved, failed, or left stale.
+- Added a minimal Tkinter **Follow Open Lead** action and updated recap/summary
+  displays so open leads and suggested actions are clearer in regular play.
+- Preserved older-save compatibility by defaulting new lead-update metadata and
+  reconstructing legacy string leads safely.
+- Added regression coverage for lead-status transitions, follow-lead behavior,
+  recap/export visibility, GUI action-label routing, and updated stress
+  invariants, bringing the validated suite to 108 passing `unittest` tests.
+
 ## v0.8.3 - lead tracking and next-action guidance
 
 - Moved **Generate New Region** into the always-visible shared action area so a

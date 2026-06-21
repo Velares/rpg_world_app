@@ -30,7 +30,7 @@ from app.gui import (
 )
 from app.inventory import InventoryCatalog
 from app.key_npcs import KEY_NPC_THRESHOLD, RELATIONSHIP_STATES
-from app.leads import add_lead
+from app.leads import add_lead, set_lead_status
 from app.generators.npc_generator import NPCGenerator
 from app.generators.settlement_generator import SettlementGenerator
 from app.models import InventoryItem, PlayerState
@@ -1817,6 +1817,66 @@ class LeadTrackingTests(unittest.TestCase):
             finally:
                 state.close()
 
+    def test_lead_status_transitions_update_open_lead_view(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 122)
+            try:
+                player = state.world.player_state
+                lead, _created = add_lead(
+                    player,
+                    "Test the abandoned ford at dusk.",
+                    source="Old ferryman",
+                    location=state.world.settlement.name,
+                    status="new",
+                    suggested_action="Inspect the abandoned ford at dusk.",
+                    category="explore",
+                )
+                self.assertIn(lead.text, player.leads)
+                set_lead_status(player, lead, "corroborated")
+                self.assertIn(lead.text, player.leads)
+                self.assertEqual(lead.status, "corroborated")
+                set_lead_status(player, lead, "resolved")
+                self.assertNotIn(lead.text, player.leads)
+                self.assertEqual(lead.status, "resolved")
+                set_lead_status(player, lead, "failed")
+                self.assertEqual(lead.status, "failed")
+                set_lead_status(player, lead, "stale")
+                self.assertEqual(lead.status, "stale")
+            finally:
+                state.close()
+
+    def test_follow_open_lead_advances_status_and_creates_result(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 123)
+            try:
+                player = state.world.player_state
+                state.create_character("Lead Runner", "Ranger", state.character_backgrounds()[0])
+                add_lead(
+                    player,
+                    "Investigate the rumor learned from Aethelberht Seyed at The Last Lantern: the drowned knight fears salt and open flame.",
+                    source="Aethelberht Seyed",
+                    location=state.world.settlement.important_locations[0].name,
+                    related_npc=state.world.npcs[0].name,
+                    status="uncorroborated",
+                    suggested_action="Investigate the drowned knight rumor.",
+                    category="investigate",
+                )
+                day_before = player.day
+                result = state.follow_open_lead(0)
+                self.assertIn("Lead followed:", result)
+                self.assertGreaterEqual(player.turns_elapsed, 1)
+                self.assertTrue(player.event_log)
+                self.assertTrue(any(entry.action_type == "lead" for entry in player.timeline_entries))
+                self.assertGreaterEqual(player.day, day_before)
+                self.assertTrue(
+                    any(
+                        lead.status in {"corroborated", "resolved", "failed", "stale"}
+                        for lead in player.lead_records
+                    )
+                )
+            finally:
+                state.close()
+
     def test_summary_and_exports_surface_open_leads_and_next_actions(self):
         with tempfile.TemporaryDirectory() as temp:
             state = self.make_state(Path(temp), 121)
@@ -1847,13 +1907,18 @@ class LeadTrackingTests(unittest.TestCase):
                 event_text = export_event_log_text(state.world)
                 self.assertIn("Open Leads", summary)
                 self.assertIn("Suggested Next Actions", summary)
+                self.assertIn("Recent Lead Changes", summary)
                 self.assertIn("Talk:", summary)
                 self.assertIn("Speak with Eurie Prela at The Market.", summary)
                 self.assertIn("OPEN LEADS", world_text)
+                self.assertIn("[Uncorroborated | Talk]", world_text)
+                self.assertIn("RECENT LEAD CHANGES", world_text)
                 self.assertIn("SUGGESTED NEXT ACTIONS", world_text)
                 self.assertIn("Find the sealed cellar connected to Aethelberht Seyed's key.", world_text)
                 self.assertIn("OPEN LEADS", character_text)
+                self.assertIn("RECENT LEAD CHANGES", character_text)
                 self.assertIn("OPEN LEADS", event_text)
+                self.assertIn("RECENT LEAD CHANGES", event_text)
             finally:
                 state.close()
 
@@ -2142,6 +2207,7 @@ class GuiHelperTests(unittest.TestCase):
         self.assertIn("Travel to Wilderness", mode_gameplay_labels(ADVENTURE_MODE))
         self.assertEqual(shared_action_labels()[0], "Generate New Region")
         self.assertIn("Journal / World Recap", shared_action_labels())
+        self.assertIn("Follow Open Lead", shared_action_labels())
         self.assertIn("Export Event Log", shared_action_labels())
         self.assertIn("Search Area", action_check_labels())
         with self.assertRaises(ValueError):
@@ -2172,6 +2238,13 @@ class GuiHelperTests(unittest.TestCase):
         self.assertFalse(
             action_is_enabled(
                 "Settlement Overview",
+                has_world=False,
+                has_character=False,
+            )
+        )
+        self.assertFalse(
+            action_is_enabled(
+                "Follow Open Lead",
                 has_world=False,
                 has_character=False,
             )
@@ -2232,7 +2305,8 @@ class GuiHelperTests(unittest.TestCase):
                 text = format_world_recap(world)
                 self.assertIn("Seed: gui-mode-seed", text)
                 self.assertIn("Character: Recap Watcher, Ranger", text)
-                self.assertIn("ACTIVE LEADS", text)
+                self.assertIn("OPEN LEADS", text)
+                self.assertIn("SUGGESTED NEXT ACTIONS", text)
                 self.assertIn("QUEST NOTES", text)
                 self.assertIn("KEY NPCS", text)
                 self.assertIn(npc.name, text)

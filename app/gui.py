@@ -14,6 +14,7 @@ from app.exporters import (
     inventory_item_text,
 )
 from app.game_state import GameState
+from app.leads import format_open_leads, format_recent_lead_changes, format_suggested_next_actions
 from app.models import World
 from app.timeline import format_summary_timeline, format_verbose_timeline
 
@@ -76,6 +77,7 @@ SHARED_ACTIONS = (
     "Generate New Region",
     "View Character",
     "Journal / World Recap",
+    "Follow Open Lead",
     "Event Log",
     "Export Event Log",
     "Export World",
@@ -109,6 +111,7 @@ WORLD_REQUIRED_ACTIONS = {
     "Event Log",
     "Journal Summary",
     "Verbose Timeline",
+    "Follow Open Lead",
     "Export Event Log",
     "Export World",
     "Export Character",
@@ -249,9 +252,17 @@ def format_world_recap(world: World | None) -> str:
                 f"Torches {player.torches} | Coin {player.coin} | Wounds {player.wounds}"
             ),
             "",
-            "ACTIVE LEADS",
-            "============",
-            _bulleted_or_fallback(player.leads, "No active leads."),
+            "OPEN LEADS",
+            "==========",
+            format_open_leads(world),
+            "",
+            "RECENT LEAD CHANGES",
+            "===================",
+            format_recent_lead_changes(world),
+            "",
+            "SUGGESTED NEXT ACTIONS",
+            "======================",
+            format_suggested_next_actions(world),
             "",
             "QUEST NOTES",
             "===========",
@@ -521,6 +532,7 @@ class RPGWorldApp(tk.Tk):
             "Adventure Hook": self.view_hook,
             "Event Log": self.view_event_log,
             "Journal / World Recap": self.view_world_recap,
+            "Follow Open Lead": self.follow_open_lead,
             "Journal Summary": self.view_timeline_summary,
             "Verbose Timeline": self.view_verbose_timeline,
             "Export Event Log": self.export_event_log,
@@ -1000,9 +1012,11 @@ class RPGWorldApp(tk.Tk):
                 "\n".join(f"{i}. {rumor}" for i, rumor in enumerate(known_rumors, 1))
                 or "No rumors learned yet. Talk to people and investigate."
             )
-            text += "\n\nACTIVE LEADS\n============\n" + (
-                "\n".join(f"- {lead}" for lead in self.state.require_world().player_state.leads)
-                or "No active leads."
+            text += "\n\nOPEN LEADS\n==========\n" + format_open_leads(
+                self.state.require_world()
+            )
+            text += "\n\nSUGGESTED NEXT ACTIONS\n======================\n" + (
+                format_suggested_next_actions(self.state.require_world())
             )
             self.show(text, f"Viewing {settlement.name}.")
 
@@ -1225,6 +1239,38 @@ class RPGWorldApp(tk.Tk):
     def view_world_recap(self) -> None:
         self.hide_index()
         self.show(format_world_recap(self.state.world), "Viewing the journal and world recap.")
+
+    def follow_open_lead(self) -> None:
+        def action():
+            leads = self.state.open_leads()
+            if not leads:
+                messagebox.showinfo(
+                    "Follow Open Lead",
+                    "There are no open leads to follow right now.",
+                    parent=self,
+                )
+                return
+            selection = 1
+            if len(leads) > 1:
+                prompt = "\n".join(
+                    f"{index}. {lead.suggested_action or lead.text}"
+                    for index, lead in enumerate(leads, 1)
+                )
+                chosen = simpledialog.askinteger(
+                    "Follow Open Lead",
+                    "Choose an open lead to follow:\n\n" + prompt,
+                    parent=self,
+                    minvalue=1,
+                    maxvalue=len(leads),
+                )
+                if chosen is None:
+                    return
+                selection = chosen
+            result = self.state.follow_open_lead(selection - 1)
+            self.show(result, "Followed an open lead.")
+            self.refresh()
+
+        self.guarded(action)
 
     def view_timeline_summary(self) -> None:
         self.guarded(

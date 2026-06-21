@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.8.3 is a local, single-player weird-fantasy starting-region generator
+Version 0.8.4 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -92,6 +92,13 @@ with a source, location, related NPC, status, suggested action, and category.
 The world summary, journal summary, and plain-text exports now surface both
 **Open Leads** and grouped **Suggested Next Actions** so the player has clearer
 short-term choices to follow.
+
+Lead follow-up remains intentionally lightweight. The player can now follow an
+open lead directly instead of only reading it in summaries. A followed lead can
+be corroborated, resolved, marked stale, or marked failed, and may produce a
+connected clue, contact, warning, resource cost, or new follow-up lead. This
+still is not a full quest system; it is a small gameplay-facing extension of
+the lead loop.
 
 World generation now supports optional reproducible seeds. The same seed should
 recreate the same generated starting world when the code version, JSON tables,
@@ -219,6 +226,9 @@ Initial usability rules:
 - Character-dependent actions such as **View Character**, **Export Character**,
   **Start Downtime**, **Advance Downtime**, and action checks stay disabled
   until a character exists.
+- **Follow Open Lead** is available once a world exists and gives a minimal
+  prompt for choosing among current unresolved leads when more than one is
+  available.
 
 Simulated-time or fast-forward controls were intentionally deferred in this
 milestone. The current calendar, downtime, and faction-phase foundations remain
