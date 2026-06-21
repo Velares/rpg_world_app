@@ -37,6 +37,11 @@ and journal summary into one text view. **Journal Summary** and
 **Verbose Timeline** still show condensed and action-by-action campaign
 logging without replacing the older event log.
 
+On first launch, **Generate New Region** is available immediately from the
+shared action area, so world generation does not require a mode switch.
+Buttons that rely on world or character state are also disabled until their
+prerequisites exist, while the underlying handlers remain guarded for safety.
+
 Version 0.2 adds explicit links among town problems, NPCs, locations, rumors,
 the dungeon, wilderness signs, and the adventure hook. NPCs, locations, dungeon
 rooms, and encounters have selectable list-and-detail views in the GUI.
@@ -190,6 +195,17 @@ Current GUI mode split:
   Export Event Log, Export World, Export Character, Save World, Load World,
   Data Diagnostics, plus the always-visible player state, seed field, status,
   and output panel.
+
+Initial usability rules:
+
+- Before a world exists, **Generate New Region**, **Load World**,
+  **Data Diagnostics**, **Clear Output**, and the friendly empty-state
+  **Journal / World Recap** remain available.
+- Most world-dependent browsing, exploration, downtime, export, and overview
+  actions stay disabled until a world exists.
+- Character-dependent actions such as **View Character**, **Export Character**,
+  **Start Downtime**, **Advance Downtime**, and action checks stay disabled
+  until a character exists.
 
 Simulated-time or fast-forward controls were intentionally deferred in this
 milestone. The current calendar, downtime, and faction-phase foundations remain
@@ -385,6 +401,8 @@ Minimal guard behavior added for this coverage:
 - mode-specific GUI layouts still route through the same guarded public
   handlers, so hidden buttons are not the only protection against invalid
   state
+- GUI action availability now reflects world and character prerequisites before
+  the player clicks into most unavailable flows
 
 ## Current boundaries
 

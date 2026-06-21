@@ -32,7 +32,6 @@ MODE_SIDEBAR_ACTIONS = {
         "Journal Summary",
     ),
     ADVENTURE_MODE: (
-        "Generate New Region",
         "Wilderness Overview",
         "Dungeon Overview",
         "Dungeon Rooms",
@@ -74,6 +73,7 @@ MODE_GAMEPLAY_ACTIONS = {
 }
 
 SHARED_ACTIONS = (
+    "Generate New Region",
     "View Character",
     "Journal / World Recap",
     "Event Log",
@@ -94,6 +94,62 @@ ACTION_CHECKS = (
     ("Track Creature", "track_creature"),
     ("Force Action", "force_dangerous_action"),
 )
+
+WORLD_REQUIRED_ACTIONS = {
+    "Create Character",
+    "View Character",
+    "Settlement Overview",
+    "NPC List",
+    "Location List",
+    "Dungeon Overview",
+    "Dungeon Rooms",
+    "Wilderness Overview",
+    "Encounter List",
+    "Adventure Hook",
+    "Event Log",
+    "Journal Summary",
+    "Verbose Timeline",
+    "Export Event Log",
+    "Export World",
+    "Export Character",
+    "Save World",
+    "Talk / Socialize",
+    "Inspect Town / Current Location",
+    "Search Town / Look for Leads",
+    "Rest / Recover",
+    "Full Rest",
+    "Start Downtime",
+    "Advance Downtime",
+    "Return to Town",
+    "Travel to Location",
+    "Travel to Wilderness",
+    "Travel to Dungeon",
+    "Explore Current Area",
+    "Search",
+    "Inspect Location",
+    "Talk to NPC",
+    "Move to Room",
+    "Inspect Room",
+    "Short Rest",
+    "Retreat",
+    "Avoid Encounter",
+    "Approach Encounter",
+    "Investigate Signs",
+    "Retreat from Encounter",
+}
+
+CHARACTER_REQUIRED_ACTIONS = {
+    "View Character",
+    "Export Character",
+    "Start Downtime",
+    "Advance Downtime",
+    "Search Area",
+    "Sneak Past Danger",
+    "Read Markings",
+    "Negotiate",
+    "Track Creature",
+    "Force Action",
+}
 
 
 def label(text: str) -> str:
@@ -128,6 +184,19 @@ def mode_gameplay_labels(mode: str) -> tuple[str, ...]:
 
 def action_check_labels() -> tuple[str, ...]:
     return tuple(label for label, _key in ACTION_CHECKS)
+
+
+def action_is_enabled(
+    action_label: str,
+    *,
+    has_world: bool,
+    has_character: bool,
+) -> bool:
+    if action_label in WORLD_REQUIRED_ACTIONS and not has_world:
+        return False
+    if action_label in CHARACTER_REQUIRED_ACTIONS and not has_character:
+        return False
+    return True
 
 
 def format_world_recap(world: World | None) -> str:
@@ -377,7 +446,11 @@ class RPGWorldApp(tk.Tk):
         self.seed_var = tk.StringVar(value="")
         self.mode_var = tk.StringVar(value=DEFAULT_GUI_MODE)
         self.selection_handler = None
+        self.sidebar_buttons: dict[str, ttk.Button] = {}
+        self.gameplay_buttons: dict[str, ttk.Button] = {}
+        self.check_buttons: dict[str, ttk.Button] = {}
         self._build()
+        self.update_player_state()
         warning_count = len(self.state.tables.warnings) + len(
             self.state.name_generator.warnings
         )
@@ -516,11 +589,13 @@ class RPGWorldApp(tk.Tk):
             width=10,
         ).grid(row=0, column=1, sticky="ew", padx=2, pady=2)
         for index, (text, action_key) in enumerate(ACTION_CHECKS, start=2):
-            ttk.Button(
+            button = ttk.Button(
                 self.check_box,
                 text=text,
                 command=lambda key=action_key: self.perform_check(key),
-            ).grid(row=0, column=index, sticky="ew", padx=2, pady=2)
+            )
+            button.grid(row=0, column=index, sticky="ew", padx=2, pady=2)
+            self.check_buttons[text] = button
         for column in range(8):
             self.check_box.columnconfigure(column, weight=1)
         self.output = tk.Text(
@@ -549,32 +624,40 @@ class RPGWorldApp(tk.Tk):
     def _render_sidebar_actions(self) -> None:
         self._clear_children(self.mode_sidebar_frame)
         self._clear_children(self.shared_sidebar_frame)
+        self.sidebar_buttons = {}
         for text in mode_sidebar_labels(self.mode_var.get()):
-            ttk.Button(
+            button = ttk.Button(
                 self.mode_sidebar_frame,
                 text=text,
                 command=self.sidebar_command_map[text],
                 width=24,
-            ).pack(fill="x", pady=2)
+            )
+            button.pack(fill="x", pady=2)
+            self.sidebar_buttons[text] = button
         for text in shared_action_labels():
-            ttk.Button(
+            button = ttk.Button(
                 self.shared_sidebar_frame,
                 text=text,
                 command=self.sidebar_command_map[text],
                 width=24,
-            ).pack(fill="x", pady=2)
+            )
+            button.pack(fill="x", pady=2)
+            self.sidebar_buttons[text] = button
 
     def _render_mode_actions(self) -> None:
         mode = self.mode_var.get()
         self._clear_children(self.mode_action_box)
+        self.gameplay_buttons = {}
         self.mode_action_box.configure(text=f"{mode} Actions")
         for index, text in enumerate(mode_gameplay_labels(mode)):
             row, column = divmod(index, 4)
-            ttk.Button(
+            button = ttk.Button(
                 self.mode_action_box,
                 text=text,
                 command=self.gameplay_command_map[text],
-            ).grid(row=row, column=column, sticky="ew", padx=2, pady=2)
+            )
+            button.grid(row=row, column=column, sticky="ew", padx=2, pady=2)
+            self.gameplay_buttons[text] = button
         for column in range(4):
             self.mode_action_box.columnconfigure(column, weight=1)
         if mode == ADVENTURE_MODE:
@@ -582,6 +665,47 @@ class RPGWorldApp(tk.Tk):
                 self.check_box.pack(fill="x", pady=(0, 7), before=self.output)
         else:
             self.check_box.pack_forget()
+        self.refresh_action_states()
+
+    def refresh_action_states(self) -> None:
+        world = self.state.world
+        has_world = world is not None
+        has_character = bool(has_world and world.player_state.character is not None)
+        for label_text, button in self.sidebar_buttons.items():
+            button.configure(
+                state=(
+                    "normal"
+                    if action_is_enabled(
+                        label_text,
+                        has_world=has_world,
+                        has_character=has_character,
+                    )
+                    else "disabled"
+                )
+            )
+        for label_text, button in self.gameplay_buttons.items():
+            button.configure(
+                state=(
+                    "normal"
+                    if action_is_enabled(
+                        label_text,
+                        has_world=has_world,
+                        has_character=has_character,
+                    )
+                    else "disabled"
+                )
+            )
+        check_state = "normal" if has_world and has_character else "disabled"
+        for button in self.check_buttons.values():
+            button.configure(state=check_state)
+        if hasattr(self, "check_box"):
+            children = self.check_box.winfo_children()
+            if children:
+                for child in children[:2]:
+                    try:
+                        child.configure(state=check_state)
+                    except tk.TclError:
+                        pass
 
     def set_mode(self, mode: str) -> None:
         if mode not in GUI_MODES:
@@ -630,6 +754,7 @@ class RPGWorldApp(tk.Tk):
     def update_player_state(self) -> None:
         if self.state.world is None:
             self.player_state_var.set("No active world.")
+            self.refresh_action_states()
             return
         player = self.state.world.player_state
         identity = (
@@ -663,6 +788,7 @@ class RPGWorldApp(tk.Tk):
             f"Position: {player.position:+d}    Attention: {player.attention}    "
             f"Last consequence: {player.last_consequence or 'None'}"
         )
+        self.refresh_action_states()
 
     def action_log_text(self) -> str:
         return export_event_log_text(self.state.require_world())

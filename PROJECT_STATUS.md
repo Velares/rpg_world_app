@@ -28,6 +28,17 @@ Version 0.8.2 reorganizes the GUI into clearer play modes on `main`:
   raising the validated `unittest` count to 100 while the local `init.tcl`
   limitation still blocks a true Tk root smoke test.
 
+Current local GUI usability follow-up work adds:
+
+- An always-visible `Generate New Region` shared action so a fresh launch does
+  not require switching into `Adventure Mode` before the first world can be
+  generated.
+- Centralized action-availability rules so most world-dependent buttons remain
+  disabled until a world exists, and character-dependent buttons remain
+  disabled until a character exists.
+- The same guarded public handlers remain in place underneath those disabled
+  states, preserving stress/error-handling expectations and older-save safety.
+
 Version 0.8.1 adds key NPC and faction-interaction framework support on
 `main`:
 
@@ -225,7 +236,7 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 100 tests passing with
+- Current verification: 101 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.

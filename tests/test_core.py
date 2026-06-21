@@ -21,6 +21,7 @@ from app.gui import (
     ADVENTURE_MODE,
     DEFAULT_GUI_MODE,
     TOWN_MODE,
+    action_is_enabled,
     action_check_labels,
     format_world_recap,
     mode_gameplay_labels,
@@ -1991,15 +1992,80 @@ class GuiHelperTests(unittest.TestCase):
         self.assertEqual(DEFAULT_GUI_MODE, TOWN_MODE)
         self.assertIn("Create Character", mode_sidebar_labels(TOWN_MODE))
         self.assertIn("Settlement Overview", mode_sidebar_labels(TOWN_MODE))
-        self.assertIn("Generate New Region", mode_sidebar_labels(ADVENTURE_MODE))
         self.assertIn("Dungeon Overview", mode_sidebar_labels(ADVENTURE_MODE))
         self.assertIn("Start Downtime", mode_gameplay_labels(TOWN_MODE))
         self.assertIn("Travel to Wilderness", mode_gameplay_labels(ADVENTURE_MODE))
+        self.assertEqual(shared_action_labels()[0], "Generate New Region")
         self.assertIn("Journal / World Recap", shared_action_labels())
         self.assertIn("Export Event Log", shared_action_labels())
         self.assertIn("Search Area", action_check_labels())
         with self.assertRaises(ValueError):
             mode_sidebar_labels("Campfire Mode")
+
+    def test_action_availability_rules_cover_world_and_character_prerequisites(self):
+        self.assertTrue(
+            action_is_enabled(
+                "Generate New Region",
+                has_world=False,
+                has_character=False,
+            )
+        )
+        self.assertTrue(
+            action_is_enabled(
+                "Journal / World Recap",
+                has_world=False,
+                has_character=False,
+            )
+        )
+        self.assertFalse(
+            action_is_enabled(
+                "Create Character",
+                has_world=False,
+                has_character=False,
+            )
+        )
+        self.assertFalse(
+            action_is_enabled(
+                "Settlement Overview",
+                has_world=False,
+                has_character=False,
+            )
+        )
+        self.assertFalse(
+            action_is_enabled(
+                "Start Downtime",
+                has_world=True,
+                has_character=False,
+            )
+        )
+        self.assertFalse(
+            action_is_enabled(
+                "Search Area",
+                has_world=True,
+                has_character=False,
+            )
+        )
+        self.assertTrue(
+            action_is_enabled(
+                "Settlement Overview",
+                has_world=True,
+                has_character=False,
+            )
+        )
+        self.assertTrue(
+            action_is_enabled(
+                "Start Downtime",
+                has_world=True,
+                has_character=True,
+            )
+        )
+        self.assertTrue(
+            action_is_enabled(
+                "Search Area",
+                has_world=True,
+                has_character=True,
+            )
+        )
 
     def test_world_recap_handles_missing_world(self):
         text = format_world_recap(None)

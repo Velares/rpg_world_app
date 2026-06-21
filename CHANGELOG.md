@@ -3,6 +3,18 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## Unreleased
+
+- Moved **Generate New Region** into the always-visible shared action area so a
+  fresh launch exposes world generation without requiring a mode switch.
+- Added centralized GUI action-availability rules so most world-dependent
+  buttons stay disabled until a world exists, and character-dependent buttons
+  remain disabled until a character exists.
+- Kept the underlying public handlers guarded so disabled buttons improve
+  usability without becoming the only safety layer.
+- Added helper-level tests for initial action availability and
+  world-versus-character prerequisites.
+
 ## v0.8.2 - GUI mode split and journal recap
 
 - Split the Tkinter action layout into two primary modes: `Town Mode` for
