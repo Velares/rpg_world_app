@@ -5,6 +5,7 @@ from collections import Counter
 
 from app.calendar import calendar_date, format_calendar
 from app.key_npcs import KEY_NPC_THRESHOLD, promote_key_npc_if_needed
+from app.leads import format_open_leads, format_suggested_next_actions
 from app.models import NPC, TimelineEntry, World
 from app.table_loader import TableLoader
 
@@ -143,6 +144,18 @@ def format_summary_timeline(world: World | None) -> str:
     ]
     lines.extend(["", "Recent Major Activity", "---------------------"])
     lines.extend(f"- {text}" for text in major[-5:]) if major else lines.append("- None yet.")
+    lines.extend(["", "Open Leads", "----------"])
+    open_leads_text = format_open_leads(world)
+    if open_leads_text == "No open leads.":
+        lines.append("- None yet.")
+    else:
+        lines.extend(open_leads_text.splitlines())
+    lines.extend(["", "Suggested Next Actions", "----------------------"])
+    next_actions_text = format_suggested_next_actions(world)
+    if next_actions_text == "No suggested next actions.":
+        lines.append("- None yet.")
+    else:
+        lines.extend(next_actions_text.splitlines())
     prominent = [npc for npc in world.npcs if npc.prominent]
     lines.extend(["", "Prominent NPCs", "--------------"])
     if prominent:

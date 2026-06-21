@@ -84,6 +84,8 @@ class StressTests(unittest.TestCase):
             self.assertIsInstance(entry.result_text, str)
         self.assertIsInstance(player.quest_log, list)
         self.assertIsInstance(player.leads, list)
+        self.assertIsInstance(player.lead_records, list)
+        self.assertTrue(all(isinstance(lead.text, str) and lead.text for lead in player.lead_records))
         self.assertTrue(all(isinstance(value, str) for value in player.known_npc_ids))
         self.assertTrue(all(isinstance(value, str) for value in player.known_location_ids))
         self.assertTrue(all(isinstance(value, int) for value in player.known_rumor_indices))

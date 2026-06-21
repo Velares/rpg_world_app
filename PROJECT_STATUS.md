@@ -3,11 +3,35 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.2`
+- Current development version on `main`: `v0.8.3`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.8.3 improves immediate usability and next-step guidance on `main`:
+
+- Kept `Generate New Region` in the always-visible shared action area so a
+  fresh launch exposes world generation without requiring a mode switch.
+- Centralized action-availability rules so most world-dependent buttons remain
+  disabled until a world exists, and character-dependent buttons remain
+  disabled until a character exists, while the same guarded public handlers
+  stay in place underneath.
+- Added lightweight structured lead records with source, location, related
+  NPC, status, suggested action, and category while preserving older saves
+  that only stored legacy lead strings.
+- Added `Open Leads` and grouped `Suggested Next Actions` sections to the
+  journal summary and plain-text exports so recent clues, rumors, and downtime
+  follow-up become clearer player-facing choices.
+- Routed talk, discovery, action-check, and downtime leads through a shared
+  helper so duplicate leads are deduplicated and repeated evidence can
+  corroborate an existing thread.
+- Capped visible downtime progress at the task requirement and made training
+  and other completion text produce more concrete gameplay-facing results.
+- Added regression coverage for lead restoration, deduplication, export and
+  summary visibility, capped downtime progress display, and concrete downtime
+  follow-up, bringing the validated `unittest` count to 106 while the local
+  `init.tcl` limitation still blocks a true Tk root smoke test.
 
 Version 0.8.2 reorganizes the GUI into clearer play modes on `main`:
 
@@ -27,17 +51,6 @@ Version 0.8.2 reorganizes the GUI into clearer play modes on `main`:
 - Added non-Tk helper coverage for mode action lists and recap formatting,
   raising the validated `unittest` count to 100 while the local `init.tcl`
   limitation still blocks a true Tk root smoke test.
-
-Current local GUI usability follow-up work adds:
-
-- An always-visible `Generate New Region` shared action so a fresh launch does
-  not require switching into `Adventure Mode` before the first world can be
-  generated.
-- Centralized action-availability rules so most world-dependent buttons remain
-  disabled until a world exists, and character-dependent buttons remain
-  disabled until a character exists.
-- The same guarded public handlers remain in place underneath those disabled
-  states, preserving stress/error-handling expectations and older-save safety.
 
 Version 0.8.1 adds key NPC and faction-interaction framework support on
 `main`:
@@ -196,6 +209,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - Structured inventory records and JSON-driven class starting gear.
 - Optional text-seed control for reproducible world generation.
 - Plain-text export for active world summaries, character sheets, and event logs.
+- Lightweight structured lead tracking with grouped suggested next actions.
 - Variable-size editable JSON generation tables, including categories larger
   than 30 entries.
 - Richer NPC dialogue leads and encounter-resolution variety driven by JSON
@@ -236,7 +250,7 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 101 tests passing with
+- Current verification: 106 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.

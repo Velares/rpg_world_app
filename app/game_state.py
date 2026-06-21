@@ -17,6 +17,7 @@ from app.generators.hex_generator import HexGenerator
 from app.generators.npc_generator import NPCGenerator
 from app.generators.settlement_generator import SettlementGenerator
 from app.generators.wilderness_generator import WildernessGenerator
+from app.leads import add_lead
 from app.models import InventoryItem, PlayerState, World
 from app.name_generator import NameGenerator
 from app.table_loader import TableLoader
@@ -130,9 +131,6 @@ class GameState:
             known_npc_ids=[npcs[0].entity_id],
             known_location_ids=[settlement.important_locations[0].entity_id],
             known_rumor_indices=[0],
-            leads=[
-                f"Ask {npcs[0].name} why travelers avoid the road toward {dungeon.name}."
-            ],
         )
         self.world = World(
             name=f"The {settlement.name} Region",
@@ -145,6 +143,16 @@ class GameState:
             player_state=player_state,
             created_at=datetime.now().astimezone().isoformat(timespec="seconds"),
             generation_seed=self.active_seed,
+        )
+        add_lead(
+            self.world.player_state,
+            f"Ask {npcs[0].name} why travelers avoid the road toward {dungeon.name}.",
+            source="World start rumor",
+            location=settlement.name,
+            related_npc=npcs[0].name,
+            status="new",
+            suggested_action=f"Speak with {npcs[0].name} about the road toward {dungeon.name}.",
+            category="talk",
         )
         append_timeline_entry(
             self.world.player_state,

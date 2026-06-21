@@ -5,6 +5,7 @@ from dataclasses import asdict
 
 from app.calendar import advance_days, append_timeline_entry, calendar_date
 from app.key_npcs import run_key_npc_interaction_phase
+from app.leads import add_lead
 from app.models import ActiveDowntimeTask, InventoryItem, World
 from app.table_loader import TableLoader
 
@@ -80,11 +81,13 @@ class DowntimeEngine:
         advance_days(self.player, days)
         active.progress_days += days
         remaining = max(0, active.required_days - active.progress_days)
+        display_progress = min(active.progress_days, active.required_days)
         progress_message = self._format(
             active.progress_text,
             active=active,
             days=days,
             remaining=remaining,
+            display_progress=display_progress,
         )
         append_timeline_entry(
             self.player,
@@ -99,6 +102,7 @@ class DowntimeEngine:
             active=active,
             days=days,
             remaining=remaining,
+            display_progress=display_progress,
         )
         if progress_outcome:
             parts.append(progress_outcome)
@@ -108,6 +112,7 @@ class DowntimeEngine:
                 active=active,
                 days=days,
                 remaining=remaining,
+                display_progress=display_progress,
             )
             append_timeline_entry(
                 self.player,
@@ -121,6 +126,7 @@ class DowntimeEngine:
                 active=active,
                 days=days,
                 remaining=remaining,
+                display_progress=display_progress,
             )
             if complication_outcome:
                 parts.append(complication_outcome)
@@ -130,6 +136,7 @@ class DowntimeEngine:
                 active=active,
                 days=days,
                 remaining=0,
+                display_progress=display_progress,
             )
             effect_note = self._apply_completion_effect(active)
             outcome_note = self._apply_outcome(
@@ -137,6 +144,7 @@ class DowntimeEngine:
                 active=active,
                 days=days,
                 remaining=0,
+                display_progress=display_progress,
             )
             full_completion = (
                 f"{completion} {effect_note}".strip()
@@ -165,8 +173,9 @@ class DowntimeEngine:
         if active is None:
             return "None"
         remaining = max(0, active.required_days - active.progress_days)
+        display_progress = min(active.progress_days, active.required_days)
         return (
-            f"{active.name} ({active.progress_days}/{active.required_days} days, "
+            f"{active.name} ({display_progress}/{active.required_days} days, "
             f"{remaining} remaining)"
         )
 
@@ -180,19 +189,53 @@ class DowntimeEngine:
             recovered = min(player.wounds, 1)
             player.wounds -= recovered
             if recovered:
-                return f"You recover {recovered} wound."
-            return "The recovery still steadies your nerves."
+                return f"Recovery complete: recover {recovered} wound and steady yourself for the road back."
+            return "Recovery complete: you leave steadier even without a visible wound change."
         if active.category == "labor":
             earnings = max(1, active.required_days)
             player.coin += earnings
-            return f"You gain {earnings} coin."
+            return f"Contract complete: gain {earnings} coin."
         if active.category in {"craft", "maintenance"}:
             player.supplies += 1
-            return "You restore order to your kit and gain 1 supply."
+            return "Maintenance complete: gain 1 supply and leave your gear ready for field use."
+        if active.category == "training":
+            note = "Training edge: claim a favorable edge on your next practical test."
+            self._append_unique(player.quest_log, note)
+            add_lead(
+                player,
+                f"Put the results of {active.name.lower()} to a practical test.",
+                source=active.name,
+                location=player.current_location,
+                status="new",
+                suggested_action="Put your new training to a practical test in the field.",
+                category="downtime",
+            )
+            return (
+                "Training complete: record a training edge for your next practical test "
+                "and take the new technique into the field."
+            )
+        if active.category == "trade":
+            add_lead(
+                player,
+                f"Call on a contact earned through {active.name.lower()}.",
+                source=active.name,
+                location=self.world.settlement.name,
+                status="new",
+                suggested_action="Follow up with the local contact earned through trade work.",
+                category="talk",
+            )
+            return "Trade complete: you leave with a usable contact for future town action."
         lead = f"Downtime result: follow up on {active.name.lower()}."
-        if lead not in player.leads:
-            player.leads.append(lead)
-        return "You gain a new lead for future action."
+        add_lead(
+            player,
+            lead,
+            source=active.name,
+            location=player.current_location,
+            status="new",
+            suggested_action=f"Follow up on the results of {active.name.lower()}.",
+            category="downtime",
+        )
+        return "Downtime complete: you finish with a concrete lead for your next step."
 
     def _apply_outcome(
         self,
@@ -200,6 +243,7 @@ class DowntimeEngine:
         active: ActiveDowntimeTask,
         days: int,
         remaining: int,
+        display_progress: int,
     ) -> str:
         if not outcomes:
             return ""
@@ -210,12 +254,22 @@ class DowntimeEngine:
             active=active,
             days=days,
             remaining=remaining,
+            display_progress=display_progress,
             context=context,
             amount=outcome.get("amount"),
         )
         kind = outcome["kind"]
         if kind == "lead":
-            self._append_unique(self.player.leads, text)
+            add_lead(
+                self.player,
+                text,
+                source=active.name,
+                location=str(context.get("location_name", "")),
+                related_npc=str(context.get("npc_name", "")),
+                status="new",
+                suggested_action=text,
+                category=self._lead_category_for_task(active),
+            )
         elif kind == "quest_note":
             self._append_unique(self.player.quest_log, text)
         elif kind == "coin":
@@ -385,6 +439,7 @@ class DowntimeEngine:
         active: ActiveDowntimeTask,
         days: int,
         remaining: int,
+        display_progress: int,
         context: dict[str, object],
         amount: int | None = None,
     ) -> str:
@@ -394,19 +449,39 @@ class DowntimeEngine:
             category=active.category,
             days=days,
             total_days=active.required_days,
-            progress_days=active.progress_days,
+            progress_days=display_progress,
+            actual_progress_days=active.progress_days,
             remaining_days=remaining,
             amount=amount if amount is not None else "",
             **clean_context,
         )
 
     @staticmethod
-    def _format(template: str, active: ActiveDowntimeTask, days: int, remaining: int) -> str:
+    def _format(
+        template: str,
+        active: ActiveDowntimeTask,
+        days: int,
+        remaining: int,
+        display_progress: int,
+    ) -> str:
         return template.format(
             task_name=active.name,
             category=active.category,
             days=days,
             total_days=active.required_days,
-            progress_days=active.progress_days,
+            progress_days=display_progress,
+            actual_progress_days=active.progress_days,
             remaining_days=remaining,
         )
+
+    @staticmethod
+    def _lead_category_for_task(active: ActiveDowntimeTask) -> str:
+        if active.category in {"training", "recovery"}:
+            return "downtime"
+        if active.category in {"social", "trade"}:
+            return "talk"
+        if active.category in {"investigation", "research", "study"}:
+            return "investigate"
+        if active.category in {"craft", "maintenance"}:
+            return "explore"
+        return "other"

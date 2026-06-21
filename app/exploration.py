@@ -5,6 +5,7 @@ import random
 from app.calendar import advance_time, append_timeline_entry
 from app.interaction_text import choose_interaction_text
 from app.key_npcs import run_key_npc_interaction_phase
+from app.leads import add_lead
 from app.models import DungeonRoom, Encounter, NPC, World
 from app.table_loader import TableLoader
 from app.timeline import record_npc_interaction
@@ -51,8 +52,32 @@ class ExplorationEngine:
         self.log(f"Discovery: {message}", action_type="discovery")
         return True
 
-    def _add_lead(self, lead: str) -> None:
-        self._discover(self.player.leads, lead, f"New lead - {lead}")
+    def _add_lead(
+        self,
+        lead: str,
+        *,
+        source: str = "",
+        location: str = "",
+        related_npc: str = "",
+        status: str = "active",
+        suggested_action: str = "",
+        category: str = "other",
+    ) -> None:
+        record, created = add_lead(
+            self.player,
+            lead,
+            source=source,
+            location=location,
+            related_npc=related_npc,
+            status=status,
+            suggested_action=suggested_action,
+            category=category,
+        )
+        if created:
+            self.log(
+                f"Discovery: New lead - {record.suggested_action or record.text}",
+                action_type="discovery",
+            )
 
     def _interaction(self, category: str, **context) -> str:
         merged = {
@@ -321,7 +346,13 @@ class ExplorationEngine:
                     f"threat or faction: {encounter.creature_or_npc}",
                 )
                 self._add_lead(
-                    f"Compare {encounter.reward_or_clue} with evidence in {self.world.dungeon.name}."
+                    f"Compare {encounter.reward_or_clue} with evidence in {self.world.dungeon.name}.",
+                    source=encounter.creature_or_npc,
+                    location=self.world.wilderness.name,
+                    suggested_action=(
+                        f"Compare {encounter.reward_or_clue} with signs inside {self.world.dungeon.name}."
+                    ),
+                    category="investigate",
                 )
                 if self.rng.random() < 0.3:
                     result = (
@@ -344,7 +375,13 @@ class ExplorationEngine:
                         f"threat or faction: {encounter.creature_or_npc}",
                     )
                     self._add_lead(
-                        f"Recover from the failed approach to {encounter.creature_or_npc} by studying {encounter.reward_or_clue}."
+                        f"Recover from the failed approach to {encounter.creature_or_npc} by studying {encounter.reward_or_clue}.",
+                        source=encounter.creature_or_npc,
+                        location=self.world.wilderness.name,
+                        suggested_action=(
+                            f"Study {encounter.reward_or_clue} before approaching {encounter.creature_or_npc} again."
+                        ),
+                        category="investigate",
                     )
                     result = (
                         f"{self._interaction('encounter_failed_forward', threat=encounter.creature_or_npc)} "
@@ -376,7 +413,13 @@ class ExplorationEngine:
                     intent=encounter.intent,
                 )
                 self._add_lead(
-                    f"Learn what {encounter.creature_or_npc} really wants near {self.world.wilderness.name}."
+                    f"Learn what {encounter.creature_or_npc} really wants near {self.world.wilderness.name}.",
+                    source=encounter.creature_or_npc,
+                    location=self.world.wilderness.name,
+                    suggested_action=(
+                        f"Investigate what {encounter.creature_or_npc} wants near {self.world.wilderness.name}."
+                    ),
+                    category="investigate",
                 )
             else:
                 if self.rng.random() < 0.35:
@@ -387,7 +430,13 @@ class ExplorationEngine:
                         f"contact: {encounter.creature_or_npc}",
                     )
                     self._add_lead(
-                        f"Follow up after the failed approach to {encounter.creature_or_npc}."
+                        f"Follow up after the failed approach to {encounter.creature_or_npc}.",
+                        source=encounter.creature_or_npc,
+                        location=self.world.wilderness.name,
+                        suggested_action=(
+                            f"Return better prepared before approaching {encounter.creature_or_npc} again."
+                        ),
+                        category="explore",
                     )
                     result = self._interaction(
                         "encounter_failed_forward",
@@ -472,7 +521,14 @@ class ExplorationEngine:
                         tradeable=False,
                     )
                 self._add_lead(
-                    f"Ask {self.world.adventure_hook.key_npc} about {room.clue}."
+                    f"Ask {self.world.adventure_hook.key_npc} about {room.clue}.",
+                    source=room.name,
+                    location=room.name,
+                    related_npc=self.world.adventure_hook.key_npc,
+                    suggested_action=(
+                        f"Speak with {self.world.adventure_hook.key_npc} about {room.clue}."
+                    ),
+                    category="talk",
                 )
                 return self.log(
                     f"You search cautiously and find {room.clue}. Danger detected: "
@@ -499,7 +555,14 @@ class ExplorationEngine:
                     f"signs of {encounter.creature_or_npc}",
                 )
                 self._add_lead(
-                    f"Follow the signs connecting {encounter.creature_or_npc} to {self.world.dungeon.name}."
+                    f"Follow the signs connecting {encounter.creature_or_npc} to {self.world.dungeon.name}.",
+                    source=encounter.creature_or_npc,
+                    location=self.world.wilderness.name,
+                    related_npc=encounter.creature_or_npc,
+                    suggested_action=(
+                        f"Track signs of {encounter.creature_or_npc} toward {self.world.dungeon.name}."
+                    ),
+                    category="explore",
                 )
             return self.log(
                 f"You find {self.world.wilderness.resources}, but note the hazard: "
@@ -513,6 +576,13 @@ class ExplorationEngine:
             location = self._current_or_random_location()
             self._discover(
                 player.known_location_ids, location.entity_id, f"location: {location.name}"
+            )
+            self._add_lead(
+                f"Investigate {location.hidden_detail} at {location.name}.",
+                source=location.name,
+                location=location.name,
+                suggested_action=f"Investigate {location.name} for signs of {location.hidden_detail}.",
+                category="investigate",
             )
             return self.log(
                 f"A search around {location.name} reveals: {location.hidden_detail}. "
@@ -541,6 +611,14 @@ class ExplorationEngine:
         self._spend_turn(supplies=0, water=0)
         self._discover(self.player.known_npc_ids, npc.entity_id, f"NPC: {npc.name}")
         dialogue_text = self._npc_dialogue_lead(npc, location)
+        self._add_lead(
+            f"Ask {npc.name} about {npc.useful_information}.",
+            source=npc.name,
+            location=location.name,
+            related_npc=npc.name,
+            suggested_action=f"Ask {npc.name} about {npc.useful_information}.",
+            category="talk",
+        )
         unknown_rumors = [
             index
             for index in range(len(self.world.settlement.rumors))
@@ -560,7 +638,13 @@ class ExplorationEngine:
                 "It still needs corroboration."
             )
             self._add_lead(
-                f"Investigate the rumor learned from {npc.name} at {npc.location}: {rumor}"
+                f"Investigate the rumor learned from {npc.name} at {npc.location}: {rumor}",
+                source=npc.name,
+                location=npc.location,
+                related_npc=npc.name,
+                status="uncorroborated",
+                suggested_action=f"Investigate the rumor from {npc.name}: {rumor}",
+                category="investigate",
             )
         note = f"Conversation at {npc.location}"
         transition_messages = record_npc_interaction(
@@ -614,7 +698,13 @@ class ExplorationEngine:
         )
         if owner:
             self._discover(self.player.known_npc_ids, owner.entity_id, f"NPC: {owner.name}")
-        self._add_lead(f"Determine whether {location.hidden_detail} connects to the local threat.")
+        self._add_lead(
+            f"Determine whether {location.hidden_detail} connects to the local threat.",
+            source=location.name,
+            location=location.name,
+            suggested_action=f"Investigate {location.name} to learn whether {location.hidden_detail} matters.",
+            category="investigate",
+        )
         return self.log(
             f"You inspect {location.name}. Publicly: {location.public_description} "
             f"Closer study suggests: {location.hidden_detail}. "
@@ -665,31 +755,47 @@ class ExplorationEngine:
         if lead_type == "warning":
             lead = f"Test {npc.name}'s warning about {encounter.creature_or_npc} near {self.world.wilderness.name}."
             category = "npc_dialogue_warning"
+            lead_category = "investigate"
         elif lead_type == "request":
             lead = f"Decide whether to help {npc.name} before {self.world.settlement.local_problem} worsens."
             category = "npc_dialogue_request"
+            lead_category = "talk"
         elif lead_type == "secret":
             lead = f"Corroborate {npc.name}'s secret: {npc.secret}."
             category = "npc_dialogue_secret"
+            lead_category = "investigate"
         elif lead_type == "local_trouble":
             lead = f"Trace how {self.world.settlement.local_problem} connects to the wider threat."
             category = "npc_dialogue_local_trouble"
+            lead_category = "investigate"
         elif lead_type == "faction_hint":
             lead = f"Find who benefits if attention turns away from {self.world.adventure_hook.artifact_or_relic}."
             category = "npc_dialogue_faction_hint"
+            lead_category = "faction"
         elif lead_type == "dungeon_clue":
             lead = f"Search {self.world.dungeon.name} for proof related to {room.clue}."
             category = "npc_dialogue_dungeon_clue"
+            lead_category = "explore"
         elif lead_type == "wilderness_clue":
             lead = f"Follow signs in {self.world.wilderness.name} tied to {encounter.creature_or_npc}."
             category = "npc_dialogue_wilderness_clue"
+            lead_category = "explore"
         elif lead_type == "trade_lead":
             lead = f"Use {npc.name}'s trade lead to learn who is redirecting local goods."
             category = "npc_dialogue_trade_lead"
+            lead_category = "talk"
         else:
             lead = f"Remember the odd detail {npc.name} shared and compare it with later evidence."
             category = "npc_dialogue_personal_oddity"
-        self._add_lead(lead)
+            lead_category = "investigate"
+        self._add_lead(
+            lead,
+            source=npc.name,
+            location=location.name,
+            related_npc=npc.name,
+            suggested_action=lead,
+            category=lead_category,
+        )
         return self._interaction(category, **context)
 
     def _current_or_random_location(self):

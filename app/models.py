@@ -282,6 +282,17 @@ class ActiveDowntimeTask:
 
 
 @dataclass
+class LeadRecord:
+    text: str
+    source: str = ""
+    location: str = ""
+    related_npc: str = ""
+    status: str = "active"
+    suggested_action: str = ""
+    category: str = "other"
+
+
+@dataclass
 class TimelineEntry:
     day: int
     time_period: str
@@ -338,6 +349,7 @@ class PlayerState:
     known_rumor_indices: list[int] = field(default_factory=list)
     known_threats: list[str] = field(default_factory=list)
     leads: list[str] = field(default_factory=list)
+    lead_records: list[LeadRecord] = field(default_factory=list)
     position: int = 0
     attention: int = 0
     last_consequence: str = ""
@@ -512,6 +524,7 @@ class World:
         player_data.setdefault("known_rumor_indices", [])
         player_data.setdefault("known_threats", [])
         player_data.setdefault("leads", [])
+        player_data.setdefault("lead_records", [])
         player_data.setdefault("position", 0)
         player_data.setdefault("attention", 0)
         player_data.setdefault("last_consequence", "")
@@ -536,6 +549,43 @@ class World:
             ]
         else:
             player_data["timeline_entries"] = []
+        lead_record_data = player_data.get("lead_records", [])
+        lead_records: list[LeadRecord] = []
+        if isinstance(lead_record_data, list):
+            for item in lead_record_data:
+                if isinstance(item, str):
+                    lead_records.append(
+                        LeadRecord(
+                            text=item,
+                            suggested_action=item,
+                        )
+                    )
+                elif isinstance(item, dict):
+                    item.setdefault("text", "")
+                    item.setdefault("source", "")
+                    item.setdefault("location", "")
+                    item.setdefault("related_npc", "")
+                    item.setdefault("status", "active")
+                    item.setdefault("suggested_action", item.get("text", ""))
+                    item.setdefault("category", "other")
+                    if item["text"]:
+                        lead_records.append(LeadRecord(**item))
+        legacy_leads = player_data.get("leads", [])
+        if not lead_records and isinstance(legacy_leads, list):
+            for lead in legacy_leads:
+                if isinstance(lead, str) and lead.strip():
+                    lead_records.append(
+                        LeadRecord(
+                            text=lead.strip(),
+                            suggested_action=lead.strip(),
+                        )
+                    )
+        player_data["lead_records"] = lead_records
+        player_data["leads"] = [
+            lead.text
+            for lead in lead_records
+            if lead.status not in {"resolved", "false"} and lead.text
+        ]
         inventory_data = player_data.get("inventory")
         if inventory_data is None:
             player_data["inventory"] = default_inventory()

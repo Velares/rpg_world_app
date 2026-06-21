@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from app.calendar import age_band, format_calendar
 from app.downtime import DowntimeEngine
+from app.leads import format_open_leads, format_suggested_next_actions
 from app.models import InventoryItem, World
 from app.timeline import format_summary_timeline, format_verbose_timeline
 
@@ -67,9 +68,12 @@ def export_world_summary(world: World | None) -> str:
         f"RUMOR LEADS\n"
         f"===========\n"
         f"{_numbered_lines(known_rumors) or 'No rumors learned yet.'}\n\n"
-        f"ACTIVE LEADS\n"
-        f"============\n"
-        f"{_bulleted_lines(player.leads) or 'No active leads.'}\n\n"
+        f"OPEN LEADS\n"
+        f"==========\n"
+        f"{format_open_leads(world)}\n\n"
+        f"SUGGESTED NEXT ACTIONS\n"
+        f"======================\n"
+        f"{format_suggested_next_actions(world)}\n\n"
         f"JOURNAL SUMMARY\n"
         f"===============\n"
         f"{_body_only(format_summary_timeline(world))}\n\n"
@@ -155,6 +159,9 @@ def export_character_text(world: World | None) -> str:
         f"RECENT MAJOR ACTIONS\n"
         f"====================\n"
         f"{_bulleted_lines(recent_actions[-5:]) or 'No major actions recorded yet.'}\n\n"
+        f"OPEN LEADS\n"
+        f"==========\n"
+        f"{format_open_leads(world)}\n\n"
         f"JOURNAL SUMMARY\n"
         f"===============\n"
         f"{_body_only(format_summary_timeline(world))}"
@@ -194,6 +201,10 @@ def export_event_log_text(world: World | None) -> str:
         )
     lines.extend(
         [
+            "",
+            "OPEN LEADS",
+            "==========",
+            format_open_leads(world),
             "",
             "TIMELINE SUMMARY",
             "================",

@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from app.calendar import advance_time, format_timeline_prefix
 from app.interaction_text import choose_interaction_text
+from app.leads import add_lead
 from app.models import CheckResult, World
 from app.timeline import add_timeline_entry
 from app.table_loader import TableLoader
@@ -211,9 +212,15 @@ class ActionResolver:
             clue = self.rng.choice(self.world.settlement.rumors)
         else:
             clue = self.world.adventure_hook.first_clue
-        lead = f"Check result: investigate {clue}"
-        if lead not in player.leads:
-            player.leads.append(lead)
+        add_lead(
+            player,
+            f"Check result: investigate {clue}",
+            source="Action check",
+            location=player.current_location,
+            status="new",
+            suggested_action=f"Investigate {clue}.",
+            category="investigate",
+        )
         return clue
 
     def _advance_time(self) -> None:

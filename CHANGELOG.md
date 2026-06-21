@@ -3,7 +3,7 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
-## Unreleased
+## v0.8.3 - lead tracking and next-action guidance
 
 - Moved **Generate New Region** into the always-visible shared action area so a
   fresh launch exposes world generation without requiring a mode switch.
@@ -14,6 +14,21 @@ history is the more reliable source.
   usability without becoming the only safety layer.
 - Added helper-level tests for initial action availability and
   world-versus-character prerequisites.
+- Added lightweight structured lead records with source, location, related NPC,
+  status, suggested action, and category while preserving older saves that only
+  store legacy lead strings.
+- Added **Open Leads** and grouped **Suggested Next Actions** sections to the
+  journal summary and plain-text exports so recent rumors, clues, and downtime
+  follow-ups become clearer player-facing choices.
+- Routed talk, discovery, action-check, and downtime lead creation through the
+  shared lead helper so duplicate leads are deduplicated and repeated evidence
+  can corroborate an existing thread.
+- Capped visible downtime progress at the task requirement and made training,
+  trade, and generic completion text produce more concrete gameplay-facing
+  follow-up instead of only vague benefit phrasing.
+- Added regression coverage for lead restoration from older saves, lead
+  deduplication and corroboration, next-action export visibility, capped
+  downtime progress display, and concrete downtime completion follow-up.
 
 ## v0.8.2 - GUI mode split and journal recap
 

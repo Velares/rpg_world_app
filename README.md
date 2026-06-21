@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.8.2 is a local, single-player weird-fantasy starting-region generator
+Version 0.8.3 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -86,6 +86,13 @@ coin, and supplies are not duplicated as consumable inventory quantities. When
 the current world was generated from a seed, exports also include that seed for
 support reports and reproducible sharing.
 
+Open leads are now tracked as lightweight records instead of only loose text.
+Conversation, discovery, checks, and downtime can add or corroborate leads
+with a source, location, related NPC, status, suggested action, and category.
+The world summary, journal summary, and plain-text exports now surface both
+**Open Leads** and grouped **Suggested Next Actions** so the player has clearer
+short-term choices to follow.
+
 World generation now supports optional reproducible seeds. The same seed should
 recreate the same generated starting world when the code version, JSON tables,
 and cleaned name data are also the same. Different seeds generally produce
@@ -130,6 +137,12 @@ implementation supports starting one active task at a time, advancing it by
 days, logging progress, and applying a few minimal completion effects such as
 recovery, coin, supplies, or new leads. This is a framework for future
 strategic play, not a complete subsystem.
+
+Downtime progress text now caps visible progress at the task requirement, so a
+completed task reads cleanly instead of showing awkward overflow like `6/5`
+days. Training and other completions also produce more concrete gameplay-facing
+follow-up, such as a recorded training edge, a new contact, or a clearer lead
+for the next field action.
 
 Downtime outcomes are now a little more world-aware without becoming a full
 faction, economy, crafting, or relationship system. Optional JSON-driven

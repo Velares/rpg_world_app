@@ -30,6 +30,7 @@ from app.gui import (
 )
 from app.inventory import InventoryCatalog
 from app.key_npcs import KEY_NPC_THRESHOLD, RELATIONSHIP_STATES
+from app.leads import add_lead
 from app.generators.npc_generator import NPCGenerator
 from app.generators.settlement_generator import SettlementGenerator
 from app.models import InventoryItem, PlayerState
@@ -414,6 +415,33 @@ class WorldTests(unittest.TestCase):
                 data.pop("generation_seed", None)
                 restored = type(world).from_dict(data)
                 self.assertIsNone(restored.generation_seed)
+            finally:
+                state.close()
+
+    def test_older_save_without_lead_records_restores_open_leads(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 41)
+            try:
+                world = state.generate_new_region("legacy-leads")
+                data = world.to_dict()
+                data["player_state"].pop("lead_records", None)
+                data["player_state"]["leads"] = [
+                    "Speak with Eurie Prela at The Market.",
+                    "Investigate the drowned knight rumor.",
+                ]
+                restored = type(world).from_dict(data)
+                self.assertEqual(
+                    restored.player_state.leads,
+                    [
+                        "Speak with Eurie Prela at The Market.",
+                        "Investigate the drowned knight rumor.",
+                    ],
+                )
+                self.assertEqual(len(restored.player_state.lead_records), 2)
+                self.assertEqual(
+                    restored.player_state.lead_records[0].suggested_action,
+                    "Speak with Eurie Prela at The Market.",
+                )
             finally:
                 state.close()
 
@@ -1109,7 +1137,8 @@ class ExporterTests(unittest.TestCase):
             self.assertIn("Downtime:", text)
             self.assertIn("KNOWN CONTACTS AND LEADS", text)
             self.assertIn("RUMOR LEADS", text)
-            self.assertIn("ACTIVE LEADS", text)
+            self.assertIn("OPEN LEADS", text)
+            self.assertIn("SUGGESTED NEXT ACTIONS", text)
             self.assertIn(world.adventure_hook.major_goal, text)
             state.close()
 
@@ -1709,6 +1738,122 @@ class CalendarAndDowntimeTests(unittest.TestCase):
                 self.assertIn("Downtime lead:", exported)
                 self.assertIn("Calendar:", exported)
                 self.assertIn("Downtime:", exported)
+            finally:
+                state.close()
+
+    def test_downtime_progress_display_caps_at_required_days(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 118)
+            try:
+                state.create_character("Capped Progress", "Ranger", state.character_backgrounds()[0])
+                state.start_downtime_task("train_skill")
+                result = state.advance_downtime(6)
+                self.assertIn("5/5", result)
+                self.assertNotIn("6/5", result)
+            finally:
+                state.close()
+
+    def test_training_completion_records_concrete_result_and_follow_up(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 119)
+            try:
+                state.create_character("Ready Walker", "Ranger", state.character_backgrounds()[0])
+                player = state.world.player_state
+                state.start_downtime_task("train_skill")
+                result = state.advance_downtime(5)
+                self.assertIn("Training complete:", result)
+                self.assertTrue(
+                    any("Training edge:" in note for note in player.quest_log)
+                )
+                self.assertTrue(
+                    any("practical test" in lead for lead in player.leads)
+                )
+            finally:
+                state.close()
+
+
+class LeadTrackingTests(unittest.TestCase):
+    def make_state(self, folder: Path, seed: int = 1) -> GameState:
+        state = GameState(
+            TableLoader(TABLES),
+            Database(folder / "worlds.db"),
+            random.Random(seed),
+        )
+        state.generate_new_region("lead-seed")
+        return state
+
+    def test_duplicate_leads_are_deduped_and_corroborated(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 120)
+            try:
+                player = state.world.player_state
+                text = "Investigate why the oath-bound dead fear salt and open flame."
+                add_lead(
+                    player,
+                    text,
+                    source="Aethelberht Seyed",
+                    location="The Last Lantern",
+                    related_npc="Eurie Prela",
+                    status="uncorroborated",
+                    suggested_action="Speak with Eurie Prela at The Market.",
+                    category="talk",
+                )
+                add_lead(
+                    player,
+                    text,
+                    source="Eurie Prela",
+                    location="The Market",
+                    related_npc="Eurie Prela",
+                    status="uncorroborated",
+                    suggested_action="Speak with Eurie Prela at The Market.",
+                    category="talk",
+                )
+                matching = [lead for lead in player.lead_records if lead.text == text]
+                self.assertEqual(len(matching), 1)
+                self.assertEqual(matching[0].status, "corroborated")
+                self.assertIn("Aethelberht Seyed", matching[0].source)
+                self.assertIn("Eurie Prela", matching[0].source)
+                self.assertEqual(player.leads.count(text), 1)
+            finally:
+                state.close()
+
+    def test_summary_and_exports_surface_open_leads_and_next_actions(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 121)
+            try:
+                player = state.world.player_state
+                state.create_character("Lead Watcher", "Ranger", state.character_backgrounds()[0])
+                add_lead(
+                    player,
+                    "The drowned knight fears salt and open flame.",
+                    source="Aethelberht Seyed",
+                    location="The Last Lantern",
+                    related_npc="Eurie Prela",
+                    status="uncorroborated",
+                    suggested_action="Speak with Eurie Prela at The Market.",
+                    category="talk",
+                )
+                add_lead(
+                    player,
+                    "A sealed cellar is tied to a hidden key.",
+                    source="Aethelberht Seyed",
+                    location="The Last Lantern",
+                    suggested_action="Find the sealed cellar connected to Aethelberht Seyed's key.",
+                    category="explore",
+                )
+                summary = format_summary_timeline(state.world)
+                world_text = export_world_summary(state.world)
+                character_text = export_character_text(state.world)
+                event_text = export_event_log_text(state.world)
+                self.assertIn("Open Leads", summary)
+                self.assertIn("Suggested Next Actions", summary)
+                self.assertIn("Talk:", summary)
+                self.assertIn("Speak with Eurie Prela at The Market.", summary)
+                self.assertIn("OPEN LEADS", world_text)
+                self.assertIn("SUGGESTED NEXT ACTIONS", world_text)
+                self.assertIn("Find the sealed cellar connected to Aethelberht Seyed's key.", world_text)
+                self.assertIn("OPEN LEADS", character_text)
+                self.assertIn("OPEN LEADS", event_text)
             finally:
                 state.close()
 
