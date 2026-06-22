@@ -486,6 +486,105 @@ General information: test
             by_name["WYRM, KURGAN"]["stat_block"]["intelligence"],
             "Very",
         )
+        self.assertEqual(
+            by_name["WYRM, KURGAN"]["stat_block"]["alignment"],
+            "Neutral evil",
+        )
+
+    def test_orphan_page_prefix_stat_lines_can_recover_real_fields(self):
+        pages = [
+            ImportPage(
+                actual_page=151,
+                book=2,
+                text="""31
+ep (25%), 1-8k gp (25%), 1-12 gems (15%), 1-8
+jewelry (10%), any 3 magic items + 1 scroll (25%)
+INTELLIGENCE: Low
+ALIGNMENT: Neutral
+LEVEL/X.P.: 5 / 395 + 8/hp
+General information : A heavily-plated reptilian/
+crustacean hybrid, crustacean dragons are
+exceedingly rare.
+Languages: Crustacean dragons have a 25% chance
+of speaking up to two languages of nearby speakers.
+Physical description : Having both reptilian and
+crustacean attributes, the two powerful crab-like
+pincers of a crustacean dragon smoothly merge
+into a reptilian scale-covered body. A series of
+massively thick plates sequence down the spine of a
+Sheth regenerates 1-6 HP per round.
+DRAGON, CRUSTACEAN
+SIZE: Large (21 ft long)
+MOVE: 90 ft., 180 ft. swimming
+ARMOR CLASS: -1
+HIT DICE: 4-6
+ATTACKS: 3
+DAMAGE: 2-12, 2-12, 2-16
+SPECIAL ATTACKS: Breath weapon
+SPECIAL DEFENSES: None
+MAGIC RESISTANCE: None
+RARITY: Very rare
+NO. ENCOUNTERED: 1
+LAIR PROBABILITY: 25%
+TREASURE: In Lair: 1-10k cp (5%), 1-12k sp (15%), 1-6k
+""",
+            ),
+            ImportPage(
+                actual_page=152,
+                book=2,
+                text="""32
+crustacean dragon to a tail more closely resembling
+a lobster's than a normal dragon's.
+DUST CENTURION
+SIZE: Medium
+MOVE: 60 ft.
+ARMOR CLASS: 5
+HIT DICE: 3
+ATTACKS: 1
+DAMAGE: 2-12
+RARITY: Uncommon
+INTELLIGENCE: Average
+ALIGNMENT: Lawful Neutral
+LEVEL/X.P.: 4 / 210 + 2/hp
+""",
+            ),
+        ]
+        result = build_catalog_from_pages(pages, "sample.pdf", Path("sample.pdf"))
+        dragon = next(monster for monster in result.catalog["monsters"] if monster["sort_name"] == "DRAGON, CRUSTACEAN")
+        self.assertEqual(dragon["stat_block"]["intelligence"], "Low")
+        self.assertEqual(dragon["stat_block"]["alignment"], "Neutral")
+        self.assertEqual(dragon["stat_block"]["level_xp"]["raw"], "5 / 395 + 8/hp")
+        self.assertIn("1-8k gp (25%)", dragon["stat_block"]["treasure"])
+
+    def test_furnace_worm_missing_intelligence_remains_honestly_reported(self):
+        pages = [
+            ImportPage(
+                actual_page=212,
+                book=2,
+                text="""WORM, FURNACE
+SIZE: Large (15+ ft. long)
+MOVE: 20 ft., stone burrow 10 ft., soil burrow 20 ft.
+ARMOR CLASS: 8
+HIT DICE: 8+1
+ATTACKS: 1
+DAMAGE: 2-12
+SPECIAL ATTACKS: None
+SPECIAL DEFENSES: None
+MAGIC RESISTANCE: None
+RARITY: Very rare
+NO. ENCOUNTERED: 1
+LAIR PROBABILITY: 0%
+TREASURE: None
+ALIGNMENT: Neutral
+LEVEL/X.P.: 4 / 175 + 3/hp
+General information : Furnace worms are rare and unusual beasts.
+""",
+            )
+        ]
+        result = build_catalog_from_pages(pages, "sample.pdf", Path("sample.pdf"))
+        worm = result.catalog["monsters"][0]
+        self.assertIsNone(worm["stat_block"]["intelligence"])
+        self.assertIn("Worm, Furnace: stat_block.intelligence", result.missing_expected_fields)
 
     def test_import_writes_catalog_and_report_from_stubbed_pages(self):
         sample_pages = [

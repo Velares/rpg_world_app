@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-22T02:08:11.786843+00:00",
+  "generated_at": "2026-06-22T13:00:43.760081+00:00",
   "source_pdf": "MandBmaster.pdf",
   "books_processed": [
     1,
@@ -2510,7 +2510,7 @@
         "rarity": "Rare",
         "number_encountered": "2-20",
         "lair_probability": "10%",
-        "treasure": "Individual: 30-180 sp, 20-120 ep, 20-80 gp; In Lair: 1-8k cp (50%), 1-6k sp (25%), 1-4k ep (25%), 1-3k gp (25%), 1-8 gems (30%), 1-4 jewelry (20%), sword, armor, or misc. weapon (10%)",
+        "treasure": "Individual: 30-180 sp, 20-120 ep, 20-80 gp;",
         "intelligence": "Average",
         "alignment": "Chaotic good",
         "level_xp": {
@@ -4375,7 +4375,7 @@
         "intelligence": "Very",
         "alignment": "Neutral good",
         "level_xp": {
-          "raw": "Regular: 3 / 125 + 2/hp Visionary: 4 / 265 + 2/hp"
+          "raw": "Regular: 3 / 125 + 2/hp"
         }
       },
       "sections": {
@@ -5487,7 +5487,10 @@
         "intelligence": "None",
         "alignment": "Neutral",
         "level_xp": {
-          "raw": "5 / 415 + 6/hp General nformation: Because they are cannibalistic by nature, giant black scorpions are solitary creatures. The only exception is during very cold periods when they will congregate in large groups of 20 or more to share body warmth. Thankfully, during such periods they are sluggish, acting as if under the influence of a slow spell. A giant black scorpion can go 6-12 months between feedings and needs no water beyond that supplied by their food. Because of their camouflage and their ability to remain motionless, a giant black scorpion has a 90% chance to hide within their native environment and can surprise prey on 1-5. S SABULOUS HUSK - SCORPION, GIANT BLACK - SCORPION SWARM - SEEDER - SHADOW LORD - SHADOWCAP - SHRIEKING SAVAGE - SILENT REAPER - SKELETON, BLACK - SKRESH - SKYSHARK - SLAVERING MOUTHER - SLITHERVINE - SNAIL MAN - SNAKE, CROWN COILER - SNAKE, ICE GLARE - SOULTRAPPER - SPIDER, ACIDWEAVER - SPIDER, PRIMAL - SPIDER, TIME - STINGING WOODFLY - STONESTRIDER - STRANGLEBARK - SUICIDE PLANT Contrary to popular belief, giant black scorpions do not lay eggs. Instead, the egs hatch inside their mother and she gives birth to live young, dozens at a time. After a scorpion is born, it climbs onto its mother’s back and rides there until it is old enough to fend for itself. These young are the size and lethality of a standard scorpion and in sufficient numbers count as a scorpion swarm. Young leave their mother after between 3 and 14 days, before the ravenous parent begins to simply look upon them as an easy meal. A typical giant black scorpion lives as long as 25 years. Giant black scorpions are justly feared for their poisonous sting. What few realize is that the venom is generally used only in self-defence because they have a limited supply, and it is slow to replenish. Most can only make two such attacks, taking 2-5 days to replenish each dose of lost poison. Legend says that to be stung by a giant black scorpion and survive is to be immune from hornet, wasp, and bee stings. This is something of an exaggeration. However, those that survive a giant black scorpion sting do gain a permanent +3 bonus to saving throws against the poisonous stings of hornets, wasps, and bees, both of the mundane and giant varieties. The chitinous body of a black scorpion is covered in long, fine, hypersensitive hairs, which pick up even the slightest vibrations in the air around them. As a result, they cannot be surprised and effortlessly detect all movement within a 60-foot radius, even if a creature is airborne. This extrasensory ability allows giant black scorpions to attack invisible foes with no penalty. Infant giant black scorpions are of great value to alchemists and spellcasters. Wizards use them as material components, while alchemists occasionally raise them to adulthood for harvesting of their deadly poison. A single live giant black scorpion infant could sell for as much as 10 gp. The scorpion goddess Selket (or Selquet) is portrayed either wearing a black scorpion on her head or as a giant black scorpion with a woman’s head. Giant black scorpions are Selket’s heralds and are considered the personification of death. As such, they are immune to all negative energy effects, and when a giant black scorpion kills a creature, it gains 1-8 temporary hit points and a +2 on all to hit rolls for a 1 hour period. Giant black scorpions breed and function very well in colder deserts and in such environments should be considered Common."
+          "raw": "5 / 415 + 6/hp",
+          "level": 5,
+          "xp_base": 415,
+          "xp_per_hp": 6
         }
       },
       "sections": {
@@ -8613,11 +8616,14 @@
         "rarity": "Very rare",
         "number_encountered": "1",
         "lair_probability": "25%",
-        "treasure": "In Lair: 1-10k cp (5%), 1-12k sp (15%), 1-6k crustacean dragon to a tail more closely resembling a lobster’s than a normal dragon’s. The head is a monstrosity, featuring a dragon’s mouth mixed with the stalked eyes of a crab.",
-        "intelligence": null,
-        "alignment": null,
+        "treasure": "In Lair: 1-10k cp (5%), 1-12k sp (15%), 1-6k ep (25%), 1-8k gp (25%), 1-12 gems (15%), 1-8 jewelry (10%), any 3 magic items + 1 scroll (25%)",
+        "intelligence": "Low",
+        "alignment": "Neutral",
         "level_xp": {
-          "raw": ""
+          "raw": "5 / 395 + 8/hp",
+          "level": 5,
+          "xp_base": 395,
+          "xp_per_hp": 8
         }
       },
       "sections": {
@@ -8628,6 +8634,8 @@
       },
       "tags": [
         "large",
+        "low_intelligence",
+        "neutral",
         "very_rare"
       ],
       "raw_text": "DRAGON, CRUSTACEAN\nSIZE: Large (21 ft long)\nMOVE: 90 ft., 180 ft. swimming\nARMOR CLASS: -1\nHIT DICE: 4-6\nATTACKS: 3\nDAMAGE: 2-12, 2-12, 2-16\nSPECIAL ATTACKS: Breath weapon\nSPECIAL DEFENSES: None\nMAGIC RESISTANCE: None\nRARITY: Very rare\nNO. ENCOUNTERED: 1\nLAIR PROBABILITY: 25%\nTREASURE: In Lair: 1-10k cp (5%), 1-12k sp (15%), 1-6k\ncrustacean dragon to a tail more closely resembling\na lobster’s than a normal dragon’s. The head is a\nmonstrosity, featuring a dragon’s mouth mixed with\nthe stalked eyes of a crab."
@@ -9415,7 +9423,7 @@
         "lair_probability": "5%",
         "treasure": "In Lair: 300-1,800 pp (30%), 2-20 gems (55%), 1-12 jewelry (50%), any 1 magic item (15%), 1-4 scrolls (50%)",
         "intelligence": "Genius",
-        "alignment": "Neutral good PSIONICS: 150-200 (All attack/All defense)",
+        "alignment": "Neutral good",
         "level_xp": {
           "raw": "9 / 6,000 + 14/hp",
           "level": 9,
@@ -9432,7 +9440,7 @@
       "tags": [
         "large",
         "genius_intelligence",
-        "neutral_good_psionics_150_200_all_attack_all_defense",
+        "neutral_good",
         "very_rare"
       ],
       "raw_text": "HAKUTAKU\nSIZE: Large (10 ft. long)\nMOVE: 240 ft., flying 480 ft. (AA: level V)\nARMOR CLASS: -3\nHIT DICE: 10+5\nATTACKS: 3\nDAMAGE: 2-12, 2-12, 3-18\nSPECIAL ATTACKS: See below\nSPECIAL DEFENSES: See below\nMAGIC RESISTANCE: 70%\nRARITY: Very rare\nNO. ENCOUNTERED: 1\nLAIR PROBABILITY: 5%\nTREASURE: In Lair: 300-1,800 pp (30%), 2-20 gems\n(55%), 1-12 jewelry (50%), any 1 magic item (15%),\n1-4 scrolls (50%)\nINTELLIGENCE: Genius\nALIGNMENT: Neutral good\nPSIONICS: 150-200 (All attack/All defense)\nLEVEL/X.P.: 9 / 6,000 + 14/hp\nGeneral information: Hakutaku are powerful servants\nof Good. They live in remote places, typically upon\nmountain tops. They appear fairly unassuming, if\nstrange, but when roused are truly fearsome.\nHakutaku physically attack with two claw attacks and\na horned head butt. They rarely engage in physical\ncombat, however, preferring to use their extensive\nmagical and psionic abilities. They possess 3 major\npsionic disciplines and 5 minor disciplines at the 8 th\nlevel of mastery, and have the magical abilities of a\n12th-level cleric, a 10 th-level magic user, and an 8 th-\nlevel druid.\nIn addition, hakutaku have the following abilities: can\nbecome ethereal at will, can assume gaseous form,\ncan call lightning (as spell), can create food and\ndrink for up to 10 people, and can polymorph self\ninto a human, a goat, or a white-feathered raven.\nThey are immune to death magic\nHakutaku are extremely well-learned and know-\nledgeable creatures. They act as sages, possessing\nfour minor fields and two major fields with four special\ncategories in each major field. More importantly,\nHakutaku are masters of the true name – knowing\nthe true names of all types of creatures. When a\nhakutaku names a creature by the true name for its\nspecies, any named creatures of that species within\nhearing distance suffer -4 penalties to all rolls made\nfor actions taken against the goals of the hakutaku.\nOthers hearing a true name that is not for their species\nmust save versus spells or be stunned for the next\nround. Heard names are unable to be remembered\nunless a creature is currently under an ESP spell when\nspoken: such creatures may remember a true name\nif they save versus magic: a failed save liquefies the\nbrain. It is best to not hear what should not be heard!\nLanguages: Hakutaku speak their own language\ncomposed of millions of true names which is only\nlearnable by hakutaku. They converse with all other\ncreatures via telepathy to a range of 240 ft. They can\nspeak with animals.\nPhysical description: The hakutaku is a shaggy white\nhaired, six-horned, lion-like creature. It has a human\nface with three eyes, the third in the center of its\nforehead. The snowy skin of a hakutaku is worth 5,000\ngp if intact."
@@ -9665,7 +9673,10 @@
         "intelligence": "Low",
         "alignment": "Neutral evil",
         "level_xp": {
-          "raw": "3 / 120 + 1/hp General description: Ilbelaygna (pronounced ILL-be- LOG-na) are evil well spirits. They spend most of their time at the bottom of their wells, peering upward as people go about their day. They rarely leave their wells to feed, but when they do, they do so at night, crawling out of the darkness to strangle the first passerby they encounter. They drag the body back to their well, were they consume most of it, but leave the rest for the people who use the well to discover. Ilbelaygna’s have the abilities of a 3 rd-level thief. If an ilbelaygna surprises an opponent, which is likely given their invisibility, they can choose to strangle instead of attacking with a clawed hand. A strangle has a chance of instantly killing a creature: treat as an assassination attempt by a 3rd-level assassin. Ilbelaygna can use the following spell like abilities at 3rd level, once per day, one at a time: dancing lights, invisibility, fog cloud. The fog of an ilbelaygna’s fog cloud appears as normal fog, not greenish fog. Ilbelaygna possess ultravision and infravision to 60 ft. They are immune to disease and poison. Although ilbelaygna are typically encountered in settled areas, some deep natural well-like bodies of water may have an evil well spirit at their bottom."
+          "raw": "3 / 120 + 1/hp",
+          "level": 3,
+          "xp_base": 120,
+          "xp_per_hp": 1
         }
       },
       "sections": {
@@ -10412,7 +10423,7 @@
         "number_encountered": "1",
         "lair_probability": "15%",
         "treasure": "In Lair: 5-30k cp (25%), 1-100k sp (40%), 10- 40k ep (40%), 10-60k gp (55%), 500-5,000 pp (25%), 1-100 gems (50%), 10-40 jewelry (50%), any 4 magic items + 1 potion +1 scroll (15%), 2-8 potions (40%)",
-        "intelligence": "Supra-genius (Wisdom = 20) PSIONICS: 220 (All attack/All defense)",
+        "intelligence": "Supra-genius (Wisdom = 20)",
         "alignment": "Neutral",
         "level_xp": {
           "raw": "10 / 25,500 + 17/hp",
@@ -10429,7 +10440,7 @@
       },
       "tags": [
         "large",
-        "supra_genius_wisdom_20_psionics_220_all_attack_all_defense_intelligence",
+        "supra_genius_wisdom_20_intelligence",
         "neutral",
         "very_rare"
       ],
@@ -13143,7 +13154,7 @@
         "lair_probability": "85%",
         "treasure": "In Lair: (roll for each category twice) 5-30k cp (25%), 1-100k sp (40%), 10-40k ep (40%), 10-60k gp (55%), 500-5,000 pp (25%), 1-100 gems (50%), 10-40 jewelry (50%), any 4 magic items + 1 potion +1 scroll (15%)",
         "intelligence": "Exceptional",
-        "alignment": "Chaotic neutral CHANCE OF: Magic Use: 40% Sleeping: 60%",
+        "alignment": "Chaotic neutral",
         "level_xp": {
           "raw": "Varies"
         }
@@ -13157,7 +13168,7 @@
       "tags": [
         "large",
         "exceptional_intelligence",
-        "chaotic_neutral_chance_of_magic_use_40_sleeping_60",
+        "chaotic_neutral",
         "very_rare"
       ],
       "raw_text": "WYRM, CRYSTALLINE\nSIZE: Large (65 ft. long)\nMOVE: 180 ft., burrowing 180 ft.\nARMOR CLASS: -5\nHIT DICE: 14-17\nATTACKS: 1\nDAMAGE: 6-48\nSPECIAL ATTACKS: See below\nSPECIAL DEFENSES: See below\nMAGIC RESISTANCE: 10%\nRARITY: Very rare\nNO. ENCOUNTERED: 1\nLAIR PROBABILITY: 85%\nTREASURE: In Lair: (roll for each category twice) 5-30k\ncp (25%), 1-100k sp (40%), 10-40k ep (40%), 10-60k\ngp (55%), 500-5,000 pp (25%), 1-100 gems (50%),\n10-40 jewelry (50%), any 4 magic items + 1 potion\n+1 scroll (15%)\nINTELLIGENCE: Exceptional\nALIGNMENT: Chaotic neutral\nCHANCE OF:\nMagic Use: 40%\nSleeping: 60%\nLEVEL/X.P.: Varies\nGeneral information : Crystalline wyrms live in dry\nlands, either mountainous or badlands. They avoid\nsandy deserts, disliking the feel of moving through\nsand. They can travel through earth and stone as if\ndidn’t exist. They lair in caves in the earth that have\nbut a single connection to the greater world, making\nthem difficult to locate.\nAny creature bitten by a crystalline wyrm turns into\ncrystal unless a save versus petrification is made. They\nare immune to petrification.\nMagic-use: Magic-using crystalline wyrms can cast\nspells of 1st through 9th level. As a Hatchling it can only\ncast a single 1 st level spell, but it gains a new spell\nof the next level until reaching 9 th level at Ancient.\nAt Very Ancient a crystalline wrym casts two spells of\neach level, as a Lord it casts three spells per level,\nand as a Tyrant it casts four spells per level.\nPhysical description : Crystalline wyrms are long\nsnake-like wyrms covered with crystal scales. Large\nscales can be turned into +3 shields in the hands of\nthe right armorer."
@@ -13191,7 +13202,7 @@
         "lair_probability": "75%",
         "treasure": "In Lair: 5-30k cp (25%), 1-100k sp (40%), 10- 40k ep (40%), 10-60k gp (55%), 500-5,000 pp (25%), 1-100 gems (50%), 10-40 jewelry (50%), any 4 magic items + 1 potion +1 scroll (15%), 2-8 potions (40%), 1-4 scrolls (50%)",
         "intelligence": "High",
-        "alignment": "Neutral evil CHANCE OF: Magic Use: 20% Sleeping: 70%",
+        "alignment": "Neutral evil",
         "level_xp": {
           "raw": "Varies"
         }
@@ -13205,7 +13216,7 @@
       "tags": [
         "large",
         "high_intelligence",
-        "neutral_evil_chance_of_magic_use_20_sleeping_70",
+        "neutral_evil",
         "very_rare"
       ],
       "raw_text": "WYRM, ENSLAVING\nSIZE: Large (56 ft. long)\nMOVE: 180 ft., swimming 120 ft.\nARMOR CLASS: -2\nHIT DICE: 12-15\nATTACKS: 2\nDAMAGE: 4-32, 2-12\nSPECIAL ATTACKS: See below\nSPECIAL DEFENSES: See below\nMAGIC RESISTANCE: 5%\nRARITY: Very rare\nNO. ENCOUNTERED: 1\nLAIR PROBABILITY: 75%\nTREASURE: In Lair: 5-30k cp (25%), 1-100k sp (40%), 10-\n40k ep (40%), 10-60k gp (55%), 500-5,000 pp (25%),\n1-100 gems (50%), 10-40 jewelry (50%), any 4 magic\nitems + 1 potion +1 scroll (15%), 2-8 potions (40%),\n1-4 scrolls (50%)\nINTELLIGENCE: High\nALIGNMENT: Neutral evil\nCHANCE OF:\nMagic Use: 20%\nSleeping: 70%\nLEVEL/X.P.: Varies\nGeneral information : Enslaving wyrms live in wet\nlands, either forests or swamps. They avoid grasslands,\ndisliking the feeling of exposure the flat lands give\nthem. They lair in large mounds built out of trees and\nspecial enchanted mud. Over time, they harden to\nan almost stone-like toughness. Many of the levels of\ntheir lairs are underwater as they can breathe water.\nEnslaving wyrms are one of the few wyrms to associate\nwith the lesser species. They keep large cadres of\nslaves about. Roughly 100 HD worth of slaves per age\ncategory of the enslaving wyrm can be encountered\nin an enslaving wrym lair. Water breathing species\nare obviously favored.\nEnslaving wyrms attack with a bite as well as a\npoisonous sting. The stinger can deliver three\ndifferent poisons (each at -2 to save): paralyzation\n(2-5 turns), enslavement, or death. The enslavement\npoison charms the victim to obey the commands\nof the enslaving wyrm, even if the victim does not\nspeak Wyrm. Enslaved creatures completely obey\nthe desires and command of the wyrm. Victims are\nallowed another save on the anniversary of their\nenslavement. This second save is made without\nmodifiers. If the second save fails, the creature is\npermanently enslaved. A neutralize poison and a\ndispel magic is required to free a creature from the\nenslavement poison.\nEnslaving wyrms are immune to poison and mind-\naffecting magics.\nMagic-use: Magic-using enslaving wyrms can cast\nspells of 1st through 9th level. As a Young wyrm it can\nonly cast a single 1st level spell, but it gains a new spell\nof the next level until reaching 9 th level at Lord. At\nTyrant age category an enslaving wrym casts two\nspells of each level.\nPhysical description: Enslaving wyrms are long snake-\nlike wyrms covered with green and purple scales.\nTheir tail is tipped with a stinger that can deliver\ndifferent poisons."
@@ -13240,7 +13251,7 @@
         "lair_probability": "65%",
         "treasure": "In Lair: 5-30k cp (25%), 1-100k sp (40%), 10- 40k ep (40%), 10-60k gp (55%), 500-5,000 pp (25%), 1-100 gems (50%), 10-40 jewelry (50%), any 4 magic items + 1 potion +1 scroll (15%)",
         "intelligence": "Very",
-        "alignment": "Neutral evil CHANCE OF: Magic Use: 10% Sleeping: 40%",
+        "alignment": "Neutral evil",
         "level_xp": {
           "raw": "Varies"
         }
@@ -13254,7 +13265,7 @@
       "tags": [
         "large",
         "very_intelligence",
-        "neutral_evil_chance_of_magic_use_10_sleeping_40",
+        "neutral_evil",
         "very_rare"
       ],
       "raw_text": "WYRM, KURGAN\nSIZE: Large (42 ft. long)\nMOVE: 180 ft., burrowing 120 ft.\nARMOR CLASS: -1\nHIT DICE: 10-13\nATTACKS: 3\nDAMAGE: 1-8, 1-8, 3-30\nSPECIAL ATTACKS: See below\nSPECIAL DEFENSES: See below\nMAGIC RESISTANCE: 20%\nRARITY: Very rare\nNO. ENCOUNTERED: 1\nLAIR PROBABILITY: 65%\nTREASURE: In Lair: 5-30k cp (25%), 1-100k sp (40%), 10-\n40k ep (40%), 10-60k gp (55%), 500-5,000 pp (25%),\n1-100 gems (50%), 10-40 jewelry (50%), any 4 magic\nitems + 1 potion +1 scroll (15%)\nINTELLIGENCE: Very\nALIGNMENT: Neutral evil\nCHANCE OF:\nMagic Use: 10%\nSleeping: 40%\nLEVEL/X.P.: Varies\nGeneral information: Kurgan wyrms live in grasslands.\nThey avoid forests (which they cannot burrow under)\nand deserts, which lack the water sources they need.\nThey lair in large burrows they dig out of the soil.\nKurgan wyrms feed upon anything, but particularly\nseek out the buried dead, finding them nearly\nirresistible. Intelligent undead fear kurgan wyrms (as\nmuch as undead can fear, that is) for durgan wyrms\ndeal double damage upon them and the wyrms\nenjoy the flavor of undead even more than the\nburied dead.\nKurgan wyrms are immune to poison, death magic,\nlife drain, and cold attacks.\nMagic-use: Magic-using kurgan wyrms can cast spells\nof 1st through 9th level. As a Hatchling it can only cast\na single 1st level spell, but it gains a new spell of the\nnext level until reaching 9th level at Ancient. At Very\nAncient a kurgan wrym casts two spells of levels 1st-\n4th, as a Lord it casts two spells of levels 5th-8th, and\nas a Tyrant it casts two 9th-level spells..\nPhysical description: Kurgan wyrms are nearly lizard-\nlike in appearance, with long necks and fairly short\nlimbs. They have a skeletal head, with clipped snout\nand slavering mouth.\nWYRM, TYPHON (equivalent to a lesser god)\nSIZE: Large (300 ft. long)\nMOVE: Swimming 480 ft.\nARMOR CLASS: -8\nHIT DICE: 400 hit points\nATTACKS: 2\nDAMAGE: 7-56, 7-56\nSPECIAL ATTACKS: See below\nSPECIAL DEFENSES: See below\nMAGIC RESISTANCE: 95%\nRARITY: Unique\nNO. ENCOUNTERED: 1\nLAIR PROBABILITY: 65%\nTREASURE: In Lair: (roll for each category five times)\n5-30k cp (25%), 1-100k sp (40%), 10-40k ep (40%),\n10-60k gp (55%), 500-5,000 pp (25%), 1-100 gems\n(50%), 10-40 jewelry (50%), any 4 magic items + 1\npotion +1 scroll (15%), plus once of the following\n10-80 gems (90%), 5-30 jewelry (80%), 1 of each\nmagic item excluding potions and scrolls (70%), 2\nof each magic item excluding potions and scrolls\n(85%)\nINTELLIGENCE: Godlike\nALIGNMENT: Neutral evil\nCLERIC/DRUID: 20th level in each\nMAGIC USER/ILLUSIONIST: 20th level in each\nCHANCE OF:\nMagic Use: 100%\nSleeping: 20%\nLEVEL/X.P.: 10 / 100,000 + 35/hp*\nS: 25 (+7, +14), I: 23, W: 20, D: 18, C: 25, CH: 23\nGeneral information : Typhon, Mother of Wyrms is a\na monster capable of challenging the gods them-\nselves. Typhon once roamed the waters of the\nMultiverse freely, but the gods arrived and eventually\nthey shunt her away to a small corner. She is currently\nimprisoned in a pocket dimension on the Elemental\nPlane of Water that the gods have warded against\nentry, but she can travel to the Material for 2-4 days\nevery decade or so as her bonds weaken. Another\nconfrontation with the gods is imminent…\nTyphon can control weather as she likes and can\nsmash down one of her mighty necks to create a\nmassive rogue wave (dealing 3-36 points of hull\ndamage and having a 75% chance of capsizing a\nsailing vessel into splinters) or a tsunami (dealing 6-60\npoints of siege damage against buildings and 3-300\nhit points of damage against non-aquatic creatures\nwithin half a mile of any coast).\nTyphon as all the abilities of a lesser god, but has few\nworshippers remaining. Those few that are faithful to\nher gain permanent water breathing as a sign of her\nblessing. Her imprisonment has made her very angry\nand she and her followers are constantly seeking for\nher freedom. Typhon cannot leave the water for any\nextended period of time, she can muster only 2-5\nrounds per hour outside the water.\nShe can cast any cleric, druid, magic user, or illusionist\nspell once per round, at will, at the 20th level of ability.\nThe gods’ decision to imprison her instead of kill her\nhas resulted in a strange situation: she cannot be truly\nkilled except in her prison, which none can enter. If\nshe escapes and is killed, she is simply re-imprisoned.\nThe X.P. value above is for the latter circumstance. If\nsomeone were to find a way to kill her permanently,\nthe experience point value should be tripled.\nPhysical description : Thypon is a giant two-headed\naquatic wyrm."

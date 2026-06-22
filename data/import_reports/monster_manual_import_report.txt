@@ -125,7 +125,6 @@ Rejected candidate headings:
 - XIAROEN - YALI - YUXA - ZIBURINIS - ZOMBIE, HOUND
 
 Entries missing expected fields:
-- Dragon, Crustacean: stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
 - Worm, Furnace: stat_block.intelligence
 
 Duplicate IDs:

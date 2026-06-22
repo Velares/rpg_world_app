@@ -50,6 +50,7 @@ SECTION_PATTERN = re.compile(
 PAGE_MARKER_PATTERN = re.compile(r"^\s*\d{1,3}(?:\s+\d{1,3})?\s*$")
 HEADING_CHAR_PATTERN = re.compile(r"^[A-Z0-9 '&(),./\-]+$")
 LETTER_RANGE_PATTERN = re.compile(r"^[A-Z](?:\s*-\s*[A-Z])?$")
+GENERIC_LABEL_PATTERN = re.compile(r"^\s*([A-Za-z][A-Za-z0-9/ .+\-()']{0,40})\s*:\s*(.*)$")
 
 
 @dataclass
@@ -66,6 +67,7 @@ class ParsedEntry:
     actual_page_start: int
     actual_page_end: int
     raw_text: str
+    start_page_prefix: str = ""
 
 
 @dataclass
@@ -160,6 +162,21 @@ def title_case_name(name: str) -> str:
 def slugify_name(name: str) -> str:
     base = re.sub(r"[^a-z0-9]+", "", title_case_name(name).lower())
     return base or "unknownmonster"
+
+
+def build_heading_name_variants(name: str) -> set[str]:
+    normalized = title_case_name(name)
+    variants = {
+        normalized.lower(),
+        normalized.replace(",", "").lower(),
+    }
+    if "," in normalized:
+        left, right = [part.strip() for part in normalized.split(",", 1)]
+        swapped = f"{right} {left}".strip().lower()
+        variants.add(swapped)
+        if not swapped.endswith("s"):
+            variants.add(f"{swapped}s")
+    return {variant for variant in variants if variant}
 
 
 def is_running_header_candidate(line: str) -> bool:
@@ -262,6 +279,63 @@ def merge_split_label_records(line_records: list[tuple[int, str]]) -> list[tuple
     return merged
 
 
+def get_start_page_prefix_lines(
+    line_records: list[tuple[int, str]], start_index: int
+) -> list[str]:
+    if not line_records or start_index <= 0:
+        return []
+    page_number = line_records[start_index][0]
+    prefix_start = start_index
+    while prefix_start > 0 and line_records[prefix_start - 1][0] == page_number:
+        prefix_start -= 1
+    return [line for _, line in line_records[prefix_start:start_index]]
+
+
+def find_orphan_stat_lines(start_page_prefix: str, heading: str) -> list[str]:
+    raw_lines = [
+        line
+        for line in start_page_prefix.replace("\r\n", "\n").replace("\r", "\n").splitlines()
+        if normalize_line(line)
+    ]
+    if not raw_lines:
+        return []
+    section_index = next(
+        (index for index, line in enumerate(raw_lines) if SECTION_PATTERN.match(normalize_line(line))),
+        None,
+    )
+    if section_index is None:
+        return []
+    stat_region = raw_lines[:section_index]
+    if not any(LABEL_PATTERN.match(normalize_line(line)) for line in stat_region):
+        return []
+    variants = build_heading_name_variants(heading)
+    context_window = " ".join(
+        normalize_line(line).lower() for line in raw_lines[section_index : section_index + 8]
+    )
+    if not any(variant in context_window for variant in variants):
+        return []
+    return [normalize_line(line) for line in stat_region if normalize_line(line)]
+
+
+def trim_to_last_labeled_stat_line(stat_lines: list[str]) -> list[str]:
+    last_label_index = None
+    for index, line in enumerate(stat_lines):
+        if LABEL_PATTERN.match(normalize_line(line)):
+            last_label_index = index
+    if last_label_index is None:
+        return stat_lines
+    return stat_lines[: last_label_index + 1]
+
+
+def is_unmodeled_label_line(line: str) -> bool:
+    stripped = normalize_line(line)
+    if not stripped:
+        return False
+    if LABEL_PATTERN.match(stripped) or SECTION_PATTERN.match(stripped):
+        return False
+    return bool(GENERIC_LABEL_PATTERN.match(stripped))
+
+
 def detect_entries_from_pages(pages: list[ImportPage]) -> tuple[list[ParsedEntry], list[str], int]:
     entries: list[ParsedEntry] = []
     rejected_candidates: list[str] = []
@@ -298,6 +372,7 @@ def detect_entries_from_pages(pages: list[ImportPage]) -> tuple[list[ParsedEntry
                     actual_page_start=chunk[0][0],
                     actual_page_end=chunk[-1][0],
                     raw_text=raw_text,
+                    start_page_prefix="\n".join(get_start_page_prefix_lines(line_records, start_index)).strip(),
                 )
             )
     return entries, rejected_candidates, candidate_headings_detected
@@ -413,6 +488,9 @@ def parse_stat_block(stat_lines: list[str]) -> dict[str, Any]:
             if remainder:
                 values[current_key].append(remainder)
             continue
+        if is_unmodeled_label_line(line):
+            current_key = None
+            continue
         if current_key is not None:
             values.setdefault(current_key, []).append(line)
 
@@ -501,6 +579,9 @@ def parse_monster_entry(entry: ParsedEntry, source_file: str) -> tuple[dict[str,
         if normalize_line(line) or line.strip() == ""
     ]
     stat_lines, section_lines = find_stat_and_section_split(raw_lines)
+    orphan_stat_lines = find_orphan_stat_lines(entry.start_page_prefix, entry.heading)
+    if orphan_stat_lines:
+        stat_lines = trim_to_last_labeled_stat_line(stat_lines) + orphan_stat_lines
     if not stat_lines:
         warnings.append(f"{entry.heading}: could not locate a SIZE-based stat block.")
     stat_block = parse_stat_block(stat_lines)

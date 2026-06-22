@@ -3,6 +3,32 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.8.8 - monster importer normalization pass
+
+- Tightened monster-manual stat parsing for real-entry spillover after the
+  Milestone 1 header and page-marker cleanup settled.
+- Added a small unmodeled-label guard so lines such as `CHANCE OF:`,
+  `Magic Use:`, `Sleeping:`, and similar side labels no longer leak into
+  structured fields like `ALIGNMENT`.
+- Added targeted recovery for page-top orphaned stat lines when PDF extraction
+  separates late stat fields from a monster heading but the nearby prose still
+  clearly belongs to that same monster.
+- Fixed `WYRM, KURGAN` so `ALIGNMENT` is no longer polluted by the following
+  chance-of-use lines.
+- Recovered `Dragon, Crustacean` intelligence, alignment, level/xp, and full
+  treasure continuation from split page text without reintroducing false
+  header records.
+- Kept `Worm, Furnace` honestly reported with a missing `INTELLIGENCE` field
+  because the extracted PDF text still does not provide a recoverable value.
+- Added focused importer regression coverage for the wyrm spillover case, the
+  orphaned crustacean-dragon stat continuation case, and the intentionally
+  unresolved furnace-worm case.
+- The current validated full-PDF rerun still produces 268 parsed monsters and
+  111 rejected candidate headings, with no false single-letter records, no
+  running-header records, no duplicate IDs, and one remaining missing common
+  field in the report.
+- Raised the validated suite to 130 passing `unittest` tests.
+
 ## v0.8.7 - monster manual importer milestone 1
 
 - Added `tools/importers/monster_manual_importer.py` and

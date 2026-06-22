@@ -3,11 +3,34 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.7`
+- Current development version on `main`: `v0.8.8`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.8.8 tightens real-monster field normalization after the importer
+cleanup pass on `main`:
+
+- Added a narrow parser guard for unmodeled stat-adjacent labels so side
+  fields such as `CHANCE OF`, `Magic Use`, `Sleeping`, and similar spillover
+  lines no longer pollute structured values like `ALIGNMENT`.
+- Added targeted recovery for page-top orphaned stat lines when PDF extraction
+  separates late stat fields from a monster heading but nearby prose still
+  clearly belongs to that same monster.
+- Fixed `WYRM, KURGAN` so its alignment stays clean instead of absorbing the
+  following chance-of-use text.
+- Recovered `Dragon, Crustacean` intelligence, alignment, level/xp, and full
+  treasure continuation from split page text.
+- Kept `Worm, Furnace` honestly flagged for a missing `INTELLIGENCE` field
+  because the extracted PDF text still does not expose a reliable value to
+  recover.
+- Preserved the existing header/page-marker cleanup behavior, with the local
+  rerun still producing 268 parsed monsters, 111 rejected candidate headings,
+  no false single-letter or running-header catalog entries, no duplicate IDs,
+  and one remaining missing expected common field.
+- Added focused importer regression coverage and raised the validated
+  `unittest` count to 130 while `python -m compileall .` still passes.
 
 Version 0.8.7 adds the first monster-manual importer milestone on `main`:
 
@@ -350,7 +373,7 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 123 tests passing with
+- Current verification: 130 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.
@@ -382,9 +405,10 @@ Version 0.7 hardened the data-driven generation foundation:
 - Milestone 1 only builds the monster catalog importer. It does not yet parse
   appendices, build terrain/rarity/level indexes, or drive encounter
   generation inside the app.
-- A few real imported monsters still need follow-up normalization where the
-  PDF formatting interrupts fields in unusual ways, such as some wrapped wyrm
-  records or entries missing expected `INTELLIGENCE` / `ALIGNMENT` details.
+- A few real imported monsters may still need follow-up normalization where
+  the PDF formatting interrupts fields in unusual ways. The current validated
+  report is down to one remaining common-field gap: `Worm, Furnace` missing a
+  recoverable `INTELLIGENCE` value in the extracted text.
 - Save compatibility is actively maintained for v0.8.4+ data. Much older
   pre-v0.8.4 save experiments are no longer treated as a guaranteed migration
   target for new milestones.
@@ -395,13 +419,12 @@ Version 0.7 hardened the data-driven generation foundation:
 
 ## Next candidate goals
 
-1. Run the monster importer against the full combined PDF once
-   `data/import_sources/mandbmaster.pdf` is available locally, then
-   review warnings, duplicate IDs, and any missing expected fields before the
-   next parser milestone.
-2. Add monster-manual appendix handling, terrain/index enrichment, or catalog
+1. Add monster-manual appendix handling, terrain/index enrichment, or catalog
    normalization only as separate thin follow-up milestones after the base
    entry importer settles.
+2. Optionally revisit the one remaining `Worm, Furnace` intelligence gap only
+   if another extraction path reveals the missing line without special-casing
+   the record.
 3. Add lightweight inventory actions beyond equipping, such as container-aware
    stash moves, simple drop/store behavior, or clearer repair/condition hooks,
    only if they stay compatible with the current rules-neutral model.
