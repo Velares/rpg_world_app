@@ -3,6 +3,7 @@ from __future__ import annotations
 from app.calendar import age_band, format_calendar
 from app.diary import recent_entries_text
 from app.downtime import DowntimeEngine
+from app.inventory import equipped_slot_lines, inventory_summary_lines
 from app.leads import (
     format_open_leads,
     format_recent_lead_changes,
@@ -23,7 +24,8 @@ def inventory_item_text(item: InventoryItem, detailed: bool = False) -> str:
     if not item.carried:
         flags.append("stored")
     suffix = f" [{', '.join(flags)}]" if flags else ""
-    base = f"{item.name} x{item.quantity} ({item.category}){suffix}"
+    bulk_text = f", bulk {item.total_bulk:g}"
+    base = f"{item.name} x{item.quantity} ({item.category}{bulk_text}){suffix}"
     if detailed and item.description:
         return f"{base} - {item.description}"
     return base
@@ -125,6 +127,7 @@ def export_character_text(world: World | None) -> str:
     inventory = "\n".join(
         f"- {inventory_item_text(item, detailed=True)}" for item in player.inventory
     ) or "- Empty"
+    equipped = "\n".join(f"- {line}" for line in equipped_slot_lines(player))
     recent_actions = [
         entry.result_text
         for entry in player.timeline_entries
@@ -154,6 +157,14 @@ def export_character_text(world: World | None) -> str:
         f"Flaw: {character.flaw or 'Not recorded'}\n\n"
         f"EQUIPMENT AND INVENTORY\n"
         f"=======================\n"
+        f"Encumbrance: {player.encumbrance_state()}\n"
+        f"Total Carried Bulk: {player.total_carried_bulk():g}\n"
+        f"Equipped Bulk: {player.equipped_bulk():g}\n\n"
+        f"EQUIPPED SLOTS\n"
+        f"==============\n"
+        f"{equipped}\n\n"
+        f"CARRIED INVENTORY\n"
+        f"=================\n"
         f"{inventory}\n\n"
         f"RESOURCES\n"
         f"=========\n"

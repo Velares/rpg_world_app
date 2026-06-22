@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.8.5 is a local, single-player weird-fantasy starting-region generator
+Version 0.8.6 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -85,6 +85,22 @@ consumable, quest-related, carried, and tradeable. Common and class-flavored
 starting gear is defined in `data/tables/item_tables.json`. Food, water,
 torches, coin, and abstract supplies remain separate resource counters because
 the exploration loop already consumes those values directly.
+
+Version 0.8.6 expands that inventory layer into a lightweight equipment and
+encumbrance framework. Item definitions can now include bulk, valid equipment
+slots, handedness, simple placeholder combat-facing notes, and optional
+container capacity. Characters track named slots such as Head, Chest, Belt,
+Back, Main Hand, Off Hand, rings, and Backpack / Container, while a new
+**Inventory / Equipment** dialog provides simple dropdown-driven equip and
+unequip controls. Encumbrance remains rules-neutral with four states:
+unencumbered, burdened, heavily burdened, and overloaded.
+
+This is still not a full tactical equipment simulator. The current system is
+meant to answer practical questions like what the character is wearing or
+carrying, whether a two-handed item blocks the off hand, roughly how much
+bulk is being carried, and whether the current loadout should affect travel or
+field readiness. Placeholder damage, range, speed, and value fields are stored
+for future use without introducing a full combat or economy ruleset yet.
 
 The app also supports plain-text export for the active world summary, the
 active character sheet, and the persistent event log. Exported character text
@@ -190,6 +206,11 @@ rules-neutral for now.
 Plain-text exports now include the current journal summary, verbose timeline
 sections where appropriate, and prominent recurring NPC notes. Older saves
 still load safely when timeline or NPC-prominence fields are missing.
+
+Current save compatibility is intentionally scoped to the modern data model.
+The oldest supported baseline is now Version 0.8.4-era saves. Earlier
+pre-0.8.4 save shapes are no longer a guaranteed compatibility target for new
+milestones.
 
 Version 0.8.1 adds a lightweight key-NPC and faction-interaction phase
 framework. Once a recurring NPC becomes prominent enough, they can be promoted
@@ -420,7 +441,8 @@ child records, calendar and downtime flow, exporter output, save/load
 reconstruction, reproducible seed behavior, downtime consequence outcomes,
 timeline logging, recurring-NPC promotion, key-NPC promotion, relationship
 records, faction-phase behavior, GUI mode helper routing, recap formatting,
-and older-save compatibility.
+equipment slots, bulk and encumbrance behavior, and older-save compatibility
+from the supported v0.8.4+ baseline.
 
 Stress coverage now also exercises messy user behavior through the public game
 state API: actions before world generation, actions before character creation,

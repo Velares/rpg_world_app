@@ -12,6 +12,7 @@ from app.exporters import (
     export_world_summary,
 )
 from app.game_state import GameState
+from app.equipment import ENCUMBRANCE_STATES, EQUIPMENT_SLOTS
 from app.models import InventoryItem
 from app.table_loader import TableLoader
 
@@ -68,10 +69,15 @@ class StressTests(unittest.TestCase):
             self.assertIsInstance(item, InventoryItem)
             self.assertIsInstance(item.item_key, str)
             self.assertTrue(item.item_key)
+            self.assertIsInstance(item.instance_id, str)
+            self.assertTrue(item.instance_id)
             self.assertIsInstance(item.name, str)
             self.assertTrue(item.name)
             self.assertIsInstance(item.quantity, int)
             self.assertGreater(item.quantity, 0)
+            self.assertIsInstance(item.bulk, (int, float))
+            self.assertGreaterEqual(item.bulk, 0.0)
+            self.assertIsInstance(item.valid_slots, list)
         self.assertTrue(all(isinstance(entry, str) for entry in player.event_log))
         self.assertTrue(all(isinstance(entry, str) for entry in player.action_log))
         self.assertIsInstance(player.timeline_entries, list)
@@ -98,6 +104,9 @@ class StressTests(unittest.TestCase):
         self.assertIsInstance(player.quest_log, list)
         self.assertIsInstance(player.leads, list)
         self.assertIsInstance(player.lead_records, list)
+        self.assertIsInstance(player.equipment_slots, dict)
+        self.assertEqual(set(player.equipment_slots), set(EQUIPMENT_SLOTS))
+        self.assertIn(player.encumbrance_state(), ENCUMBRANCE_STATES)
         self.assertTrue(all(isinstance(lead.text, str) and lead.text for lead in player.lead_records))
         self.assertTrue(
             all(

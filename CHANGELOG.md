@@ -3,6 +3,30 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.8.6 - inventory, equipment, bulk, and encumbrance
+
+- Added a lightweight equipment framework with named slots for worn gear,
+  hands, rings, back items, and a backpack/container slot, plus simple
+  handedness rules for one-handed and two-handed items.
+- Expanded `InventoryItem` records and `data/tables/item_tables.json` so item
+  definitions can carry bulk, valid slots, container capacity, and placeholder
+  combat/economy-facing metadata without introducing a full ruleset.
+- Added shared encumbrance helpers with four rules-neutral states:
+  unencumbered, burdened, heavily burdened, and overloaded.
+- Added a minimal Tkinter `Inventory / Equipment` dialog with dropdown-driven
+  equip and unequip controls, current slot summaries, and carried-bulk /
+  encumbrance feedback.
+- Expanded character recap and plain-text export output to include equipped
+  slots, carried inventory, bulk totals, and encumbrance state while keeping
+  resource counters separate from inventory records.
+- Updated compatibility guidance and repair defaults around the new inventory
+  shape, with active support now centered on v0.8.4+ save data rather than
+  the oldest early-project save experiments.
+- Added regression and stress coverage for item-table validation, stackable
+  versus equippable inventory behavior, slot rules, encumbrance state,
+  export/recap visibility, and v0.8.4/v0.8.5 compatibility repair, bringing
+  the validated suite to 118 passing `unittest` tests.
+
 ## v0.8.5 - character sheet and diary
 
 - Expanded the character sheet with classic ability scores alongside the

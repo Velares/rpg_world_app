@@ -314,6 +314,12 @@ class GameState:
             item_key_or_name, quantity
         )
 
+    def equip_item(self, item_ref: str, slot_name: str):
+        return self.require_world().player_state.equip_item(item_ref, slot_name)
+
+    def unequip_slot(self, slot_name: str) -> None:
+        self.require_world().player_state.unequip_slot(slot_name)
+
     def random_first_name(self) -> str:
         return self.name_generator.first_name()
 

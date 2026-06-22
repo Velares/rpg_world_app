@@ -3,11 +3,36 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.5`
+- Current development version on `main`: `v0.8.6`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.8.6 expands structured inventory into lightweight equipment, bulk,
+and encumbrance support on `main`:
+
+- Added named equipment slots for worn gear, hand items, rings, back items,
+  and a backpack/container slot without introducing a heavier combat or vendor
+  subsystem.
+- Expanded item-table definitions and `InventoryItem` records with bulk, valid
+  slots, handedness, container capacity, and placeholder combat/economy-facing
+  metadata for future use.
+- Added simple encumbrance helpers and rules-neutral states:
+  unencumbered, burdened, heavily burdened, and overloaded.
+- Added a minimal Tkinter `Inventory / Equipment` dialog with dropdown equip /
+  unequip controls, slot summaries, and current bulk feedback.
+- Expanded character recap and plain-text export output to show equipped
+  slots, carried inventory, bulk totals, and encumbrance state while keeping
+  food, water, torches, coin, and supplies as separate authoritative counters.
+- Tightened compatibility repair around the newer inventory shape and
+  equipment defaults, with active save compatibility now centered on the
+  v0.8.4+ baseline rather than the oldest early-project save experiments.
+- Added regression and stress coverage for item validation, stackable versus
+  equippable behavior, slot rules, bulk/encumbrance state, export visibility,
+  and compatibility repair, bringing the validated `unittest` count to 118
+  while the local `init.tcl` limitation still blocks a true Tk root smoke
+  test.
 
 Version 0.8.5 expands the character sheet and adds a diary system on `main`:
 
@@ -250,6 +275,7 @@ Version 0.7 hardened the data-driven generation foundation:
   Stealth.
 - Class-based resources and placeholder special abilities.
 - Structured inventory records and JSON-driven class starting gear.
+- Lightweight equipment slots, carried bulk, and encumbrance states.
 - Optional text-seed control for reproducible world generation.
 - Plain-text export for active world summaries, character sheets, and event logs.
 - Lightweight structured lead tracking with grouped suggested next actions.
@@ -277,7 +303,8 @@ Version 0.7 hardened the data-driven generation foundation:
   export actions, seed entry, `Town Mode` / `Adventure Mode` action groups,
   downtime controls, journal/timeline views, recap view, save/load, and data
   diagnostics.
-- SQLite persistence with compatibility defaults for older save shapes.
+- SQLite persistence with compatibility defaults for the supported v0.8.4+
+  save baseline.
 
 ## Name generation status
 
@@ -294,7 +321,7 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 108 tests passing with
+- Current verification: 118 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.
@@ -309,13 +336,16 @@ Version 0.7 hardened the data-driven generation foundation:
   table selection, interaction variety, normalized database rows, older-save
   compatibility, reproducible seed behavior, world-aware downtime outcomes,
   timeline logging, recurring-NPC promotion, key-NPC promotion, relationship
-  records, faction-phase behavior, and randomized/error-handling stress
-  scenarios.
+  records, faction-phase behavior, equipment slot rules, bulk and encumbrance
+  state, and randomized/error-handling stress scenarios.
 
 ## Known issues and boundaries
 
 - Tactical combat, visual maps, full equipment rules, leveling, and spell
   systems are intentionally not implemented.
+- Save compatibility is actively maintained for v0.8.4+ data. Much older
+  pre-v0.8.4 save experiments are no longer treated as a guaranteed migration
+  target for new milestones.
 - The large name datasets and mutable `data/saves/worlds.db` are tracked, making
   the repository larger and causing save activity to modify a versioned file.
 - Tests use `unittest`; `pytest` is optional and not a project dependency.
@@ -323,16 +353,19 @@ Version 0.7 hardened the data-driven generation foundation:
 
 ## Next candidate goals
 
-1. Add a small simulated-time helper or preset-driven town-side fast-forward
+1. Add lightweight inventory actions beyond equipping, such as container-aware
+   stash moves, simple drop/store behavior, or clearer repair/condition hooks,
+   only if they stay compatible with the current rules-neutral model.
+2. Add a small simulated-time helper or preset-driven town-side fast-forward
    flow only if it can reuse the current calendar/downtime framework without
    bloating the GUI.
-2. Design later character retirement so retired protagonists can remain in the
+3. Design later character retirement so retired protagonists can remain in the
    same world as NPCs after the calendar/downtime layer settles.
-3. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
+4. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
    available in the local environment.
-4. Consider a small seed-copy or seed-regenerate affordance only if players
+5. Consider a small seed-copy or seed-regenerate affordance only if players
    actually need more than the current single text entry.
-5. Deepen key NPCs with optional world-aware quest hooks before considering
+6. Deepen key NPCs with optional world-aware quest hooks before considering
    any broader relationship or faction system.
 
 ## Important files and directories
@@ -350,6 +383,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - `app/interaction_text.py` - interaction template formatting helpers
 - `app/name_generator.py` - cached large-file name generation
 - `app/inventory.py` - item catalog and class starting loadouts
+- `app/equipment.py` - slot definitions and encumbrance helpers
 - `app/generators/` - focused procedural generators
 - `data/tables/` - editable JSON content
 - `data/tables/interaction_tables.json` - dialogue, encounter, and action text

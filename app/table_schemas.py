@@ -6,6 +6,7 @@ BONUS_NAMES = ("combat", "exploration", "social", "lore", "survival", "stealth")
 ITEM_CATEGORIES = (
     "Weapon",
     "Armor",
+    "Container",
     "Tool",
     "Supply",
     "Food",
@@ -248,6 +249,17 @@ FALLBACKS: dict[tuple[str, str], list[object]] = {
             "consumable": False,
             "quest_related": False,
             "tradeable": True,
+            "bulk": 1.0,
+            "valid_slots": [],
+            "handedness": "",
+            "speed_factor": 0,
+            "range_profile": "",
+            "mode": "",
+            "placeholder_damage": "",
+            "placeholder_special_rules": "",
+            "placeholder_value": "",
+            "placeholder_condition": "",
+            "capacity_bulk": 0.0,
         }
     ],
     ("item_tables", "common_loadout"): [

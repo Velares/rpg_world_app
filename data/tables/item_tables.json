@@ -6,7 +6,12 @@
       "category": "Supply",
       "description": "A waxed blanket and compact bedding for rough camps.",
       "tags": ["camp", "starter"],
-      "tradeable": true
+      "tradeable": true,
+      "bulk": 1.0,
+      "valid_slots": ["Back"],
+      "placeholder_value": "common gear",
+      "placeholder_condition": "serviceable",
+      "placeholder_special_rules": "Bulky but easy to lash to a pack."
     },
     {
       "item_key": "flint_steel",
@@ -14,7 +19,12 @@
       "category": "Tool",
       "description": "A reliable fire-lighting kit kept in an oiled pouch.",
       "tags": ["fire", "starter"],
-      "tradeable": true
+      "tradeable": true,
+      "bulk": 0.1,
+      "valid_slots": ["Belt", "Backpack / Container"],
+      "placeholder_value": "cheap",
+      "placeholder_condition": "reliable",
+      "placeholder_special_rules": "Useful for campfires and cautious delving."
     },
     {
       "item_key": "rope",
@@ -22,7 +32,12 @@
       "category": "Tool",
       "description": "Thirty feet of serviceable hemp rope.",
       "tags": ["climbing", "restraint"],
-      "tradeable": true
+      "tradeable": true,
+      "bulk": 1.0,
+      "valid_slots": ["Back", "Backpack / Container"],
+      "placeholder_value": "useful trade good",
+      "placeholder_condition": "worn but strong",
+      "placeholder_special_rules": "Supports climbing and improvised hauling."
     },
     {
       "item_key": "blade",
@@ -31,7 +46,17 @@
       "description": "A practical close-combat weapon with no rules-specific statistics.",
       "tags": ["martial", "starter"],
       "equipped": true,
-      "tradeable": true
+      "tradeable": true,
+      "bulk": 1.0,
+      "valid_slots": ["Main Hand", "Backpack / Container"],
+      "handedness": "1H",
+      "speed_factor": 4,
+      "range_profile": "close",
+      "mode": "melee",
+      "placeholder_damage": "1d6 placeholder",
+      "placeholder_value": "modest weapon",
+      "placeholder_condition": "travel-worn",
+      "placeholder_special_rules": "Balanced for cautious close fighting."
     },
     {
       "item_key": "light_armor",
@@ -40,7 +65,12 @@
       "description": "Layered protection suited to long journeys and cautious delving.",
       "tags": ["protection", "starter"],
       "equipped": true,
-      "tradeable": true
+      "tradeable": true,
+      "bulk": 2.0,
+      "valid_slots": ["Chest"],
+      "placeholder_value": "solid protection",
+      "placeholder_condition": "patched",
+      "placeholder_special_rules": "Keeps mobility better than heavier harness."
     },
     {
       "item_key": "lock_tools",
@@ -48,7 +78,12 @@
       "category": "Tool",
       "description": "Small picks, probes, wedges, wire, and chalk.",
       "tags": ["precision", "inspection"],
-      "tradeable": true
+      "tradeable": true,
+      "bulk": 0.4,
+      "valid_slots": ["Belt", "Backpack / Container"],
+      "placeholder_value": "specialist kit",
+      "placeholder_condition": "carefully wrapped",
+      "placeholder_special_rules": "Useful for locks, seams, and small mechanisms."
     },
     {
       "item_key": "field_kit",
@@ -56,7 +91,12 @@
       "category": "Tool",
       "description": "Cord, wax, needles, marking cloth, and repair pieces.",
       "tags": ["survival", "repair"],
-      "tradeable": true
+      "tradeable": true,
+      "bulk": 0.8,
+      "valid_slots": ["Backpack / Container", "Belt"],
+      "placeholder_value": "practical kit",
+      "placeholder_condition": "well packed",
+      "placeholder_special_rules": "Supports repairs and field expeditions."
     },
     {
       "item_key": "journal",
@@ -64,7 +104,12 @@
       "category": "Tool",
       "description": "A bound notebook with charcoal, ink, and folded reference sheets.",
       "tags": ["lore", "mapping"],
-      "tradeable": true
+      "tradeable": true,
+      "bulk": 0.3,
+      "valid_slots": ["Backpack / Container", "Belt"],
+      "placeholder_value": "scholarly supplies",
+      "placeholder_condition": "dry and legible",
+      "placeholder_special_rules": "Pairs naturally with the diary and note-taking loop."
     },
     {
       "item_key": "ritual_kit",
@@ -72,7 +117,12 @@
       "category": "Tool",
       "description": "Incense, clean thread, chalk, bells, and empty petition slips.",
       "tags": ["ritual", "lore"],
-      "tradeable": true
+      "tradeable": true,
+      "bulk": 0.7,
+      "valid_slots": ["Backpack / Container", "Belt"],
+      "placeholder_value": "temple tools",
+      "placeholder_condition": "carefully sealed",
+      "placeholder_special_rules": "Supports rites, vows, and cleansing work."
     },
     {
       "item_key": "occult_case",
@@ -80,7 +130,12 @@
       "category": "Tool",
       "description": "A warded case for samples, rubbings, and unsettling evidence.",
       "tags": ["occult", "evidence"],
-      "tradeable": false
+      "tradeable": false,
+      "bulk": 1.0,
+      "valid_slots": ["Back", "Backpack / Container"],
+      "placeholder_value": "rare specialist case",
+      "placeholder_condition": "sealed",
+      "placeholder_special_rules": "Keeps questionable findings contained."
     },
     {
       "item_key": "contract_tokens",
@@ -88,7 +143,12 @@
       "category": "Miscellaneous",
       "description": "Marked counters used to record employers, debts, and obligations.",
       "tags": ["social", "records"],
-      "tradeable": false
+      "tradeable": false,
+      "bulk": 0.2,
+      "valid_slots": ["Belt", "Backpack / Container"],
+      "placeholder_value": "personal markers",
+      "placeholder_condition": "mixed metals",
+      "placeholder_special_rules": "Useful for promises, debts, and leverage."
     },
     {
       "item_key": "mapping_kit",
@@ -96,7 +156,12 @@
       "category": "Tool",
       "description": "Measuring cord, charcoal, parchment scraps, and a compass.",
       "tags": ["exploration", "mapping"],
-      "tradeable": true
+      "tradeable": true,
+      "bulk": 0.7,
+      "valid_slots": ["Backpack / Container", "Belt"],
+      "placeholder_value": "expedition kit",
+      "placeholder_condition": "ink-stained",
+      "placeholder_special_rules": "Supports route planning and survey notes."
     },
     {
       "item_key": "instrument",
@@ -104,7 +169,12 @@
       "category": "Tool",
       "description": "A compact instrument suitable for performance and signaling.",
       "tags": ["performance", "social"],
-      "tradeable": true
+      "tradeable": true,
+      "bulk": 1.0,
+      "valid_slots": ["Back", "Backpack / Container"],
+      "placeholder_value": "fine personal gear",
+      "placeholder_condition": "delicate",
+      "placeholder_special_rules": "Useful in performance, morale, and signals."
     },
     {
       "item_key": "meditation_tokens",
@@ -112,22 +182,82 @@
       "category": "Miscellaneous",
       "description": "Smooth marked stones used for memory, focus, and interpretation.",
       "tags": ["mystic", "focus"],
-      "tradeable": false
+      "tradeable": false,
+      "bulk": 0.2,
+      "valid_slots": ["Belt", "Backpack / Container"],
+      "placeholder_value": "personal tokens",
+      "placeholder_condition": "smooth",
+      "placeholder_special_rules": "Useful for focus and ritual recollection."
+    },
+    {
+      "item_key": "shield_001",
+      "name": "Weathered Shield",
+      "category": "Armor",
+      "description": "A sturdy shield with space for paint, nails, or travel scars.",
+      "tags": ["shield", "starter"],
+      "bulk": 1.5,
+      "valid_slots": ["Off Hand", "Back"],
+      "placeholder_value": "martial gear",
+      "placeholder_condition": "serviceable",
+      "placeholder_special_rules": "Can be readied in the off hand or stowed on the back."
+    },
+    {
+      "item_key": "spear_001",
+      "name": "Ashwood Spear",
+      "category": "Weapon",
+      "description": "A practical spear suited to guarding narrow ground or traveling trails.",
+      "tags": ["weapon", "polearm"],
+      "bulk": 2.0,
+      "valid_slots": ["Main Hand", "Back"],
+      "handedness": "2H",
+      "speed_factor": 6,
+      "range_profile": "close / thrown placeholder",
+      "mode": "both",
+      "placeholder_damage": "1d8 placeholder",
+      "placeholder_value": "common weapon",
+      "placeholder_condition": "balanced",
+      "placeholder_special_rules": "Two-handed by default; long enough to stow on the back."
+    },
+    {
+      "item_key": "container_001",
+      "name": "Wayfarer Backpack",
+      "category": "Container",
+      "description": "A travel backpack with straps, loops, and room for expedition gear.",
+      "tags": ["container", "starter"],
+      "bulk": 1.0,
+      "valid_slots": ["Backpack / Container", "Back"],
+      "capacity_bulk": 10.0,
+      "placeholder_value": "useful container",
+      "placeholder_condition": "sturdy",
+      "placeholder_special_rules": "Provides a place to stow smaller carried items."
+    },
+    {
+      "item_key": "armor_001",
+      "name": "Padded Hood",
+      "category": "Armor",
+      "description": "A quilted hood that softens glare, rain, and minor scrapes.",
+      "tags": ["head", "travel"],
+      "bulk": 0.4,
+      "valid_slots": ["Head"],
+      "placeholder_value": "common clothing",
+      "placeholder_condition": "serviceable",
+      "placeholder_special_rules": "A simple protective layer for rough weather."
     }
   ],
   "common_loadout": [
     {"item_key": "bedroll", "quantity": 1},
-    {"item_key": "flint_steel", "quantity": 1}
+    {"item_key": "flint_steel", "quantity": 1},
+    {"item_key": "container_001", "quantity": 1}
   ],
   "class_loadouts": [
-    {"class_name": "Fighter", "items": [{"item_key": "blade", "quantity": 1}, {"item_key": "light_armor", "quantity": 1}]},
+    {"class_name": "Fighter", "items": [{"item_key": "blade", "quantity": 1}, {"item_key": "light_armor", "quantity": 1}, {"item_key": "shield_001", "quantity": 1}]},
     {"class_name": "Thief", "items": [{"item_key": "blade", "quantity": 1}, {"item_key": "lock_tools", "quantity": 1}]},
-    {"class_name": "Ranger", "items": [{"item_key": "blade", "quantity": 1}, {"item_key": "field_kit", "quantity": 1}]},
+    {"class_name": "Ranger", "items": [{"item_key": "blade", "quantity": 1}, {"item_key": "field_kit", "quantity": 1}, {"item_key": "spear_001", "quantity": 1}]},
     {"class_name": "Scholar", "items": [{"item_key": "journal", "quantity": 1}, {"item_key": "rope", "quantity": 1}]},
     {"class_name": "Acolyte", "items": [{"item_key": "ritual_kit", "quantity": 1}, {"item_key": "light_armor", "quantity": 1}]},
     {"class_name": "Occultist", "items": [{"item_key": "occult_case", "quantity": 1}, {"item_key": "journal", "quantity": 1}]},
     {"class_name": "Mercenary", "items": [{"item_key": "blade", "quantity": 1}, {"item_key": "contract_tokens", "quantity": 1}]},
-    {"class_name": "Explorer", "items": [{"item_key": "mapping_kit", "quantity": 1}, {"item_key": "rope", "quantity": 1}]},
+    {"class_name": "Explorer", "items": [{"item_key": "mapping_kit", "quantity": 1}, {"item_key": "rope", "quantity": 1}, {"item_key": "armor_001", "quantity": 1}]},
     {"class_name": "Bard", "items": [{"item_key": "instrument", "quantity": 1}, {"item_key": "blade", "quantity": 1}]},
     {"class_name": "Mystic", "items": [{"item_key": "meditation_tokens", "quantity": 1}, {"item_key": "ritual_kit", "quantity": 1}]}
   ]

@@ -5,6 +5,7 @@ import random
 from pathlib import Path
 from typing import Any
 
+from app.equipment import EQUIPMENT_SLOTS
 from app.table_schemas import (
     BONUS_NAMES,
     FALLBACKS,
@@ -139,6 +140,50 @@ class TableLoader:
                 "description": str(item.get("description", "")).strip(),
                 "tags": [tag.strip() for tag in tags],
             }
+            bulk = item.get("bulk", 0.0)
+            if not isinstance(bulk, (int, float)) or isinstance(bulk, bool) or bulk < 0:
+                self._warn(f"{location}.bulk must be a non-negative number")
+                continue
+            valid_slots = item.get("valid_slots", [])
+            if not isinstance(valid_slots, list) or any(
+                not isinstance(slot, str) or slot not in EQUIPMENT_SLOTS
+                for slot in valid_slots
+            ):
+                self._warn(f"{location}.valid_slots must be a list of supported slot names")
+                continue
+            handedness = str(item.get("handedness", "")).strip()
+            if handedness not in {"", "1H", "2H"}:
+                self._warn(f"{location}.handedness must be '', '1H', or '2H'")
+                continue
+            speed_factor = item.get("speed_factor", 0)
+            if not isinstance(speed_factor, int) or isinstance(speed_factor, bool):
+                self._warn(f"{location}.speed_factor must be an integer")
+                continue
+            capacity_bulk = item.get("capacity_bulk", 0.0)
+            if not isinstance(capacity_bulk, (int, float)) or isinstance(
+                capacity_bulk, bool
+            ) or capacity_bulk < 0:
+                self._warn(f"{location}.capacity_bulk must be a non-negative number")
+                continue
+            normalized.update(
+                {
+                    "bulk": round(float(bulk), 2),
+                    "valid_slots": valid_slots,
+                    "handedness": handedness,
+                    "speed_factor": speed_factor,
+                    "range_profile": str(item.get("range_profile", "")).strip(),
+                    "mode": str(item.get("mode", "")).strip(),
+                    "placeholder_damage": str(item.get("placeholder_damage", "")).strip(),
+                    "placeholder_special_rules": str(
+                        item.get("placeholder_special_rules", "")
+                    ).strip(),
+                    "placeholder_value": str(item.get("placeholder_value", "")).strip(),
+                    "placeholder_condition": str(
+                        item.get("placeholder_condition", "")
+                    ).strip(),
+                    "capacity_bulk": round(float(capacity_bulk), 2),
+                }
+            )
             for flag, default in (
                 ("equipped", False),
                 ("carried", True),

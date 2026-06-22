@@ -14,6 +14,7 @@ from app.diary import (
     recent_entries_text,
 )
 from app.downtime import DowntimeEngine
+from app.equipment import EQUIPMENT_SLOTS
 from app.exporters import (
     export_character_text,
     export_event_log_text,
@@ -21,6 +22,7 @@ from app.exporters import (
     inventory_item_text,
 )
 from app.game_state import GameState
+from app.inventory import equipped_slot_lines
 from app.leads import format_open_leads, format_recent_lead_changes, format_suggested_next_actions
 from app.models import World
 from app.timeline import format_summary_timeline, format_verbose_timeline
@@ -83,6 +85,7 @@ MODE_GAMEPLAY_ACTIONS = {
 SHARED_ACTIONS = (
     "Generate New Region",
     "View Character",
+    "Inventory / Equipment",
     "Character Diary",
     "Journal / World Recap",
     "Follow Open Lead",
@@ -119,6 +122,7 @@ WORLD_REQUIRED_ACTIONS = {
     "Event Log",
     "Journal Summary",
     "Verbose Timeline",
+    "Inventory / Equipment",
     "Character Diary",
     "Follow Open Lead",
     "Export Event Log",
@@ -152,6 +156,7 @@ WORLD_REQUIRED_ACTIONS = {
 
 CHARACTER_REQUIRED_ACTIONS = {
     "View Character",
+    "Inventory / Equipment",
     "Character Diary",
     "Export Character",
     "Start Downtime",
@@ -260,6 +265,17 @@ def format_world_recap(world: World | None) -> str:
             (
                 f"Supplies {player.supplies} | Food {player.food} | Water {player.water} | "
                 f"Torches {player.torches} | Coin {player.coin} | Wounds {player.wounds}"
+            ),
+            "",
+            "LOADOUT",
+            "=======",
+            (
+                f"Total Bulk {player.total_carried_bulk():g} | Equipped Bulk {player.equipped_bulk():g} | "
+                f"Encumbrance {player.encumbrance_state()}"
+            ),
+            _bulleted_or_fallback(
+                equipped_slot_lines(player),
+                "No equipment slots recorded.",
             ),
             "",
             "OPEN LEADS",
@@ -513,6 +529,102 @@ class DiaryEntryDialog(tk.Toplevel):
         self.destroy()
 
 
+class EquipmentDialog(tk.Toplevel):
+    def __init__(self, parent: tk.Misc, state: GameState):
+        super().__init__(parent)
+        self.state = state
+        self.title("Inventory / Equipment")
+        self.geometry("900x620")
+        self.transient(parent)
+        self.grab_set()
+        self.item_options: dict[str, str] = {}
+        self.item_var = tk.StringVar()
+        self.slot_var = tk.StringVar(value=EQUIPMENT_SLOTS[0])
+
+        container = ttk.Frame(self, padding=12)
+        container.pack(fill="both", expand=True)
+        controls = ttk.Frame(container)
+        controls.pack(fill="x", pady=(0, 8))
+        ttk.Label(controls, text="Item").grid(row=0, column=0, sticky="w", padx=(0, 6))
+        self.item_box = ttk.Combobox(controls, textvariable=self.item_var, state="readonly")
+        self.item_box.grid(row=0, column=1, sticky="ew", padx=(0, 10))
+        ttk.Label(controls, text="Slot").grid(row=0, column=2, sticky="w", padx=(0, 6))
+        self.slot_box = ttk.Combobox(
+            controls,
+            textvariable=self.slot_var,
+            values=list(EQUIPMENT_SLOTS),
+            state="readonly",
+        )
+        self.slot_box.grid(row=0, column=3, sticky="ew", padx=(0, 10))
+        ttk.Button(controls, text="Equip", command=self.equip_selected).grid(row=0, column=4, padx=(0, 6))
+        ttk.Button(controls, text="Unequip Slot", command=self.unequip_selected).grid(row=0, column=5, padx=(0, 6))
+        ttk.Button(controls, text="Refresh", command=self.refresh).grid(row=0, column=6, padx=(0, 6))
+        ttk.Button(controls, text="Close", command=self.destroy).grid(row=0, column=7)
+        controls.columnconfigure(1, weight=2)
+        controls.columnconfigure(3, weight=1)
+
+        self.summary_var = tk.StringVar()
+        ttk.Label(container, textvariable=self.summary_var, justify="left").pack(fill="x", pady=(0, 8))
+
+        body = ttk.Frame(container)
+        body.pack(fill="both", expand=True)
+        self.equipment_text = tk.Text(body, wrap="word", font=("Consolas", 10), padx=10, pady=10)
+        self.equipment_text.pack(side="left", fill="both", expand=True)
+        self.inventory_text = tk.Text(body, wrap="word", font=("Consolas", 10), padx=10, pady=10)
+        self.inventory_text.pack(side="left", fill="both", expand=True)
+        self.refresh()
+
+    def refresh(self) -> None:
+        world = self.state.require_world()
+        player = world.player_state
+        self.item_options = {
+            f"{item.name} [{item.instance_id}]": item.instance_id
+            for item in player.inventory
+        }
+        self.item_box.configure(values=list(self.item_options))
+        if self.item_options and self.item_var.get() not in self.item_options:
+            self.item_var.set(next(iter(self.item_options)))
+        self.summary_var.set(
+            f"Total Bulk: {player.total_carried_bulk():g} | Equipped Bulk: {player.equipped_bulk():g} | "
+            f"Encumbrance: {player.encumbrance_state()} | Strength Capacity Baseline: {player.strength_score()}"
+        )
+        self.equipment_text.delete("1.0", "end")
+        self.equipment_text.insert(
+            "1.0",
+            "EQUIPPED SLOTS\n==============\n"
+            + "\n".join(equipped_slot_lines(player))
+            + "\n\nENCUMBRANCE EFFECTS\n===================\n"
+            + "\n".join(
+                f"{key.replace('_', ' ').title()}: {value}"
+                for key, value in player.encumbrance_effects().items()
+            ),
+        )
+        self.inventory_text.delete("1.0", "end")
+        inventory_lines = [
+            f"- {inventory_item_text(item, detailed=True)}"
+            + (
+                f"\n  Slots: {', '.join(item.valid_slots)}"
+                if item.valid_slots else ""
+            )
+            for item in player.inventory
+        ]
+        self.inventory_text.insert(
+            "1.0",
+            "INVENTORY\n=========\n" + ("\n".join(inventory_lines) or "No items."),
+        )
+
+    def equip_selected(self) -> None:
+        label = self.item_var.get()
+        if not label:
+            raise RuntimeError("Select an item to equip.")
+        self.state.equip_item(self.item_options[label], self.slot_var.get())
+        self.refresh()
+
+    def unequip_selected(self) -> None:
+        self.state.unequip_slot(self.slot_var.get())
+        self.refresh()
+
+
 class RPGWorldApp(tk.Tk):
     def __init__(self, state: GameState):
         super().__init__()
@@ -595,6 +707,7 @@ class RPGWorldApp(tk.Tk):
             "Generate New Region": self.generate,
             "Create Character": self.create_character,
             "View Character": self.view_character,
+            "Inventory / Equipment": self.view_equipment,
             "Character Diary": self.view_diary,
             "Settlement Overview": self.view_settlement,
             "NPC List": self.view_npcs,
@@ -1056,6 +1169,8 @@ class RPGWorldApp(tk.Tk):
             f"Supplies: {player.supplies}    Food: {player.food}    Water: {player.water}    "
             f"Torches/Light: {light}    Coin: {player.coin}\n"
             f"Downtime: {DowntimeEngine.summarize(player.active_downtime_task)}\n"
+            f"Bulk: {player.total_carried_bulk():g} total / {player.equipped_bulk():g} equipped    "
+            f"Encumbrance: {player.encumbrance_state()}\n"
             f"Inventory: "
             f"{', '.join(inventory_item_text(item) for item in player.inventory) or 'empty'}\n"
             f"Known: {len(player.known_npc_ids)} NPCs, "
@@ -1234,6 +1349,19 @@ class RPGWorldApp(tk.Tk):
         self.guarded(
             lambda: self.show(self.character_sheet_text(), "Viewing character sheet.")
         )
+
+    def view_equipment(self) -> None:
+        def action():
+            self.state.require_world()
+            world = self.state.require_world()
+            if world.player_state.character is None:
+                raise RuntimeError("Create a character before managing equipment.")
+            dialog = EquipmentDialog(self, self.state)
+            self.wait_window(dialog)
+            self.update_player_state()
+            self.show(self.character_sheet_text(), "Viewed inventory and equipment.")
+
+        self.guarded(action)
 
     def world_overview(self) -> str:
         world = self.state.require_world()

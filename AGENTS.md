@@ -5,6 +5,7 @@
 RPG World App is a dependency-free Python 3/Tkinter procedural weird-fantasy
 application with SQLite persistence and editable generation data. Changes
 should remain small, rules-neutral, testable, and compatible with older saves.
+The supported save-compatibility baseline begins at `v0.8.4`.
 
 The names below are coordinated roles for Codex sessions, not independent
 developers. Each task should identify its active role or roles.
@@ -12,6 +13,7 @@ developers. Each task should identify its active role or roles.
 Treat the following as core systems unless a milestone explicitly changes them:
 
 - structured inventory records and resource counters
+- equipment slots, bulk tracking, and encumbrance placeholders
 - plain-text export helpers and export actions
 - variable-size editable JSON tables and weighted table entries
 - JSON-driven interaction text and encounter/dialogue content
@@ -44,8 +46,14 @@ Treat the following as core systems unless a milestone explicitly changes them:
 - Manage human-editable JSON, CSV, TXT, and table-driven content.
 - Maintain names, classes, backgrounds, supplies, locations, rumors,
   encounters, NPCs, items, factions, interaction text, and downtime data.
+- Prefer editable JSON tables for RPG content whenever practical, including
+  inventory, weapons, armor, gear, containers, equipment slots, encumbrance
+  thresholds, and future item traits where reasonable.
 - Prevent duplicate, malformed, or unusable entries.
 - Keep content extensible and avoid large hard-coded Python lists.
+- Placeholder content is acceptable when structure is needed before final data
+  exists; prefer clear IDs such as `weapon_001`, `armor_001`, `gear_001`, or
+  `container_001`.
 - Preserve variable-size table support instead of assuming fixed `d30` tables
   or 30-entry categories.
 - Add validation and fallback tests for new tables.
@@ -58,6 +66,8 @@ Treat the following as core systems unless a milestone explicitly changes them:
 - Maintain simple, readable layouts and guarded GUI behavior.
 - Prefer testing GUI-facing behavior through public state/helper methods when a
   real Tk root cannot be created.
+- Keep the main event/action log system-controlled. Editable player text should
+  live in dedicated notes, diary, or other player-facing systems instead.
 - Do not claim a Tkinter smoke test passed if the environment cannot find a
   usable `init.tcl`; report the limitation clearly instead.
 - Do not alter procedural logic unless specifically requested.
@@ -66,10 +76,15 @@ Treat the following as core systems unless a milestone explicitly changes them:
 
 - Own save/load behavior and backward compatibility.
 - Add migration defaults when persistent models gain fields.
-- Ensure new data does not break older saves.
+- Ensure new data does not break supported older saves.
 - Protect compatibility for calendar fields, age fields, downtime task state,
-  inventory records, event logs, and known/discovered content.
-- Treat missing newer fields in older saves as a normal supported path.
+  inventory records, equipment slots, encumbrance-related state, event logs,
+  and known/discovered content.
+- Treat missing newer fields in supported older saves as a normal supported
+  path.
+- Preserve compatibility with `v0.8.4+` saves.
+- Do not spend time preserving pre-`v0.8.4` saves unless a later milestone
+  explicitly restores that requirement.
 - Add tests for loading older save structures.
 - Review every feature that changes persistent state.
 
@@ -123,8 +138,11 @@ Use this sequence:
 - Name the active role or roles for each task.
 - Only one role modifies a given area at a time unless coordination is explicit.
 - Keep changes small and reviewable.
+- Implement new systems as thin vertical slices whenever practical:
+  data model, table support, core logic, GUI exposure, save/load compatibility,
+  exports or summaries when relevant, tests, and documentation.
 - Do not rewrite working systems unless the task asks for a refactor.
-- Do not break older saves or silently remove existing features.
+- Do not break supported older saves or silently remove existing features.
 - Do not add dependencies without explaining why they are necessary.
 - Prefer table-driven content where practical.
 - Do not hard-code large editable data lists in Python when JSON tables are the
@@ -134,12 +152,18 @@ Use this sequence:
   keep working.
 - Preserve `TableLoader` diagnostics and safe fallbacks when content is
   malformed, missing, or empty.
+- Keep the project weird-fantasy / sword-and-sorcery compatible. Combat and
+  travel preparation should matter, and inventory or encumbrance systems
+  should support meaningful preparation without becoming overly complex too
+  early.
 - Public actions should guard missing world/character state instead of
   crashing.
 - Repeated, illogical, or out-of-order actions should no-op safely, return a
   guarded message, or preserve valid state.
 - Every new feature should include or update tests.
 - Every milestone should update relevant documentation.
+- Do not remove existing repair/default logic unless it is clearly only for
+  pre-`v0.8.4` saves and tests confirm no supported save path is broken.
 - For small work, one Codex session may perform several roles in sequence.
 - Split larger work into separate prompts or milestones.
 

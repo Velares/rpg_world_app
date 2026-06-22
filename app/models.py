@@ -2,6 +2,15 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from typing import Any
+from uuid import uuid4
+
+from app.equipment import (
+    COIN_PER_POUND,
+    HAND_SLOTS,
+    default_equipment_slots,
+    encumbrance_effects,
+    encumbrance_state,
+)
 
 ABILITY_SCORE_NAMES = (
     "strength",
@@ -224,6 +233,7 @@ class InventoryItem:
 
     item_key: str
     name: str
+    instance_id: str = field(default_factory=lambda: f"item_{uuid4().hex[:12]}")
     category: str = "Miscellaneous"
     quantity: int = 1
     description: str = ""
@@ -233,6 +243,17 @@ class InventoryItem:
     consumable: bool = False
     quest_related: bool = False
     tradeable: bool = True
+    bulk: float = 0.0
+    valid_slots: list[str] = field(default_factory=list)
+    handedness: str = ""
+    speed_factor: int = 0
+    range_profile: str = ""
+    mode: str = ""
+    placeholder_damage: str = ""
+    placeholder_special_rules: str = ""
+    placeholder_value: str = ""
+    placeholder_condition: str = ""
+    container_capacity_bulk: float = 0.0
 
     @classmethod
     def from_legacy(cls, name: str) -> "InventoryItem":
@@ -248,6 +269,14 @@ class InventoryItem:
             tags=["legacy"],
         )
 
+    @property
+    def is_equippable(self) -> bool:
+        return bool(self.valid_slots)
+
+    @property
+    def total_bulk(self) -> float:
+        return round(float(self.bulk) * max(1, int(self.quantity)), 2)
+
 
 def default_inventory() -> list[InventoryItem]:
     return [
@@ -257,6 +286,8 @@ def default_inventory() -> list[InventoryItem]:
             category="Supply",
             description="Basic bedding for a rough camp.",
             tags=["camp", "starter"],
+            bulk=1.0,
+            valid_slots=["Back"],
         ),
         InventoryItem(
             item_key="flint_steel",
@@ -264,8 +295,59 @@ def default_inventory() -> list[InventoryItem]:
             category="Tool",
             description="A basic fire-lighting kit.",
             tags=["fire", "starter"],
+            bulk=0.1,
         ),
     ]
+
+
+def default_item_metadata(item_key: str, category: str) -> dict[str, Any]:
+    key = str(item_key).strip()
+    category_name = str(category).strip()
+    defaults = {
+        "bulk": 0.0,
+        "valid_slots": [],
+        "handedness": "",
+        "speed_factor": 0,
+        "range_profile": "",
+        "mode": "",
+        "placeholder_damage": "",
+        "placeholder_special_rules": "",
+        "placeholder_value": "",
+        "placeholder_condition": "",
+        "container_capacity_bulk": 0.0,
+    }
+    if key == "blade" or category_name == "Weapon":
+        defaults.update(
+            {
+                "bulk": 1.0,
+                "valid_slots": ["Main Hand", "Backpack / Container"],
+                "handedness": "1H",
+                "speed_factor": 4,
+                "range_profile": "close",
+                "mode": "melee",
+                "placeholder_damage": "1d6 placeholder",
+            }
+        )
+    elif category_name == "Armor":
+        defaults.update(
+            {
+                "bulk": 2.0 if key == "light_armor" else 0.5,
+                "valid_slots": ["Chest"] if key == "light_armor" else ["Back"],
+            }
+        )
+    elif category_name == "Container":
+        defaults.update(
+            {
+                "bulk": 1.0,
+                "valid_slots": ["Backpack / Container", "Back"],
+                "container_capacity_bulk": 10.0,
+            }
+        )
+    elif category_name in {"Tool", "Miscellaneous"}:
+        defaults.update({"bulk": 0.5, "valid_slots": ["Backpack / Container", "Belt"]})
+    elif category_name == "Supply":
+        defaults.update({"bulk": 1.0, "valid_slots": ["Back", "Backpack / Container"]})
+    return defaults
 
 
 @dataclass
@@ -394,6 +476,8 @@ class PlayerState:
     active_downtime_task: ActiveDowntimeTask | None = None
     timeline_entries: list[TimelineEntry] = field(default_factory=list)
     diary_entries: list[DiaryEntry] = field(default_factory=list)
+    equipment_slots: dict[str, str] = field(default_factory=default_equipment_slots)
+    use_coin_weight: bool = False
 
     def inventory_item(self, item_key_or_name: str) -> InventoryItem | None:
         needle = item_key_or_name.casefold()
@@ -403,6 +487,12 @@ class PlayerState:
                 for item in self.inventory
                 if item.item_key.casefold() == needle or item.name.casefold() == needle
             ),
+            None,
+        )
+
+    def inventory_instance(self, instance_id: str) -> InventoryItem | None:
+        return next(
+            (item for item in self.inventory if item.instance_id == instance_id),
             None,
         )
 
@@ -419,11 +509,28 @@ class PlayerState:
                     setattr(new_item, key, value)
         else:
             new_item = InventoryItem(**asdict(item))
+        metadata_defaults = default_item_metadata(new_item.item_key, new_item.category)
+        if new_item.bulk == 0 and metadata_defaults["bulk"] > 0:
+            new_item.bulk = metadata_defaults["bulk"]
+        if (
+            new_item.container_capacity_bulk == 0
+            and metadata_defaults["container_capacity_bulk"] > 0
+        ):
+            new_item.container_capacity_bulk = metadata_defaults["container_capacity_bulk"]
         amount = new_item.quantity if quantity is None else quantity
         if not isinstance(amount, int) or isinstance(amount, bool):
             raise ValueError("Inventory quantity must be a whole number.")
         if amount <= 0:
             raise ValueError("Inventory quantity must be positive.")
+        if new_item.is_equippable:
+            created_item: InventoryItem | None = None
+            for _ in range(amount):
+                clone = InventoryItem(**asdict(new_item))
+                clone.instance_id = f"item_{uuid4().hex[:12]}"
+                clone.quantity = 1
+                self.inventory.append(clone)
+                created_item = clone
+            return created_item if created_item is not None else new_item
         existing = self.inventory_item(new_item.item_key)
         if existing:
             existing.quantity += amount
@@ -433,11 +540,15 @@ class PlayerState:
         return new_item
 
     def ensure_inventory_item(self, item: InventoryItem) -> InventoryItem:
-        existing = self.inventory_item(item.item_key)
-        if existing:
+        existing = None if item.is_equippable else self.inventory_item(item.item_key)
+        if existing is not None:
             existing.quantity = max(existing.quantity, item.quantity)
             return existing
-        self.inventory.append(InventoryItem(**asdict(item)))
+        clone = InventoryItem(**asdict(item))
+        if item.is_equippable:
+            clone.instance_id = f"item_{uuid4().hex[:12]}"
+            clone.quantity = 1
+        self.inventory.append(clone)
         return self.inventory[-1]
 
     def remove_inventory_item(self, item_key_or_name: str, quantity: int = 1) -> int:
@@ -451,8 +562,106 @@ class PlayerState:
         removed = min(quantity, item.quantity)
         item.quantity -= removed
         if item.quantity == 0:
+            self.unequip_item(item.instance_id)
             self.inventory.remove(item)
         return removed
+
+    def equipped_items(self) -> list[InventoryItem]:
+        seen_ids = {instance_id for instance_id in self.equipment_slots.values() if instance_id}
+        return [
+            item for item in self.inventory
+            if item.instance_id in seen_ids or item.equipped
+        ]
+
+    def carried_items(self) -> list[InventoryItem]:
+        return [item for item in self.inventory if item.carried]
+
+    def equipped_bulk(self) -> float:
+        return round(sum(item.total_bulk for item in self.equipped_items()), 2)
+
+    def total_carried_bulk(self) -> float:
+        total = sum(item.total_bulk for item in self.carried_items())
+        if self.use_coin_weight and self.coin > 0:
+            total += self.coin / COIN_PER_POUND
+        return round(total, 2)
+
+    def strength_score(self) -> int:
+        if self.character is None:
+            return 10
+        return max(1, int(self.character.ability_scores.get("strength", 10)))
+
+    def encumbrance_state(self) -> str:
+        return encumbrance_state(self.total_carried_bulk(), self.strength_score())
+
+    def encumbrance_effects(self) -> dict[str, str]:
+        return encumbrance_effects(self.encumbrance_state())
+
+    def slot_item(self, slot_name: str) -> InventoryItem | None:
+        instance_id = self.equipment_slots.get(slot_name, "")
+        return self.inventory_instance(instance_id) if instance_id else None
+
+    def equip_item(self, item_ref: str, slot_name: str) -> InventoryItem:
+        item = self.inventory_instance(item_ref) or self.inventory_item(item_ref)
+        if item is None:
+            raise KeyError(f"No inventory item matches {item_ref}")
+        if slot_name not in self.equipment_slots:
+            raise ValueError(f"Unknown equipment slot: {slot_name}")
+        if slot_name not in item.valid_slots:
+            raise ValueError(f"{item.name} cannot be equipped in {slot_name}.")
+        if item.handedness == "2H" and slot_name != "Main Hand":
+            raise ValueError(f"{item.name} must be equipped in Main Hand.")
+        if slot_name == "Off Hand":
+            main_hand = self.slot_item("Main Hand")
+            if main_hand and main_hand.handedness == "2H":
+                raise RuntimeError("Off Hand is blocked by a two-handed weapon.")
+        if item.handedness == "2H" and self.slot_item("Off Hand") is not None:
+            raise RuntimeError("Unequip the current Off Hand item before using a two-handed weapon.")
+        if slot_name == "Main Hand":
+            current_main = self.slot_item("Main Hand")
+            if current_main and current_main.handedness == "2H":
+                self.unequip_item(current_main.instance_id)
+        current_slot_item = self.slot_item(slot_name)
+        if current_slot_item is not None and current_slot_item.instance_id != item.instance_id:
+            self.unequip_item(current_slot_item.instance_id)
+        self.unequip_item(item.instance_id)
+        self.equipment_slots[slot_name] = item.instance_id
+        item.equipped = True
+        if item.handedness == "2H":
+            self.equipment_slots["Off Hand"] = item.instance_id
+        return item
+
+    def unequip_slot(self, slot_name: str) -> None:
+        if slot_name not in self.equipment_slots:
+            raise ValueError(f"Unknown equipment slot: {slot_name}")
+        instance_id = self.equipment_slots.get(slot_name, "")
+        if instance_id:
+            self.unequip_item(instance_id)
+
+    def unequip_item(self, item_ref: str) -> None:
+        item = self.inventory_instance(item_ref) or self.inventory_item(item_ref)
+        if item is None:
+            return
+        for slot_name, instance_id in list(self.equipment_slots.items()):
+            if instance_id == item.instance_id:
+                self.equipment_slots[slot_name] = ""
+        item.equipped = False
+
+    def auto_equip_defaults(self) -> None:
+        for item in self.inventory:
+            if not item.equipped or not item.valid_slots:
+                continue
+            item.equipped = False
+            preferred_slots = list(item.valid_slots)
+            if item.handedness == "2H":
+                preferred_slots = ["Main Hand", *preferred_slots]
+            elif "Main Hand" in preferred_slots:
+                preferred_slots = ["Main Hand", *[slot for slot in preferred_slots if slot != "Main Hand"]]
+            for slot_name in preferred_slots:
+                try:
+                    self.equip_item(item.instance_id, slot_name)
+                    break
+                except (RuntimeError, ValueError):
+                    continue
 
 
 @dataclass
@@ -703,6 +912,10 @@ class World:
                     item.setdefault("item_key", legacy_key)
                     item.setdefault("name", "Unnamed item")
                     item.setdefault("category", "Miscellaneous")
+                    metadata_defaults = default_item_metadata(
+                        item["item_key"],
+                        item["category"],
+                    )
                     item.setdefault("quantity", 1)
                     item.setdefault("description", "")
                     item.setdefault("tags", [])
@@ -711,8 +924,22 @@ class World:
                     item.setdefault("consumable", False)
                     item.setdefault("quest_related", False)
                     item.setdefault("tradeable", True)
+                    item.setdefault("instance_id", f"item_{uuid4().hex[:12]}")
+                    for metadata_key, metadata_value in metadata_defaults.items():
+                        item.setdefault(metadata_key, metadata_value)
                     inventory.append(InventoryItem(**item))
             player_data["inventory"] = inventory
+        equipment_slots = player_data.get("equipment_slots")
+        if not isinstance(equipment_slots, dict):
+            equipment_slots = default_equipment_slots()
+        else:
+            normalized_slots = default_equipment_slots()
+            for slot_name in normalized_slots:
+                value = equipment_slots.get(slot_name, "")
+                normalized_slots[slot_name] = value if isinstance(value, str) else ""
+            equipment_slots = normalized_slots
+        player_data["equipment_slots"] = equipment_slots
+        player_data["use_coin_weight"] = bool(player_data.get("use_coin_weight", False))
         player_data["hexes"] = [Hex(**item) for item in player_data.get("hexes", [])]
         npc_data = data.get("npcs", [])
         for item in npc_data:
@@ -787,6 +1014,10 @@ class World:
             generation_seed=data.get("generation_seed"),
             world_id=data.get("world_id"),
         )
+        if not any(world.player_state.equipment_slots.values()) and any(
+            item.equipped and item.valid_slots for item in world.player_state.inventory
+        ):
+            world.player_state.auto_equip_defaults()
         world.repair_relationship_ids()
         world.normalize_relationship_records()
         return world

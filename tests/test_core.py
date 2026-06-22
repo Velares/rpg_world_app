@@ -14,6 +14,7 @@ from app.diary import (
     hide_entry,
     update_entry,
 )
+from app.equipment import encumbrance_effects
 from app.characters import BONUS_NAMES, CharacterFactory
 from app.character_profiles import CharacterProfileGenerator
 from app.checks import DIFFICULTIES
@@ -238,26 +239,26 @@ class NameTests(unittest.TestCase):
 class InventoryTests(unittest.TestCase):
     def test_inventory_items_add_stack_and_remove_quantities(self):
         player = PlayerState(inventory=[])
-        rope = InventoryItem(
-            item_key="rope",
-            name="Coil of Rope",
-            category="Tool",
+        rations = InventoryItem(
+            item_key="trail_rations",
+            name="Trail Rations",
+            category="Supply",
             quantity=2,
-            description="Useful for climbing and retreat.",
-            tags=["climbing"],
+            description="Packed food for a short journey.",
+            tags=["food"],
             tradeable=True,
         )
-        added = player.add_inventory_item(rope)
+        added = player.add_inventory_item(rations)
         self.assertEqual(added.quantity, 2)
-        player.add_inventory_item(rope, quantity=3)
-        self.assertEqual(player.inventory_item("rope").quantity, 5)
-        self.assertEqual(player.remove_inventory_item("Coil of Rope", 2), 2)
-        self.assertEqual(player.inventory_item("rope").quantity, 3)
-        self.assertEqual(player.remove_inventory_item("rope", 99), 3)
-        self.assertIsNone(player.inventory_item("rope"))
+        player.add_inventory_item(rations, quantity=3)
+        self.assertEqual(player.inventory_item("trail_rations").quantity, 5)
+        self.assertEqual(player.remove_inventory_item("Trail Rations", 2), 2)
+        self.assertEqual(player.inventory_item("trail_rations").quantity, 3)
+        self.assertEqual(player.remove_inventory_item("trail_rations", 99), 3)
+        self.assertIsNone(player.inventory_item("trail_rations"))
         self.assertEqual(player.remove_inventory_item("missing"), 0)
         with self.assertRaises(ValueError):
-            player.add_inventory_item(rope, quantity=0)
+            player.add_inventory_item(rations, quantity=0)
 
     def test_item_catalog_loads_class_specific_starting_inventory(self):
         loader = TableLoader(TABLES)
@@ -266,9 +267,10 @@ class InventoryTests(unittest.TestCase):
         by_key = {item.item_key: item for item in items}
         self.assertEqual(
             set(by_key),
-            {"bedroll", "flint_steel", "blade", "field_kit"},
+            {"bedroll", "flint_steel", "container_001", "blade", "field_kit", "spear_001"},
         )
         self.assertTrue(by_key["blade"].equipped)
+        self.assertEqual(by_key["spear_001"].handedness, "2H")
         self.assertEqual(by_key["field_kit"].category, "Tool")
         self.assertTrue(all(item.quantity > 0 for item in items))
         for definition in CharacterFactory(loader).classes():
@@ -287,6 +289,8 @@ class InventoryTests(unittest.TestCase):
                                 "name": "Valid Item",
                                 "category": "Tool",
                                 "tags": ["test"],
+                                "bulk": 0.5,
+                                "valid_slots": ["Belt"],
                             },
                             {
                                 "item_key": "bad",
@@ -326,6 +330,130 @@ class InventoryTests(unittest.TestCase):
             self.assertTrue(
                 any("references unknown item 'missing'" in warning for warning in loader.warnings)
             )
+
+    def test_item_table_validation_rejects_bad_slot_and_bulk_data(self):
+        with tempfile.TemporaryDirectory() as temp:
+            table_dir = Path(temp)
+            (table_dir / "item_tables.json").write_text(
+                json.dumps(
+                    {
+                        "item_definitions": [
+                            {
+                                "item_key": "bad_slot",
+                                "name": "Bad Slot Item",
+                                "category": "Tool",
+                                "tags": ["test"],
+                                "valid_slots": ["Shoulder"],
+                            },
+                            {
+                                "item_key": "bad_bulk",
+                                "name": "Bad Bulk Item",
+                                "category": "Tool",
+                                "tags": ["test"],
+                                "bulk": -2,
+                            },
+                        ],
+                        "common_loadout": [],
+                        "class_loadouts": [],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            loader = TableLoader(table_dir)
+            items = loader.get("item_tables", "item_definitions")
+            self.assertEqual(items[0]["item_key"], "basic_gear")
+            self.assertTrue(any(".valid_slots must be a list of supported slot names" in warning for warning in loader.warnings))
+            self.assertTrue(any(".bulk must be a non-negative number" in warning for warning in loader.warnings))
+
+    def test_equipping_valid_items_and_slot_rules(self):
+        player = PlayerState(inventory=[])
+        shield = InventoryItem(
+            item_key="shield_001",
+            name="Weathered Shield",
+            category="Armor",
+            bulk=1.5,
+            valid_slots=["Off Hand", "Back"],
+        )
+        spear = InventoryItem(
+            item_key="spear_001",
+            name="Ashwood Spear",
+            category="Weapon",
+            bulk=2.0,
+            valid_slots=["Main Hand", "Back"],
+            handedness="2H",
+            mode="both",
+        )
+        pack = InventoryItem(
+            item_key="container_001",
+            name="Wayfarer Backpack",
+            category="Container",
+            bulk=1.0,
+            valid_slots=["Backpack / Container", "Back"],
+            container_capacity_bulk=10.0,
+        )
+        hood = InventoryItem(
+            item_key="armor_001",
+            name="Padded Hood",
+            category="Armor",
+            bulk=0.4,
+            valid_slots=["Head"],
+        )
+        shield_item = player.add_inventory_item(shield)
+        spear_item = player.add_inventory_item(spear)
+        pack_item = player.add_inventory_item(pack)
+        hood_item = player.add_inventory_item(hood)
+        player.equip_item(hood_item.instance_id, "Head")
+        self.assertEqual(player.slot_item("Head").name, "Padded Hood")
+        player.equip_item(shield_item.instance_id, "Off Hand")
+        self.assertEqual(player.slot_item("Off Hand").name, "Weathered Shield")
+        with self.assertRaises(ValueError):
+            player.equip_item(shield_item.instance_id, "Face")
+        player.unequip_slot("Off Hand")
+        player.equip_item(spear_item.instance_id, "Main Hand")
+        self.assertEqual(player.slot_item("Main Hand").name, "Ashwood Spear")
+        self.assertEqual(player.slot_item("Off Hand").name, "Ashwood Spear")
+        with self.assertRaises(RuntimeError):
+            player.equip_item(shield_item.instance_id, "Off Hand")
+        player.unequip_slot("Main Hand")
+        player.equip_item(shield_item.instance_id, "Back")
+        self.assertEqual(player.slot_item("Back").name, "Weathered Shield")
+        player.equip_item(pack_item.instance_id, "Backpack / Container")
+        self.assertEqual(player.slot_item("Backpack / Container").name, "Wayfarer Backpack")
+
+    def test_bulk_and_encumbrance_placeholders(self):
+        player = PlayerState(inventory=[])
+        player.character = type(
+            "TempCharacter",
+            (),
+            {"ability_scores": {"strength": 10}},
+        )()
+        player.add_inventory_item(
+            InventoryItem(
+                item_key="sack",
+                name="Heavy Sack",
+                category="Supply",
+                quantity=5,
+                bulk=2.0,
+            )
+        )
+        self.assertEqual(player.total_carried_bulk(), 10.0)
+        self.assertEqual(player.encumbrance_state(), "unencumbered")
+        player.add_inventory_item(
+            InventoryItem(
+                item_key="spare_stone",
+                name="Spare Stone",
+                category="Supply",
+                quantity=1,
+                bulk=3.0,
+            )
+        )
+        self.assertEqual(player.encumbrance_state(), "burdened")
+        effects = player.encumbrance_effects()
+        self.assertIn("movement", effects)
+        self.assertEqual(
+            encumbrance_effects("overloaded")["travel_fatigue"],
+            "Travel is barely sustainable.",
+        )
 
 
 class WorldTests(unittest.TestCase):
@@ -1029,6 +1157,64 @@ class WorldTests(unittest.TestCase):
             self.assertEqual(restored.player_state.diary_entries, [])
             state.close()
 
+    def test_v084_baseline_save_repairs_character_and_equipment_defaults(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 34)
+            world = state.generate_new_region("v084-baseline")
+            state.create_character("Mira Holt", "Fighter", state.character_backgrounds()[0])
+            data = world.to_dict()
+            character_data = data["player_state"]["character"]
+            for key in (
+                "class_role",
+                "class_type",
+                "class_subtype",
+                "ability_scores",
+                "fixed_scores",
+                "derived_scores",
+            ):
+                character_data.pop(key, None)
+            data["player_state"].pop("diary_entries", None)
+            data["player_state"].pop("equipment_slots", None)
+            data["player_state"].pop("use_coin_weight", None)
+            for item in data["player_state"]["inventory"]:
+                if isinstance(item, dict):
+                    for key in (
+                        "instance_id",
+                        "bulk",
+                        "valid_slots",
+                        "handedness",
+                        "speed_factor",
+                        "range_profile",
+                        "mode",
+                        "placeholder_damage",
+                        "placeholder_special_rules",
+                        "placeholder_value",
+                        "placeholder_condition",
+                        "container_capacity_bulk",
+                    ):
+                        item.pop(key, None)
+            restored = type(world).from_dict(data)
+            self.assertEqual(restored.player_state.character.class_role, "adventurer")
+            self.assertTrue(all(value == 10 for value in restored.player_state.character.ability_scores.values()))
+            self.assertEqual(restored.player_state.diary_entries, [])
+            self.assertTrue(restored.player_state.equipment_slots)
+            self.assertIn(restored.player_state.encumbrance_state(), {"unencumbered", "burdened", "heavily_burdened", "overloaded"})
+            state.close()
+
+    def test_v085_baseline_save_repairs_missing_equipment_state(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 35)
+            world = state.generate_new_region("v085-baseline")
+            state.create_character("Rook Ash", "Ranger", state.character_backgrounds()[0])
+            data = world.to_dict()
+            data["player_state"].pop("equipment_slots", None)
+            data["player_state"].pop("use_coin_weight", None)
+            restored = type(world).from_dict(data)
+            self.assertTrue(restored.player_state.equipment_slots)
+            self.assertIsNotNone(restored.player_state.slot_item("Main Hand"))
+            self.assertIn(restored.player_state.encumbrance_state(), {"unencumbered", "burdened", "heavily_burdened", "overloaded"})
+            state.close()
+
     def test_game_state_random_names_fall_back_without_cleaned_files(self):
         with tempfile.TemporaryDirectory() as temp:
             state = self.make_state(Path(temp), 16)
@@ -1273,7 +1459,10 @@ class ExporterTests(unittest.TestCase):
                 self.assertIn("Strength:", text)
                 self.assertIn("CHARACTER DIARY HIGHLIGHTS", text)
                 self.assertIn("Current Calendar:", text)
-                self.assertIn("Trail Rations x2 (Supply) [consumable]", text)
+                self.assertIn("Encumbrance:", text)
+                self.assertIn("Total Carried Bulk:", text)
+                self.assertIn("EQUIPPED SLOTS", text)
+                self.assertIn("Trail Rations x2 (Supply, bulk 2)", text)
                 self.assertIn("RESOURCES", text)
                 self.assertIn("Food: 9", text)
                 self.assertNotIn("Food x9", text)
@@ -2303,6 +2492,7 @@ class GuiHelperTests(unittest.TestCase):
         self.assertIn("Start Downtime", mode_gameplay_labels(TOWN_MODE))
         self.assertIn("Travel to Wilderness", mode_gameplay_labels(ADVENTURE_MODE))
         self.assertEqual(shared_action_labels()[0], "Generate New Region")
+        self.assertIn("Inventory / Equipment", shared_action_labels())
         self.assertIn("Character Diary", shared_action_labels())
         self.assertIn("Journal / World Recap", shared_action_labels())
         self.assertIn("Follow Open Lead", shared_action_labels())
@@ -2322,6 +2512,13 @@ class GuiHelperTests(unittest.TestCase):
         self.assertTrue(
             action_is_enabled(
                 "Journal / World Recap",
+                has_world=False,
+                has_character=False,
+            )
+        )
+        self.assertFalse(
+            action_is_enabled(
+                "Inventory / Equipment",
                 has_world=False,
                 has_character=False,
             )
@@ -2384,6 +2581,13 @@ class GuiHelperTests(unittest.TestCase):
         )
         self.assertTrue(
             action_is_enabled(
+                "Inventory / Equipment",
+                has_world=True,
+                has_character=True,
+            )
+        )
+        self.assertTrue(
+            action_is_enabled(
                 "Search Area",
                 has_world=True,
                 has_character=True,
@@ -2400,6 +2604,12 @@ class GuiHelperTests(unittest.TestCase):
         self.assertIn("No diary entries recorded yet.", format_scope_text(player, "daily"))
         add_manual_entry(player, "Lantern Notes", "Count the burned doorways near dusk.")
         self.assertIn("Lantern Notes", format_scope_text(player, "weekly"))
+
+    def test_agents_md_records_v084_compatibility_baseline(self):
+        text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("v0.8.4", text)
+        self.assertIn("thin vertical slices", text)
+        self.assertIn("pre-`v0.8.4` saves", text)
 
     def test_world_recap_surfaces_current_state_summary(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -2419,6 +2629,8 @@ class GuiHelperTests(unittest.TestCase):
                 self.assertIn("OPEN LEADS", text)
                 self.assertIn("SUGGESTED NEXT ACTIONS", text)
                 self.assertIn("QUEST NOTES", text)
+                self.assertIn("LOADOUT", text)
+                self.assertIn("Encumbrance", text)
                 self.assertIn("KEY NPCS", text)
                 self.assertIn(npc.name, text)
                 self.assertIn("local_traders: stable", text)

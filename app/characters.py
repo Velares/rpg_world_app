@@ -142,6 +142,7 @@ class CharacterFactory:
             definition.class_name
         ):
             player.ensure_inventory_item(item)
+        player.auto_equip_defaults()
         append_timeline_entry(
             player,
             f"{character.name}, a {character.character_class} with the "
