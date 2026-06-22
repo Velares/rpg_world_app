@@ -350,7 +350,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.
 - The monster-manual importer tests pass, but the expected default source PDF
-  `data/import_sources/MandBmaster - Copy.pdf` is not present in this
+  `data/import_sources/mandbmaster.pdf` is not present in this
   workspace, so no full real catalog/report output was generated here.
 - No Tkinter smoke test was completed for this milestone because the local
   Python 3.11 install still lacks a usable `init.tcl`; an attempted Tk root
@@ -388,7 +388,7 @@ Version 0.7 hardened the data-driven generation foundation:
 ## Next candidate goals
 
 1. Run the monster importer against the full combined PDF once
-   `data/import_sources/MandBmaster - Copy.pdf` is available locally, then
+   `data/import_sources/mandbmaster.pdf` is available locally, then
    review warnings, duplicate IDs, and any missing expected fields before the
    next parser milestone.
 2. Add monster-manual appendix handling, terrain/index enrichment, or catalog

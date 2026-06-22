@@ -5,7 +5,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_MONSTER_MANUAL_PDF = (
-    PROJECT_ROOT / "data" / "import_sources" / "MandBmaster - Copy.pdf"
+    PROJECT_ROOT / "data" / "import_sources" / "mandbmaster.pdf"
 )
 DEFAULT_MONSTER_CATALOG_JSON = (
     PROJECT_ROOT / "data" / "catalogs" / "monsters" / "monster_catalog.json"

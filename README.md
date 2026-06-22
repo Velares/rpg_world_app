@@ -222,7 +222,7 @@ appendices or drive encounter generation in the app.
 Expected default source PDF location:
 
 ```text
-data/import_sources/MandBmaster - Copy.pdf
+data/import_sources/mandbmaster.pdf
 ```
 
 Run the importer from the project directory with:

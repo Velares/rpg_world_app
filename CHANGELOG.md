@@ -24,8 +24,8 @@ history is the more reliable source.
   encounter generation, no appendix parsing, and no hard-coded monster data in
   application logic.
 - Raised the validated suite to 123 passing `unittest` tests; the full real
-  PDF import step remains pending until `data/import_sources/MandBmaster -
-  Copy.pdf` is available locally.
+  PDF import step remains pending until `data/import_sources/mandbmaster.pdf`
+  is available locally.
 
 ## v0.8.6 - inventory, equipment, bulk, and encumbrance
 
