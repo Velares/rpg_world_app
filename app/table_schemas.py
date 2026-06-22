@@ -209,6 +209,9 @@ DEFAULT_CHARACTER_CLASS = {
         "stealth": 0,
     },
     "special_ability_placeholder": "Expedition planning placeholder.",
+    "class_role": "specialist",
+    "class_type": "scout",
+    "class_subtype": "delver",
 }
 
 # Structural tables need structural fallbacks. Most prose categories can safely

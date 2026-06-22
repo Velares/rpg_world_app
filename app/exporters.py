@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from app.calendar import age_band, format_calendar
+from app.diary import recent_entries_text
 from app.downtime import DowntimeEngine
 from app.leads import (
     format_open_leads,
@@ -117,6 +118,10 @@ def export_character_text(world: World | None) -> str:
     bonuses = "\n".join(
         f"{name.title()}: {value:+d}" for name, value in character.bonuses.items()
     )
+    ability_scores = "\n".join(
+        f"{name.replace('_', ' ').title()}: {value}"
+        for name, value in character.ability_scores.items()
+    )
     inventory = "\n".join(
         f"- {inventory_item_text(item, detailed=True)}" for item in player.inventory
     ) or "- Empty"
@@ -129,6 +134,9 @@ def export_character_text(world: World | None) -> str:
         f"{character.name.upper()}\n{'=' * len(character.name)}\n"
         f"Class: {character.character_class}\n"
         f"Background: {character.background}\n"
+        f"Class Role: {character.class_role}\n"
+        f"Class Type: {character.class_type}\n"
+        f"Class Subtype: {character.class_subtype or 'None recorded'}\n"
         f"Seed: {_seed_text(world)}\n"
         f"Age: {character.age_years}\n"
         f"Age Band: {age_band(character.age_years)}\n"
@@ -160,6 +168,13 @@ def export_character_text(world: World | None) -> str:
         f"BONUSES\n"
         f"=======\n"
         f"{bonuses}\n\n"
+        f"CLASSIC ABILITY SCORES\n"
+        f"======================\n"
+        f"{ability_scores}\n\n"
+        f"FIXED AND DERIVED SCORES\n"
+        f"========================\n"
+        f"Fixed Scores: {_score_block(character.fixed_scores)}\n"
+        f"Derived Scores: {_score_block(character.derived_scores)}\n\n"
         f"SPECIAL ABILITY PLACEHOLDER\n"
         f"===========================\n"
         f"{character.special_ability_placeholder}\n\n"
@@ -172,6 +187,9 @@ def export_character_text(world: World | None) -> str:
         f"RECENT LEAD CHANGES\n"
         f"===================\n"
         f"{format_recent_lead_changes(world)}\n\n"
+        f"CHARACTER DIARY HIGHLIGHTS\n"
+        f"==========================\n"
+        f"{recent_entries_text(player)}\n\n"
         f"JOURNAL SUMMARY\n"
         f"===============\n"
         f"{_body_only(format_summary_timeline(world))}"
@@ -242,6 +260,15 @@ def _numbered_lines(values: list[str]) -> str:
 
 def _seed_text(world: World) -> str:
     return world.generation_seed or "Random / not recorded"
+
+
+def _score_block(values: dict[str, int]) -> str:
+    if not values:
+        return "None recorded yet."
+    return ", ".join(
+        f"{key.replace('_', ' ').title()} {value}"
+        for key, value in sorted(values.items())
+    )
 
 
 def _body_only(text: str) -> str:

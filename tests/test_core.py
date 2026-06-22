@@ -7,6 +7,13 @@ from pathlib import Path
 
 from app.calendar import age_band, calendar_date
 from app.database import Database
+from app.diary import (
+    add_manual_entry,
+    delete_entry,
+    format_scope_text,
+    hide_entry,
+    update_entry,
+)
 from app.characters import BONUS_NAMES, CharacterFactory
 from app.character_profiles import CharacterProfileGenerator
 from app.checks import DIFFICULTIES
@@ -858,6 +865,21 @@ class WorldTests(unittest.TestCase):
             self.assertTrue(character.bond)
             self.assertTrue(character.flaw)
             self.assertEqual(set(character.bonuses), set(BONUS_NAMES))
+            self.assertEqual(
+                set(character.ability_scores),
+                {
+                    "strength",
+                    "dexterity",
+                    "constitution",
+                    "intelligence",
+                    "wisdom",
+                    "charisma",
+                },
+            )
+            self.assertTrue(all(3 <= value <= 18 for value in character.ability_scores.values()))
+            self.assertEqual(character.class_role, definition.class_role)
+            self.assertEqual(character.class_type, definition.class_type)
+            self.assertEqual(character.class_subtype, definition.class_subtype)
             self.assertEqual(player.supplies, definition.starting_supplies)
             self.assertEqual(player.food, definition.starting_food)
             self.assertEqual(player.water, definition.starting_water)
@@ -876,6 +898,7 @@ class WorldTests(unittest.TestCase):
             self.assertTrue(
                 any("Sable Vey" in entry for entry in loaded.player_state.event_log)
             )
+            self.assertTrue(loaded.player_state.diary_entries)
             state.close()
 
     def test_legacy_string_and_missing_inventories_load_safely(self):
@@ -923,6 +946,12 @@ class WorldTests(unittest.TestCase):
                 "ideal",
                 "bond",
                 "flaw",
+                "class_role",
+                "class_type",
+                "class_subtype",
+                "ability_scores",
+                "fixed_scores",
+                "derived_scores",
             ):
                 character_data.pop(key)
             restored = type(world).from_dict(data)
@@ -934,6 +963,70 @@ class WorldTests(unittest.TestCase):
             self.assertEqual(character.ideal, "")
             self.assertEqual(character.bond, "")
             self.assertEqual(character.flaw, "")
+            self.assertEqual(character.class_role, "adventurer")
+            self.assertEqual(character.class_type, "generalist")
+            self.assertEqual(character.class_subtype, "")
+            self.assertTrue(all(value == 10 for value in character.ability_scores.values()))
+            self.assertEqual(character.fixed_scores, {})
+            self.assertEqual(character.derived_scores, {})
+            state.close()
+
+    def test_diary_manual_entries_can_be_created_edited_hidden_and_deleted(self):
+        player = PlayerState()
+        entry = add_manual_entry(player, "Field Notes", "The shrine stones hum after sunset.")
+        self.assertEqual(entry.title, "Field Notes")
+        self.assertFalse(entry.protected)
+        update_entry(
+            player,
+            entry.entry_id,
+            title="Updated Notes",
+            text="The shrine stones hum louder after sunset.",
+            player_notes="Return with lamp oil.",
+        )
+        self.assertEqual(entry.title, "Updated Notes")
+        self.assertIn("louder", entry.text)
+        self.assertEqual(entry.player_notes, "Return with lamp oil.")
+        hide_entry(player, entry.entry_id)
+        self.assertTrue(entry.hidden)
+        replacement = add_manual_entry(player, "Packing List", "Salt, rope, and chalk.")
+        delete_entry(player, replacement.entry_id)
+        self.assertEqual(len([item for item in player.diary_entries if not item.hidden]), 0)
+
+    def test_protected_diary_milestones_allow_notes_but_not_text_changes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 27)
+            world = state.generate_new_region("diary-milestone")
+            state.create_character("Iris Vale", "Scholar", state.character_backgrounds()[0])
+            protected = next(
+                entry for entry in world.player_state.diary_entries if entry.protected
+            )
+            update_entry(
+                world.player_state,
+                protected.entry_id,
+                player_notes="This seems worth revisiting after more clues surface.",
+            )
+            self.assertIn("worth revisiting", protected.player_notes)
+            with self.assertRaises(RuntimeError):
+                update_entry(
+                    world.player_state,
+                    protected.entry_id,
+                    text="Changed milestone text",
+                )
+            with self.assertRaises(RuntimeError):
+                hide_entry(world.player_state, protected.entry_id)
+            with self.assertRaises(RuntimeError):
+                delete_entry(world.player_state, protected.entry_id)
+            state.close()
+
+    def test_older_save_without_diary_fields_loads_safely(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = self.make_state(Path(temp), 33)
+            world = state.generate_new_region("legacy-diary")
+            state.create_character("Ada Thorn", "Mystic", state.character_backgrounds()[0])
+            data = world.to_dict()
+            data["player_state"].pop("diary_entries", None)
+            restored = type(world).from_dict(data)
+            self.assertEqual(restored.player_state.diary_entries, [])
             state.close()
 
     def test_game_state_random_names_fall_back_without_cleaned_files(self):
@@ -1175,6 +1268,10 @@ class ExporterTests(unittest.TestCase):
                 self.assertIn("Seed: character-export-seed", text)
                 self.assertIn("Age:", text)
                 self.assertIn("Age Band:", text)
+                self.assertIn("Class Role:", text)
+                self.assertIn("CLASSIC ABILITY SCORES", text)
+                self.assertIn("Strength:", text)
+                self.assertIn("CHARACTER DIARY HIGHLIGHTS", text)
                 self.assertIn("Current Calendar:", text)
                 self.assertIn("Trail Rations x2 (Supply) [consumable]", text)
                 self.assertIn("RESOURCES", text)
@@ -2206,6 +2303,7 @@ class GuiHelperTests(unittest.TestCase):
         self.assertIn("Start Downtime", mode_gameplay_labels(TOWN_MODE))
         self.assertIn("Travel to Wilderness", mode_gameplay_labels(ADVENTURE_MODE))
         self.assertEqual(shared_action_labels()[0], "Generate New Region")
+        self.assertIn("Character Diary", shared_action_labels())
         self.assertIn("Journal / World Recap", shared_action_labels())
         self.assertIn("Follow Open Lead", shared_action_labels())
         self.assertIn("Export Event Log", shared_action_labels())
@@ -2224,6 +2322,13 @@ class GuiHelperTests(unittest.TestCase):
         self.assertTrue(
             action_is_enabled(
                 "Journal / World Recap",
+                has_world=False,
+                has_character=False,
+            )
+        )
+        self.assertFalse(
+            action_is_enabled(
+                "Character Diary",
                 has_world=False,
                 has_character=False,
             )
@@ -2289,6 +2394,12 @@ class GuiHelperTests(unittest.TestCase):
         text = format_world_recap(None)
         self.assertIn("WORLD RECAP", text)
         self.assertIn("Generate or load a world first.", text)
+
+    def test_diary_scope_text_handles_empty_and_populated_state(self):
+        player = PlayerState()
+        self.assertIn("No diary entries recorded yet.", format_scope_text(player, "daily"))
+        add_manual_entry(player, "Lantern Notes", "Count the burned doorways near dusk.")
+        self.assertIn("Lantern Notes", format_scope_text(player, "weekly"))
 
     def test_world_recap_surfaces_current_state_summary(self):
         with tempfile.TemporaryDirectory() as temp:

@@ -6,6 +6,13 @@ from pathlib import Path
 from tkinter import filedialog, messagebox, simpledialog, ttk
 
 from app.calendar import age_band, format_calendar
+from app.diary import (
+    DIARY_SCOPES,
+    entries_for_scope,
+    format_entry,
+    format_scope_text,
+    recent_entries_text,
+)
 from app.downtime import DowntimeEngine
 from app.exporters import (
     export_character_text,
@@ -76,6 +83,7 @@ MODE_GAMEPLAY_ACTIONS = {
 SHARED_ACTIONS = (
     "Generate New Region",
     "View Character",
+    "Character Diary",
     "Journal / World Recap",
     "Follow Open Lead",
     "Event Log",
@@ -111,6 +119,7 @@ WORLD_REQUIRED_ACTIONS = {
     "Event Log",
     "Journal Summary",
     "Verbose Timeline",
+    "Character Diary",
     "Follow Open Lead",
     "Export Event Log",
     "Export World",
@@ -143,6 +152,7 @@ WORLD_REQUIRED_ACTIONS = {
 
 CHARACTER_REQUIRED_ACTIONS = {
     "View Character",
+    "Character Diary",
     "Export Character",
     "Start Downtime",
     "Advance Downtime",
@@ -309,6 +319,10 @@ def format_world_recap(world: World | None) -> str:
             "=======================",
             _numbered_or_fallback(recent_events, "No recent events recorded yet."),
             "",
+            "DIARY HIGHLIGHTS",
+            "================",
+            recent_entries_text(player),
+            "",
             "JOURNAL SUMMARY",
             "===============",
             "\n".join(summary_lines) or "No timeline activity has been summarized yet.",
@@ -443,6 +457,62 @@ class CharacterDialog(tk.Toplevel):
         self.destroy()
 
 
+class DiaryEntryDialog(tk.Toplevel):
+    def __init__(
+        self,
+        parent: tk.Misc,
+        *,
+        title_text: str,
+        entry_title: str = "",
+        entry_text: str = "",
+        player_notes: str = "",
+        protected: bool = False,
+    ):
+        super().__init__(parent)
+        self.title(title_text)
+        self.geometry("620x520")
+        self.transient(parent)
+        self.grab_set()
+        self.result: dict[str, str] | None = None
+        form = ttk.Frame(self, padding=12)
+        form.pack(fill="both", expand=True)
+        ttk.Label(form, text="Title").pack(anchor="w")
+        self.title_var = tk.StringVar(value=entry_title)
+        title_entry = ttk.Entry(form, textvariable=self.title_var)
+        title_entry.pack(fill="x", pady=(2, 8))
+        ttk.Label(form, text="Entry Text").pack(anchor="w")
+        self.text_box = tk.Text(form, height=12, wrap="word")
+        self.text_box.pack(fill="both", expand=True, pady=(2, 8))
+        self.text_box.insert("1.0", entry_text)
+        ttk.Label(form, text="Player Notes").pack(anchor="w")
+        self.notes_box = tk.Text(form, height=8, wrap="word")
+        self.notes_box.pack(fill="both", expand=True, pady=(2, 8))
+        self.notes_box.insert("1.0", player_notes)
+        if protected:
+            title_entry.configure(state="disabled")
+            self.text_box.configure(state="disabled")
+            ttk.Label(
+                form,
+                text="Protected milestone: original title and text stay read-only, but player notes may be added.",
+                wraplength=560,
+                justify="left",
+            ).pack(anchor="w", pady=(0, 8))
+        buttons = ttk.Frame(form)
+        buttons.pack(fill="x")
+        ttk.Button(buttons, text="Save", command=self.accept).pack(side="right")
+        ttk.Button(buttons, text="Cancel", command=self.destroy).pack(
+            side="right", padx=(0, 8)
+        )
+
+    def accept(self) -> None:
+        self.result = {
+            "title": self.title_var.get().strip(),
+            "text": self.text_box.get("1.0", "end").strip(),
+            "player_notes": self.notes_box.get("1.0", "end").strip(),
+        }
+        self.destroy()
+
+
 class RPGWorldApp(tk.Tk):
     def __init__(self, state: GameState):
         super().__init__()
@@ -456,10 +526,13 @@ class RPGWorldApp(tk.Tk):
         self.check_difficulty_var = tk.StringVar(value="Standard")
         self.seed_var = tk.StringVar(value="")
         self.mode_var = tk.StringVar(value=DEFAULT_GUI_MODE)
+        self.current_major_view = "play"
         self.selection_handler = None
         self.sidebar_buttons: dict[str, ttk.Button] = {}
         self.gameplay_buttons: dict[str, ttk.Button] = {}
         self.check_buttons: dict[str, ttk.Button] = {}
+        self.diary_lists: dict[str, tk.Listbox] = {}
+        self.diary_scope_entries: dict[str, list[str]] = {}
         self._build()
         self.update_player_state()
         warning_count = len(self.state.tables.warnings) + len(
@@ -522,6 +595,7 @@ class RPGWorldApp(tk.Tk):
             "Generate New Region": self.generate,
             "Create Character": self.create_character,
             "View Character": self.view_character,
+            "Character Diary": self.view_diary,
             "Settlement Overview": self.view_settlement,
             "NPC List": self.view_npcs,
             "Location List": self.view_locations,
@@ -618,10 +692,13 @@ class RPGWorldApp(tk.Tk):
             pady=12,
             undo=False,
         )
-        scrollbar = ttk.Scrollbar(self.display_frame, orient="vertical", command=self.output.yview)
-        self.output.configure(yscrollcommand=scrollbar.set)
+        self.output_scrollbar = ttk.Scrollbar(
+            self.display_frame, orient="vertical", command=self.output.yview
+        )
+        self.output.configure(yscrollcommand=self.output_scrollbar.set)
         self.output.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
+        self.output_scrollbar.pack(side="right", fill="y")
+        self._build_diary_area()
         ttk.Label(self, textvariable=self.status_var, anchor="w", padding=(10, 5)).pack(
             fill="x", side="bottom"
         )
@@ -632,6 +709,46 @@ class RPGWorldApp(tk.Tk):
     def _clear_children(frame: ttk.Frame) -> None:
         for child in frame.winfo_children():
             child.destroy()
+
+    def _build_diary_area(self) -> None:
+        self.diary_frame = ttk.Frame(self.display_frame)
+        controls = ttk.Frame(self.diary_frame)
+        controls.pack(fill="x", pady=(0, 8))
+        ttk.Button(controls, text="Add Entry", command=self.add_diary_entry).pack(
+            side="left"
+        )
+        ttk.Button(controls, text="Edit / Add Note", command=self.edit_diary_entry).pack(
+            side="left", padx=(6, 0)
+        )
+        ttk.Button(controls, text="Hide Entry", command=self.hide_diary_entry).pack(
+            side="left", padx=(6, 0)
+        )
+        ttk.Button(controls, text="Delete Entry", command=self.delete_diary_entry).pack(
+            side="left", padx=(6, 0)
+        )
+        ttk.Button(controls, text="Refresh", command=self.refresh_diary_view).pack(
+            side="left", padx=(6, 0)
+        )
+        ttk.Button(controls, text="Exit Diary", command=self.exit_diary_view).pack(
+            side="right"
+        )
+        body = ttk.Frame(self.diary_frame)
+        body.pack(fill="both", expand=True)
+        self.diary_notebook = ttk.Notebook(body)
+        self.diary_notebook.pack(side="left", fill="both", expand=True, padx=(0, 8))
+        self.diary_notebook.bind("<<NotebookTabChanged>>", lambda _event: self._sync_diary_detail())
+        self.diary_detail = tk.Text(body, wrap="word", font=("Consolas", 10), padx=10, pady=10)
+        self.diary_detail.pack(side="left", fill="both", expand=True)
+        for scope in DIARY_SCOPES:
+            frame = ttk.Frame(self.diary_notebook, padding=6)
+            listbox = tk.Listbox(frame, exportselection=False)
+            scrollbar = ttk.Scrollbar(frame, orient="vertical", command=listbox.yview)
+            listbox.configure(yscrollcommand=scrollbar.set)
+            listbox.pack(side="left", fill="both", expand=True)
+            scrollbar.pack(side="right", fill="y")
+            listbox.bind("<<ListboxSelect>>", lambda _event, value=scope: self._show_diary_entry_detail(value))
+            self.diary_notebook.add(frame, text=scope.title())
+            self.diary_lists[scope] = listbox
 
     def _render_sidebar_actions(self) -> None:
         self._clear_children(self.mode_sidebar_frame)
@@ -729,6 +846,8 @@ class RPGWorldApp(tk.Tk):
         self.status_var.set(f"Switched to {mode}.")
 
     def show(self, text: str, status: str = "Ready.") -> None:
+        if self.current_major_view == "diary":
+            self.exit_diary_view()
         self.output.delete("1.0", "end")
         self.output.insert("1.0", text)
         self.output.see("1.0")
@@ -762,6 +881,152 @@ class RPGWorldApp(tk.Tk):
         except Exception as exc:
             messagebox.showerror("RPG World App", str(exc), parent=self)
             self.status_var.set(str(exc))
+
+    def _active_diary_scope(self) -> str:
+        current = self.diary_notebook.index(self.diary_notebook.select())
+        return DIARY_SCOPES[current]
+
+    def _selected_diary_entry_id(self) -> str | None:
+        scope = self._active_diary_scope()
+        listbox = self.diary_lists[scope]
+        selection = listbox.curselection()
+        if not selection:
+            return None
+        entries = self.diary_scope_entries.get(scope, [])
+        return entries[selection[0]] if selection[0] < len(entries) else None
+
+    def _selected_diary_entry(self):
+        entry_id = self._selected_diary_entry_id()
+        if entry_id is None or self.state.world is None:
+            return None
+        player = self.state.world.player_state
+        return next(
+            (entry for entry in player.diary_entries if entry.entry_id == entry_id),
+            None,
+        )
+
+    def _show_diary_entry_detail(self, scope: str | None = None) -> None:
+        if self.state.world is None:
+            self.diary_detail.delete("1.0", "end")
+            self.diary_detail.insert("1.0", "Generate or load a world first.")
+            return
+        entry = self._selected_diary_entry()
+        if entry is None:
+            scope = scope or self._active_diary_scope()
+            self.diary_detail.delete("1.0", "end")
+            self.diary_detail.insert(
+                "1.0",
+                format_scope_text(self.state.world.player_state, scope),
+            )
+            return
+        self.diary_detail.delete("1.0", "end")
+        self.diary_detail.insert("1.0", format_entry(entry))
+
+    def _sync_diary_detail(self) -> None:
+        self._show_diary_entry_detail(self._active_diary_scope())
+
+    def refresh_diary_view(self) -> None:
+        if self.state.world is None:
+            return
+        player = self.state.world.player_state
+        for scope in DIARY_SCOPES:
+            listbox = self.diary_lists[scope]
+            listbox.delete(0, "end")
+            entries = entries_for_scope(player, scope)
+            self.diary_scope_entries[scope] = [entry.entry_id for entry in entries]
+            for entry in entries:
+                prefix = "[Milestone] " if entry.protected else ""
+                listbox.insert("end", f"{prefix}{entry.title}")
+        self._sync_diary_detail()
+
+    def view_diary(self) -> None:
+        def action():
+            self.state.require_world()
+            self.current_major_view = "diary"
+            self.hide_index()
+            self.mode_action_box.pack_forget()
+            self.check_box.pack_forget()
+            self.output.pack_forget()
+            self.output_scrollbar.pack_forget()
+            self.diary_frame.pack(fill="both", expand=True)
+            self.refresh_diary_view()
+            self.status_var.set("Viewing character diary.")
+
+        self.guarded(action)
+
+    def exit_diary_view(self) -> None:
+        if self.current_major_view != "diary":
+            return
+        self.current_major_view = "play"
+        self.diary_frame.pack_forget()
+        self.mode_action_box.pack(fill="x", pady=(0, 7))
+        if self.mode_var.get() == ADVENTURE_MODE:
+            self.check_box.pack(fill="x", pady=(0, 7), before=self.output)
+        self.output.pack(side="left", fill="both", expand=True)
+        self.output_scrollbar.pack(side="right", fill="y")
+
+    def add_diary_entry(self) -> None:
+        def action():
+            self.state.require_world()
+            dialog = DiaryEntryDialog(self, title_text="Add Diary Entry")
+            self.wait_window(dialog)
+            if dialog.result:
+                self.state.add_diary_entry(
+                    dialog.result["title"],
+                    dialog.result["text"],
+                )
+                self.refresh_diary_view()
+                self.status_var.set("Added diary entry.")
+
+        self.guarded(action)
+
+    def edit_diary_entry(self) -> None:
+        def action():
+            entry = self._selected_diary_entry()
+            if entry is None:
+                raise RuntimeError("Select a diary entry first.")
+            dialog = DiaryEntryDialog(
+                self,
+                title_text="Edit Diary Entry",
+                entry_title=entry.title,
+                entry_text=entry.text,
+                player_notes=entry.player_notes,
+                protected=entry.protected,
+            )
+            self.wait_window(dialog)
+            if dialog.result:
+                self.state.update_diary_entry(
+                    entry.entry_id,
+                    title=dialog.result["title"],
+                    text=dialog.result["text"],
+                    player_notes=dialog.result["player_notes"],
+                )
+                self.refresh_diary_view()
+                self.status_var.set("Updated diary entry.")
+
+        self.guarded(action)
+
+    def hide_diary_entry(self) -> None:
+        def action():
+            entry = self._selected_diary_entry()
+            if entry is None:
+                raise RuntimeError("Select a diary entry first.")
+            self.state.hide_diary_entry(entry.entry_id)
+            self.refresh_diary_view()
+            self.status_var.set("Diary entry hidden.")
+
+        self.guarded(action)
+
+    def delete_diary_entry(self) -> None:
+        def action():
+            entry = self._selected_diary_entry()
+            if entry is None:
+                raise RuntimeError("Select a diary entry first.")
+            self.state.delete_diary_entry(entry.entry_id)
+            self.refresh_diary_view()
+            self.status_var.set("Diary entry deleted.")
+
+        self.guarded(action)
 
     def update_player_state(self) -> None:
         if self.state.world is None:
@@ -801,6 +1066,8 @@ class RPGWorldApp(tk.Tk):
             f"Last consequence: {player.last_consequence or 'None'}"
         )
         self.refresh_action_states()
+        if self.current_major_view == "diary":
+            self.refresh_diary_view()
 
     def action_log_text(self) -> str:
         return export_event_log_text(self.state.require_world())

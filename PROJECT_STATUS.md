@@ -3,11 +3,34 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.4`
+- Current development version on `main`: `v0.8.5`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.8.5 expands the character sheet and adds a diary system on `main`:
+
+- Added classic ability scores alongside the existing six gameplay bonuses so
+  the character sheet now carries both immediate exploration bonuses and a more
+  traditional six-score scaffold for later mechanics.
+- Added compatibility-safe class role, class type, class subtype, and
+  placeholder fixed/derived score fields so future rules layers have somewhere
+  to grow without rewriting the current character record.
+- Added a lightweight diary model with editable ordinary entries, protected
+  milestone entries, player notes on milestones, and grouped daily, weekly,
+  monthly, and yearly views.
+- Routed important structured timeline events into diary generation with
+  placeholder importance levels so major world and character developments
+  create a persistent character-facing record.
+- Added a minimal Tkinter `Character Diary` area that temporarily takes over
+  the main display until exited, keeping Town Mode and Adventure Mode intact
+  while adding a third focused place for reflection and notes.
+- Expanded character exports and recap output with diary highlights and the
+  richer character-sheet structure.
+- Preserved older-save compatibility by defaulting missing character-sheet and
+  diary fields on load, bringing the validated `unittest` count to 112 while
+  the local `init.tcl` limitation still blocks a true Tk root smoke test.
 
 Version 0.8.4 adds lightweight lead follow-up and resolution on `main`:
 

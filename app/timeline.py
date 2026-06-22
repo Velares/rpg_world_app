@@ -57,6 +57,9 @@ def add_timeline_entry(
         resource_impact=resource_impact,
     )
     player.timeline_entries.append(entry)
+    from app.diary import record_event_entry
+
+    record_event_entry(player, action_type, result_text)
     return entry
 
 

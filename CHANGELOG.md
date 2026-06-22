@@ -3,6 +3,27 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.8.5 - character sheet and diary
+
+- Expanded the character sheet with classic ability scores alongside the
+  existing six gameplay bonuses, plus compatibility-safe class role, class
+  type, class subtype, and placeholder fixed/derived score fields for future
+  growth.
+- Added a lightweight character diary system with protected milestone entries,
+  editable ordinary entries, player notes on milestones, and grouped daily,
+  weekly, monthly, and yearly views.
+- Routed important structured timeline events into diary generation with
+  placeholder importance levels so world starts, character creation, downtime,
+  key-NPC milestones, faction shifts, and similar events leave a diary trail.
+- Added a minimal Tkinter **Character Diary** area that takes over the main
+  view until exited, with add, edit, hide, delete, refresh, and notes-focused
+  milestone handling.
+- Expanded character exports and recap text to surface diary highlights and the
+  richer character-sheet structure without replacing the older event log.
+- Preserved older-save compatibility by defaulting missing character-sheet and
+  diary fields on load, raising the validated suite to 112 passing `unittest`
+  tests.
+
 ## v0.8.4 - lead follow-up and resolution
 
 - Added lightweight lead-status advancement helpers so lead threads can move

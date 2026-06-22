@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.8.4 is a local, single-player weird-fantasy starting-region generator
+Version 0.8.5 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -36,6 +36,9 @@ resources, leads, quest notes, key NPC notes, faction notes, recent events,
 and journal summary into one text view. **Journal Summary** and
 **Verbose Timeline** still show condensed and action-by-action campaign
 logging without replacing the older event log.
+**Character Diary** now opens a third major view with daily, weekly, monthly,
+and yearly tabs, allowing ordinary entries to be edited or hidden while major
+auto-generated milestones remain protected and accept player notes only.
 
 On first launch, **Generate New Region** is available immediately from the
 shared action area, so world generation does not require a mode switch.
@@ -71,6 +74,10 @@ the eventual rules implementation can be SRD-friendly or replaced entirely.
 New characters also receive a generated origin, formative event, personality
 trait, ideal, bond, and flaw from `data/tables/player_background_tables.json`.
 These details are descriptive only and do not impose additional rules.
+The character sheet now also carries classic Strength, Dexterity,
+Constitution, Intelligence, Wisdom, and Charisma scores beside the existing
+six gameplay bonuses, plus lightweight class role/type/subtype and placeholder
+fixed/derived score fields for future expansion.
 
 Characters have lightweight structured inventory records with a name, category,
 quantity, description, tags, and practical status flags such as equipped,
@@ -99,6 +106,12 @@ be corroborated, resolved, marked stale, or marked failed, and may produce a
 connected clue, contact, warning, resource cost, or new follow-up lead. This
 still is not a full quest system; it is a small gameplay-facing extension of
 the lead loop.
+
+The diary system is similarly lightweight. Important world and character events
+from the structured timeline can create protected milestone entries with
+placeholder importance levels, while the player can still add ordinary diary
+entries for planning or reflection. Protected milestones keep their original
+text but allow appended player notes.
 
 World generation now supports optional reproducible seeds. The same seed should
 recreate the same generated starting world when the code version, JSON tables,

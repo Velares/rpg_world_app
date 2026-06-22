@@ -6,6 +6,7 @@ from datetime import datetime
 
 from app.calendar import append_timeline_entry
 from app.database import Database
+from app.diary import add_manual_entry, delete_entry, hide_entry, update_entry
 from app.characters import CharacterFactory
 from app.checks import ActionResolver
 from app.downtime import DowntimeEngine
@@ -272,6 +273,31 @@ class GameState:
         return CharacterFactory(self.tables, self.rng).create(
             self.require_world(), name, class_name, background
         )
+
+    def add_diary_entry(self, title: str, text: str):
+        return add_manual_entry(self.require_world().player_state, title, text)
+
+    def update_diary_entry(
+        self,
+        entry_id: str,
+        *,
+        title: str | None = None,
+        text: str | None = None,
+        player_notes: str | None = None,
+    ):
+        return update_entry(
+            self.require_world().player_state,
+            entry_id,
+            title=title,
+            text=text,
+            player_notes=player_notes,
+        )
+
+    def hide_diary_entry(self, entry_id: str):
+        return hide_entry(self.require_world().player_state, entry_id)
+
+    def delete_diary_entry(self, entry_id: str) -> None:
+        delete_entry(self.require_world().player_state, entry_id)
 
     def add_inventory_item(
         self,

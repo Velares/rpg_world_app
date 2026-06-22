@@ -3,6 +3,19 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
+ABILITY_SCORE_NAMES = (
+    "strength",
+    "dexterity",
+    "constitution",
+    "intelligence",
+    "wisdom",
+    "charisma",
+)
+
+
+def default_ability_scores() -> dict[str, int]:
+    return {name: 10 for name in ABILITY_SCORE_NAMES}
+
 
 @dataclass
 class Location:
@@ -197,6 +210,12 @@ class PlayerCharacter:
     bond: str = ""
     flaw: str = ""
     age_years: int = 26
+    class_role: str = "adventurer"
+    class_type: str = "generalist"
+    class_subtype: str = ""
+    ability_scores: dict[str, int] = field(default_factory=default_ability_scores)
+    fixed_scores: dict[str, int] = field(default_factory=dict)
+    derived_scores: dict[str, int] = field(default_factory=dict)
 
 
 @dataclass
@@ -323,6 +342,21 @@ class NpcRelationship:
 
 
 @dataclass
+class DiaryEntry:
+    entry_id: str
+    title: str
+    text: str
+    created_day: int
+    created_time_period: str
+    player_notes: str = ""
+    importance: str = "ordinary"
+    source_action: str = ""
+    protected: bool = False
+    hidden: bool = False
+    auto_generated: bool = False
+
+
+@dataclass
 class PlayerState:
     character: PlayerCharacter | None = None
     current_location: str = "town"
@@ -359,6 +393,7 @@ class PlayerState:
     age_days_accumulated: int = 0
     active_downtime_task: ActiveDowntimeTask | None = None
     timeline_entries: list[TimelineEntry] = field(default_factory=list)
+    diary_entries: list[DiaryEntry] = field(default_factory=list)
 
     def inventory_item(self, item_key_or_name: str) -> InventoryItem | None:
         needle = item_key_or_name.casefold()
@@ -484,6 +519,31 @@ class World:
             ):
                 character_data.setdefault(field_name, "")
             character_data.setdefault("age_years", 26)
+            character_data.setdefault("class_role", "adventurer")
+            character_data.setdefault("class_type", "generalist")
+            character_data.setdefault("class_subtype", "")
+            ability_scores = character_data.get("ability_scores")
+            if not isinstance(ability_scores, dict):
+                ability_scores = {}
+            character_data["ability_scores"] = {
+                name: (
+                    value
+                    if isinstance(value := ability_scores.get(name), int)
+                    and not isinstance(value, bool)
+                    else 10
+                )
+                for name in ABILITY_SCORE_NAMES
+            }
+            for scores_key in ("fixed_scores", "derived_scores"):
+                raw_scores = character_data.get(scores_key)
+                if isinstance(raw_scores, dict):
+                    character_data[scores_key] = {
+                        str(key): value
+                        for key, value in raw_scores.items()
+                        if isinstance(value, int) and not isinstance(value, bool)
+                    }
+                else:
+                    character_data[scores_key] = {}
             player_data["character"] = PlayerCharacter(**character_data)
         else:
             player_data["character"] = None
@@ -550,6 +610,40 @@ class World:
             ]
         else:
             player_data["timeline_entries"] = []
+        diary_data = player_data.get("diary_entries", [])
+        if isinstance(diary_data, list):
+            clean_diary_entries: list[DiaryEntry] = []
+            for index, item in enumerate(diary_data):
+                if not isinstance(item, dict):
+                    continue
+                item.setdefault("entry_id", f"legacy_diary_{index}")
+                item.setdefault("title", "Diary Entry")
+                item.setdefault("text", "")
+                item.setdefault("created_day", player_data["day"])
+                item.setdefault("created_time_period", player_data["time_period"])
+                item.setdefault("player_notes", "")
+                item.setdefault("importance", "ordinary")
+                item.setdefault("source_action", "")
+                item.setdefault("protected", False)
+                item.setdefault("hidden", False)
+                item.setdefault("auto_generated", False)
+                if not isinstance(item["created_day"], int) or isinstance(
+                    item["created_day"], bool
+                ):
+                    item["created_day"] = 1
+                else:
+                    item["created_day"] = max(1, item["created_day"])
+                if item["created_time_period"] not in (
+                    "Morning",
+                    "Afternoon",
+                    "Evening",
+                    "Night",
+                ):
+                    item["created_time_period"] = "Morning"
+                clean_diary_entries.append(DiaryEntry(**item))
+            player_data["diary_entries"] = clean_diary_entries
+        else:
+            player_data["diary_entries"] = []
         lead_record_data = player_data.get("lead_records", [])
         lead_records: list[LeadRecord] = []
         if isinstance(lead_record_data, list):
