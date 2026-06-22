@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.8.6 is a local, single-player weird-fantasy starting-region generator
+Version 0.8.7 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -212,6 +212,30 @@ The oldest supported baseline is now Version 0.8.4-era saves. Earlier
 pre-0.8.4 save shapes are no longer a guaranteed compatibility target for new
 milestones.
 
+The repository also now includes a first-pass monster-manual importer under
+`tools/importers/monster_manual_importer.py`. Milestone 1 is tooling-only: it
+reads the combined monster-manual PDF page by page, extracts only monster-entry
+pages, detects uppercase monster headings followed by `SIZE:`, and writes an
+editable JSON catalog plus a text import report. It does not yet parse
+appendices or drive encounter generation in the app.
+
+Expected default source PDF location:
+
+```text
+data/import_sources/MandBmaster - Copy.pdf
+```
+
+Run the importer from the project directory with:
+
+```powershell
+python tools/importers/monster_manual_importer.py
+```
+
+If the Python runtime used for the import command does not have a PDF reader
+available, the importer exits with a clear message. The core game itself
+remains dependency-free; this importer is optional tooling for building the
+editable monster catalog.
+
 Version 0.8.1 adds a lightweight key-NPC and faction-interaction phase
 framework. Once a recurring NPC becomes prominent enough, they can be promoted
 to a key NPC with a key date, reason, notes, and a simple placeholder faction
@@ -303,6 +327,7 @@ database on its next launch.
 - `data/tables/key_npc_tables.json`: key-NPC and relationship-phase text
 - `data/tables/npc_depth_tables.json`: placeholder recurring-NPC depth text
 - `data/saves/`: local SQLite saves
+- `tools/importers/`: monster manual import tooling
 - `tests/`: standard-library unit tests
 
 ## Editing generation tables
@@ -441,8 +466,9 @@ child records, calendar and downtime flow, exporter output, save/load
 reconstruction, reproducible seed behavior, downtime consequence outcomes,
 timeline logging, recurring-NPC promotion, key-NPC promotion, relationship
 records, faction-phase behavior, GUI mode helper routing, recap formatting,
-equipment slots, bulk and encumbrance behavior, and older-save compatibility
-from the supported v0.8.4+ baseline.
+equipment slots, bulk and encumbrance behavior, monster-manual stat-block
+parsing/import tooling, and older-save compatibility from the supported
+v0.8.4+ baseline.
 
 Stress coverage now also exercises messy user behavior through the public game
 state API: actions before world generation, actions before character creation,

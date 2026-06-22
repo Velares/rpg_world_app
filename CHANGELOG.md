@@ -3,6 +3,30 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.8.7 - monster manual importer milestone 1
+
+- Added `tools/importers/monster_manual_importer.py` and
+  `tools/importers/monster_manual_schema.py` for a repeatable monster-manual
+  import pipeline that reads only the monster-entry page ranges from the
+  combined PDF and ignores appendices for now.
+- Added text-first parsing helpers for uppercase monster headings, multi-page
+  entry assembly, standard stat-block labels, wrapped treasure and level/xp
+  values, the `LAIR PROBABLITY` typo, and several irregular attack/damage/hit
+  dice formats while preserving raw text for every imported record.
+- Added editable monster catalog output structure with source page tracking,
+  parsed stat blocks, section buckets, tags, and import-report generation for
+  warnings, missing expected fields, duplicate IDs, and first/last entries per
+  book.
+- Added focused importer tests with inline fixture text for normal entries,
+  mid-page follow-on entries, typo handling, multiline `LEVEL/X.P.`, and more
+  complex attack/damage formats.
+- Kept the work tooling-only: no save/load schema changes, no app-facing
+  encounter generation, no appendix parsing, and no hard-coded monster data in
+  application logic.
+- Raised the validated suite to 123 passing `unittest` tests; the full real
+  PDF import step remains pending until `data/import_sources/MandBmaster -
+  Copy.pdf` is available locally.
+
 ## v0.8.6 - inventory, equipment, bulk, and encumbrance
 
 - Added a lightweight equipment framework with named slots for worn gear,

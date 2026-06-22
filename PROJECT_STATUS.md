@@ -3,11 +3,34 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.6`
+- Current development version on `main`: `v0.8.7`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.8.7 adds the first monster-manual importer milestone on `main`:
+
+- Added `tools/importers/monster_manual_importer.py` plus a small schema
+  helper for a repeatable PDF-to-JSON monster catalog pipeline.
+- Scoped Milestone 1 to the actual monster-entry pages only:
+  Book 1 actual pages 2-115 and Book 2 actual pages 124-220, leaving
+  appendices for later work.
+- Added entry detection for uppercase monster headings followed by `SIZE:`,
+  including multi-page entries and entries that begin partway down a page
+  after a prior monster's prose.
+- Added tolerant stat-block parsing for wrapped `TREASURE` and `LEVEL/X.P.`
+  values, the `LAIR PROBABLITY` typo, AC values with parentheses, irregular
+  hit-dice formats, and mixed attack/damage fields while preserving raw text.
+- Added editable catalog/report output structure with source page tracking,
+  section buckets, lightweight tags, duplicate-ID reporting, and missing-field
+  reporting.
+- Kept the work tooling-only with no save/load schema changes, no app-facing
+  encounter generation, and no appendix parsing yet.
+- Added focused importer tests and raised the validated `unittest` count to
+  123 while `python -m compileall .` still passes. The expected source PDF is
+  not present in this workspace, so a full real-file import run could not be
+  completed here.
 
 Version 0.8.6 expands structured inventory into lightweight equipment, bulk,
 and encumbrance support on `main`:
@@ -275,6 +298,7 @@ Version 0.7 hardened the data-driven generation foundation:
   Stealth.
 - Class-based resources and placeholder special abilities.
 - Structured inventory records and JSON-driven class starting gear.
+- Tooling-only monster manual import pipeline for PDF-to-JSON catalog creation.
 - Lightweight equipment slots, carried bulk, and encumbrance states.
 - Optional text-seed control for reproducible world generation.
 - Plain-text export for active world summaries, character sheets, and event logs.
@@ -321,10 +345,13 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 118 tests passing with
+- Current verification: 123 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.
+- The monster-manual importer tests pass, but the expected default source PDF
+  `data/import_sources/MandBmaster - Copy.pdf` is not present in this
+  workspace, so no full real catalog/report output was generated here.
 - No Tkinter smoke test was completed for this milestone because the local
   Python 3.11 install still lacks a usable `init.tcl`; an attempted Tk root
   creation still fails for that reason, so GUI-facing behavior was validated
@@ -337,12 +364,19 @@ Version 0.7 hardened the data-driven generation foundation:
   compatibility, reproducible seed behavior, world-aware downtime outcomes,
   timeline logging, recurring-NPC promotion, key-NPC promotion, relationship
   records, faction-phase behavior, equipment slot rules, bulk and encumbrance
-  state, and randomized/error-handling stress scenarios.
+  state, monster-manual stat-block parsing, and randomized/error-handling
+  stress scenarios.
 
 ## Known issues and boundaries
 
 - Tactical combat, visual maps, full equipment rules, leveling, and spell
   systems are intentionally not implemented.
+- The monster importer currently depends on an external PDF reader being
+  available in the runtime used for the import command. The core app runtime
+  remains standard-library based.
+- Milestone 1 only builds the monster catalog importer. It does not yet parse
+  appendices, build terrain/rarity/level indexes, or drive encounter
+  generation inside the app.
 - Save compatibility is actively maintained for v0.8.4+ data. Much older
   pre-v0.8.4 save experiments are no longer treated as a guaranteed migration
   target for new milestones.
@@ -353,19 +387,26 @@ Version 0.7 hardened the data-driven generation foundation:
 
 ## Next candidate goals
 
-1. Add lightweight inventory actions beyond equipping, such as container-aware
+1. Run the monster importer against the full combined PDF once
+   `data/import_sources/MandBmaster - Copy.pdf` is available locally, then
+   review warnings, duplicate IDs, and any missing expected fields before the
+   next parser milestone.
+2. Add monster-manual appendix handling, terrain/index enrichment, or catalog
+   normalization only as separate thin follow-up milestones after the base
+   entry importer settles.
+3. Add lightweight inventory actions beyond equipping, such as container-aware
    stash moves, simple drop/store behavior, or clearer repair/condition hooks,
    only if they stay compatible with the current rules-neutral model.
-2. Add a small simulated-time helper or preset-driven town-side fast-forward
+4. Add a small simulated-time helper or preset-driven town-side fast-forward
    flow only if it can reuse the current calendar/downtime framework without
    bloating the GUI.
-3. Design later character retirement so retired protagonists can remain in the
+5. Design later character retirement so retired protagonists can remain in the
    same world as NPCs after the calendar/downtime layer settles.
-4. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
+6. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
    available in the local environment.
-5. Consider a small seed-copy or seed-regenerate affordance only if players
+7. Consider a small seed-copy or seed-regenerate affordance only if players
    actually need more than the current single text entry.
-6. Deepen key NPCs with optional world-aware quest hooks before considering
+8. Deepen key NPCs with optional world-aware quest hooks before considering
    any broader relationship or faction system.
 
 ## Important files and directories
@@ -394,6 +435,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - `data/tables/item_tables.json` - item definitions and starting gear
 - `data/saves/worlds.db` - current SQLite save database
 - `tools/` - name cleanup and corruption-scrubbing utilities
+- `tools/importers/` - monster manual import tooling
 - `tests/test_core.py` - automated test suite
 - `tests/test_stress.py` - stress and illogical-action regression coverage
 - `AGENTS.md` - named AI roles and coordinated operating model
