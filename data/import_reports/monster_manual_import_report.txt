@@ -1,134 +1,142 @@
 Monster Manual Import Report
 ============================
 
-Source PDF path: data\import_sources\MandBmaster.pdf
+Source PDF path: C:\Users\chrismata\Documents\Codex\2026-06-18\files-mentioned-by-the-user-codex\rpg_world_app\data\import_sources\mandbmaster.pdf
 Page ranges processed: Book 1: actual pages 2-115, Book 2: actual pages 124-220
-Candidate headings detected: 379
-Candidate headings rejected as running headers or invalid entries: 111
-Monster records detected: 268
-Monster records successfully parsed: 268
+Monster records detected: 324
+Monster records successfully parsed: 324
 
 Warnings:
-- None
-
-Rejected candidate headings:
-- A
-- ACANOPYORNIS - ACULEAN - ADDLEVETCH - ARCANOPLASM - ASTRAL WEB - AUTUMNAL MOURNER
-- - AVATAR OF FAMINE - AVMAR
-- B
-- BARATHELAR - BLACKWATER SLOUGH - BLESSED RING - BLIGHT BELCHER - BLOOD BOWLER - BLOOD
-- WORM - BOG BEAST - BOGWING - BONE SOVEREIGN - BRAINLOCK MOLD (SPIDER) - BRINE CRUST - BULL
-- OF HEAVEN
-- C
-- CADAVER - CANOPY KRAKEN - CAVE HERMIT - CEILIDH HORROR - CLAMOR - COBLYNAU
-- D
-- DARK VOYEUR - DARK WOODSMAN - DEADWOOD - DELUSION HUMMER - DIOCTOPUS - DRAGON,
-- E
-- ELEMENTAL PRINCE, WATER - ENGRAVED - EPICUREAN - EROLTH
-- F
-- G
-- GANYADI - GARGOYLE, MADSOME - GEHZIN - GHOULFRUIT TREE - GIANT, NEPHILIM - GIANT, RIME- GIANT,
-- SEA- GIANT, WOOD - GOLEM, AMALGAM - GOLEM, DRAGONSHIP - GOLEM, FURNACE - GOLEM, IOUN
-- - GOLEM, LABYRINTHINE - GOLEM, RESIN - GOLEM, WAX - GRAY LADY - GREENFEEDER - GROUNDLING
-- H
-- HAEMOVORID - HAG, BLOOD - HAG, DOOM - HARBINGER - HARMOAI - HAZE HORROR - HEARTH
-- HORROR - HEARTLESS - HELIOKARABOS - HELLSCORN - HEPHAESTAN - HERALD OF ARMAGEDDON -
-- HOLD CREEPER - HYDRACNID - HYDRAMNION
-- I-K
-- INSCRIBER - JELLYHIVE - KINGMAKER SWAN - KLORTHACK SPINE
-- L
-- LASSOO - LATCH FROG - LOSTLING
-- M
-- MAGPINE - MALIGANTI - MARLOC - MARSHLIGHT OOZE - MUS MAXIMUS - MYRCLOUD
-- N
-- NAGA, BLOOD - NAGA, MOLT - NEVERLASTING - NOCTUAR - NOJA- NOKKER
-- O
-- OAKMAN - OATHBROKEN - OTYUGH, CORRUPTED
-- P
-- PALLEMON - PHASE STALLION - PRISM WARD - PUDDLE STALKER
-- Q
-- QUICKENER - QUICKGRASS - QUISLOI
-- R
-- RANCID - ROPE HORROR - RUMBLE LIZARD
-- S
-- SABULOUS HUSK - SCORPION, GIANT BLACK - SCORPION SWARM - SEEDER - SHADOW LORD -
-- SHADOWCAP - SHRIEKING SAVAGE - SILENT REAPER - SKELETON, BLACK - SKRESH - SKYSHARK
-- - SLAVERING MOUTHER - SLITHERVINE - SNAIL MAN - SNAKE, CROWN COILER - SNAKE, ICE GLARE
-- - SOULTRAPPER - SPIDER, ACIDWEAVER - SPIDER, PRIMAL - SPIDER, TIME - STINGING WOODFLY -
-- STONESTRIDER - STRANGLEBARK - SUICIDE PLANT
-- T
-- TEO-SELERAI - TROLL, SHRIEKING - TULGORTH
-- U
-- UBEROUS GUARDIAN - UMBRA SMOKE BEAST - UNDAL
-- UMBRA SMOKE BEAST
-- V
-- VAMPIRE MOSS - VERMIN DOG - VOLLEY FLOWER - VORPA - VULTURE, GRIMDEATH
-- WAX DOPPELGANGER - WHITE FOAM - WODEWOSE - WYRDWOLF
-- A
-- RIDER - AVENGING ANGEL - AWAKENED
-- B
-- BANFAET - BARROW LORD - BLOB, SEWER - BLUE CAP - BOOK GUARDIAN - BOULDER KIND - BROKEN
-- ONES
-- C
-- CADUCEAN - CANTRIP - CAVERN CRAWLER - CEILING ANEMONE - CHROTOMATON - CROSSBREED,
-- OGRE/BUGBEAR - CROSSBREED, SHRIEKER/SHAMBLING MOUND - CROSSBREED, SNAKE/BASILISK -
-- CROW, CAVERN
-- D
-- DAEMON, ARACHNEDAEMON - DAEMON, ASTERIDAEMON - DAEMON, METANIODAEMON - DAEMON,
-- PHRENITIKODAEMON - DAEMON, RHODODAEMON - DAEMON, SARCOPTODAEMON - DEEP SPIRIT -
-- DEFORMED ONE - DEMON, BLATTOD - DEMON, CALCINE - DEMON, EFFLUVIAL - DEMON, HALPHAS -
-- DEMON, JOROGUMO - DEMON, RED HORNETS - DEMON, SAWOLITAN - DEMON, CHIROPTERAN - DEVIL,
-- EMBER - DEVIL, LIGHTNING - DEVIL, SHETH - DRAGON, CRUSTACEAN - DUST CENTURION - DUST WEIRD
-- E
-- ELEPAIO - ELOKO - EXHUMED
-- F
-- FISH-FOLK - FOREBODING - FROMPLE - FULGURANT
-- G
-- GHOUL, SKIN THIEF - GIANT, GIGANTES - GIANT, GUARDIAN - GNART - GOLEM, BARROW
-- H
-- HAKUTAKU - HAUGBUI - HEDGE CREEPER - HERCINA - HORROR, ASTRAL STALKER - HORROR, ETHEREAL
-- LEECH - HORROR, ETHEREAL STALKER - HORROR, EYE SCORPION - HORROR, GASIFORM - HORROR,
-- GIMMAL - HORROR, OFFAL - HORROR, SPAWNER - HORROR, VOLITANT - HORROR, WALKING EYE
-- HORRORS
-- I-K
-- IELE - ILBELAYGNA - JELLY, FORMALDEHYDE - KNEEBITHERS - KOOSHDAKHAA - KRABBEN
-- L
-- LAELAPS - LARES - LAUREL GUARDIAN - LEECH, ANEMONAL - LESSER GOLEM, LEATHER - LESSER GOLEM,
-- ROPE - LESSER GOLEM, STRAW - LESSER GOLEM, WOOD
-- M
-- MAKARA - MEDUSA, GREATER - MELIAE - MINNIKIN - MONSTER VESTIGE - MUMMY, GREATER
-- N-P
-- NARIPHON - NEKOMATA - OSSEOPOD - PELESIT - PELUDA - PISHACHA
-- Q
-- QUASI-ELEMENTAL, ASH - QUASI-ELEMENTAL, DUST - QUASI-ELEMENTAL, MINERAL - QUASI-ELEMENTAL,
-- RADIENT - QUASI-ELEMENTAL, SALT - QUASI-ELEMENTAL, STEAM - QUASI-ELEMENTAL, VACUUM
-- QUASI-ELEMENTAL
-- R
-- REDCAP
-- S
-- SAKABASHIRA - SANDMAND, OBSIDIAN - SATORI - SERPENTIAN - SHADOW WEIRD - SKELETON, FUNGAL
-- - SNAKE, GIANT TRANSLUCENT - SORDAG - SPIDER, CRYSTALLINE - SPIDER, SHADOW - SPRITE, GRASS -
-- SPRITE, LEAF - SQUATGRUNK - SQUIDHEAD - SQUID, ICE - SQUONK - STEED OF CHAOS - STUHAC - SVART
-- ALFAR
-- T
-- TERPLIP - THREE-LEGGED CROW - TIKBALANG - TROLL, BLACK - TROLL, NORTHERN
-- U
-- UNDEAD RAT, GHOULRAT - UNDEAD RAT, SKELIRAT - UNDEAD RAT, WIGHTRAT - UNDEAD RAT, ZOMBIRAT
-- - UNIHORN JACKEL
-- U-V
-- UNIHORN JACKAL - VENUS FLYTRAP, GIANT - VINE, WARRIOR
-- W
-- WASP, SPARK - WEGGEEST - WENDIGO - WORM, CAVE - WORM, FURNACE - WRITHE - WYRM,
-- CRYSTALLINE - WYRM, ENSLAVING - WYRM, KURGAN - WYRM, TYPHON
-- WYRM
-- X-Z
-- XIAROEN - YALI - YUXA - ZIBURINIS - ZOMBIE, HOUND
+- A: could not locate a SIZE-based stat block.
+- ACANOPYORNIS - ACULEAN - ADDLEVETCH - ARCANOPLASM - ASTRAL WEB - AUTUMNAL MOURNER: could not locate a SIZE-based stat block.
+- - AVATAR OF FAMINE - AVMAR: could not locate a SIZE-based stat block.
+- B: could not locate a SIZE-based stat block.
+- BARATHELAR - BLACKWATER SLOUGH - BLESSED RING - BLIGHT BELCHER - BLOOD BOWLER - BLOOD: could not locate a SIZE-based stat block.
+- WORM - BOG BEAST - BOGWING - BONE SOVEREIGN - BRAINLOCK MOLD (SPIDER) - BRINE CRUST - BULL: could not locate a SIZE-based stat block.
+- OF HEAVEN: could not locate a SIZE-based stat block.
+- C: could not locate a SIZE-based stat block.
+- CADAVER - CANOPY KRAKEN - CAVE HERMIT - CEILIDH HORROR - CLAMOR - COBLYNAU: could not locate a SIZE-based stat block.
+- D: could not locate a SIZE-based stat block.
+- DARK VOYEUR - DARK WOODSMAN - DEADWOOD - DELUSION HUMMER - DIOCTOPUS - DRAGON,: could not locate a SIZE-based stat block.
+- E: could not locate a SIZE-based stat block.
+- ELEMENTAL PRINCE, WATER - ENGRAVED - EPICUREAN - EROLTH: could not locate a SIZE-based stat block.
+- F: could not locate a SIZE-based stat block.
+- H: could not locate a SIZE-based stat block.
+- HAEMOVORID - HAG, BLOOD - HAG, DOOM - HARBINGER - HARMOAI - HAZE HORROR - HEARTH: could not locate a SIZE-based stat block.
+- HORROR - HEARTLESS - HELIOKARABOS - HELLSCORN - HEPHAESTAN - HERALD OF ARMAGEDDON -: could not locate a SIZE-based stat block.
+- HOLD CREEPER - HYDRACNID - HYDRAMNION: could not locate a SIZE-based stat block.
+- L: could not locate a SIZE-based stat block.
+- LASSOO - LATCH FROG - LOSTLING: could not locate a SIZE-based stat block.
+- M: could not locate a SIZE-based stat block.
+- MAGPINE - MALIGANTI - MARLOC - MARSHLIGHT OOZE - MUS MAXIMUS - MYRCLOUD: could not locate a SIZE-based stat block.
+- Q: could not locate a SIZE-based stat block.
+- QUICKENER - QUICKGRASS - QUISLOI: could not locate a SIZE-based stat block.
+- T: could not locate a SIZE-based stat block.
+- TEO-SELERAI - TROLL, SHRIEKING - TULGORTH: could not locate a SIZE-based stat block.
+- U: could not locate a SIZE-based stat block.
+- UBEROUS GUARDIAN - UMBRA SMOKE BEAST - UNDAL: could not locate a SIZE-based stat block.
+- V: could not locate a SIZE-based stat block.
+- VAMPIRE MOSS - VERMIN DOG - VOLLEY FLOWER - VORPA - VULTURE, GRIMDEATH: could not locate a SIZE-based stat block.
+- WAX DOPPELGANGER - WHITE FOAM - WODEWOSE - WYRDWOLF: could not locate a SIZE-based stat block.
+- RIDER - AVENGING ANGEL - AWAKENED: could not locate a SIZE-based stat block.
+- E: could not locate a SIZE-based stat block.
+- ELEPAIO - ELOKO - EXHUMED: could not locate a SIZE-based stat block.
+- I-K: could not locate a SIZE-based stat block.
+- IELE - ILBELAYGNA - JELLY, FORMALDEHYDE - KNEEBITHERS - KOOSHDAKHAA - KRABBEN: could not locate a SIZE-based stat block.
+- L: could not locate a SIZE-based stat block.
+- LAELAPS - LARES - LAUREL GUARDIAN - LEECH, ANEMONAL - LESSER GOLEM, LEATHER - LESSER GOLEM,: could not locate a SIZE-based stat block.
+- ROPE - LESSER GOLEM, STRAW - LESSER GOLEM, WOOD: could not locate a SIZE-based stat block.
+- M: could not locate a SIZE-based stat block.
+- MAKARA - MEDUSA, GREATER - MELIAE - MINNIKIN - MONSTER VESTIGE - MUMMY, GREATER: could not locate a SIZE-based stat block.
+- N-P: could not locate a SIZE-based stat block.
+- NARIPHON - NEKOMATA - OSSEOPOD - PELESIT - PELUDA - PISHACHA: could not locate a SIZE-based stat block.
+- R: could not locate a SIZE-based stat block.
+- REDCAP: could not locate a SIZE-based stat block.
+- T: could not locate a SIZE-based stat block.
+- TERPLIP - THREE-LEGGED CROW - TIKBALANG - TROLL, BLACK - TROLL, NORTHERN: could not locate a SIZE-based stat block.
+- U: could not locate a SIZE-based stat block.
+- UNDEAD RAT, GHOULRAT - UNDEAD RAT, SKELIRAT - UNDEAD RAT, WIGHTRAT - UNDEAD RAT, ZOMBIRAT: could not locate a SIZE-based stat block.
+- - UNIHORN JACKEL: could not locate a SIZE-based stat block.
+- U-V: could not locate a SIZE-based stat block.
+- UNIHORN JACKAL - VENUS FLYTRAP, GIANT - VINE, WARRIOR: could not locate a SIZE-based stat block.
+- W: could not locate a SIZE-based stat block.
+- WASP, SPARK - WEGGEEST - WENDIGO - WORM, CAVE - WORM, FURNACE - WRITHE - WYRM,: could not locate a SIZE-based stat block.
+- CRYSTALLINE - WYRM, ENSLAVING - WYRM, KURGAN - WYRM, TYPHON: could not locate a SIZE-based stat block.
+- Duplicate monster id detected: e
+- Duplicate monster id detected: l
+- Duplicate monster id detected: m
+- Duplicate monster id detected: redcap
+- Duplicate monster id detected: t
+- Duplicate monster id detected: u
 
 Entries missing expected fields:
+- A: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Acanopyornis - Aculean - Addlevetch - Arcanoplasm - Astral Web - Autumnal Mourner: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- - Avatar Of Famine - Avmar: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- B: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Barathelar - Blackwater Slough - Blessed Ring - Blight Belcher - Blood Bowler - Blood: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Worm - Bog Beast - Bogwing - Bone Sovereign - Brainlock Mold (Spider) - Brine Crust - Bull: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Of Heaven: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- C: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Cadaver - Canopy Kraken - Cave Hermit - Ceilidh Horror - Clamor - Coblynau: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- D: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Dark Voyeur - Dark Woodsman - Deadwood - Delusion Hummer - Dioctopus - Dragon,: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- E: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Elemental Prince, Water - Engraved - Epicurean - Erolth: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- F: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- H: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Haemovorid - Hag, Blood - Hag, Doom - Harbinger - Harmoai - Haze Horror - Hearth: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Horror - Heartless - Heliokarabos - Hellscorn - Hephaestan - Herald Of Armageddon -: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Hold Creeper - Hydracnid - Hydramnion: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- L: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Lassoo - Latch Frog - Lostling: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- M: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Magpine - Maliganti - Marloc - Marshlight Ooze - Mus Maximus - Myrcloud: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Q: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Quickener - Quickgrass - Quisloi: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Rancid: stat_block.rarity
+- T: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Teo-Selerai - Troll, Shrieking - Tulgorth: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- U: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Uberous Guardian - Umbra Smoke Beast - Undal: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- V: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Vampire Moss - Vermin Dog - Volley Flower - Vorpa - Vulture, Grimdeath: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Wax Doppelganger - White Foam - Wodewose - Wyrdwolf: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Rider - Avenging Angel - Awakened: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Dragon, Crustacean: stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- E: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Elepaio - Eloko - Exhumed: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- I-K: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Iele - Ilbelaygna - Jelly, Formaldehyde - Kneebithers - Kooshdakhaa - Krabben: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- L: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Laelaps - Lares - Laurel Guardian - Leech, Anemonal - Lesser Golem, Leather - Lesser Golem,: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Rope - Lesser Golem, Straw - Lesser Golem, Wood: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- M: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Makara - Medusa, Greater - Meliae - Minnikin - Monster Vestige - Mummy, Greater: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- N-P: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Nariphon - Nekomata - Osseopod - Pelesit - Peluda - Pishacha: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- R: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Redcap: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- T: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Terplip - Three-Legged Crow - Tikbalang - Troll, Black - Troll, Northern: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- U: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Undead Rat, Ghoulrat - Undead Rat, Skelirat - Undead Rat, Wightrat - Undead Rat, Zombirat: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- - Unihorn Jackel: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- U-V: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Unihorn Jackal - Venus Flytrap, Giant - Vine, Warrior: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- W: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Wasp, Spark - Weggeest - Wendigo - Worm, Cave - Worm, Furnace - Writhe - Wyrm,: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
+- Crystalline - Wyrm, Enslaving - Wyrm, Kurgan - Wyrm, Typhon: stat_block.size, stat_block.move, stat_block.armor_class, stat_block.hit_dice, stat_block.rarity, stat_block.intelligence, stat_block.alignment, stat_block.level_xp.raw
 - Worm, Furnace: stat_block.intelligence
+- Wyrm, Kurgan: stat_block.intelligence
 
 Duplicate IDs:
-- None
+- e
+- l
+- m
+- redcap
+- t
+- u
 
 First and last monster detected per book:
 - Book 1: first=ACANOPYORNIS, last=WYRDWOLF
