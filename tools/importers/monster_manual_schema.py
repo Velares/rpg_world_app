@@ -49,7 +49,7 @@ STAT_LABELS: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("special_attacks", ("SPECIAL ATTACKS",)),
     ("special_defenses", ("SPECIAL DEFENSES",)),
     ("magic_resistance", ("MAGIC RESISTANCE",)),
-    ("rarity", ("RARITY",)),
+    ("rarity", ("RARITY", "FREQUENCY")),
     ("number_encountered", ("NO. ENCOUNTERED",)),
     ("lair_probability", ("LAIR PROBABILITY", "LAIR PROBABLITY")),
     ("treasure", ("TREASURE",)),

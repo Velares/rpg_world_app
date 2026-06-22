@@ -20,12 +20,19 @@ history is the more reliable source.
 - Added focused importer tests with inline fixture text for normal entries,
   mid-page follow-on entries, typo handling, multiline `LEVEL/X.P.`, and more
   complex attack/damage formats.
+- Tightened heading detection and page cleanup so running headers, letter
+  markers, dangling fragments, and standalone page-number lines are rejected
+  before catalog generation instead of becoming false monsters.
+- Updated the import report to distinguish candidate headings, rejected header
+  candidates, parsed monster records, missing expected fields, and duplicate
+  IDs among real records only.
 - Kept the work tooling-only: no save/load schema changes, no app-facing
   encounter generation, no appendix parsing, and no hard-coded monster data in
   application logic.
-- Raised the validated suite to 123 passing `unittest` tests; the full real
-  PDF import step remains pending until `data/import_sources/mandbmaster.pdf`
-  is available locally.
+- The current local full-PDF rerun now produces 268 parsed monsters with 111
+  rejected candidate headings, no false single-letter or running-header
+  records in the catalog, and no duplicate IDs from header noise.
+- Raised the validated suite to 123 passing `unittest` tests.
 
 ## v0.8.6 - inventory, equipment, bulk, and encumbrance
 

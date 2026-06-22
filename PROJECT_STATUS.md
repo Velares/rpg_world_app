@@ -25,12 +25,17 @@ Version 0.8.7 adds the first monster-manual importer milestone on `main`:
 - Added editable catalog/report output structure with source page tracking,
   section buckets, lightweight tags, duplicate-ID reporting, and missing-field
   reporting.
+- Tightened heading detection and page cleanup so running headers, letter
+  markers, dangling fragments, and standalone page-number lines are rejected
+  before catalog generation rather than turning into false monster records.
 - Kept the work tooling-only with no save/load schema changes, no app-facing
   encounter generation, and no appendix parsing yet.
 - Added focused importer tests and raised the validated `unittest` count to
-  123 while `python -m compileall .` still passes. The expected source PDF is
-  not present in this workspace, so a full real-file import run could not be
-  completed here.
+  123 while `python -m compileall .` still passes.
+- A local rerun against `data/import_sources/MandBmaster.pdf` now produces 268
+  parsed monsters with 111 rejected candidate headings, no false single-letter
+  or running-header catalog entries, no duplicate IDs from header noise, and
+  only two currently reported missing-expected-field cases in the real output.
 
 Version 0.8.6 expands structured inventory into lightweight equipment, bulk,
 and encumbrance support on `main`:
@@ -350,8 +355,8 @@ Version 0.7 hardened the data-driven generation foundation:
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.
 - The monster-manual importer tests pass, but the expected default source PDF
-  `data/import_sources/mandbmaster.pdf` is not present in this
-  workspace, so no full real catalog/report output was generated here.
+  may differ by local filename casing. The current workspace rerun used
+  `data/import_sources/MandBmaster.pdf` successfully.
 - No Tkinter smoke test was completed for this milestone because the local
   Python 3.11 install still lacks a usable `init.tcl`; an attempted Tk root
   creation still fails for that reason, so GUI-facing behavior was validated
@@ -377,6 +382,9 @@ Version 0.7 hardened the data-driven generation foundation:
 - Milestone 1 only builds the monster catalog importer. It does not yet parse
   appendices, build terrain/rarity/level indexes, or drive encounter
   generation inside the app.
+- A few real imported monsters still need follow-up normalization where the
+  PDF formatting interrupts fields in unusual ways, such as some wrapped wyrm
+  records or entries missing expected `INTELLIGENCE` / `ALIGNMENT` details.
 - Save compatibility is actively maintained for v0.8.4+ data. Much older
   pre-v0.8.4 save experiments are no longer treated as a guaranteed migration
   target for new milestones.
