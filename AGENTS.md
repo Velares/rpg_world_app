@@ -22,6 +22,44 @@ Treat the following as core systems unless a milestone explicitly changes them:
 - older-save compatibility defaults and state reconstruction
 - stress/error-handling coverage for messy or illogical action ordering
 
+## Rules and Source Guidance
+
+- Primary rules baseline: `Advanced Labyrinth Lord`.
+- Core/basic reference: `Labyrinth Lord Revised Edition`.
+- Comparison/reference only: `OSE`; do not treat it as the main baseline for
+  new work.
+- The following PDFs are removed or inactive as current rules sources and
+  should not be used as active project baselines: `Swords & Wizardry Core
+  Rules`, `Swords & Wizardry Companion / Supplemental Lore`, `Swords &
+  Wizardry Players Companion`, `AD&D 2e Player's Handbook`, `AD&D 2e Dungeon
+  Master Guide`, and `AD&D 2e Monstrous Manual OCR`.
+- `Swords & Wizardry` monster books may still be used as monster/content
+  sources when present, but the deleted `Swords & Wizardry` rules PDFs above
+  should not be treated as active rule references.
+- Imported content should preserve source records first. Do not blindly merge
+  duplicate monsters, spells, magic items, mundane items, or treasure records
+  before source variants are preserved.
+- Preserve original source title, source page when available, and raw text
+  when practical.
+- Normalize imported material toward the app's internal `Advanced Labyrinth
+  Lord` / `Labyrinth Lord` terminology later, while keeping original source
+  variants instead of overwriting them.
+- Keep future importer work separated by content domain. Current durable
+  domains are: `rules references`, `monsters`, `spells`, `magic_items`,
+  `mundane_equipment`, `treasure_tables`, `modules / keyed locations`,
+  `generator tables`, and `factions / religions / cults`.
+- Do not build one giant generic PDF importer that tries to parse every source
+  type the same way.
+- Current source-work priority order is: `source registry and path
+  validation`, `monster importer baseline`, `magic item importer`,
+  `mundane equipment importer`, `spell importer`, `treasure-table importer`,
+  `module / keyed-location importer`, then `generator/world-system importers`
+  later.
+- `AGENTS.md` should hold durable Codex behavior and workflow guidance.
+  `PROJECT_STATUS.md` should hold current status and next milestone guidance.
+  A source registry, when present, should hold detailed source metadata.
+  Do not turn `AGENTS.md` into a full PDF inventory.
+
 ## Atlas - Project Planner Agent
 
 - Read the current codebase and project documentation before proposing work.
