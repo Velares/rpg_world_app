@@ -1,0 +1,464 @@
+Monster Appendix Import Report
+==============================
+
+Source PDF path: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_sources\mandbmaster.pdf
+Page ranges processed: Book 1: actual pages 117-122, Book 2: actual pages 221-229
+Appendix sections detected: 6
+Appendix rows parsed: 2981
+Matched monster references: 2586
+Unmatched monster references: 395
+Ambiguous monster references: 0
+Skipped/rejected rows: 0
+
+Sections detected:
+- Appendix B: MONSTERS BY LEVEL
+- Appendix C: MONSTERS BY RARITY
+- Appendix D: MONSTERS BY TERRAIN TYPE
+- Appendix B: MONSTERS BY LEVEL
+- Appendix C: MONSTERS BY RARITY
+- Appendix D: MONSTERS BY TERRAIN TYPE
+
+Warnings:
+- None
+
+Sample matched appendix rows:
+- Page 117 [Level I]: Delusion Hummer -> delusionhummer
+- Page 117 [Level I]: Fluttering Ooze -> flutteringooze
+- Page 117 [Level I]: Shadowcap -> shadowcap
+- Page 117 [Level I]: Slithervine -> slithervine
+- Page 117 [Level I]: Stinging Woodfly -> stingingwoodfly
+- Page 117 [Level I]: Volley Flower -> volleyflower
+- Page 117 [Level Ii]: Acanopyornis -> acanopyornis
+- Page 117 [Level Ii]: Addlevetch -> addlevetch
+- Page 117 [Level Ii]: Blood Bowler -> bloodbowler
+- Page 117 [Level Ii]: Blood Worm -> bloodworm
+
+Unmatched appendix rows:
+- Page 117 [Level Iii]: Droth’Yar
+- Page 117 [Level Iii]: Umbra Smoke Beast
+- Page 117 [Level Iv]: Umbra Smoke Beast
+- Page 117 [Level Vi]: Fool’s Dragon
+- Page 118 [Uncommon]: Fool’s Dragon
+- Page 118 [Rare]: Droth’Yar
+- Page 118 [Rare]: Umbra Smoke Beast
+- Page 119 [Underground or Ruin]: Umbra Smoke Beast
+- Page 119 [Cold Wilderness / Mountains]: Fool’s Dragon
+- Page 119 [Cold Wilderness / Hill and Rough]: Droth’Yar
+- Page 119 [Cold Wilderness / Hill and Rough]: Fool’s Dragon
+- Page 119 [Cold Wilderness / Forest]: Fool’s Dragon
+- Page 119 [Cold Wilderness / Swamp and Marsh]: Fool’s Dragon
+- Page 119 [Cold Wilderness / Plain and Scrub]: Droth’Yar
+- Page 119 [Cold Wilderness / Plain and Scrub]: Fool’s Dragon
+- Page 119 [Cold Wilderness / Desert]: Fool’s Dragon
+- Page 119 [Cold Civilized / Hill and Rough]: Droth’Yar
+- Page 119 [Cold Civilized / Plain and Scrub]: Droth’Yar
+- Page 120 [Temperate Wilderness / Mountains]: Fool’s Dragon
+- Page 120 [Temperate Wilderness / Hill and Rough]: Droth’Yar
+- Page 120 [Temperate Wilderness / Hill and Rough]: Fool’s Dragon
+- Page 120 [Temperate Wilderness / Forest]: Fool’s Dragon
+- Page 120 [Temperate Wilderness / Swamp and Marsh]: Fool’s Dragon
+- Page 120 [Temperate Wilderness / Plain and Scrub]: Droth’Yar
+- Page 120 [Temperate Wilderness / Plain and Scrub]: Fool’s Dragon
+- Page 120 [Temperate Wilderness / Desert]: Fool’s Dragon
+- Page 120 [Temperate Civilized / Hill and Rough]: Droth’Yar
+- Page 120 [Temperate Civilized / Plain and Scrub]: Droth’Yar
+- Page 121 [Tropical or Subtropical Wilderness / Mountains]: Fool’s Dragon
+- Page 121 [Tropical or Subtropical Wilderness / Hill and Rough]: Droth’Yar
+- Page 121 [Tropical or Subtropical Wilderness / Hill and Rough]: Fool’s Dragon
+- Page 121 [Tropical or Subtropical Wilderness / Forest]: Fool’s Dragon
+- Page 121 [Tropical or Subtropical Wilderness / Swamp and Marsh]: Fool’s Dragon
+- Page 121 [Tropical or Subtropical Wilderness / Plain and Scrub]: Droth’Yar
+- Page 121 [Tropical or Subtropical Wilderness / Plain and Scrub]: Fool’s Dragon
+- Page 121 [Tropical or Subtropical Wilderness / Desert]: Fool’s Dragon
+- Page 121 [Tropical or Subtropical Civilized / Hill and Rough]: Droth’Yar
+- Page 122 [Tropical or Subtropical Civilized / Plain and Scrub]: Droth’Yar
+- Page 122 [Urban or Settled]: Droth’Yar
+- Page 122 [Urban or Settled]: Droth’Yar
+- Page 122 [Urban or Settled]: Droth’Yar
+- Page 122 [Extraplaner]: Elemental Prince
+- Page 221 [Level I]: Demon, Red Hornets
+- Page 221 [Level I]: Horror, Ethereal Leech
+- Page 221 [Level Ii]: Horror, Walking Eye
+- Page 221 [Level Iii]: Devil, Ember
+- Page 221 [Level Iii]: Horror, Gasiform
+- Page 221 [Level Iv]: Horror, Eye Scorpion
+- Page 221 [Level V]: Animated Armor, Arcma’s
+- Page 221 [Level V]: Demon, Blattod
+- Page 221 [Level V]: Horror, Gimmal
+- Page 221 [Level Vi]: Daemon, Phrenitikodaemon
+- Page 221 [Level Vi]: Demon, Calcine
+- Page 221 [Level Vi]: Demon, Effluvial
+- Page 221 [Level Vii]: Daemon, Asteridaemon
+- Page 221 [Level Vii]: Daemon, Metaniodaemon
+- Page 221 [Level Vii]: Daemon, Rhododaemon
+- Page 221 [Level Vii]: Demon, Jorogumo
+- Page 221 [Level Vii]: Devil, Chiropteran
+- Page 221 [Level Vii]: Devil, Lightning
+- Page 221 [Level Vii]: Horror, Astral Stalker
+- Page 221 [Level Vii]: Horror, Offal
+- Page 221 [Level Viii]: Daemon, Arachnedaemon
+- Page 221 [Level Viii]: Demon, Sawolitan
+- Page 221 [Level Viii]: Horror, Ethereal Stalker
+- Page 221 [Level Ix]: Daemon, Sarcoptodaemon
+- Page 221 [Level Ix]: Horror, Spawner
+- Page 221 [Level X]: Demon, Halphas
+- Page 221 [Level X]: Devil, Sheth
+- Page 221 [Level X]: Horror, Volitant
+- Page 221 [Level X]: Wyrm, Typhon
+- Page 222 [Common]: Demon, Blattod
+- Page 222 [Common]: Daemon, Rhododaemon
+- Page 222 [Common]: Devil, Chiropteran
+- Page 222 [Uncommon]: Demon, Red Hornets
+- Page 222 [Uncommon]: Horror, Ethereal Leech
+- Page 222 [Uncommon]: Horror, Walking Eye
+- Page 222 [Uncommon]: Horror, Gasiform
+- Page 222 [Uncommon]: Demon, Jorogumo
+- Page 222 [Rare]: Devil, Ember
+- Page 222 [Rare]: Animated Armor, Arcma’s
+- Page 222 [Rare]: Horror, Gimmal
+- Page 222 [Rare]: Daemon, Phrenitikodaemon
+- Page 222 [Rare]: Demon, Effluvial
+- Page 222 [Rare]: Daemon, Asteridaemon
+- Page 222 [Rare]: Devil, Lightning
+- Page 222 [Rare]: Horror, Astral Stalker
+- Page 222 [Rare]: Daemon, Arachnedaemon
+- Page 222 [Rare]: Horror, Ethereal Stalker
+- Page 222 [Very Rare]: Horror, Eye Scorpion
+- Page 222 [Very Rare]: Demon, Calcine
+- Page 222 [Very Rare]: Daemon, Metaniodaemon
+- Page 222 [Very Rare]: Horror, Offal
+- Page 222 [Very Rare]: Demon, Sawolitan
+- Page 222 [Very Rare]: Daemon, Sarcoptodaemon
+- Page 222 [Very Rare]: Horror, Spawner
+- Page 222 [Very Rare]: Horror, Volitant
+- Page 222 [Unique]: Demon, Halphas
+- Page 222 [Unique]: Devil, Sheth
+- Page 222 [Unique]: Wyrm, Typhon
+- Page 223 [Underground or Ruin]: Animated Armor, Arcma’s
+- Page 223 [Underground or Ruin]: Horror, Ethereal Leech
+- Page 223 [Underground or Ruin]: Horror, Ethereal Stalker
+- Page 223 [Underground or Ruin]: Horror, Eye Scorpion
+- Page 223 [Underground or Ruin]: Horror, Gasiform
+- Page 223 [Underground or Ruin]: Horror, Offal
+- Page 223 [Underground or Ruin]: Horror, Spawner
+- Page 223 [Underground or Ruin]: Horror, Walking Eye
+- Page 223 [Cold Wilderness / Mountains]: Horror, Ethereal Leech
+- Page 223 [Cold Wilderness / Mountains]: Horror, Ethereal Stalker
+- Page 223 [Cold Wilderness / Mountains]: Horror, Gasiform
+- Page 223 [Cold Wilderness / Mountains]: Horror, Gimmal
+- Page 223 [Cold Wilderness / Mountains]: Horror, Volitant
+- Page 223 [Cold Wilderness / Mountains]: Horror, Walking Eye
+- Page 223 [Cold Wilderness / Hill and Rough]: Horror, Ethereal Leech
+- Page 223 [Cold Wilderness / Hill and Rough]: Horror, Ethereal Stalker
+- Page 223 [Cold Wilderness / Hill and Rough]: Horror, Gasiform
+- Page 223 [Cold Wilderness / Hill and Rough]: Horror, Gimmal
+- Page 223 [Cold Wilderness / Hill and Rough]: Horror, Volitant
+- Page 223 [Cold Wilderness / Hill and Rough]: Horror, Walking Eye
+- Page 223 [Cold Wilderness / Forest]: Horror, Ethereal Leech
+- Page 223 [Cold Wilderness / Forest]: Horror, Ethereal Stalker
+- Page 223 [Cold Wilderness / Forest]: Horror, Gasiform
+- Page 223 [Cold Wilderness / Forest]: Horror, Gimmal
+- Page 223 [Cold Wilderness / Forest]: Horror, Volitant
+- Page 223 [Cold Wilderness / Forest]: Horror, Walking Eye
+- Page 223 [Cold Wilderness / Swamp and Marsh]: Horror, Ethereal Leech
+- Page 223 [Cold Wilderness / Swamp and Marsh]: Horror, Ethereal Stalker
+- Page 223 [Cold Wilderness / Swamp and Marsh]: Horror, Gasiform
+- Page 223 [Cold Wilderness / Swamp and Marsh]: Horror, Volitant
+- Page 223 [Cold Wilderness / Swamp and Marsh]: Horror, Walking Eye
+- Page 223 [Cold Wilderness / Plain and Scrub]: Horror, Ethereal Leech
+- Page 223 [Cold Wilderness / Plain and Scrub]: Horror, Ethereal Stalker
+- Page 223 [Cold Wilderness / Plain and Scrub]: Horror, Gasiform
+- Page 223 [Cold Wilderness / Plain and Scrub]: Horror, Volitant
+- Page 223 [Cold Wilderness / Plain and Scrub]: Horror, Walking Eye
+- Page 224 [Cold Wilderness / Desert]: Horror, Ethereal Leech
+- Page 224 [Cold Wilderness / Desert]: Horror, Ethereal Stalker
+- Page 224 [Cold Wilderness / Desert]: Horror, Gasiform
+- Page 224 [Cold Wilderness / Desert]: Horror, Volitant
+- Page 224 [Cold Wilderness / Desert]: Horror, Walking Eye
+- Page 224 [Cold Civilized / Mountains]: Horror, Ethereal Leech
+- Page 224 [Cold Civilized / Mountains]: Horror, Ethereal Stalker
+- Page 224 [Cold Civilized / Mountains]: Horror, Volitant
+- Page 224 [Cold Civilized / Mountains]: Horror, Walking Eye
+- Page 224 [Cold Civilized / Mountains]: Horror, Gimmal
+- Page 224 [Cold Civilized / Mountains]: Horror, Offal
+- Page 224 [Cold Civilized / Hill and Rough]: Horror, Ethereal Leech
+- Page 224 [Cold Civilized / Hill and Rough]: Horror, Ethereal Stalker
+- Page 224 [Cold Civilized / Hill and Rough]: Horror, Volitant
+- Page 224 [Cold Civilized / Hill and Rough]: Horror, Walking Eye
+- Page 224 [Cold Civilized / Hill and Rough]: Horror, Gimmal
+- Page 224 [Cold Civilized / Hill and Rough]: Horror, Offal
+- Page 224 [Cold Civilized / Forest]: Horror, Ethereal Leech
+- Page 224 [Cold Civilized / Forest]: Horror, Ethereal Stalker
+- Page 224 [Cold Civilized / Forest]: Horror, Volitant
+- Page 224 [Cold Civilized / Forest]: Horror, Walking Eye
+- Page 224 [Cold Civilized / Forest]: Horror, Gimmal
+- Page 224 [Cold Civilized / Forest]: Horror, Offal
+- Page 224 [Cold Civilized / Swamp and Marsh]: Horror, Ethereal Leech
+- Page 224 [Cold Civilized / Swamp and Marsh]: Horror, Ethereal Stalker
+- Page 224 [Cold Civilized / Swamp and Marsh]: Horror, Volitant
+- Page 224 [Cold Civilized / Swamp and Marsh]: Horror, Walking Eye
+- Page 224 [Cold Civilized / Swamp and Marsh]: Horror, Offal
+- Page 224 [Cold Civilized / Plain and Scrub]: Horror, Ethereal Leech
+- Page 224 [Cold Civilized / Plain and Scrub]: Horror, Ethereal Stalker
+- Page 224 [Cold Civilized / Plain and Scrub]: Horror, Volitant
+- Page 224 [Cold Civilized / Plain and Scrub]: Horror, Walking Eye
+- Page 224 [Cold Civilized / Plain and Scrub]: Horror, Offal
+- Page 224 [Cold Civilized / Desert]: Horror, Ethereal Leech
+- Page 224 [Cold Civilized / Desert]: Horror, Ethereal Stalker
+- Page 224 [Cold Civilized / Desert]: Horror, Volitant
+- Page 224 [Cold Civilized / Desert]: Horror, Walking Eye
+- Page 224 [Cold Civilized / Desert]: Horror, Offal
+- Page 224 [Temperate Wilderness / Mountains]: Horror, Ethereal Leech
+- Page 224 [Temperate Wilderness / Mountains]: Horror, Ethereal Stalker
+- Page 224 [Temperate Wilderness / Mountains]: Horror, Gasiform
+- Page 224 [Temperate Wilderness / Mountains]: Horror, Volitant
+- Page 224 [Temperate Wilderness / Mountains]: Horror, Walking Eye
+- Page 225 [Temperate Wilderness / Hill and Rough]: Horror, Ethereal Leech
+- Page 225 [Temperate Wilderness / Hill and Rough]: Horror, Ethereal Stalker
+- Page 225 [Temperate Wilderness / Hill and Rough]: Horror, Gasiform
+- Page 225 [Temperate Wilderness / Hill and Rough]: Horror, Volitant
+- Page 225 [Temperate Wilderness / Hill and Rough]: Horror, Walking Eye
+- Page 225 [Temperate Wilderness / Forest]: Horror, Ethereal Leech
+- Page 225 [Temperate Wilderness / Forest]: Horror, Ethereal Stalker
+- Page 225 [Temperate Wilderness / Forest]: Horror, Gasiform
+- Page 225 [Temperate Wilderness / Forest]: Horror, Volitant
+- Page 225 [Temperate Wilderness / Forest]: Horror, Walking Eye
+- Page 225 [Temperate Wilderness / Swamp and Marsh]: Horror, Ethereal Leech
+- Page 225 [Temperate Wilderness / Swamp and Marsh]: Horror, Ethereal Stalker
+- Page 225 [Temperate Wilderness / Swamp and Marsh]: Horror, Gasiform
+- Page 225 [Temperate Wilderness / Swamp and Marsh]: Horror, Volitant
+- Page 225 [Temperate Wilderness / Swamp and Marsh]: Horror, Walking Eye
+- Page 225 [Temperate Wilderness / Plain and Scrub]: Horror, Ethereal Leech
+- Page 225 [Temperate Wilderness / Plain and Scrub]: Horror, Ethereal Stalker
+- Page 225 [Temperate Wilderness / Plain and Scrub]: Horror, Gasiform
+- Page 225 [Temperate Wilderness / Plain and Scrub]: Horror, Volitant
+- Page 225 [Temperate Wilderness / Plain and Scrub]: Horror, Walking Eye
+- Page 225 [Temperate Wilderness / Desert]: Horror, Ethereal Leech
+- Page 225 [Temperate Wilderness / Desert]: Horror, Ethereal Stalker
+- Page 225 [Temperate Wilderness / Desert]: Horror, Gasiform
+- Page 225 [Temperate Wilderness / Desert]: Horror, Volitant
+- Page 225 [Temperate Wilderness / Desert]: Horror, Walking Eye
+- Page 225 [Temperate Civilized / Mountains]: Horror, Ethereal Leech
+- Page 225 [Temperate Civilized / Mountains]: Horror, Ethereal Stalker
+- Page 225 [Temperate Civilized / Mountains]: Horror, Offal
+- Page 225 [Temperate Civilized / Mountains]: Horror, Volitant
+- Page 225 [Temperate Civilized / Mountains]: Horror, Walking Eye
+- Page 225 [Temperate Civilized / Hill and Rough]: Horror, Ethereal Leech
+- Page 225 [Temperate Civilized / Hill and Rough]: Horror, Ethereal Stalker
+- Page 225 [Temperate Civilized / Hill and Rough]: Horror, Offal
+- Page 225 [Temperate Civilized / Hill and Rough]: Horror, Volitant
+- Page 225 [Temperate Civilized / Hill and Rough]: Horror, Walking Eye
+- Page 226 [Temperate Civilized / Forest]: Horror, Ethereal Leech
+- Page 226 [Temperate Civilized / Forest]: Horror, Ethereal Stalker
+- Page 226 [Temperate Civilized / Forest]: Horror, Offal
+- Page 226 [Temperate Civilized / Forest]: Horror, Volitant
+- Page 226 [Temperate Civilized / Forest]: Horror, Walking Eye
+- Page 226 [Temperate Civilized / Swamp and Marsh]: Horror, Ethereal Leech
+- Page 226 [Temperate Civilized / Swamp and Marsh]: Horror, Ethereal Stalker
+- Page 226 [Temperate Civilized / Swamp and Marsh]: Horror, Offal
+- Page 226 [Temperate Civilized / Swamp and Marsh]: Horror, Volitant
+- Page 226 [Temperate Civilized / Swamp and Marsh]: Horror, Walking Eye
+- Page 226 [Temperate Civilized / Plain and Scrub]: Horror, Ethereal Leech
+- Page 226 [Temperate Civilized / Plain and Scrub]: Horror, Ethereal Stalker
+- Page 226 [Temperate Civilized / Plain and Scrub]: Horror, Offal
+- Page 226 [Temperate Civilized / Plain and Scrub]: Horror, Volitant
+- Page 226 [Temperate Civilized / Plain and Scrub]: Horror, Walking Eye
+- Page 226 [Temperate Civilized / Desert]: Horror, Ethereal Leech
+- Page 226 [Temperate Civilized / Desert]: Horror, Ethereal Stalker
+- Page 226 [Temperate Civilized / Desert]: Horror, Offal
+- Page 226 [Temperate Civilized / Desert]: Horror, Volitant
+- Page 226 [Temperate Civilized / Desert]: Horror, Walking Eye
+- Page 226 [Tropical or Subtropical Wilderness / Mountains]: Horror, Ethereal Leech
+- Page 226 [Tropical or Subtropical Wilderness / Mountains]: Horror, Ethereal Stalker
+- Page 226 [Tropical or Subtropical Wilderness / Mountains]: Horror, Gasiform
+- Page 226 [Tropical or Subtropical Wilderness / Mountains]: Horror, Gimmal
+- Page 226 [Tropical or Subtropical Wilderness / Mountains]: Horror, Volitant
+- Page 226 [Tropical or Subtropical Wilderness / Mountains]: Horror, Walking Eye
+- Page 226 [Tropical or Subtropical Wilderness / Hill and Rough]: Horror, Ethereal Leech
+- Page 226 [Tropical or Subtropical Wilderness / Hill and Rough]: Horror, Ethereal Stalker
+- Page 226 [Tropical or Subtropical Wilderness / Hill and Rough]: Horror, Gasiform
+- Page 226 [Tropical or Subtropical Wilderness / Hill and Rough]: Horror, Gimmal
+- Page 226 [Tropical or Subtropical Wilderness / Hill and Rough]: Horror, Volitant
+- Page 226 [Tropical or Subtropical Wilderness / Hill and Rough]: Horror, Walking Eye
+- Page 226 [Tropical or Subtropical Wilderness / Forest]: Horror, Ethereal Leech
+- Page 226 [Tropical or Subtropical Wilderness / Forest]: Horror, Ethereal Stalker
+- Page 226 [Tropical or Subtropical Wilderness / Forest]: Horror, Gasiform
+- Page 226 [Tropical or Subtropical Wilderness / Forest]: Horror, Gimmal
+- Page 226 [Tropical or Subtropical Wilderness / Forest]: Horror, Volitant
+- Page 226 [Tropical or Subtropical Wilderness / Forest]: Horror, Walking Eye
+- Page 227 [Tropical or Subtropical Wilderness / Swamp and Marsh]: Horror, Ethereal Leech
+- Page 227 [Tropical or Subtropical Wilderness / Swamp and Marsh]: Horror, Ethereal Stalker
+- Page 227 [Tropical or Subtropical Wilderness / Swamp and Marsh]: Horror, Gasiform
+- Page 227 [Tropical or Subtropical Wilderness / Swamp and Marsh]: Horror, Volitant
+- Page 227 [Tropical or Subtropical Wilderness / Swamp and Marsh]: Horror, Walking Eye
+- Page 227 [Tropical or Subtropical Wilderness / Plain and Scrub]: Horror, Ethereal Leech
+- Page 227 [Tropical or Subtropical Wilderness / Plain and Scrub]: Horror, Ethereal Stalker
+- Page 227 [Tropical or Subtropical Wilderness / Plain and Scrub]: Horror, Gasiform
+- Page 227 [Tropical or Subtropical Wilderness / Plain and Scrub]: Horror, Volitant
+- Page 227 [Tropical or Subtropical Wilderness / Plain and Scrub]: Horror, Walking Eye
+- Page 227 [Tropical or Subtropical Wilderness / Desert]: Horror, Ethereal Leech
+- Page 227 [Tropical or Subtropical Wilderness / Desert]: Horror, Ethereal Stalker
+- Page 227 [Tropical or Subtropical Wilderness / Desert]: Horror, Gasiform
+- Page 227 [Tropical or Subtropical Wilderness / Desert]: Horror, Volitant
+- Page 227 [Tropical or Subtropical Wilderness / Desert]: Horror, Walking Eye
+- Page 227 [Tropical or Subtropical Civilized / Mountains]: Horror, Ethereal Leech
+- Page 227 [Tropical or Subtropical Civilized / Mountains]: Horror, Ethereal Stalker
+- Page 227 [Tropical or Subtropical Civilized / Mountains]: Horror, Gimmal
+- Page 227 [Tropical or Subtropical Civilized / Mountains]: Horror, Offal
+- Page 227 [Tropical or Subtropical Civilized / Mountains]: Horror, Volitant
+- Page 227 [Tropical or Subtropical Civilized / Mountains]: Horror, Walking Eye
+- Page 227 [Tropical or Subtropical Civilized / Hill and Rough]: Horror, Ethereal Leech
+- Page 227 [Tropical or Subtropical Civilized / Hill and Rough]: Horror, Ethereal Stalker
+- Page 227 [Tropical or Subtropical Civilized / Hill and Rough]: Horror, Gimmal
+- Page 227 [Tropical or Subtropical Civilized / Hill and Rough]: Horror, Offal
+- Page 227 [Tropical or Subtropical Civilized / Hill and Rough]: Horror, Volitant
+- Page 227 [Tropical or Subtropical Civilized / Hill and Rough]: Horror, Walking Eye
+- Page 227 [Tropical or Subtropical Civilized / Forest]: Horror, Ethereal Leech
+- Page 227 [Tropical or Subtropical Civilized / Forest]: Horror, Ethereal Stalker
+- Page 227 [Tropical or Subtropical Civilized / Forest]: Horror, Gimmal
+- Page 227 [Tropical or Subtropical Civilized / Forest]: Horror, Offal
+- Page 227 [Tropical or Subtropical Civilized / Forest]: Horror, Volitant
+- Page 227 [Tropical or Subtropical Civilized / Forest]: Horror, Walking Eye
+- Page 227 [Tropical or Subtropical Civilized / Swamp and Marsh]: Horror, Ethereal Leech
+- Page 227 [Tropical or Subtropical Civilized / Swamp and Marsh]: Horror, Ethereal Stalker
+- Page 227 [Tropical or Subtropical Civilized / Swamp and Marsh]: Horror, Offal
+- Page 227 [Tropical or Subtropical Civilized / Swamp and Marsh]: Horror, Volitant
+- Page 227 [Tropical or Subtropical Civilized / Swamp and Marsh]: Horror, Walking Eye
+- Page 228 [Tropical or Subtropical Civilized / Plain and Scrub]: Horror, Ethereal Leech
+- Page 228 [Tropical or Subtropical Civilized / Plain and Scrub]: Horror, Ethereal Stalker
+- Page 228 [Tropical or Subtropical Civilized / Plain and Scrub]: Horror, Offal
+- Page 228 [Tropical or Subtropical Civilized / Plain and Scrub]: Horror, Volitant
+- Page 228 [Tropical or Subtropical Civilized / Plain and Scrub]: Horror, Walking Eye
+- Page 228 [Tropical or Subtropical Civilized / Desert]: Horror, Ethereal Leech
+- Page 228 [Tropical or Subtropical Civilized / Desert]: Horror, Ethereal Stalker
+- Page 228 [Tropical or Subtropical Civilized / Desert]: Horror, Offal
+- Page 228 [Tropical or Subtropical Civilized / Desert]: Horror, Volitant
+- Page 228 [Tropical or Subtropical Civilized / Desert]: Horror, Walking Eye
+- Page 228 [Urban or Settled]: Animated Armor, Arcma’s
+- Page 228 [Urban or Settled]: Horror, Ethereal Leech
+- Page 228 [Urban or Settled]: Horror, Ethereal Stalker
+- Page 228 [Urban or Settled]: Horror, Offal
+- Page 228 [Urban or Settled]: Horror, Walking Eye
+- Page 228 [Urban or Settled]: Animated Armor, Arcma’s
+- Page 228 [Urban or Settled]: Horror, Ethereal Leech
+- Page 228 [Urban or Settled]: Horror, Ethereal Stalker
+- Page 228 [Urban or Settled]: Horror, Offal
+- Page 228 [Urban or Settled]: Horror, Walking Eye
+- Page 228 [Urban or Settled]: Animated Armor, Arcma’s
+- Page 228 [Urban or Settled]: Horror, Ethereal Leech
+- Page 228 [Urban or Settled]: Horror, Ethereal Stalker
+- Page 228 [Urban or Settled]: Horror, Offal
+- Page 228 [Urban or Settled]: Horror, Walking Eye
+- Page 228 [Urban or Settled / Underground]: Animated Armor, Arcma’s
+- Page 228 [Urban or Settled / Underground]: Horror, Ethereal Leech
+- Page 228 [Urban or Settled / Underground]: Horror, Ethereal Stalker
+- Page 228 [Urban or Settled / Underground]: Horror, Gimmal
+- Page 228 [Urban or Settled / Underground]: Horror, Offal
+- Page 228 [Urban or Settled / Underground]: Horror, Walking Eye
+- Page 228 [Cold Freshwater / Surface]: Horror, Ethereal Leech
+- Page 228 [Cold Freshwater / Surface]: Horror, Ethereal Stalker
+- Page 228 [Cold Freshwater / Depths]: Horror, Ethereal Leech
+- Page 228 [Cold Freshwater / Depths]: Horror, Ethereal Stalker
+- Page 228 [Temperate Freshwater / Surface]: Horror, Ethereal Leech
+- Page 228 [Temperate Freshwater / Surface]: Horror, Ethereal Stalker
+- Page 228 [Temperate Freshwater / Depths]: Horror, Ethereal Leech
+- Page 228 [Temperate Freshwater / Depths]: Horror, Ethereal Stalker
+- Page 228 [Cold Saltwater / Surface]: Horror, Ethereal Leech
+- Page 228 [Cold Saltwater / Surface]: Horror, Ethereal Stalker
+- Page 228 [Cold Saltwater / Depths]: Horror, Ethereal Leech
+- Page 228 [Cold Saltwater / Depths]: Horror, Ethereal Stalker
+- Page 228 [Temperate Saltwater / Surface]: Horror, Ethereal Leech
+- Page 228 [Temperate Saltwater / Surface]: Horror, Ethereal Stalker
+- Page 228 [Temperate Saltwater / Depths]: Horror, Ethereal Leech
+- Page 228 [Temperate Saltwater / Depths]: Horror, Ethereal Stalker
+- Page 229 [Tropical or Subtropical Saltwater / Surface]: Horror, Ethereal Leech
+- Page 229 [Tropical or Subtropical Saltwater / Surface]: Horror, Ethereal Stalker
+- Page 229 [Tropical or Subtropical Saltwater / Depths]: Horror, Ethereal Leech
+- Page 229 [Tropical or Subtropical Saltwater / Depths]: Horror, Ethereal Stalker
+- Page 229 [Astral]: Daemon, Arachnedaemon
+- Page 229 [Astral]: Daemon, Asteridaemon
+- Page 229 [Astral]: Daemon, Metaniodaemon
+- Page 229 [Astral]: Daemon, Phrenitikodaemon
+- Page 229 [Astral]: Daemon, Rhododaemon
+- Page 229 [Astral]: Daemon, Sarcoptodaemon
+- Page 229 [Astral]: Demon, Blattod
+- Page 229 [Astral]: Demon, Calcine
+- Page 229 [Astral]: Demon, Effluvial
+- Page 229 [Astral]: Demon, Halphas
+- Page 229 [Astral]: Demon, Jorogumo
+- Page 229 [Astral]: Demon, Red Hornets
+- Page 229 [Astral]: Demon, Sawolitan
+- Page 229 [Astral]: Devil, Chiropteran
+- Page 229 [Astral]: Devil, Ember
+- Page 229 [Astral]: Devil, Lightning
+- Page 229 [Astral]: Devil, Sheth
+- Page 229 [Astral]: Horror, Astral Stalker
+- Page 229 [Astral]: Horror, Ethereal Stalker
+- Page 229 [Astral]: Horror, Spawner
+- Page 229 [Astral]: Horror, Volitant
+- Page 229 [Ethereal]: Daemon, Arachnedaemon
+- Page 229 [Ethereal]: Daemon, Asteridaemon
+- Page 229 [Ethereal]: Daemon, Metaniodaemon
+- Page 229 [Ethereal]: Daemon, Phrenitikodaemon
+- Page 229 [Ethereal]: Daemon, Rhododaemon
+- Page 229 [Ethereal]: Daemon, Sarcoptodaemon
+- Page 229 [Ethereal]: Horror, Ethereal Leech
+- Page 229 [Ethereal]: Horror, Ethereal Stalker
+- Page 229 [Ethereal]: Horror, Spawner
+- Page 229 [Ethereal]: Horror, Volitant
+- Page 229 [Extraplaner]: Daemon, Arachnedaemon
+- Page 229 [Extraplaner]: Daemon, Asteridaemon
+- Page 229 [Extraplaner]: Daemon, Metaniodaemon
+- Page 229 [Extraplaner]: Daemon, Phrenitikodaemon
+- Page 229 [Extraplaner]: Daemon, Rhododaemon
+- Page 229 [Extraplaner]: Daemon, Sarcoptodaemon
+- Page 229 [Extraplaner]: Demon, Blattod
+- Page 229 [Extraplaner]: Demon, Calcine
+- Page 229 [Extraplaner]: Demon, Effluvial
+- Page 229 [Extraplaner]: Demon, Halphas
+- Page 229 [Extraplaner]: Demon, Jorogumo
+- Page 229 [Extraplaner]: Demon, Red Hornets
+- Page 229 [Extraplaner]: Demon, Sawolitan
+- Page 229 [Extraplaner]: Devil, Chiropteran
+- Page 229 [Extraplaner]: Devil, Ember
+- Page 229 [Extraplaner]: Devil, Lightning
+- Page 229 [Extraplaner]: Devil, Sheth
+- Page 229 [Extraplaner]: Horror, Astral Stalker
+- Page 229 [Extraplaner]: Horror, Ethereal Leech
+- Page 229 [Extraplaner]: Horror, Ethereal Stalker
+- Page 229 [Extraplaner]: Horror, Spawner
+- Page 229 [Extraplaner]: Horror, Volitant
+- Page 229 [Extraplaner]: Wyrm, Typhon
+
+Ambiguous appendix rows:
+- None
+
+Unmatched Reference Review:
+- Unique unmatched normalized names: 33
+- appendix_only_or_missing_catalog_entry: 30 unique names
+- encoding_or_ocr_variant: 3 unique names
+
+Top repeated unmatched normalized names:
+- Horror, Ethereal Stalker | normalized=horroretherealstalker | count=56 | category=appendix_only_or_missing_catalog_entry
+- Horror, Ethereal Leech | normalized=horroretherealleech | count=55 | category=appendix_only_or_missing_catalog_entry
+- Horror, Walking Eye | normalized=horrorwalkingeye | count=43 | category=appendix_only_or_missing_catalog_entry
+- Horror, Volitant | normalized=horrorvolitant | count=41 | category=appendix_only_or_missing_catalog_entry
+- Horror, Offal | normalized=horroroffal | count=25 | category=appendix_only_or_missing_catalog_entry
+- Horror, Gasiform | normalized=horrorgasiform | count=21 | category=appendix_only_or_missing_catalog_entry
+- Fool’s Dragon | normalized=foolsdragon | count=20 | category=encoding_or_ocr_variant
+- Droth’Yar | normalized=drothyar | count=17 | category=encoding_or_ocr_variant
+- Horror, Gimmal | normalized=horrorgimmal | count=15 | category=appendix_only_or_missing_catalog_entry
+- Animated Armor, Arcma’s | normalized=animatedarmorarcmas | count=7 | category=encoding_or_ocr_variant
+- Horror, Spawner | normalized=horrorspawner | count=6 | category=appendix_only_or_missing_catalog_entry
+- Daemon, Arachnedaemon | normalized=daemonarachnedaemon | count=5 | category=appendix_only_or_missing_catalog_entry
+- Daemon, Asteridaemon | normalized=daemonasteridaemon | count=5 | category=appendix_only_or_missing_catalog_entry
+- Daemon, Metaniodaemon | normalized=daemonmetaniodaemon | count=5 | category=appendix_only_or_missing_catalog_entry
+- Daemon, Phrenitikodaemon | normalized=daemonphrenitikodaemon | count=5 | category=appendix_only_or_missing_catalog_entry
+- Daemon, Rhododaemon | normalized=daemonrhododaemon | count=5 | category=appendix_only_or_missing_catalog_entry
+- Daemon, Sarcoptodaemon | normalized=daemonsarcoptodaemon | count=5 | category=appendix_only_or_missing_catalog_entry
+- Demon, Blattod | normalized=demonblattod | count=4 | category=appendix_only_or_missing_catalog_entry
+- Demon, Calcine | normalized=demoncalcine | count=4 | category=appendix_only_or_missing_catalog_entry
+- Demon, Effluvial | normalized=demoneffluvial | count=4 | category=appendix_only_or_missing_catalog_entry
+
+Skipped/rejected rows:
+- None

@@ -3,6 +3,141 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.8.13 - source registry and source-path validation
+
+- Added an editable source registry at `data/source_registry.json` as Step 1
+  of the 8-step source/import roadmap.
+- Recorded the current durable source policy in machine-readable form,
+  including the `Advanced Labyrinth Lord` primary baseline,
+  `Labyrinth Lord Revised Edition` core/basic reference, `OSE` as
+  comparison-only, inactive removed rules PDFs, the stable
+  `mandbmaster.pdf` monster source, the separate ADD Bestiary source path, and
+  future domain placeholders.
+- Added `app/source_registry.py` for reusable registry loading, validation,
+  allowed domain/status checks, duplicate `source_id` detection, and local
+  expected-path presence reporting without requiring source PDFs to be
+  committed.
+- Added `tools/validate_sources.py` for a lightweight CLI report covering total
+  sources, domain/status grouping, present files, missing expected files,
+  warnings, and errors.
+- Kept missing optional or inactive local PDFs from failing normal validation,
+  while reserving hard failures for malformed registry data or explicitly
+  required active files.
+- Added focused `unittest` coverage for valid registry loading, duplicate IDs,
+  missing required fields, unknown domains, inactive/optional missing-path
+  handling, required active missing-path errors, summary reporting, and future
+  domain placeholders.
+- This milestone does not import new content and does not change existing
+  monster, appendix, JSON-import, or ADD importer behavior.
+
+## v0.8.12 - ADD Bestiary import milestone 1
+
+- Added `tools/import_add_bestiary.py` and
+  `tools/importers/add_bestiary_importer.py` for Milestone 1 support aimed at
+  the user-provided *Adventures Dark and Deep Bestiary* PDF.
+- Scoped the ADD importer to actual PDF pages 4 through 438 only, explicitly
+  skipping front matter, appendices, and index pages by actual PDF page number
+  rather than printed page numbers.
+- Added raw page text extraction to
+  `import_work/adventures_dark_and_deep_bestiary/raw_pages/page_###.txt`.
+- Added conservative single-entry parsing that only accepts records with the
+  expected ADD stat labels plus at least one prose section, while rejecting
+  unsupported repeated-stat-block entries as
+  `multi_variant_stat_block_not_supported_yet`.
+- Added draft content-pack output targets for
+  `data/content_packs/imported/adventures_dark_and_deep_bestiary/pack.json`
+  and `monsters.json`.
+- Added lightweight monster-catalog helpers for loading the core monster
+  catalog beside imported monster packs and returning a combined alphabetical
+  monster view without overwriting same-name records from different sources.
+- Added validation coverage for imported ADD pack structure and tests for
+  single-entry parsing, multi-variant rejection, page-range behavior, stable
+  IDs, combined sorting, and same-name/different-source warnings.
+- Added `.gitignore` coverage for local-only `import_work/` output and
+  `data/import_sources/`.
+- Raised the validated suite to 152 passing `unittest` tests.
+
+## v0.8.11 - monster catalog multi-source import foundation
+
+- Added a small shared monster-catalog import layer for canonical JSON
+  normalization, source metadata conventions, and conservative merge-preview
+  behavior without changing the stable PDF or appendix importers.
+- Added `tools/importers/monster_json_importer.py` for dry-run JSON monster
+  imports with a text report plus a JSON preview artifact before any catalog
+  write is attempted.
+- Added source metadata conventions for imported records through optional
+  `import_metadata` fields such as `source_id`, `source_name`, `source_type`,
+  `source_file`, `source_page`, `source_record_id`, `import_method`,
+  `import_version`, `original_name`, `normalized_name`, warnings, and notes.
+- Added conservative merge decisions for exact duplicates, would-add,
+  would-update, would-conflict, and protected-conflict cases instead of
+  silently overwriting existing catalog entries.
+- Added lightweight manual/custom protection rules keyed off
+  `custom_record`, `manual_override`, `protected_fields`, and manual/custom
+  source types to prepare for later Bestiary editing without building the full
+  GUI yet.
+- Kept the default JSON import path non-destructive: explicit write mode only
+  applies safe additions, while updates and conflicts remain report-only for
+  later review.
+- Preserved the current monster-manual catalog and appendix catalog workflows
+  unchanged while extending importer tests to cover JSON happy path, malformed
+  records, metadata preservation, duplicate detection, conflict reporting, and
+  manual/custom protection.
+- Raised the validated suite to 146 passing `unittest` tests.
+
+## v0.8.10 - appendix unmatched review and normalization pass
+
+- Added a conservative appendix normalization pass that keeps the standalone
+  appendix importer separate from the stable monster stat-block importer.
+- Added general matching improvements for appendix references through broader
+  normalized lookup variants, including article stripping, simple singular
+  handling, parenthetical-descriptor normalization, and tightly limited
+  one-edit typo recovery when the result is unique.
+- Reduced unmatched appendix references from 413 to 395 without adding
+  monster-specific hard-coded mappings.
+- Preserved truly unresolved appendix references as unmatched instead of
+  guessing, and kept ambiguous handling available when a future normalization
+  rule would hit more than one catalog target.
+- Added an `Unmatched Reference Review` section to the appendix import report
+  plus a separate `monster_appendix_unmatched_review.txt` audit artifact with
+  grouped repeated names, category counts, pages, and example tables.
+- Added focused appendix importer tests for grouped unmatched reporting,
+  context preservation, and the new conservative normalization rules.
+- Reran both importers successfully: the monster catalog remains at 268 real
+  records with the same one unresolved `WORM, FURNACE` intelligence gap, while
+  the appendix catalog remains at 2,981 rows with 2,586 matched references,
+  395 unmatched references, and 0 ambiguous references.
+- Raised the validated suite to 139 passing `unittest` tests.
+
+## v0.8.9 - monster appendix parser milestone 1
+
+- Added `tools/importers/monster_appendix_importer.py` as a separate appendix
+  parsing path so terrain, rarity, and level appendix data can be extracted
+  without destabilizing the stable monster stat-block importer.
+- Added shared schema defaults for appendix page ranges plus appendix catalog
+  and report output paths.
+- Added conservative appendix parsing for `Appendix B: Monsters by Level`,
+  `Appendix C: Monsters by Rarity`, and `Appendix D: Monsters by Terrain Type`
+  across both books of the combined PDF.
+- Preserved actual PDF page numbers, section titles, table titles, terrain /
+  climate / region context, roll ranges, raw row text, and per-row match state
+  in the generated appendix catalog.
+- Added conservative monster-name matching against the existing
+  `monster_catalog.json`, including simple punctuation/case normalization and
+  safe comma-form matching such as `Wax Golem` -> `GOLEM, WAX`.
+- Kept unmatched appendix rows instead of guessing, and reported unmatched and
+  ambiguous rows separately in `monster_appendix_import_report.txt`.
+- Added focused appendix importer tests for section detection, wrapped heading
+  merging, roll ranges, context carry-forward, matching behavior, unmatched
+  preservation, and output-file generation.
+- Reran the stable monster stat importer and preserved the validated v0.8.8
+  baseline of 268 parsed monster records, zero warnings, and one remaining
+  unresolved common-field gap for `WORM, FURNACE` intelligence.
+- The current local appendix rerun against `data/import_sources/mandbmaster.pdf`
+  produced 2,981 appendix records with 2,568 matched references, 413
+  unmatched references, and 0 ambiguous matches.
+- Raised the validated suite to 137 passing `unittest` tests.
+
 ## v0.8.8 - monster importer normalization pass
 
 - Tightened monster-manual stat parsing for real-entry spillover after the

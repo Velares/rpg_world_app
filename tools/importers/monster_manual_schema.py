@@ -13,10 +13,54 @@ DEFAULT_MONSTER_CATALOG_JSON = (
 DEFAULT_MONSTER_IMPORT_REPORT = (
     PROJECT_ROOT / "data" / "import_reports" / "monster_manual_import_report.txt"
 )
+DEFAULT_MONSTER_APPENDIX_CATALOG_JSON = (
+    PROJECT_ROOT / "data" / "catalogs" / "monsters" / "monster_appendix_catalog.json"
+)
+DEFAULT_MONSTER_APPENDIX_IMPORT_REPORT = (
+    PROJECT_ROOT / "data" / "import_reports" / "monster_appendix_import_report.txt"
+)
+DEFAULT_MONSTER_APPENDIX_UNMATCHED_REVIEW_REPORT = (
+    PROJECT_ROOT / "data" / "import_reports" / "monster_appendix_unmatched_review.txt"
+)
+DEFAULT_MONSTER_JSON_IMPORT_REPORT = (
+    PROJECT_ROOT / "data" / "import_reports" / "monster_json_import_report.txt"
+)
+DEFAULT_MONSTER_JSON_IMPORT_PREVIEW = (
+    PROJECT_ROOT / "data" / "import_reports" / "monster_json_import_preview.json"
+)
+DEFAULT_ADD_BESTIARY_PDF = (
+    PROJECT_ROOT
+    / "data"
+    / "import_sources"
+    / "adventures_dark_and_deep_bestiary"
+    / "Adventures Dark and Deep Bestiaryforingestion.pdf"
+)
+DEFAULT_ADD_BESTIARY_PACK_DIR = (
+    PROJECT_ROOT
+    / "data"
+    / "content_packs"
+    / "imported"
+    / "adventures_dark_and_deep_bestiary"
+)
+DEFAULT_ADD_BESTIARY_PACK_JSON = DEFAULT_ADD_BESTIARY_PACK_DIR / "pack.json"
+DEFAULT_ADD_BESTIARY_MONSTERS_JSON = DEFAULT_ADD_BESTIARY_PACK_DIR / "monsters.json"
+DEFAULT_ADD_BESTIARY_IMPORT_WORK_DIR = (
+    PROJECT_ROOT / "import_work" / "adventures_dark_and_deep_bestiary"
+)
+DEFAULT_ADD_BESTIARY_RAW_PAGES_DIR = DEFAULT_ADD_BESTIARY_IMPORT_WORK_DIR / "raw_pages"
+DEFAULT_ADD_BESTIARY_IMPORT_REPORT = (
+    DEFAULT_ADD_BESTIARY_IMPORT_WORK_DIR / "import_report.txt"
+)
+ADD_BESTIARY_ENTRY_PAGE_RANGE = (4, 438)
 
 BOOK_ENTRY_RANGES: tuple[tuple[int, int, int], ...] = (
     (1, 2, 115),
     (2, 124, 220),
+)
+
+BOOK_APPENDIX_RANGES: tuple[tuple[int, int, int], ...] = (
+    (1, 117, 122),
+    (2, 221, 229),
 )
 
 EXPECTED_REQUIRED_FIELDS: tuple[str, ...] = (

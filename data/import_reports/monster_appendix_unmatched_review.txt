@@ -1,0 +1,36 @@
+Monster Appendix Unmatched Review
+================================
+
+Unmatched rows reviewed: 395
+Unique unmatched normalized names: 33
+
+Category counts:
+- appendix_only_or_missing_catalog_entry: 351
+- encoding_or_ocr_variant: 44
+
+Top repeated unmatched normalized names:
+- Horror, Ethereal Stalker | normalized=horroretherealstalker | count=56 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 223, 224, 225, 226, 227, 228, 229 | tables=Astral; Cold Civilized / Desert; Cold Civilized / Forest
+- Horror, Ethereal Leech | normalized=horroretherealleech | count=55 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 223, 224, 225, 226, 227, 228, 229 | tables=Cold Civilized / Desert; Cold Civilized / Forest; Cold Civilized / Hill and Rough
+- Horror, Walking Eye | normalized=horrorwalkingeye | count=43 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 223, 224, 225, 226, 227, 228 | tables=Cold Civilized / Desert; Cold Civilized / Forest; Cold Civilized / Hill and Rough
+- Horror, Volitant | normalized=horrorvolitant | count=41 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 223, 224, 225, 226, 227, 228, 229 | tables=Astral; Cold Civilized / Desert; Cold Civilized / Forest
+- Horror, Offal | normalized=horroroffal | count=25 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 223, 224, 225, 226, 227, 228 | tables=Cold Civilized / Desert; Cold Civilized / Forest; Cold Civilized / Hill and Rough
+- Horror, Gasiform | normalized=horrorgasiform | count=21 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 223, 224, 225, 226, 227 | tables=Cold Wilderness / Desert; Cold Wilderness / Forest; Cold Wilderness / Hill and Rough
+- Fool’s Dragon | normalized=foolsdragon | count=20 | category=encoding_or_ocr_variant | pages=117, 118, 119, 120, 121 | tables=Cold Wilderness / Desert; Cold Wilderness / Forest; Cold Wilderness / Hill and Rough
+- Droth’Yar | normalized=drothyar | count=17 | category=encoding_or_ocr_variant | pages=117, 118, 119, 120, 121, 122 | tables=Cold Civilized / Hill and Rough; Cold Civilized / Plain and Scrub; Cold Wilderness / Hill and Rough
+- Horror, Gimmal | normalized=horrorgimmal | count=15 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 223, 224, 226, 227, 228 | tables=Cold Civilized / Forest; Cold Civilized / Hill and Rough; Cold Civilized / Mountains
+- Animated Armor, Arcma’s | normalized=animatedarmorarcmas | count=7 | category=encoding_or_ocr_variant | pages=221, 222, 223, 228 | tables=Level V; Rare; Underground or Ruin
+- Horror, Spawner | normalized=horrorspawner | count=6 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 223, 229 | tables=Astral; Ethereal; Extraplaner
+- Daemon, Arachnedaemon | normalized=daemonarachnedaemon | count=5 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 229 | tables=Astral; Ethereal; Extraplaner
+- Daemon, Asteridaemon | normalized=daemonasteridaemon | count=5 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 229 | tables=Astral; Ethereal; Extraplaner
+- Daemon, Metaniodaemon | normalized=daemonmetaniodaemon | count=5 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 229 | tables=Astral; Ethereal; Extraplaner
+- Daemon, Phrenitikodaemon | normalized=daemonphrenitikodaemon | count=5 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 229 | tables=Astral; Ethereal; Extraplaner
+- Daemon, Rhododaemon | normalized=daemonrhododaemon | count=5 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 229 | tables=Astral; Common; Ethereal
+- Daemon, Sarcoptodaemon | normalized=daemonsarcoptodaemon | count=5 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 229 | tables=Astral; Ethereal; Extraplaner
+- Demon, Blattod | normalized=demonblattod | count=4 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 229 | tables=Astral; Common; Extraplaner
+- Demon, Calcine | normalized=demoncalcine | count=4 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 229 | tables=Astral; Extraplaner; Level Vi
+- Demon, Effluvial | normalized=demoneffluvial | count=4 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 229 | tables=Astral; Extraplaner; Level Vi
+- Demon, Halphas | normalized=demonhalphas | count=4 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 229 | tables=Astral; Extraplaner; Level X
+- Demon, Jorogumo | normalized=demonjorogumo | count=4 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 229 | tables=Astral; Extraplaner; Level Vii
+- Demon, Red Hornets | normalized=demonredhornets | count=4 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 229 | tables=Astral; Extraplaner; Level I
+- Demon, Sawolitan | normalized=demonsawolitan | count=4 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 229 | tables=Astral; Extraplaner; Level Viii
+- Devil, Chiropteran | normalized=devilchiropteran | count=4 | category=appendix_only_or_missing_catalog_entry | pages=221, 222, 229 | tables=Astral; Common; Extraplaner

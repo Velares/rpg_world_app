@@ -3,11 +3,143 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.8`
+- Current development version on `main`: `v0.8.13`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.8.13 adds the Step 1 source-registry and source-path validation
+foundation on `main`:
+
+- Added an editable source registry at `data/source_registry.json`.
+- Recorded current durable source policy in structured form, including active
+  rules references, comparison-only references, inactive removed rules PDFs,
+  the stable monster-manual PDF path, the separate ADD Bestiary source path,
+  and future domain placeholders.
+- Added `app/source_registry.py` for reusable registry loading, validation,
+  duplicate `source_id` checks, allowed domain/status checks, and local
+  expected-path presence reporting.
+- Added `python tools/validate_sources.py` for local source validation without
+  requiring importer dependencies or committed PDFs.
+- Kept missing optional/inactive local PDFs from breaking normal validation,
+  while still allowing explicitly required active sources to fail validation in
+  the future if needed.
+- Added focused source-registry tests and raised the validated `unittest`
+  count to 163 while `python -m compileall .` still passes.
+- This milestone is Step 1 of the 8-step source/import roadmap and does not
+  import new content or change existing importer behavior.
+
+Version 0.8.12 adds ADD Bestiary import milestone 1 support on `main`:
+
+- Added a dedicated ADD Bestiary importer command at
+  `python tools/import_add_bestiary.py`.
+- Scoped the importer to actual PDF pages 4 through 438 and documented that
+  printed page numbers in the PDF are not authoritative.
+- Added raw page extraction to
+  `import_work/adventures_dark_and_deep_bestiary/raw_pages/` using actual PDF
+  page numbers in filenames.
+- Added conservative Milestone 1 parsing that accepts likely single-entry
+  monsters only when the expected ADD stat block is present together with at
+  least one prose section such as `General`, `Combat`, or `Appearance`.
+- Deferred multi-column and repeated-stat-block variant monsters by rejecting
+  them with the explicit reason
+  `multi_variant_stat_block_not_supported_yet` rather than inventing bad child
+  records.
+- Added draft output support for
+  `data/content_packs/imported/adventures_dark_and_deep_bestiary/pack.json`
+  and `monsters.json`, plus a focused validator for the imported pack shape.
+- Added lightweight combined monster-catalog helpers so the core manual-import
+  catalog and imported content-pack monsters can be loaded together and sorted
+  alphabetically by display name without overwriting same-name records from
+  different sources.
+- Added focused ADD importer tests and raised the validated `unittest` count
+  to 152 while `python -m compileall .` still passes.
+- The user-provided ADD Bestiary PDF is not present in this workspace yet, so
+  the real importer command currently exits with a clear file-not-found message
+  after ensuring the documented input folder exists.
+
+Version 0.8.11 adds the monster catalog multi-source import foundation on
+`main`:
+
+- Added a shared monster-catalog import helper layer so future monster sources
+  can normalize into the existing canonical monster-record shape without
+  rewriting the stable PDF or appendix importers.
+- Added `tools/importers/monster_json_importer.py` for JSON-based monster
+  import preview, report generation, and optional safe-addition catalog writes.
+- Added source metadata conventions for imported records through optional
+  `import_metadata` fields such as `source_id`, `source_name`, `source_type`,
+  `source_file`, `source_page`, `source_record_id`, `import_method`,
+  `import_version`, `original_name`, `normalized_name`, warnings, notes, and
+  preserved extra source fields.
+- Added conservative merge classification for `would_add`, `exact_duplicate`,
+  `would_update`, `would_conflict`, and `protected_conflict` cases so later
+  multi-source catalog work stays auditable instead of silently overwriting
+  records.
+- Added lightweight manual/custom protection hooks keyed off
+  `custom_record`, `manual_override`, `protected_fields`, and manual/custom
+  source types to prepare for a later editable Bestiary flow.
+- Kept the default JSON import path non-destructive: dry-run preview stays the
+  default, while explicit write mode only applies safe additions and leaves
+  updates/conflicts report-only for later review.
+- Preserved the stable monster stat importer and appendix importer regression
+  suites, and raised the validated `unittest` count to 146 while
+  `python -m compileall .` still passes.
+
+Version 0.8.10 adds the appendix unmatched-review and normalization pass on
+`main`:
+
+- Kept appendix parsing separate from the stable monster stat importer and
+  focused only on appendix data quality.
+- Added broader but still conservative appendix-name normalization through
+  shared normalized variants, including article stripping, simple singular
+  handling, parenthetical-descriptor removal, and tightly limited one-edit
+  typo recovery when the result is unique.
+- Reduced unmatched appendix references from 413 to 395 without adding a
+  manual monster-mapping table or broad fuzzy guessing.
+- Added a clearer `Unmatched Reference Review` section inside
+  `data/import_reports/monster_appendix_import_report.txt`.
+- Added a separate audit artifact at
+  `data/import_reports/monster_appendix_unmatched_review.txt` with grouped
+  repeated unresolved names, category counts, pages, and example tables.
+- The current rerun still preserves 2,981 appendix records total, now with
+  2,586 matched references, 395 unmatched references, and 0 ambiguous
+  references.
+- Reran the stable monster stat importer without regression: 268 parsed
+  monsters, 0 warnings, 111 rejected candidate headings, no duplicate IDs, no
+  null `SIZE` records, and the same one remaining missing expected field for
+  `WORM, FURNACE` intelligence.
+- Added focused appendix importer regression coverage and raised the validated
+  `unittest` count to 139 while `python -m compileall .` still passes.
+
+Version 0.8.9 adds the first appendix parsing milestone for monster-manual
+tooling on `main`:
+
+- Added `tools/importers/monster_appendix_importer.py` as a separate appendix
+  parser so terrain, rarity, and level appendix data can be cataloged without
+  changing the stable monster stat importer.
+- Added appendix page-range and output-path constants in the shared importer
+  schema helper.
+- Parsed both books' `Appendix B`, `Appendix C`, and `Appendix D` pages into a
+  new editable appendix catalog with actual PDF page references, section
+  titles, table titles, region/terrain/climate context, optional roll ranges,
+  raw row text, and conservative match status.
+- Added conservative name matching against
+  `data/catalogs/monsters/monster_catalog.json`, including punctuation/case
+  normalization and safe comma-form handling such as `Wax Golem` matching
+  `GOLEM, WAX`.
+- Kept unmatched appendix references instead of guessing and wrote them to a
+  separate appendix import report for later follow-up.
+- A local rerun against `data/import_sources/MandBmaster.pdf` now produces
+  2,981 appendix records with 2,568 matched references, 413 unmatched
+  references, 0 ambiguous matches, and 0 skipped rows in the current parser
+  pass.
+- Reran the stable monster stat importer without regression: 268 parsed
+  monsters, 0 warnings, 111 rejected candidate headings, no duplicate IDs, no
+  null `SIZE` catalog records, and the same one remaining missing expected
+  field for `WORM, FURNACE` intelligence.
+- Added focused appendix importer tests and raised the validated `unittest`
+  count to 137 while `python -m compileall .` still passes.
 
 Version 0.8.8 tightens real-monster field normalization after the importer
 cleanup pass on `main`:
@@ -327,6 +459,17 @@ Version 0.7 hardened the data-driven generation foundation:
 - Class-based resources and placeholder special abilities.
 - Structured inventory records and JSON-driven class starting gear.
 - Tooling-only monster manual import pipeline for PDF-to-JSON catalog creation.
+- Tooling-only monster-manual appendix import pipeline for PDF-to-JSON appendix
+  catalog creation with conservative monster matching.
+- Appendix unmatched-reference review output with grouped repeated unresolved
+  names and conservative normalization auditing.
+- Dry-run JSON monster import preview tooling with source metadata, duplicate
+  detection, conflict reporting, and manual/custom protection planning for
+  later multi-source Bestiary work.
+- ADD Bestiary Milestone 1 importer scaffolding for actual-page parsing, raw
+  page extraction, content-pack draft output, and combined alphabetical monster
+  views across sources.
+- Editable source registry plus local source-path validation tooling.
 - Lightweight equipment slots, carried bulk, and encumbrance states.
 - Optional text-seed control for reproducible world generation.
 - Plain-text export for active world summaries, character sheets, and event logs.
@@ -373,13 +516,26 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 130 tests passing with
+- Current verification: 163 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.
+- `python tools/validate_sources.py` now reports the local source-registry
+  summary separately from importer runs. In the current workspace it reports
+  19 total sources, 1 present file, 18 missing expected files, 3 warnings, and
+  0 errors because the missing files are optional active or inactive
+  references rather than required active sources.
 - The monster-manual importer tests pass, but the expected default source PDF
   may differ by local filename casing. The current workspace rerun used
   `data/import_sources/MandBmaster.pdf` successfully.
+- The new appendix importer also reran successfully against
+  `data/import_sources/MandBmaster.pdf`, producing 2,981 appendix records with
+  2,586 matched references, 395 unmatched references, 0 ambiguous matches,
+  and 0 skipped rows.
+- The ADD Bestiary importer command now exists and prepares the documented
+  source folder automatically, but the actual source PDF is not present in this
+  workspace yet, so a full import rerun remains pending the user-supplied file
+  at `data/import_sources/adventures_dark_and_deep_bestiary/Adventures Dark and Deep Bestiaryforingestion.pdf`.
 - No Tkinter smoke test was completed for this milestone because the local
   Python 3.11 install still lacks a usable `init.tcl`; an attempted Tk root
   creation still fails for that reason, so GUI-facing behavior was validated
@@ -402,13 +558,26 @@ Version 0.7 hardened the data-driven generation foundation:
 - The monster importer currently depends on an external PDF reader being
   available in the runtime used for the import command. The core app runtime
   remains standard-library based.
-- Milestone 1 only builds the monster catalog importer. It does not yet parse
-  appendices, build terrain/rarity/level indexes, or drive encounter
-  generation inside the app.
+- Monster-manual appendix parsing is now available as separate tooling output,
+  but it still does not drive encounter generation inside the app or build
+  higher-level encounter indexes yet.
+- ADD Bestiary import Milestone 1 intentionally does not solve multi-column or
+  repeated-stat-block variant monsters yet. Those entries are deferred and
+  should be handled in a later milestone after more parser review.
 - A few real imported monsters may still need follow-up normalization where
   the PDF formatting interrupts fields in unusual ways. The current validated
   report is down to one remaining common-field gap: `Worm, Furnace` missing a
   recoverable `INTELLIGENCE` value in the extracted text.
+- The appendix catalog intentionally keeps unresolved rows for later review
+  rather than guessing IDs. After the v0.8.10 cleanup pass, 395 unresolved
+  rows remain. The new unmatched-review report currently splits them between
+  likely encoding/OCR variants and appendix-only-or-missing-catalog names.
+- The source registry intentionally describes local source expectations without
+  committing the actual PDFs. Missing optional active files should be treated
+  as setup notes, not importer regressions, unless a later milestone marks a
+  source as required.
+- `data/import_sources/` remains intentionally untracked and should continue to
+  hold local-only source PDFs rather than versioned import assets.
 - Save compatibility is actively maintained for v0.8.4+ data. Much older
   pre-v0.8.4 save experiments are no longer treated as a guaranteed migration
   target for new milestones.
@@ -419,25 +588,39 @@ Version 0.7 hardened the data-driven generation foundation:
 
 ## Next candidate goals
 
-1. Add monster-manual appendix handling, terrain/index enrichment, or catalog
-   normalization only as separate thin follow-up milestones after the base
-   entry importer settles.
-2. Optionally revisit the one remaining `Worm, Furnace` intelligence gap only
+1. Use the new source registry and validation layer as the gate for Step 2:
+   continue the monster importer baseline without changing the broader domain
+   roadmap yet.
+2. Place the user-provided ADD Bestiary PDF at the documented import_sources
+   path and run the new importer to measure real accepted versus deferred
+   monsters before tackling multi-variant parsing.
+3. Use the new JSON import preview path to test a second monster source with a
+   small common-monster sample before attempting a broader merged catalog.
+4. Review the remaining 395 unmatched appendix references and decide whether
+   the next follow-up should widen the monster catalog, improve the core
+   stat-block importer, or add a carefully reviewed manual alias layer for
+   appendix-only names before any app-facing use.
+5. Optionally revisit the one remaining `Worm, Furnace` intelligence gap only
    if another extraction path reveals the missing line without special-casing
    the record.
-3. Add lightweight inventory actions beyond equipping, such as container-aware
+6. Build the future Bestiary around the new import metadata and protection
+   hooks: list/search/filter, source/audit visibility, manual edits, and
+   preserved custom overrides.
+7. Add app-facing region/rarity-based monster selection only after Bestiary
+   patterns and multi-source catalog merge rules are proven stable.
+8. Add lightweight inventory actions beyond equipping, such as container-aware
    stash moves, simple drop/store behavior, or clearer repair/condition hooks,
    only if they stay compatible with the current rules-neutral model.
-4. Add a small simulated-time helper or preset-driven town-side fast-forward
+9. Add a small simulated-time helper or preset-driven town-side fast-forward
    flow only if it can reuse the current calendar/downtime framework without
    bloating the GUI.
-5. Design later character retirement so retired protagonists can remain in the
+10. Design later character retirement so retired protagonists can remain in the
    same world as NPCs after the calendar/downtime layer settles.
-6. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
+11. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
    available in the local environment.
-7. Consider a small seed-copy or seed-regenerate affordance only if players
+12. Consider a small seed-copy or seed-regenerate affordance only if players
    actually need more than the current single text entry.
-8. Deepen key NPCs with optional world-aware quest hooks before considering
+13. Deepen key NPCs with optional world-aware quest hooks before considering
    any broader relationship or faction system.
 
 ## Important files and directories
@@ -467,7 +650,28 @@ Version 0.7 hardened the data-driven generation foundation:
 - `data/saves/worlds.db` - current SQLite save database
 - `tools/` - name cleanup and corruption-scrubbing utilities
 - `tools/importers/` - monster manual import tooling
+- `tools/importers/monster_catalog_import.py` - shared normalization and
+  merge-preview helpers for future multi-source monster imports
+- `tools/importers/monster_json_importer.py` - dry-run JSON monster import path
+- `tools/importers/add_bestiary_importer.py` - ADD Bestiary milestone 1 import
+  tooling
+- `tools/import_add_bestiary.py` - simple command entry point for the ADD
+  Bestiary importer
+- `app/monster_catalog.py` - lightweight combined monster loading and
+  alphabetical sorting helpers across sources
+- `app/source_registry.py` - source registry loading and validation helpers
+- `data/catalogs/monsters/monster_appendix_catalog.json` - parsed appendix
+  encounter/location rows
+- `data/source_registry.json` - editable source registry and expected local
+  source paths
+- `data/import_reports/monster_appendix_import_report.txt` - appendix importer
+  audit report
+- `data/import_reports/monster_appendix_unmatched_review.txt` - grouped
+  unmatched appendix review artifact
+- `tools/validate_sources.py` - source-registry and local path validation
+  command
 - `tests/test_core.py` - automated test suite
+- `tests/test_source_registry.py` - source-registry validation coverage
 - `tests/test_stress.py` - stress and illogical-action regression coverage
 - `AGENTS.md` - named AI roles and coordinated operating model
 

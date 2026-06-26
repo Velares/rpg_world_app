@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.8.7 is a local, single-player weird-fantasy starting-region generator
+Version 0.8.13 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -212,12 +212,61 @@ The oldest supported baseline is now Version 0.8.4-era saves. Earlier
 pre-0.8.4 save shapes are no longer a guaranteed compatibility target for new
 milestones.
 
-The repository also now includes a first-pass monster-manual importer under
-`tools/importers/monster_manual_importer.py`. Milestone 1 is tooling-only: it
-reads the combined monster-manual PDF page by page, extracts only monster-entry
-pages, detects uppercase monster headings followed by `SIZE:`, and writes an
-editable JSON catalog plus a text import report. It does not yet parse
-appendices or drive encounter generation in the app.
+The repository also now includes monster-manual import tooling under
+`tools/importers/`. The stable stat-block pipeline in
+`tools/importers/monster_manual_importer.py` reads the combined PDF page by
+page, extracts only monster-entry pages, detects uppercase monster headings
+followed by `SIZE:`, and writes an editable JSON catalog plus a text import
+report. A separate appendix pipeline in
+`tools/importers/monster_appendix_importer.py` parses the level, rarity, and
+terrain appendices into a second JSON catalog without disturbing the main
+monster catalog.
+
+Before running importer tooling, validate local source setup with the new
+source registry command:
+
+```powershell
+python tools/validate_sources.py
+```
+
+The editable source registry lives at:
+
+```text
+data/source_registry.json
+```
+
+This registry is Step 1 of the current 8-step source/import roadmap. It does
+not import content by itself. Instead, it records:
+
+- source identity
+- source domain
+- source role
+- source status
+- expected local path
+- importer family
+- whether a missing file should be treated as required or optional
+
+Current status labels are intentionally lightweight:
+
+- `active`: currently relevant source for importer or rules-reference work
+- `inactive`: intentionally removed from active work
+- `comparison_only`: usable for comparison/reference, not as the main baseline
+- `placeholder`: future-domain or future-source placeholder
+
+The registry is designed to be hand-edited. When adding a new source entry,
+preserve:
+
+- original source title
+- expected local path
+- domain separation
+- source role
+- whether it is active for rules, active for content, both, or neither
+
+Missing local PDFs do not automatically break normal development. The
+validation command reports them clearly, but optional active sources and
+inactive sources remain warnings or informational setup notes rather than hard
+failures. `data/import_sources/` remains intentionally untracked so local PDFs
+do not enter version control.
 
 Expected default source PDF location:
 
@@ -231,10 +280,134 @@ Run the importer from the project directory with:
 python tools/importers/monster_manual_importer.py
 ```
 
+Run the appendix importer from the project directory with:
+
+```powershell
+python tools/importers/monster_appendix_importer.py
+```
+
+The appendix importer writes:
+
+```text
+data/catalogs/monsters/monster_appendix_catalog.json
+data/import_reports/monster_appendix_import_report.txt
+data/import_reports/monster_appendix_unmatched_review.txt
+```
+
+Appendix rows keep source page numbers, section and table titles, region /
+terrain / climate context, raw row text, and conservative monster-reference
+matching against the existing monster catalog. Exact normalized matches are
+linked to known monster IDs. Unmatched rows are preserved and reported rather
+than guessed. The separate unmatched-review report groups repeated unresolved
+names and highlights likely encoding/OCR variants versus appendix-only or
+missing-catalog names. `data/import_sources/` remains intentionally untracked
+so local PDFs do not enter version control.
+
+The importer tooling now also includes an early multi-source JSON import path:
+
+```powershell
+python tools/importers/monster_json_importer.py path/to/monsters.json
+```
+
+By default this is a dry-run preview. It normalizes JSON monster records into
+the canonical catalog shape, records source metadata, detects duplicates and
+conflicts against the existing monster catalog, and writes:
+
+```text
+data/import_reports/monster_json_import_report.txt
+data/import_reports/monster_json_import_preview.json
+```
+
+Dry-run mode does not overwrite the main monster catalog. If you later want to
+apply safe additions only, use:
+
+```powershell
+python tools/importers/monster_json_importer.py path/to/monsters.json --write-catalog
+```
+
+Even in explicit write mode, conflicting or protected records are not silently
+overwritten. They remain report-only for later review. This milestone is
+preparing the import architecture for a later editable Bestiary flow, not
+building the full Bestiary GUI yet.
+
+The monster-import tooling now also includes a dedicated Milestone 1 path for
+the *Adventures Dark and Deep Bestiary* PDF:
+
+Expected local source path:
+
+```text
+data/import_sources/adventures_dark_and_deep_bestiary/Adventures Dark and Deep Bestiaryforingestion.pdf
+```
+
+Run from the project directory with:
+
+```powershell
+python tools/import_add_bestiary.py
+```
+
+Milestone 1 behavior:
+
+- scans actual PDF pages 4 through 438 only
+- skips actual PDF pages 1 through 3
+- skips appendices and index beginning at actual PDF page 439
+- writes raw page text to
+  `import_work/adventures_dark_and_deep_bestiary/raw_pages/page_###.txt`
+- writes a draft content pack to
+  `data/content_packs/imported/adventures_dark_and_deep_bestiary/`
+- writes a report to
+  `import_work/adventures_dark_and_deep_bestiary/import_report.txt`
+
+Milestone 1 intentionally supports only likely single-entry monster records.
+Entries with repeated stat-block labels or multi-variant layouts are deferred
+and reported as `multi_variant_stat_block_not_supported_yet` instead of being
+split into unreliable records. Appendices and index content are skipped.
+
+The imported ADD content pack is intended to live beside the earlier monster
+manual import output rather than overwrite it. Combined monster views can now
+load the core monster catalog together with imported content packs and sort the
+records alphabetically by display name while keeping same-name, different-source
+records distinct by ID and source.
+
+Imported JSON records may carry optional source metadata and later-edit
+protection hints such as:
+
+- `import_metadata.source_id`
+- `import_metadata.source_name`
+- `import_metadata.source_type`
+- `import_metadata.source_file`
+- `import_metadata.source_page`
+- `import_metadata.source_record_id`
+- `import_metadata.import_method`
+- `import_metadata.import_version`
+- `import_metadata.original_name`
+- `import_metadata.normalized_name`
+- `custom_record`
+- `manual_override`
+- `protected_fields`
+
+These fields are forward-looking compatibility hooks for multi-source monster
+catalog work. They are optional and backward-compatible with the current app
+because the gameplay layer does not yet depend on a full Bestiary editor.
+
 If the Python runtime used for the import command does not have a PDF reader
 available, the importer exits with a clear message. The core game itself
 remains dependency-free; this importer is optional tooling for building the
 editable monster catalog.
+
+Current source/import roadmap:
+
+1. Source registry / source-path validation
+2. Monster importer baseline continuation
+3. Magic item importer
+4. Mundane equipment importer
+5. Spell importer
+6. Treasure-table importer
+7. Module / keyed-location importer
+8. Generator/world-system importers later
+
+Version 0.8.13 completes Step 1 only. No new content import happens in this
+milestone, and the existing monster/manual/appendix/JSON/ADD importer behavior
+is preserved.
 
 Version 0.8.1 adds a lightweight key-NPC and faction-interaction phase
 framework. Once a recurring NPC becomes prominent enough, they can be promoted
@@ -318,6 +491,7 @@ database on its next launch.
 - `app/key_npcs.py`: key-NPC promotion and faction-phase helpers
 - `app/interaction_text.py`: interaction template formatting helpers
 - `app/exporters.py`: plain-text export formatting helpers
+- `app/source_registry.py`: source registry loading and validation helpers
 - `app/timeline.py`: structured timeline logging and recurring-NPC helpers
 - `app/checks.py`: generic d20 checks, outcomes, and state consequences
 - `app/generators/`: focused procedural generators
@@ -327,7 +501,11 @@ database on its next launch.
 - `data/tables/key_npc_tables.json`: key-NPC and relationship-phase text
 - `data/tables/npc_depth_tables.json`: placeholder recurring-NPC depth text
 - `data/saves/`: local SQLite saves
+- `data/source_registry.json`: editable source registry for local import
+  sources
 - `tools/importers/`: monster manual import tooling
+- `tools/validate_sources.py`: source-registry and source-path validation
+  command
 - `tests/`: standard-library unit tests
 
 ## Editing generation tables
@@ -467,8 +645,11 @@ reconstruction, reproducible seed behavior, downtime consequence outcomes,
 timeline logging, recurring-NPC promotion, key-NPC promotion, relationship
 records, faction-phase behavior, GUI mode helper routing, recap formatting,
 equipment slots, bulk and encumbrance behavior, monster-manual stat-block
-parsing/import tooling, and older-save compatibility from the supported
-v0.8.4+ baseline.
+parsing/import tooling, monster appendix parsing/import tooling, and
+older-save compatibility from the supported v0.8.4+ baseline. Source-registry
+coverage also validates editable source entries, duplicate detection, allowed
+domains/statuses, required-vs-optional missing paths, and summary reporting
+without requiring real PDFs.
 
 Stress coverage now also exercises messy user behavior through the public game
 state API: actions before world generation, actions before character creation,
@@ -493,6 +674,12 @@ Minimal guard behavior added for this coverage:
 The app has a lightweight exploration game loop, calendar/downtime framework,
 and character scaffold, but not tactical combat. Visual maps, detailed combat
 resolution, multiplayer, and web/server features are intentionally deferred.
+
+Monster-system direction is also intentionally staged. The near-term sequence
+is: strengthen multi-source monster import architecture, add one more monster
+source, build a read/write Bestiary workflow, and only then wire region/rarity
+monster selection into regular play. Spells, gear, arms, armor, and all image
+support remain deferred until that monster-data pipeline is stable.
 
 Future direction: a player character may eventually retire and remain in the
 same generated world as an NPC. That should build on the existing world and NPC
