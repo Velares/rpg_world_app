@@ -1,5 +1,9 @@
 {
-  "generated_at": "2026-06-22T16:24:55.250407+00:00",
+  "generated_at": "2026-06-26T06:21:39.592063+00:00",
+  "source_id": "mandbmaster_combined_monster_manual",
+  "source_title": "MandBmaster Combined Monster Manual",
+  "source_status": "active",
+  "source_path": "C:\\Users\\chrismata\\Documents\\Codex\\2026-06-19\\continue-development-on-https-github-com\\repo\\data\\import_sources\\mandbmaster.pdf",
   "source_pdf": "mandbmaster.pdf",
   "books_processed": [
     1,

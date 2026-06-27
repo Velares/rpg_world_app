@@ -3,11 +3,37 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.13`
+- Current development version on `main`: `v0.8.14`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
 ## Latest completed work
+
+Version 0.8.14 adds Step 2 monster-importer readiness work on `main`:
+
+- Added reusable source-registry lookup helpers so monster importer tools can
+  resolve registered source metadata without duplicating path/status logic.
+- Added canonical monster source IDs and a shared resolver in
+  `tools/importers/monster_manual_schema.py` for the combined manual PDF and
+  the ADD Bestiary PDF.
+- Made the monster manual importer, appendix importer, JSON preview importer,
+  and ADD Bestiary importer source-registry aware while preserving direct path
+  override support.
+- Standardized importer report headers so they now include importer name,
+  source ID, source title, source status, source path mode, output paths, and
+  next recommended action text.
+- Added `python tools/monster_import_status.py` to show registered monster
+  sources, local present/missing status, recommended commands, and primary
+  output paths.
+- Preserved dry-run safety for JSON imports while allowing registered source
+  IDs to flow through `import_metadata.source_id` instead of requiring ad hoc
+  `source_type:source_name` identifiers every time.
+- Added focused monster-import readiness tests and raised the validated
+  `unittest` count to 172 while `python -m compileall .` and
+  `python tools/validate_sources.py` still pass.
+- This milestone hardens monster import entry points and local setup guidance
+  without starting the magic item, mundane equipment, spell, treasure, module,
+  or generator importer milestones yet.
 
 Version 0.8.13 adds the Step 1 source-registry and source-path validation
 foundation on `main`:
@@ -516,7 +542,7 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 163 tests passing with
+- Current verification: 172 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.
@@ -525,9 +551,8 @@ Version 0.7 hardened the data-driven generation foundation:
   19 total sources, 1 present file, 18 missing expected files, 3 warnings, and
   0 errors because the missing files are optional active or inactive
   references rather than required active sources.
-- The monster-manual importer tests pass, but the expected default source PDF
-  may differ by local filename casing. The current workspace rerun used
-  `data/import_sources/MandBmaster.pdf` successfully.
+- The monster-manual importer tests pass, and the current registered local PDF
+  path reruns cleanly from `data/import_sources/mandbmaster.pdf`.
 - The new appendix importer also reran successfully against
   `data/import_sources/MandBmaster.pdf`, producing 2,981 appendix records with
   2,586 matched references, 395 unmatched references, 0 ambiguous matches,
@@ -668,9 +693,13 @@ Version 0.7 hardened the data-driven generation foundation:
   audit report
 - `data/import_reports/monster_appendix_unmatched_review.txt` - grouped
   unmatched appendix review artifact
+- `tools/monster_import_status.py` - registered monster-source readiness and
+  recommended command summary
 - `tools/validate_sources.py` - source-registry and local path validation
   command
 - `tests/test_core.py` - automated test suite
+- `tests/test_monster_import_readiness.py` - source-aware importer readiness
+  coverage
 - `tests/test_source_registry.py` - source-registry validation coverage
 - `tests/test_stress.py` - stress and illogical-action regression coverage
 - `AGENTS.md` - named AI roles and coordinated operating model

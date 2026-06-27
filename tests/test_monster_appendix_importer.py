@@ -18,6 +18,20 @@ from tools.importers.monster_appendix_importer import (
     normalize_monster_reference_name,
     parse_appendix_records_from_pages,
 )
+from tools.importers.monster_manual_schema import ResolvedMonsterSource
+
+
+def sample_source_info(path: str = "sample.pdf") -> ResolvedMonsterSource:
+    return ResolvedMonsterSource(
+        source_id="test.monsters.appendix",
+        source_title="Sample Appendix Source",
+        source_status="active",
+        source_path=Path(path),
+        path_display=path,
+        exists=True,
+        used_path_override=True,
+        registry_status=None,
+    )
 
 
 def sample_monster_catalog() -> dict[str, object]:
@@ -222,7 +236,10 @@ LEVEL II
         self.assertIn("Elemental Prince | normalized=elementalprince | count=2", review_text)
         self.assertIn("suggestions: UNIHORN JACKAL", review_text)
         report_text = build_appendix_report_text(
-            source_pdf_path=Path("sample.pdf"),
+            source_info=sample_source_info(),
+            output_path=Path("appendix_catalog.json"),
+            report_path=Path("appendix_report.txt"),
+            unmatched_review_path=Path("appendix_unmatched.txt"),
             sections_detected=["Appendix D: MONSTERS BY TERRAIN TYPE"],
             records=records,
             skipped_rows=[],
@@ -253,7 +270,7 @@ Unknown Beast
             result = build_appendix_catalog_from_pages(
                 pages,
                 "sample.pdf",
-                Path("sample.pdf"),
+                sample_source_info(),
                 catalog_path,
             )
         self.assertEqual(result.records_parsed, 2)

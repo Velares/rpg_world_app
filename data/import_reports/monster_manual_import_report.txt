@@ -1,7 +1,17 @@
 Monster Manual Import Report
 ============================
 
-Source PDF path: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_sources\mandbmaster.pdf
+Importer: monster_manual_importer
+Source ID: mandbmaster_combined_monster_manual
+Source title: MandBmaster Combined Monster Manual
+Source status: active
+Source path used: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_sources\mandbmaster.pdf
+Source path mode: registry/default
+Registered expected path: data/import_sources/mandbmaster.pdf
+Input file present: yes
+Catalog output path: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\catalogs\monsters\monster_catalog.json
+Report output path: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_reports\monster_manual_import_report.txt
+
 Page ranges processed: Book 1: actual pages 2-115, Book 2: actual pages 124-220
 Candidate headings detected: 379
 Candidate headings rejected as running headers or invalid entries: 111
@@ -133,3 +143,7 @@ Duplicate IDs:
 First and last monster detected per book:
 - Book 1: first=ACANOPYORNIS, last=WYRDWOLF
 - Book 2: first=AGARINID, last=ZOMBIE, HOUND
+
+Next recommended action:
+- Review monster_manual_import_report.txt for missing expected fields and rejected headings.
+- Use monster_catalog.json as the current source-preserving monster catalog artifact.

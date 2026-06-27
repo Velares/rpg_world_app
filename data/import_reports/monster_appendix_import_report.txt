@@ -1,7 +1,18 @@
 Monster Appendix Import Report
 ==============================
 
-Source PDF path: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_sources\mandbmaster.pdf
+Importer: monster_appendix_importer
+Source ID: mandbmaster_combined_monster_manual
+Source title: MandBmaster Combined Monster Manual
+Source status: active
+Source path used: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_sources\mandbmaster.pdf
+Source path mode: registry/default
+Registered expected path: data/import_sources/mandbmaster.pdf
+Input file present: yes
+Catalog output path: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\catalogs\monsters\monster_appendix_catalog.json
+Report output path: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_reports\monster_appendix_import_report.txt
+Unmatched review output path: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_reports\monster_appendix_unmatched_review.txt
+
 Page ranges processed: Book 1: actual pages 117-122, Book 2: actual pages 221-229
 Appendix sections detected: 6
 Appendix rows parsed: 2981
@@ -462,3 +473,7 @@ Top repeated unmatched normalized names:
 
 Skipped/rejected rows:
 - None
+
+Next recommended action:
+- Review monster_appendix_unmatched_review.txt before normalizing unresolved appendix names.
+- Keep monster_appendix_catalog.json separate from the main monster catalog.

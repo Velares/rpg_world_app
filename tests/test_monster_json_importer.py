@@ -251,6 +251,38 @@ class MonsterJsonImporterTests(unittest.TestCase):
             self.assertIn("Record 2: Missing required field: name", preview["errors"])
             self.assertIn("Dry run only: yes", report_path.read_text(encoding="utf-8"))
 
+    def test_registry_source_id_is_preserved_in_preview_and_metadata(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            json_path = root / "sample_import.json"
+            json_path.write_text(
+                json.dumps([{"name": "Ash Lurker", "size": "Medium", "source_record_id": "ASH-1"}]),
+                encoding="utf-8",
+            )
+            catalog_path = root / "monster_catalog.json"
+            catalog_path.write_text(json.dumps(sample_existing_catalog()), encoding="utf-8")
+            report_path = root / "report.txt"
+            preview_path = root / "preview.json"
+
+            result = import_monsters_from_json(
+                json_path,
+                catalog_path=catalog_path,
+                report_path=report_path,
+                preview_output_path=preview_path,
+                source_id="mandbmaster_combined_monster_manual",
+            )
+
+            first_record = result.preview["normalized_records"][0]
+            self.assertEqual(
+                first_record["import_metadata"]["source_id"],
+                "mandbmaster_combined_monster_manual",
+            )
+            self.assertEqual(
+                result.preview["source"]["id"],
+                "mandbmaster_combined_monster_manual",
+            )
+            self.assertIn("Source ID: mandbmaster_combined_monster_manual", result.report_text)
+
 
 if __name__ == "__main__":
     unittest.main()

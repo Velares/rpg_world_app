@@ -29,12 +29,15 @@ from tools.importers.monster_manual_importer import (
 )
 from tools.importers.monster_manual_schema import (
     ADD_BESTIARY_ENTRY_PAGE_RANGE,
+    ADD_BESTIARY_SOURCE_ID,
     DEFAULT_ADD_BESTIARY_IMPORT_REPORT,
     DEFAULT_ADD_BESTIARY_MONSTERS_JSON,
     DEFAULT_ADD_BESTIARY_PACK_JSON,
     DEFAULT_ADD_BESTIARY_PDF,
     DEFAULT_ADD_BESTIARY_RAW_PAGES_DIR,
     DEFAULT_MONSTER_CATALOG_JSON,
+    ResolvedMonsterSource,
+    resolve_registered_monster_source,
 )
 
 
@@ -168,6 +171,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--catalog",
         default=str(DEFAULT_MONSTER_CATALOG_JSON),
         help="Path to the existing core monster catalog for same-name comparisons.",
+    )
+    parser.add_argument(
+        "--source-id",
+        default=ADD_BESTIARY_SOURCE_ID,
+        help="Registered monster source ID to use for source metadata and default path resolution.",
+    )
+    parser.add_argument(
+        "--allow-inactive-source",
+        action="store_true",
+        help="Allow import from a source registry entry marked inactive, comparison-only, or deprecated.",
     )
     return parser.parse_args(argv)
 
@@ -485,7 +498,7 @@ def validate_imported_monster_pack(
     return errors
 
 
-def build_pack_metadata() -> dict[str, Any]:
+def build_pack_metadata(source_info: ResolvedMonsterSource) -> dict[str, Any]:
     return {
         "id": SOURCE_PACK_ID,
         "name": SOURCE_PACK_NAME,
@@ -494,12 +507,22 @@ def build_pack_metadata() -> dict[str, Any]:
         "license": LICENSE,
         "enabled": True,
         "description": DESCRIPTION,
+        "source_id": source_info.source_id,
+        "source_title": source_info.source_title,
+        "source_status": source_info.source_status,
     }
 
 
-def build_monsters_payload(monsters: list[dict[str, Any]], source_pdf: Path) -> dict[str, Any]:
+def build_monsters_payload(
+    monsters: list[dict[str, Any]],
+    source_pdf: Path,
+    source_info: ResolvedMonsterSource,
+) -> dict[str, Any]:
     return {
         "generated_at": datetime.now(UTC).isoformat(),
+        "source_id": source_info.source_id,
+        "source_title": source_info.source_title,
+        "source_status": source_info.source_status,
         "source_pdf": source_pdf.name,
         "source_pack": SOURCE_PACK_ID,
         "monster_count": len(monsters),
@@ -509,7 +532,11 @@ def build_monsters_payload(monsters: list[dict[str, Any]], source_pdf: Path) -> 
 
 def build_import_report(
     *,
-    source_pdf: Path,
+    source_info: ResolvedMonsterSource,
+    pack_json_path: Path,
+    monsters_json_path: Path,
+    raw_pages_dir: Path,
+    report_path: Path,
     scanned_pages: list[int],
     skipped_pages: list[str],
     monsters: list[dict[str, Any]],
@@ -528,7 +555,19 @@ def build_import_report(
         "Adventures Dark and Deep Bestiary Import Report",
         "===============================================",
         "",
-        f"Source PDF path: {source_pdf}",
+        "Importer: add_bestiary_importer",
+        f"Source ID: {source_info.source_id or 'None'}",
+        f"Source title: {source_info.source_title or 'None'}",
+        f"Source status: {source_info.source_status or 'None'}",
+        f"Source path used: {source_info.source_path}",
+        f"Source path mode: {'direct override' if source_info.used_path_override else 'registry/default'}",
+        f"Registered expected path: {source_info.path_display}",
+        f"Input file present: {'yes' if source_info.exists else 'no'}",
+        f"Pack output path: {pack_json_path}",
+        f"Monsters output path: {monsters_json_path}",
+        f"Raw pages directory: {raw_pages_dir}",
+        f"Report output path: {report_path}",
+        "",
         f"Actual PDF pages scanned: {scanned_pages[0]}-{scanned_pages[-1] if scanned_pages else 0}",
         f"Pages skipped: {', '.join(skipped_pages)}",
         f"Accepted monster count: {len(monsters)}",
@@ -568,14 +607,26 @@ def build_import_report(
         )
     else:
         lines.append("- None")
+    lines.extend(
+        [
+            "",
+            "Next recommended action:",
+            f"- Review {report_path.name} before promoting this import pack into wider catalog workflows.",
+            f"- Inspect raw page extracts under {raw_pages_dir} when a candidate entry is rejected.",
+        ]
+    )
     return "\n".join(lines) + "\n"
 
 
 def build_import_from_pages(
     pages: list[ImportPage],
     *,
-    source_pdf: Path,
+    source_info: ResolvedMonsterSource,
     existing_catalog_path: Path = DEFAULT_MONSTER_CATALOG_JSON,
+    pack_json_path: Path = DEFAULT_ADD_BESTIARY_PACK_JSON,
+    monsters_json_path: Path = DEFAULT_ADD_BESTIARY_MONSTERS_JSON,
+    raw_pages_dir: Path = DEFAULT_ADD_BESTIARY_RAW_PAGES_DIR,
+    report_path: Path = DEFAULT_ADD_BESTIARY_IMPORT_REPORT,
 ) -> AddBestiaryImportResult:
     entries, pages_without_records = split_entries_from_pages(pages)
     accepted_monsters: list[dict[str, Any]] = []
@@ -624,10 +675,18 @@ def build_import_from_pages(
     )
     same_name_warnings = find_same_name_different_source_records(existing_records + accepted_monsters)
 
-    pack = build_pack_metadata()
-    monsters_payload = build_monsters_payload(accepted_monsters, source_pdf)
+    pack = build_pack_metadata(source_info)
+    monsters_payload = build_monsters_payload(
+        accepted_monsters,
+        source_info.source_path,
+        source_info,
+    )
     report_text = build_import_report(
-        source_pdf=source_pdf,
+        source_info=source_info,
+        pack_json_path=pack_json_path,
+        monsters_json_path=monsters_json_path,
+        raw_pages_dir=raw_pages_dir,
+        report_path=report_path,
         scanned_pages=[page.actual_page for page in pages],
         skipped_pages=["1-3", "439+"],
         monsters=accepted_monsters,
@@ -662,19 +721,26 @@ def import_add_bestiary(
     raw_pages_dir: Path = DEFAULT_ADD_BESTIARY_RAW_PAGES_DIR,
     report_path: Path = DEFAULT_ADD_BESTIARY_IMPORT_REPORT,
     existing_catalog_path: Path = DEFAULT_MONSTER_CATALOG_JSON,
+    source_id: str = ADD_BESTIARY_SOURCE_ID,
+    allow_inactive_source: bool = False,
 ) -> AddBestiaryImportResult:
-    pdf_path.parent.mkdir(parents=True, exist_ok=True)
-    if not pdf_path.exists():
-        raise FileNotFoundError(
-            "ADD Bestiary PDF not found: "
-            f"{pdf_path}\nPlace the PDF at the documented import_sources path before running the importer."
-        )
-    pages = extract_pdf_pages(pdf_path)
+    source_info = resolve_registered_monster_source(
+        default_source_id=ADD_BESTIARY_SOURCE_ID,
+        override_path=pdf_path if pdf_path != DEFAULT_ADD_BESTIARY_PDF else None,
+        source_id=source_id,
+        allow_inactive_source=allow_inactive_source,
+    )
+    source_info.source_path.parent.mkdir(parents=True, exist_ok=True)
+    pages = extract_pdf_pages(source_info.source_path)
     write_raw_pages(pages, raw_pages_dir)
     result = build_import_from_pages(
         pages,
-        source_pdf=pdf_path,
+        source_info=source_info,
         existing_catalog_path=existing_catalog_path,
+        pack_json_path=pack_json_path,
+        monsters_json_path=monsters_json_path,
+        raw_pages_dir=raw_pages_dir,
+        report_path=report_path,
     )
     pack_json_path.parent.mkdir(parents=True, exist_ok=True)
     monsters_json_path.parent.mkdir(parents=True, exist_ok=True)
@@ -698,6 +764,8 @@ def main(argv: list[str] | None = None) -> int:
             raw_pages_dir=Path(args.raw_pages_dir),
             report_path=Path(args.report),
             existing_catalog_path=Path(args.catalog),
+            source_id=args.source_id,
+            allow_inactive_source=args.allow_inactive_source,
         )
     except (FileNotFoundError, RuntimeError) as exc:
         print(exc)

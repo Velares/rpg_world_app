@@ -22,7 +22,10 @@ from tools.importers.monster_manual_schema import (
     EXPECTED_COMMON_FIELDS,
     EXPECTED_REQUIRED_FIELDS,
     LABEL_TO_KEY,
+    MONSTER_MANUAL_SOURCE_ID,
+    ResolvedMonsterSource,
     SECTION_LABELS,
+    resolve_registered_monster_source,
 )
 
 
@@ -104,6 +107,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--report",
         default=str(DEFAULT_MONSTER_IMPORT_REPORT),
         help="Path to write the import report text file.",
+    )
+    parser.add_argument(
+        "--source-id",
+        default=MONSTER_MANUAL_SOURCE_ID,
+        help="Registered monster source ID to use for source metadata and default path resolution.",
+    )
+    parser.add_argument(
+        "--allow-inactive-source",
+        action="store_true",
+        help="Allow import from a source registry entry marked inactive, comparison-only, or deprecated.",
     )
     return parser.parse_args(argv)
 
@@ -619,7 +632,9 @@ def dotted_has_value(mapping: dict[str, Any], dotted_key: str) -> bool:
 
 def build_report_text(
     *,
-    source_pdf_path: Path,
+    source_info: ResolvedMonsterSource,
+    output_path: Path,
+    report_path: Path,
     candidate_headings_detected: int,
     rejected_candidate_count: int,
     monsters_detected: int,
@@ -637,7 +652,17 @@ def build_report_text(
         "Monster Manual Import Report",
         "============================",
         "",
-        f"Source PDF path: {source_pdf_path}",
+        "Importer: monster_manual_importer",
+        f"Source ID: {source_info.source_id or 'None'}",
+        f"Source title: {source_info.source_title or 'None'}",
+        f"Source status: {source_info.source_status or 'None'}",
+        f"Source path used: {source_info.source_path}",
+        f"Source path mode: {'direct override' if source_info.used_path_override else 'registry/default'}",
+        f"Registered expected path: {source_info.path_display}",
+        f"Input file present: {'yes' if source_info.exists else 'no'}",
+        f"Catalog output path: {output_path}",
+        f"Report output path: {report_path}",
+        "",
         f"Page ranges processed: {page_ranges}",
         f"Candidate headings detected: {candidate_headings_detected}",
         f"Candidate headings rejected as running headers or invalid entries: {rejected_candidate_count}",
@@ -671,11 +696,19 @@ def build_report_text(
         lines.append(
             f"- Book {book}: first={first_name or 'None'}, last={last_name or 'None'}"
         )
+    lines.extend(
+        [
+            "",
+            "Next recommended action:",
+            f"- Review {report_path.name} for missing expected fields and rejected headings.",
+            f"- Use {output_path.name} as the current source-preserving monster catalog artifact.",
+        ]
+    )
     return "\n".join(lines) + "\n"
 
 
 def build_catalog_from_pages(
-    pages: list[ImportPage], source_file_name: str, source_pdf_path: Path
+    pages: list[ImportPage], source_file_name: str, source_info: ResolvedMonsterSource
 ) -> MonsterImportResult:
     entries, rejected_candidates, candidate_headings_detected = detect_entries_from_pages(pages)
     monsters: list[dict[str, Any]] = []
@@ -725,6 +758,10 @@ def build_catalog_from_pages(
 
     catalog = {
         "generated_at": datetime.now(UTC).isoformat(),
+        "source_id": source_info.source_id,
+        "source_title": source_info.source_title,
+        "source_status": source_info.source_status,
+        "source_path": str(source_info.source_path),
         "source_pdf": source_file_name,
         "books_processed": [book for book, _, _ in BOOK_ENTRY_RANGES],
         "page_ranges_processed": [
@@ -735,7 +772,9 @@ def build_catalog_from_pages(
         "monsters": monsters,
     }
     report_text = build_report_text(
-        source_pdf_path=source_pdf_path,
+        source_info=source_info,
+        output_path=DEFAULT_MONSTER_CATALOG_JSON,
+        report_path=DEFAULT_MONSTER_IMPORT_REPORT,
         candidate_headings_detected=candidate_headings_detected,
         rejected_candidate_count=len(rejected_candidates),
         monsters_detected=len(entries),
@@ -765,15 +804,36 @@ def import_monster_manual(
     pdf_path: Path = DEFAULT_MONSTER_MANUAL_PDF,
     output_path: Path = DEFAULT_MONSTER_CATALOG_JSON,
     report_path: Path = DEFAULT_MONSTER_IMPORT_REPORT,
+    *,
+    source_id: str = MONSTER_MANUAL_SOURCE_ID,
+    allow_inactive_source: bool = False,
 ) -> MonsterImportResult:
-    if not pdf_path.exists():
-        raise FileNotFoundError(f"Monster manual PDF not found: {pdf_path}")
+    source_info = resolve_registered_monster_source(
+        default_source_id=MONSTER_MANUAL_SOURCE_ID,
+        override_path=pdf_path if pdf_path != DEFAULT_MONSTER_MANUAL_PDF else None,
+        source_id=source_id,
+        allow_inactive_source=allow_inactive_source,
+    )
 
-    pages = extract_pdf_pages(pdf_path)
+    pages = extract_pdf_pages(source_info.source_path)
     result = build_catalog_from_pages(
         pages=pages,
-        source_file_name=pdf_path.name,
-        source_pdf_path=pdf_path,
+        source_file_name=source_info.source_path.name,
+        source_info=source_info,
+    )
+    result.report_text = build_report_text(
+        source_info=source_info,
+        output_path=output_path,
+        report_path=report_path,
+        candidate_headings_detected=result.candidate_headings_detected,
+        rejected_candidate_count=result.rejected_candidate_count,
+        monsters_detected=result.monsters_detected,
+        monsters_parsed=result.monsters_parsed,
+        warnings=result.warnings,
+        rejected_candidates=result.rejected_candidates,
+        missing_expected_fields=result.missing_expected_fields,
+        duplicate_ids=result.duplicate_ids,
+        first_last_by_book=result.first_last_by_book,
     )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.parent.mkdir(parents=True, exist_ok=True)
@@ -792,6 +852,8 @@ def main(argv: list[str] | None = None) -> int:
             pdf_path=Path(args.pdf_path),
             output_path=Path(args.output),
             report_path=Path(args.report),
+            source_id=args.source_id,
+            allow_inactive_source=args.allow_inactive_source,
         )
     except FileNotFoundError as exc:
         print(exc)

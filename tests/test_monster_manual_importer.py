@@ -13,6 +13,20 @@ from tools.importers.monster_manual_importer import (
     parse_monster_entry,
     split_entries_from_pages,
 )
+from tools.importers.monster_manual_schema import ResolvedMonsterSource
+
+
+def sample_source_info(path: str = "sample.pdf") -> ResolvedMonsterSource:
+    return ResolvedMonsterSource(
+        source_id="test.monsters.sample",
+        source_title="Sample Monster Source",
+        source_status="active",
+        source_path=Path(path),
+        path_display=path,
+        exists=True,
+        used_path_override=True,
+        registry_status=None,
+    )
 
 
 class MonsterManualImporterTests(unittest.TestCase):
@@ -330,7 +344,7 @@ LEVEL/X.P.: 3 / 120 + 3/hp
 """,
             ),
         ]
-        result = build_catalog_from_pages(pages, "sample.pdf", Path("sample.pdf"))
+        result = build_catalog_from_pages(pages, "sample.pdf", sample_source_info())
         self.assertEqual(result.monsters_detected, 2)
         self.assertEqual(result.monsters_parsed, 2)
         self.assertEqual(result.first_last_by_book[1], ("ACANOPYORNIS", "ACANOPYORNIS"))
@@ -379,7 +393,7 @@ LEVEL/X.P.: 2 / 40 + 1/hp
 """,
             ),
         ]
-        result = build_catalog_from_pages(pages, "sample.pdf", Path("sample.pdf"))
+        result = build_catalog_from_pages(pages, "sample.pdf", sample_source_info())
         names = [monster["sort_name"] for monster in result.catalog["monsters"]]
         self.assertEqual(names, ["LASSOO", "ZOMBIE, HOUND"])
         self.assertEqual(result.duplicate_ids, [])
@@ -468,7 +482,7 @@ General information: test
 """,
             ),
         ]
-        result = build_catalog_from_pages(pages, "sample.pdf", Path("sample.pdf"))
+        result = build_catalog_from_pages(pages, "sample.pdf", sample_source_info())
         by_name = {monster["sort_name"]: monster for monster in result.catalog["monsters"]}
         self.assertEqual(
             by_name["CEILIDH HORROR"]["stat_block"]["level_xp"]["raw"],
@@ -549,7 +563,7 @@ LEVEL/X.P.: 4 / 210 + 2/hp
 """,
             ),
         ]
-        result = build_catalog_from_pages(pages, "sample.pdf", Path("sample.pdf"))
+        result = build_catalog_from_pages(pages, "sample.pdf", sample_source_info())
         dragon = next(monster for monster in result.catalog["monsters"] if monster["sort_name"] == "DRAGON, CRUSTACEAN")
         self.assertEqual(dragon["stat_block"]["intelligence"], "Low")
         self.assertEqual(dragon["stat_block"]["alignment"], "Neutral")
@@ -581,7 +595,7 @@ General information : Furnace worms are rare and unusual beasts.
 """,
             )
         ]
-        result = build_catalog_from_pages(pages, "sample.pdf", Path("sample.pdf"))
+        result = build_catalog_from_pages(pages, "sample.pdf", sample_source_info())
         worm = result.catalog["monsters"][0]
         self.assertIsNone(worm["stat_block"]["intelligence"])
         self.assertIn("Worm, Furnace: stat_block.intelligence", result.missing_expected_fields)

@@ -8,6 +8,9 @@ from pathlib import Path
 from app.source_registry import (
     DEFAULT_SOURCE_REGISTRY_PATH,
     build_source_validation_report,
+    get_source_registry_entry,
+    get_source_registry_entry_status,
+    list_source_registry_entry_statuses,
     load_source_registry_payload,
     validate_source_registry,
 )
@@ -49,6 +52,32 @@ class SourceRegistryTests(unittest.TestCase):
         )
         self.assertEqual(advanced["title"], "Advanced Labyrinth Lord")
         self.assertIn("data/import_sources/", advanced["expected_path"])
+
+    def test_entry_lookup_and_status_helpers_return_registered_source(self):
+        entry = get_source_registry_entry(
+            "mandbmaster_combined_monster_manual",
+            path=DEFAULT_SOURCE_REGISTRY_PATH,
+        )
+        self.assertIsNotNone(entry)
+        assert entry is not None
+        self.assertEqual(entry["domain"], "monsters")
+
+        status = get_source_registry_entry_status(
+            "mandbmaster_combined_monster_manual",
+            path=DEFAULT_SOURCE_REGISTRY_PATH,
+        )
+        self.assertIsNotNone(status)
+        assert status is not None
+        self.assertEqual(status.source_id, "mandbmaster_combined_monster_manual")
+        self.assertEqual(status.domain, "monsters")
+
+    def test_domain_filtered_status_list_returns_monster_sources(self):
+        statuses = list_source_registry_entry_statuses(
+            path=DEFAULT_SOURCE_REGISTRY_PATH,
+            domain="monsters",
+        )
+        self.assertTrue(statuses)
+        self.assertTrue(all(item.domain == "monsters" for item in statuses))
 
     def test_duplicate_source_id_detection(self):
         with tempfile.TemporaryDirectory() as temp:

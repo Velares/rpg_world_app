@@ -9,3 +9,5 @@ venv/
 .vscode/
 import_work/
 data/import_sources/
+local_sources/
+*.pdf

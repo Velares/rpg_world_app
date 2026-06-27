@@ -17,6 +17,7 @@ from tools.importers.add_bestiary_importer import (
     is_add_bestiary_entry_page,
     validate_imported_monster_pack,
 )
+from tools.importers.monster_manual_schema import ResolvedMonsterSource
 
 
 def simple_entry_text(name: str = "Aerian") -> str:
@@ -43,6 +44,19 @@ General: A winged hunter of the high ruins.
 Combat: It dives quickly and retreats if bloodied.
 Appearance: Feathered scales and glassy eyes.
 """
+
+
+def sample_source_info(path: str = "sample_add.pdf") -> ResolvedMonsterSource:
+    return ResolvedMonsterSource(
+        source_id="test.monsters.add",
+        source_title="Sample ADD Source",
+        source_status="active",
+        source_path=Path(path),
+        path_display=path,
+        exists=True,
+        used_path_override=True,
+        registry_status=None,
+    )
 
 
 class AddBestiaryImporterTests(unittest.TestCase):
@@ -151,7 +165,7 @@ Appearance: Soldiers carry oversized mandibles.
         ]
         result = build_import_from_pages(
             pages,
-            source_pdf=Path("sample_add.pdf"),
+            source_info=sample_source_info(),
             existing_catalog_path=Path(__file__).resolve().parents[1] / "data" / "catalogs" / "monsters" / "monster_catalog.json",
         )
         self.assertEqual(result.accepted_count, 1)

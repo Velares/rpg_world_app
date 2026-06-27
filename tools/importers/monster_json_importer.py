@@ -10,6 +10,7 @@ from pathlib import Path
 if __package__ in {None, ""}:
     sys.path.append(str(Path(__file__).resolve().parents[2]))
 
+from app.source_registry import get_source_registry_entry_status
 from tools.importers.monster_appendix_importer import load_monster_catalog
 from tools.importers.monster_catalog_import import (
     JSON_IMPORT_VERSION,
@@ -66,6 +67,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Optional human-readable source name override.",
     )
     parser.add_argument(
+        "--source-id",
+        default=None,
+        help="Optional registered monster source ID to preserve in import metadata and reports.",
+    )
+    parser.add_argument(
         "--source-type",
         default="json",
         help="Source type label to record in import metadata.",
@@ -85,6 +91,7 @@ def import_monsters_from_json(
     report_path: Path = DEFAULT_MONSTER_JSON_IMPORT_REPORT,
     preview_output_path: Path = DEFAULT_MONSTER_JSON_IMPORT_PREVIEW,
     output_catalog_path: Path = DEFAULT_MONSTER_CATALOG_JSON,
+    source_id: str | None = None,
     source_name: str | None = None,
     source_type: str = "json",
     write_catalog: bool = False,
@@ -92,10 +99,24 @@ def import_monsters_from_json(
     if not json_path.exists():
         raise FileNotFoundError(f"JSON monster source not found: {json_path}")
 
+    registry_status = None
+    if source_id:
+        registry_status = get_source_registry_entry_status(source_id)
+        if registry_status is None:
+            raise ValueError(f"Unknown source registry ID: {source_id}")
+        if registry_status.domain != "monsters":
+            raise ValueError(
+                f"Source '{source_id}' is registered under domain '{registry_status.domain}', not 'monsters'."
+            )
+
+    effective_source_name = source_name or (
+        registry_status.title if registry_status is not None else json_path.stem
+    )
     existing_catalog = load_monster_catalog(catalog_path)
     normalized_records, warnings, errors = load_json_monster_records(
         json_path,
-        source_name=source_name or json_path.stem,
+        source_id_override=registry_status.source_id if registry_status is not None else None,
+        source_name=effective_source_name,
         source_type=source_type,
         import_version=JSON_IMPORT_VERSION,
     )
@@ -106,8 +127,10 @@ def import_monsters_from_json(
     )
     preview = build_json_import_preview(
         source_path=json_path,
-        source_name=source_name or json_path.stem,
+        source_id=registry_status.source_id if registry_status is not None else source_id,
+        source_name=effective_source_name,
         source_type=source_type,
+        source_status=registry_status.status if registry_status is not None else None,
         existing_catalog=existing_catalog,
         merge_result=merge_result,
         errors=errors,
@@ -115,8 +138,10 @@ def import_monsters_from_json(
     )
     report_text = build_json_import_report_text(
         source_path=json_path,
-        source_name=source_name or json_path.stem,
+        source_id=registry_status.source_id if registry_status is not None else source_id,
+        source_name=effective_source_name,
         source_type=source_type,
+        source_status=registry_status.status if registry_status is not None else None,
         existing_catalog=existing_catalog,
         merge_result=merge_result,
         errors=errors,
@@ -155,6 +180,7 @@ def main(argv: list[str] | None = None) -> int:
             report_path=Path(args.report),
             preview_output_path=Path(args.preview_output),
             output_catalog_path=Path(args.output_catalog),
+            source_id=args.source_id,
             source_name=args.source_name,
             source_type=args.source_type,
             write_catalog=args.write_catalog,

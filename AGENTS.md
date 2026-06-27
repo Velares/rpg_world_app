@@ -190,6 +190,9 @@ Use this sequence:
   keep working.
 - Preserve `TableLoader` diagnostics and safe fallbacks when content is
   malformed, missing, or empty.
+- Raw local PDF source files belong under `local_sources/pdf/` unless a
+  milestone explicitly changes that setup guidance. They are local-only inputs
+  and should not be committed.
 - Keep the project weird-fantasy / sword-and-sorcery compatible. Combat and
   travel preparation should matter, and inventory or encumbrance systems
   should support meaningful preparation without becoming overly complex too

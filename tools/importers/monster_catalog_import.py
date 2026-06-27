@@ -183,6 +183,7 @@ def normalize_sections(raw_record: dict[str, Any]) -> dict[str, str | None]:
 
 def build_import_metadata(
     *,
+    source_id_override: str | None,
     source_name: str,
     source_type: str,
     source_file: str,
@@ -196,7 +197,7 @@ def build_import_metadata(
     extra_fields: list[str],
     notes: list[str],
 ) -> dict[str, Any]:
-    source_id = f"{source_type}:{source_name}"
+    source_id = source_id_override or f"{source_type}:{source_name}"
     metadata: dict[str, Any] = {
         "source_id": source_id,
         "source_name": source_name,
@@ -219,6 +220,7 @@ def build_import_metadata(
 def normalize_monster_record(
     raw_record: Any,
     *,
+    source_id_override: str | None = None,
     source_name: str,
     source_type: str,
     source_file: str,
@@ -297,6 +299,7 @@ def normalize_monster_record(
         "last_updated": coerce_text(raw_record.get("last_updated")),
         "source_conflicts": [],
         "import_metadata": build_import_metadata(
+            source_id_override=source_id_override,
             source_name=source["name"],
             source_type=source["type"],
             source_file=str(source["file"]),
@@ -330,6 +333,7 @@ def iter_json_monster_records(payload: Any) -> list[Any]:
 def load_json_monster_records(
     json_path: Path,
     *,
+    source_id_override: str | None = None,
     source_name: str | None = None,
     source_type: str = "json",
     import_method: str = "json_import",
@@ -342,6 +346,7 @@ def load_json_monster_records(
     for index, raw_record in enumerate(iter_json_monster_records(payload), start=1):
         normalized = normalize_monster_record(
             raw_record,
+            source_id_override=source_id_override,
             source_name=source_name or json_path.stem,
             source_type=source_type,
             source_file=json_path.name,
@@ -537,8 +542,10 @@ def merge_monster_catalog(
 def build_json_import_preview(
     *,
     source_path: Path,
+    source_id: str | None,
     source_name: str,
     source_type: str,
+    source_status: str | None = None,
     existing_catalog: dict[str, Any],
     merge_result: MonsterCatalogMergeResult,
     errors: list[str],
@@ -549,9 +556,11 @@ def build_json_import_preview(
         "generated_at": datetime.now(UTC).isoformat(),
         "import_version": JSON_IMPORT_VERSION,
         "source": {
+            "id": source_id,
             "path": str(source_path),
             "name": source_name,
             "type": source_type,
+            "status": source_status,
             "method": "json_import",
         },
         "base_monster_count": existing_catalog.get("monster_count", len(existing_catalog.get("monsters", []))),
@@ -579,8 +588,10 @@ def build_json_import_preview(
 def build_json_import_report_text(
     *,
     source_path: Path,
+    source_id: str | None,
     source_name: str,
     source_type: str,
+    source_status: str | None = None,
     existing_catalog: dict[str, Any],
     merge_result: MonsterCatalogMergeResult,
     errors: list[str],
@@ -592,9 +603,11 @@ def build_json_import_report_text(
         "Monster JSON Import Report",
         "==========================",
         "",
+        f"Source ID: {source_id or 'None'}",
         f"Source path: {source_path}",
         f"Source name: {source_name}",
         f"Source type: {source_type}",
+        f"Source status: {source_status or 'unregistered_path'}",
         f"Base catalog monster count: {existing_catalog.get('monster_count', len(existing_catalog.get('monsters', [])))}",
         f"Normalized JSON records: {len(merge_result.normalized_records)}",
         f"Dry run only: {'no' if apply_safe_additions else 'yes'}",
@@ -668,7 +681,7 @@ def build_json_import_report_text(
         [
             "",
             "Source metadata conventions:",
-            "- import_metadata.source_id = '<source_type>:<source_name>'",
+            "- import_metadata.source_id preserves a registered source ID when one is supplied; otherwise it falls back to '<source_type>:<source_name>'.",
             "- import_metadata preserves source_name, source_type, source_file, source_page, source_record_id, import_method, import_version, original_name, normalized_name, warnings, notes, and any extra source fields.",
             "- manual/custom protection relies on custom_record, manual_override, protected_fields, or a manual/custom source type.",
             "",

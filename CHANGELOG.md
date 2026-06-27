@@ -3,6 +3,34 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## v0.8.14 - monster importer readiness and source-aware tooling
+
+- Added reusable source-registry lookup helpers so importer tooling can load
+  registered source metadata and resolved expected paths without duplicating
+  validation logic.
+- Added canonical monster source IDs plus a shared resolver in
+  `tools/importers/monster_manual_schema.py` for the combined manual PDF and
+  the ADD Bestiary source.
+- Made `tools/importers/monster_manual_importer.py`,
+  `tools/importers/monster_appendix_importer.py`,
+  `tools/importers/monster_json_importer.py`, and
+  `tools/importers/add_bestiary_importer.py` source-registry aware while
+  preserving direct path override support.
+- Standardized monster importer reports so they include importer name, source
+  ID, source title, source status, source path mode, input/output paths, and
+  next recommended action text.
+- Added `tools/monster_import_status.py` as a practical readiness command for
+  registered monster sources, present/missing local files, recommended import
+  commands, and primary output paths.
+- Preserved dry-run safety for JSON import preview while allowing a registered
+  source ID to flow through `import_metadata.source_id`.
+- Added focused readiness tests for registry lookup helpers, source-aware
+  manual/appendix/JSON/ADD behavior, inactive-source blocking, and the new
+  monster import status helper.
+- Raised the validated suite to 172 passing `unittest` tests while
+  `python -m compileall .` and `python tools/validate_sources.py` continue to
+  pass.
+
 ## v0.8.13 - source registry and source-path validation
 
 - Added an editable source registry at `data/source_registry.json` as Step 1

@@ -105,6 +105,73 @@ class SourceRegistryValidationResult:
         return dict(sorted(Counter(item.status for item in self.path_statuses).items()))
 
 
+@dataclass
+class SourceRegistryEntryStatus:
+    entry: dict[str, Any]
+    path_status: SourceRegistryPathStatus
+
+    @property
+    def source_id(self) -> str:
+        return self.path_status.source_id
+
+    @property
+    def title(self) -> str:
+        return self.path_status.title
+
+    @property
+    def domain(self) -> str:
+        return self.path_status.domain
+
+    @property
+    def role(self) -> str:
+        return self.path_status.role
+
+    @property
+    def status(self) -> str:
+        return self.path_status.status
+
+    @property
+    def expected_path(self) -> str:
+        return self.path_status.expected_path
+
+    @property
+    def resolved_path(self) -> Path:
+        return self.path_status.resolved_path
+
+    @property
+    def exists(self) -> bool:
+        return self.path_status.exists
+
+    @property
+    def file_required(self) -> bool:
+        return self.path_status.file_required
+
+    @property
+    def active_for_rules(self) -> bool:
+        return self.path_status.active_for_rules
+
+    @property
+    def active_for_content(self) -> bool:
+        return self.path_status.active_for_content
+
+    @property
+    def importer_family(self) -> str:
+        return str(self.entry.get("importer_family") or "")
+
+    @property
+    def priority(self) -> int:
+        value = self.entry.get("priority")
+        return int(value) if isinstance(value, int) else 0
+
+    @property
+    def notes(self) -> str:
+        return str(self.entry.get("notes") or "")
+
+    @property
+    def license_or_usage_note(self) -> str:
+        return str(self.entry.get("license_or_usage_note") or "")
+
+
 def load_source_registry_payload(path: Path = DEFAULT_SOURCE_REGISTRY_PATH) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
@@ -246,6 +313,47 @@ def validate_source_registry_entries(
         warnings=warnings,
         errors=errors,
     )
+
+
+def get_source_registry_entry(
+    source_id: str,
+    *,
+    path: Path = DEFAULT_SOURCE_REGISTRY_PATH,
+) -> dict[str, Any] | None:
+    payload = load_source_registry_payload(path)
+    for entry in get_source_registry_entries(payload):
+        if entry.get("source_id") == source_id:
+            return entry
+    return None
+
+
+def get_source_registry_entry_status(
+    source_id: str,
+    *,
+    path: Path = DEFAULT_SOURCE_REGISTRY_PATH,
+    project_root: Path = PROJECT_ROOT,
+) -> SourceRegistryEntryStatus | None:
+    result = validate_source_registry(path, project_root=project_root)
+    for entry, path_status in zip(result.entries, result.path_statuses):
+        if path_status.source_id == source_id:
+            return SourceRegistryEntryStatus(entry=entry, path_status=path_status)
+    return None
+
+
+def list_source_registry_entry_statuses(
+    *,
+    path: Path = DEFAULT_SOURCE_REGISTRY_PATH,
+    project_root: Path = PROJECT_ROOT,
+    domain: str | None = None,
+) -> list[SourceRegistryEntryStatus]:
+    result = validate_source_registry(path, project_root=project_root)
+    statuses = [
+        SourceRegistryEntryStatus(entry=entry, path_status=path_status)
+        for entry, path_status in zip(result.entries, result.path_statuses)
+    ]
+    if domain is not None:
+        statuses = [status for status in statuses if status.domain == domain]
+    return statuses
 
 
 def build_source_validation_report(result: SourceRegistryValidationResult) -> str:

@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.8.13 is a local, single-player weird-fantasy starting-region generator
+Version 0.8.14 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -229,14 +229,22 @@ source registry command:
 python tools/validate_sources.py
 ```
 
+Then check the monster-specific readiness summary with:
+
+```powershell
+python tools/monster_import_status.py
+```
+
 The editable source registry lives at:
 
 ```text
 data/source_registry.json
 ```
 
-This registry is Step 1 of the current 8-step source/import roadmap. It does
-not import content by itself. Instead, it records:
+The source registry is Step 1 of the current 8-step source/import roadmap.
+Version 0.8.14 completes Step 2 importer-readiness hardening for monsters
+without adding a new content domain importer. The registry itself does not
+import content by itself. Instead, it records:
 
 - source identity
 - source domain
@@ -280,11 +288,23 @@ Run the importer from the project directory with:
 python tools/importers/monster_manual_importer.py
 ```
 
+The manual importer is now source-registry aware. It defaults to the
+registered source ID `mandbmaster_combined_monster_manual`, reports the
+registered source title/status/path in its text report, and still allows a
+direct path override when needed:
+
+```powershell
+python tools/importers/monster_manual_importer.py C:\path\to\other_manual.pdf --source-id mandbmaster_combined_monster_manual
+```
+
 Run the appendix importer from the project directory with:
 
 ```powershell
 python tools/importers/monster_appendix_importer.py
 ```
+
+Like the main manual importer, the appendix importer now reports source ID,
+source title, source status, input path mode, and output paths in its report.
 
 The appendix importer writes:
 
@@ -307,6 +327,13 @@ The importer tooling now also includes an early multi-source JSON import path:
 
 ```powershell
 python tools/importers/monster_json_importer.py path/to/monsters.json
+```
+
+If the JSON file belongs to a registered monster source, preserve that source
+identity explicitly:
+
+```powershell
+python tools/importers/monster_json_importer.py path/to/monsters.json --source-id mandbmaster_combined_monster_manual
 ```
 
 By default this is a dry-run preview. It normalizes JSON monster records into
@@ -344,6 +371,9 @@ Run from the project directory with:
 ```powershell
 python tools/import_add_bestiary.py
 ```
+
+The ADD importer is also source-registry aware and now includes the registry
+source ID, title, status, input path mode, and output paths in its report.
 
 Milestone 1 behavior:
 
@@ -397,7 +427,7 @@ editable monster catalog.
 Current source/import roadmap:
 
 1. Source registry / source-path validation
-2. Monster importer baseline continuation
+2. Monster importer baseline continuation and import readiness
 3. Magic item importer
 4. Mundane equipment importer
 5. Spell importer
@@ -405,9 +435,10 @@ Current source/import roadmap:
 7. Module / keyed-location importer
 8. Generator/world-system importers later
 
-Version 0.8.13 completes Step 1 only. No new content import happens in this
-milestone, and the existing monster/manual/appendix/JSON/ADD importer behavior
-is preserved.
+Version 0.8.13 completed Step 1. Version 0.8.14 keeps the current
+monster/manual/appendix/JSON/ADD parser behavior stable while adding
+source-registry-aware command/report behavior, a dedicated monster import
+status helper, and clearer import-readiness documentation.
 
 Version 0.8.1 adds a lightweight key-NPC and faction-interaction phase
 framework. Once a recurring NPC becomes prominent enough, they can be promoted
@@ -504,6 +535,8 @@ database on its next launch.
 - `data/source_registry.json`: editable source registry for local import
   sources
 - `tools/importers/`: monster manual import tooling
+- `tools/monster_import_status.py`: monster-source readiness and recommended
+  import commands
 - `tools/validate_sources.py`: source-registry and source-path validation
   command
 - `tests/`: standard-library unit tests
