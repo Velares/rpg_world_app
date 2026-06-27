@@ -59,6 +59,10 @@ Treat the following as core systems unless a milestone explicitly changes them:
   `PROJECT_STATUS.md` should hold current status and next milestone guidance.
   A source registry, when present, should hold detailed source metadata.
   Do not turn `AGENTS.md` into a full PDF inventory.
+- Before path-sensitive setup or importer work, verify the active repository
+  root with `git rev-parse --show-toplevel` and compare it to any user-shared
+  VS Code or filesystem path. If they do not match, stop and confirm the
+  correct clone before editing files.
 
 ## Atlas - Project Planner Agent
 
@@ -190,9 +194,9 @@ Use this sequence:
   keep working.
 - Preserve `TableLoader` diagnostics and safe fallbacks when content is
   malformed, missing, or empty.
-- Raw local PDF source files belong under `local_sources/pdf/` unless a
-  milestone explicitly changes that setup guidance. They are local-only inputs
-  and should not be committed.
+- Raw local PDF source files for this repository belong under
+  `data/import_sources/` unless a milestone explicitly changes that setup
+  guidance. They are local-only inputs and should not be committed.
 - Keep the project weird-fantasy / sword-and-sorcery compatible. Combat and
   travel preparation should matter, and inventory or encumbrance systems
   should support meaningful preparation without becoming overly complex too
