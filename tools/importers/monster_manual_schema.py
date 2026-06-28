@@ -16,8 +16,12 @@ SOURCE_REGISTRY_PATH = DEFAULT_SOURCE_REGISTRY_PATH
 MONSTER_MANUAL_SOURCE_ID = "mandbmaster_combined_monster_manual"
 MONSTER_APPENDIX_SOURCE_ID = MONSTER_MANUAL_SOURCE_ID
 ADD_BESTIARY_SOURCE_ID = "adventures_dark_and_deep_bestiary"
+MEGADUNGEON_MONSTER_SOURCE_ID = "megadungeon_monster_manual"
 DEFAULT_MONSTER_MANUAL_PDF = (
     PROJECT_ROOT / "data" / "import_sources" / "mandbmaster.pdf"
+)
+DEFAULT_MEGADUNGEON_MONSTER_PDF = (
+    PROJECT_ROOT / "data" / "import_sources" / "MegadungeonMonsterManual.pdf"
 )
 DEFAULT_MONSTER_CATALOG_JSON = (
     PROJECT_ROOT / "data" / "catalogs" / "monsters" / "monster_catalog.json"
