@@ -262,6 +262,7 @@ Appearance: Soldiers carry oversized mandibles.
             monsters = get_monsters_sorted_by_name(
                 catalog_path=core_catalog,
                 content_packs_root=root / "content_packs" / "imported",
+                include_imported=True,
             )
             warnings = find_same_name_different_source_records(monsters)
         self.assertEqual(
