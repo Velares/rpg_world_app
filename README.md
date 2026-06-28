@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.8.19 is a local, single-player weird-fantasy starting-region generator
+Version 0.8.20 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -542,15 +542,16 @@ Current source/import roadmap:
 8. Module / keyed-location importer, then generator/world-system importers
    later
 
-An in-app **Editors** hub is now available from the shared actions. It lists
-Monster, NPC, PC, Item, and Spell editor categories. The Monster editor opens a
-sub-hub with **Canonical Candidate Review** (persistent approve/reject/needs-review
+An in-app **Editors** hub is now available from the shared actions, and a
+separate **Monster Editor** shared action is also visible directly in the
+sidebar for quick access. The Monster Editor hub (reachable either way) shows
+sub-options for **Canonical Candidate Review** (persistent approve/reject/needs-review
 decisions) and **Normalized Monster Review** (read-only inspection of MandBmaster
 and Megadungeon normalized records with missing/placeholder/low-confidence
 highlighting, plus a `Correct Fields` dialog that stores field-level corrections
 in `data/import_reviews/monster_normalized_field_corrections.json` without
-modifying the generated preview files). The other editor categories are
-placeholders with clear "not implemented yet" messages.
+modifying the generated preview files). The Editors hub also lists NPC, PC, Item,
+and Spell editor placeholders with clear "not implemented yet" messages.
 
 Combat roadmap: the project is preparing a modular, rules-neutral d20 OSR-style
 combat resolution model. After monster data is imported and reviewed, earlier

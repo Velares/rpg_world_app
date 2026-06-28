@@ -131,6 +131,7 @@ SHARED_ACTIONS = (
     "Load World",
     "Data Diagnostics",
     "Monster Import Review",
+    "Monster Editor",
     "Editors",
     "Clear Output",
 )
@@ -765,6 +766,7 @@ class RPGWorldApp(tk.Tk):
             "Export Character": self.export_character,
             "Data Diagnostics": self.view_data_diagnostics,
             "Monster Import Review": self.view_monster_import_review,
+            "Monster Editor": self.view_monster_editor,
             "Editors": self.view_editors,
             "Save World": self.save_world,
             "Load World": self.load_world,

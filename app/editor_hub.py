@@ -63,9 +63,13 @@ def editors_hub_summary_text() -> str:
         "",
         "Select an editor category from the list.",
         "",
-        "- Monster Editor / Monster Import Review: inspect and approve/reject "
-        "monster canonical-group candidates or review normalized monster records.",
-        "- NPC Editor, PC Editor, Item Editor, Spell Editor: placeholders for future work.",
+        "Available categories:",
+        "",
+        "- Monster Editor — inspect and correct monster records.",
+        "- NPC Editor — not implemented yet.",
+        "- PC Editor — not implemented yet.",
+        "- Item Editor — not implemented yet.",
+        "- Spell Editor — not implemented yet.",
     ]
     return "\n".join(lines)
 
@@ -83,10 +87,12 @@ def monster_editor_summary_text() -> str:
         "",
         "Select a review surface.",
         "",
-        "- Canonical Candidate Review: compare cross-source monster groups and "
-        "approve, reject, or mark them as needing review.",
-        "- Normalized Monster Review: inspect normalized records from each source "
-        "without merging them.",
+        "- Canonical Candidate Review: approve/reject likely same-monster matches.",
+        "- Normalized Monster Review: inspect imported monster records and correct fields.",
+        "",
+        "Use Canonical Candidate Review to approve/reject likely same-monster matches.",
+        "Use Normalized Monster Review to inspect imported monster records and correct fields.",
+        "Corrections are stored separately and do not modify source imports or the live catalog.",
         "",
         "Review only. No source records or catalogs are modified.",
     ]

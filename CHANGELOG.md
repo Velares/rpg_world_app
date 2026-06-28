@@ -25,6 +25,26 @@ history is the more reliable source.
   for reusable logic; and a future combat test/stress harness for balance
   auditing.
 
+## v0.8.20 - Direct Monster Editor Action
+
+- Added a direct, clearly visible **Monster Editor** shared action in
+  `app/gui.py` so it appears as a first-class sidebar button.
+- Mapped the new action directly to `view_monster_editor` in the sidebar command
+  map.
+- Kept the existing **Editors** hub intact; its Monster Editor entry still routes
+  to the same Monster Editor sub-hub.
+- Updated `app/editor_hub.py` summary text so the Monster Editor hub and Editors
+  hub clearly list the available categories and explain:
+  - Canonical Candidate Review for approve/reject decisions on same-monster matches
+  - Normalized Monster Review for inspecting imported records and correcting fields
+  - Corrections stored separately without modifying source imports or live catalog
+- Updated `tests/test_editor_hub.py` to verify the direct Monster Editor action,
+  command-map mapping, and that the Editors hub and placeholder messages remain
+  intact.
+- Confirmed no live catalog JSON modification, no importer changes, and no record
+  merging.
+- Raised the validated suite to 295 passing `unittest` tests.
+
 ## v0.8.19 - Normalized Monster Field Correction Storage
 
 - Added correction-store helpers to `app/monster_editor.py`:

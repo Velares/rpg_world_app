@@ -3,7 +3,7 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.19`
+- Current development version on `main`: `v0.8.20`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
@@ -98,6 +98,30 @@ Placeholder and mapping policy for that future normalized layer:
   exact mapping.
 
 ## Latest completed work
+
+Version 0.8.20 adds a direct, clearly visible **Monster Editor** shared action
+on `main`:
+
+- Added "Monster Editor" to the shared action list in `app/gui.py` so it
+  appears as a first-class sidebar button alongside "Editors" and "Monster
+  Import Review".
+- Mapped the new "Monster Editor" action directly to `view_monster_editor` in
+  the sidebar command map.
+- Kept the existing **Editors** hub intact; its Monster Editor entry still
+  routes to the same `view_monster_editor` hub.
+- Updated `app/editor_hub.py` so the Monster Editor hub text and the Editors hub
+  text clearly state the available categories and the purpose of each
+  sub-option, including the requested instructions about canonical candidate
+  review, normalized review, and correction storage.
+- Added focused tests to `tests/test_editor_hub.py` proving that:
+  - "Monster Editor" appears in `SHARED_ACTIONS`
+  - the sidebar command map maps "Monster Editor" to `view_monster_editor`
+  - the Editors hub still exists and exposes the same categories
+  - placeholder editors still show helpful not-implemented messages
+  - no live catalog JSON is modified.
+- Raised the validated suite to 295 passing `unittest` tests while
+  `python -m compileall .`, `python tools/validate_sources.py`, and
+  `python tools/monster_import_status.py` continue to pass.
 
 Version 0.8.19 adds persistent correction storage for normalized monster
 records on `main`:
@@ -722,6 +746,8 @@ Version 0.7 hardened the data-driven generation foundation:
 - Editable source registry plus local source-path validation tooling.
 - In-app `Editors` hub with a live Monster Import Review entry point and
   placeholders for NPC, PC, Item, and Spell editors.
+- Direct **Monster Editor** shared action in the sidebar, plus the same Monster
+  Editor sub-hub reachable from the Editors hub.
 - Monster Editor sub-hub with Canonical Candidate Review and Normalized Monster
   Review surfaces.
 - Read-only Normalized Monster Review of MandBmaster and Megadungeon preview
@@ -777,7 +803,7 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 293 tests passing with
+- Current verification: 295 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.

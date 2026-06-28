@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
 
 import app.gui
 from app.editor_hub import (
@@ -16,6 +17,10 @@ from tools.importers.monster_manual_schema import (
     DEFAULT_MONSTER_APPENDIX_CATALOG_JSON,
     DEFAULT_MONSTER_CATALOG_JSON,
 )
+
+
+ROOT = Path(__file__).resolve().parents[1]
+TABLES = ROOT / "data" / "tables"
 
 
 class EditorHubTests(unittest.TestCase):
@@ -48,8 +53,32 @@ class EditorHubTests(unittest.TestCase):
     def test_summary_text(self) -> None:
         text = editors_hub_summary_text()
         self.assertIn("EDITORS HUB", text)
-        self.assertIn("Monster Editor / Monster Import Review", text)
-        self.assertIn("placeholders for future work", text)
+        self.assertIn("Monster Editor", text)
+        self.assertIn("NPC Editor", text)
+        self.assertIn("PC Editor", text)
+        self.assertIn("Item Editor", text)
+        self.assertIn("Spell Editor", text)
+
+    def test_monster_editor_action_in_shared_actions(self) -> None:
+        self.assertIn("Monster Editor", app.gui.SHARED_ACTIONS)
+
+    def test_monster_editor_action_in_command_map(self) -> None:
+        self.assertIn("view_monster_editor", dir(app.gui.RPGWorldApp))
+        try:
+            import tkinter as tk
+            from app.database import Database
+            from app.game_state import GameState
+            from app.table_loader import TableLoader
+
+            tables = TableLoader(TABLES)
+            database = Database(ROOT / "data" / "saves" / "worlds.db")
+            game_state = GameState(tables, database)
+            instance = app.gui.RPGWorldApp(game_state)
+            self.assertIn("Monster Editor", instance.sidebar_command_map)
+            self.assertEqual(instance.sidebar_command_map["Monster Editor"], instance.view_monster_editor)
+            instance.destroy()
+        except tk.TclError as exc:
+            self.skipTest(f"Tk not available for command-map inspection: {exc}")
 
     def test_app_has_view_editors_method(self) -> None:
         self.assertTrue(hasattr(app.gui.RPGWorldApp, "view_editors"))
@@ -87,7 +116,18 @@ class EditorHubTests(unittest.TestCase):
         self.assertIn("MONSTER EDITOR", text)
         self.assertIn("Canonical Candidate Review", text)
         self.assertIn("Normalized Monster Review", text)
-        self.assertIn("Review only", text)
+        self.assertIn(
+            "Use Canonical Candidate Review to approve/reject likely same-monster matches.",
+            text,
+        )
+        self.assertIn(
+            "Use Normalized Monster Review to inspect imported monster records and correct fields.",
+            text,
+        )
+        self.assertIn(
+            "Corrections are stored separately and do not modify source imports or the live catalog.",
+            text,
+        )
 
     def test_app_has_view_monster_editor_method(self) -> None:
         self.assertTrue(hasattr(app.gui.RPGWorldApp, "view_monster_editor"))
