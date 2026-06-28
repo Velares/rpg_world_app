@@ -1,0 +1,34 @@
+Megadungeon Normalized Monster Preview
+======================================
+
+Source ID: megadungeon_monster_manual
+Source title: Megadungeon Monster Manual
+Source file: MegadungeonMonsterManual.pdf
+Source pack: imported.megadungeon_monster_manual
+Normalized preview records: 253
+Preview output: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_reports\megadungeon_normalized_monster_preview.json
+Preview report: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_reports\megadungeon_normalized_monster_preview_report.txt
+
+Review status counts:
+- mapped_with_placeholders: 139
+- needs_review: 114
+
+Aarakocra normalized sample
+- id: normalized.megadungeon_monster_manual.aarakocra
+- pages: 9-9
+- number_appearing: 2d4
+- movement: 30 (Fly 120)
+- xp: 33
+- mapping_confidence[number_appearing]: medium
+- review_status: needs_review
+- placeholders: category, challenge, environment, hit_points, intelligence, level, region, size
+
+Rock Manta normalized sample
+- id: normalized.megadungeon_monster_manual.rockmanta
+- pages: 83-83
+- number_appearing: 1d2
+- movement: See Below
+- xp: 47 , 95, 220, 650
+- mapping_confidence[number_appearing]: medium
+- review_status: mapped_with_placeholders
+- placeholders: category, challenge, environment, hit_points, intelligence, level, monster_type, region

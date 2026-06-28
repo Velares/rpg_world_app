@@ -13,6 +13,14 @@ from typing import Any
 if __package__ in {None, ""}:
     sys.path.append(str(Path(__file__).resolve().parents[2]))
 
+from app.monster_normalization import (
+    CONFIDENCE_HIGH,
+    CONFIDENCE_MEDIUM,
+    NormalizedMonster,
+    finalize_normalized_monster,
+    map_inferred_field,
+    map_normalized_field,
+)
 from tools.importers.monster_manual_importer import is_page_marker_line, normalize_line
 from tools.importers.monster_manual_schema import (
     DEFAULT_MEGADUNGEON_MONSTER_PDF,
@@ -37,6 +45,12 @@ DEFAULT_CONTENT_PACK_JSON = DEFAULT_CONTENT_PACK_DIR / "pack.json"
 DEFAULT_CONTENT_MONSTERS_JSON = DEFAULT_CONTENT_PACK_DIR / "monsters.json"
 DEFAULT_CONTENT_PACK_REPORT_PATH = (
     PROJECT_ROOT / "data" / "import_reports" / "megadungeon_monster_content_pack_report.txt"
+)
+DEFAULT_NORMALIZED_PREVIEW_OUTPUT_PATH = (
+    PROJECT_ROOT / "data" / "import_reports" / "megadungeon_normalized_monster_preview.json"
+)
+DEFAULT_NORMALIZED_PREVIEW_REPORT_PATH = (
+    PROJECT_ROOT / "data" / "import_reports" / "megadungeon_normalized_monster_preview_report.txt"
 )
 DEFAULT_RAW_TEXT_EXCERPT_LENGTH = 500
 CONTENT_PACK_ID = "imported.megadungeon_monster_manual"
@@ -112,6 +126,13 @@ UPPERCASE_WORD_PATTERN = re.compile(r"^[A-Z]{2,}$")
 HEADING_TOKEN_PATTERN = re.compile(r"[A-Za-z]+(?:['-][A-Za-z]+)*|[A-Z]{2,}|&|\d+")
 LABEL_TOKEN_NORMALIZER = re.compile(r"[^a-z]+")
 SLUG_TOKEN_PATTERN = re.compile(r"[^a-z0-9]+")
+TYPE_KEYWORD_HINTS: tuple[tuple[str, str], ...] = (
+    ("humanoid", "humanoid"),
+    ("humanoids", "humanoid"),
+    ("undead", "undead"),
+    ("dragon", "dragon"),
+    ("dragons", "dragon"),
+)
 
 
 @dataclass
@@ -194,6 +215,20 @@ class MegadungeonContentPackResult:
     report_text: str
 
 
+@dataclass
+class MegadungeonNormalizedPreviewResult:
+    source_id: str
+    source_title: str
+    source_file: str
+    source_pack: str
+    normalized_records: list[dict[str, Any]]
+    preview_path: Path
+    report_path: Path
+    report_text: str
+    record_count: int
+    review_status_counts: dict[str, int]
+
+
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Probe or generate dry-run preview output for the Megadungeon Monster Manual PDF."
@@ -218,6 +253,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--write-content-pack",
         action="store_true",
         help="Write a separate imported content pack without modifying live monster catalogs.",
+    )
+    parser.add_argument(
+        "--normalized-preview",
+        action="store_true",
+        help="Map the separate Megadungeon content pack into the shared normalized schema preview without modifying live monster catalogs.",
     )
     parser.add_argument(
         "--pages",
@@ -250,6 +290,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--content-pack-report",
         default=str(DEFAULT_CONTENT_PACK_REPORT_PATH),
         help="Path for the Megadungeon content-pack report text file.",
+    )
+    parser.add_argument(
+        "--normalized-preview-output",
+        default=str(DEFAULT_NORMALIZED_PREVIEW_OUTPUT_PATH),
+        help="Path for the normalized monster preview JSON output.",
+    )
+    parser.add_argument(
+        "--normalized-preview-report",
+        default=str(DEFAULT_NORMALIZED_PREVIEW_REPORT_PATH),
+        help="Path for the normalized monster preview text report.",
     )
     parser.add_argument(
         "--source-id",
@@ -919,12 +969,226 @@ def write_content_pack(
     )
 
 
+def load_content_pack_records(monsters_json_path: Path = DEFAULT_CONTENT_MONSTERS_JSON) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    if not monsters_json_path.exists():
+        raise FileNotFoundError(
+            "Megadungeon content-pack monsters.json not found: "
+            f"{monsters_json_path}\nRun --write-content-pack first to create the separate pack."
+        )
+    payload = json.loads(monsters_json_path.read_text(encoding="utf-8"))
+    monsters = payload.get("monsters", []) if isinstance(payload, dict) else []
+    if not isinstance(monsters, list):
+        raise ValueError(
+            f"Megadungeon content-pack file must contain a top-level 'monsters' list: {monsters_json_path}"
+        )
+    return payload if isinstance(payload, dict) else {}, [record for record in monsters if isinstance(record, dict)]
+
+
+def infer_monster_type(raw_text: str) -> tuple[str | None, str | None]:
+    lower_text = raw_text.casefold()
+    for keyword, value in TYPE_KEYWORD_HINTS:
+        if keyword in lower_text:
+            return value, f"Inferred monster_type='{value}' from raw text keyword '{keyword}'."
+    return None, None
+
+
+def map_megadungeon_content_record_to_normalized(record: dict[str, Any]) -> dict[str, Any]:
+    display_name = str(record.get("name") or "").strip() or "Unknown Monster"
+    source_id = str(record.get("source_id") or MEGADUNGEON_MONSTER_SOURCE_ID)
+    source_slug = str(record.get("slug") or slugify_name(display_name))
+    normalized = NormalizedMonster(
+        id=f"normalized.{source_id}.{source_slug}",
+        canonical_name=display_name,
+        display_name=display_name,
+        aliases=[],
+        source_id=source_id,
+        source_title=str(record.get("source_title") or "Megadungeon Monster Manual"),
+        source_file=str(record.get("source_file") or DEFAULT_MEGADUNGEON_MONSTER_PDF.name),
+        source_page_start=record.get("actual_page_start") if isinstance(record.get("actual_page_start"), int) else None,
+        source_page_end=record.get("actual_page_end") if isinstance(record.get("actual_page_end"), int) else None,
+        source_entry_id=str(record.get("id") or ""),
+        source_slug=source_slug,
+        raw_stat_block=str(record.get("raw_stat_block") or ""),
+        raw_text=str(record.get("raw_text") or ""),
+    )
+    normalized.normalized_fields.extend(
+        [
+            "id",
+            "canonical_name",
+            "display_name",
+            "source_id",
+            "source_title",
+            "source_file",
+            "source_page_start",
+            "source_page_end",
+            "source_entry_id",
+            "source_slug",
+            "raw_stat_block",
+            "raw_text",
+        ]
+    )
+    normalized.mapping_confidence.update(
+        {
+            "id": CONFIDENCE_MEDIUM,
+            "canonical_name": CONFIDENCE_HIGH,
+            "display_name": CONFIDENCE_HIGH,
+            "source_id": CONFIDENCE_HIGH,
+            "source_title": CONFIDENCE_HIGH,
+            "source_file": CONFIDENCE_HIGH,
+            "source_page_start": CONFIDENCE_HIGH,
+            "source_page_end": CONFIDENCE_HIGH,
+            "source_entry_id": CONFIDENCE_HIGH,
+            "source_slug": CONFIDENCE_HIGH,
+            "raw_stat_block": CONFIDENCE_HIGH,
+            "raw_text": CONFIDENCE_HIGH,
+        }
+    )
+
+    map_normalized_field(normalized, "armor_class", record.get("armor_class"), CONFIDENCE_HIGH)
+    map_normalized_field(normalized, "hit_dice", record.get("hit_dice"), CONFIDENCE_HIGH)
+    map_normalized_field(normalized, "movement", record.get("movement"), CONFIDENCE_HIGH)
+    map_normalized_field(normalized, "attacks", record.get("attacks"), CONFIDENCE_HIGH)
+    map_normalized_field(normalized, "damage", record.get("damage"), CONFIDENCE_HIGH)
+    map_normalized_field(normalized, "save", record.get("save"), CONFIDENCE_HIGH)
+    map_normalized_field(normalized, "morale", record.get("morale"), CONFIDENCE_HIGH)
+    map_normalized_field(normalized, "alignment", record.get("alignment"), CONFIDENCE_HIGH)
+    map_normalized_field(normalized, "treasure", record.get("treasure"), CONFIDENCE_HIGH)
+    map_normalized_field(normalized, "xp", record.get("xp"), CONFIDENCE_HIGH)
+    map_normalized_field(normalized, "number_appearing", record.get("no_enc"), CONFIDENCE_MEDIUM)
+    map_normalized_field(normalized, "description", record.get("description") or record.get("source_text_excerpt"), CONFIDENCE_HIGH)
+
+    inferred_type, inferred_note = infer_monster_type(normalized.raw_text)
+    if inferred_type is not None and inferred_note is not None:
+        map_inferred_field(normalized, "monster_type", inferred_type, review_note=inferred_note)
+
+    for warning in record.get("warnings", []):
+        if warning not in normalized.review_notes:
+            normalized.review_notes.append(f"Source parser warning: {warning}")
+    parser_status = str(record.get("parser_status") or "").strip()
+    if parser_status and parser_status != "parsed":
+        normalized.review_notes.append(f"Source parser status is '{parser_status}'.")
+    parser_confidence = str(record.get("confidence") or "").strip()
+    if parser_confidence and parser_confidence != "high":
+        normalized.review_notes.append(f"Source parser confidence is '{parser_confidence}'.")
+
+    return finalize_normalized_monster(normalized).to_dict()
+
+
+def build_normalized_preview_report(
+    *,
+    source_id: str,
+    source_title: str,
+    source_file: str,
+    source_pack: str,
+    normalized_records: list[dict[str, Any]],
+    preview_path: Path,
+    report_path: Path,
+) -> str:
+    review_status_counts: dict[str, int] = {}
+    for record in normalized_records:
+        status = str(record.get("review_status") or "unknown")
+        review_status_counts[status] = review_status_counts.get(status, 0) + 1
+
+    lines = [
+        "Megadungeon Normalized Monster Preview",
+        "======================================",
+        "",
+        f"Source ID: {source_id}",
+        f"Source title: {source_title}",
+        f"Source file: {source_file}",
+        f"Source pack: {source_pack}",
+        f"Normalized preview records: {len(normalized_records)}",
+        f"Preview output: {preview_path}",
+        f"Preview report: {report_path}",
+        "",
+        "Review status counts:",
+    ]
+    for key, value in sorted(review_status_counts.items()):
+        lines.append(f"- {key}: {value}")
+
+    by_name = {record["display_name"]: record for record in normalized_records}
+    for sample_name in ("Aarakocra", "Rock Manta"):
+        record = by_name.get(sample_name)
+        if record is None:
+            continue
+        lines.extend(
+            [
+                "",
+                f"{sample_name} normalized sample",
+                f"- id: {record['id']}",
+                f"- pages: {record['source_page_start']}-{record['source_page_end']}",
+                f"- number_appearing: {record['number_appearing']}",
+                f"- movement: {record['movement']}",
+                f"- xp: {record['xp']}",
+                f"- mapping_confidence[number_appearing]: {record['mapping_confidence'].get('number_appearing')}",
+                f"- review_status: {record['review_status']}",
+                f"- placeholders: {', '.join(record['placeholder_fields'][:8]) if record['placeholder_fields'] else 'None'}",
+            ]
+        )
+    return "\n".join(lines) + "\n"
+
+
+def generate_normalized_preview(
+    *,
+    monsters_json_path: Path = DEFAULT_CONTENT_MONSTERS_JSON,
+    preview_output_path: Path = DEFAULT_NORMALIZED_PREVIEW_OUTPUT_PATH,
+    report_path: Path = DEFAULT_NORMALIZED_PREVIEW_REPORT_PATH,
+) -> MegadungeonNormalizedPreviewResult:
+    payload, records = load_content_pack_records(monsters_json_path)
+    normalized_records = [
+        map_megadungeon_content_record_to_normalized(record)
+        for record in records
+    ]
+    review_status_counts: dict[str, int] = {}
+    for record in normalized_records:
+        status = str(record.get("review_status") or "unknown")
+        review_status_counts[status] = review_status_counts.get(status, 0) + 1
+
+    source_id = str(payload.get("source_id") or MEGADUNGEON_MONSTER_SOURCE_ID)
+    source_title = str(payload.get("source_title") or "Megadungeon Monster Manual")
+    source_file = str(payload.get("source_pdf") or DEFAULT_MEGADUNGEON_MONSTER_PDF.name)
+    source_pack = str(payload.get("source_pack") or CONTENT_PACK_ID)
+    preview_payload = {
+        "generated_at": now_utc_iso(),
+        "source_id": source_id,
+        "source_title": source_title,
+        "source_file": source_file,
+        "source_pack": source_pack,
+        "record_count": len(normalized_records),
+        "review_status_counts": review_status_counts,
+        "normalized_monsters": normalized_records,
+    }
+    report_text = build_normalized_preview_report(
+        source_id=source_id,
+        source_title=source_title,
+        source_file=source_file,
+        source_pack=source_pack,
+        normalized_records=normalized_records,
+        preview_path=preview_output_path,
+        report_path=report_path,
+    )
+    write_json_file(preview_output_path, preview_payload)
+    write_text_file(report_path, report_text)
+    return MegadungeonNormalizedPreviewResult(
+        source_id=source_id,
+        source_title=source_title,
+        source_file=source_file,
+        source_pack=source_pack,
+        normalized_records=normalized_records,
+        preview_path=preview_output_path,
+        report_path=report_path,
+        report_text=report_text,
+        record_count=len(normalized_records),
+        review_status_counts=review_status_counts,
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
-    selected_modes = [args.probe, args.dry_run_preview, args.write_content_pack]
+    selected_modes = [args.probe, args.dry_run_preview, args.write_content_pack, args.normalized_preview]
     if sum(1 for mode in selected_modes if mode) != 1:
         print(
-            "Choose exactly one mode: --probe, --dry-run-preview, or --write-content-pack.",
+            "Choose exactly one mode: --probe, --dry-run-preview, --write-content-pack, or --normalized-preview.",
             file=sys.stderr,
         )
         return 2
@@ -949,6 +1213,15 @@ def main(argv: list[str] | None = None) -> int:
                 preview_report_path=Path(args.preview_report),
                 source_id=args.source_id,
                 allow_inactive_source=args.allow_inactive_source,
+            )
+            print(result.report_text, end="")
+            return 0
+
+        if args.normalized_preview:
+            result = generate_normalized_preview(
+                monsters_json_path=Path(args.monsters_json),
+                preview_output_path=Path(args.normalized_preview_output),
+                report_path=Path(args.normalized_preview_report),
             )
             print(result.report_text, end="")
             return 0
