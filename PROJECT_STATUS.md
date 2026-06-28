@@ -601,8 +601,15 @@ Version 0.7 hardened the data-driven generation foundation:
   committing the actual PDFs. Missing optional active files should be treated
   as setup notes, not importer regressions, unless a later milestone marks a
   source as required.
+- `MandBmaster.pdf` remains the stable baseline monster-manual import source.
+- `MegadungeonMonsterManual.pdf` is now tracked as a registered
+  content-source-only PDF that needs a dedicated parser; its title-case
+  `No. Enc` / `Movement` / `Armor Class` / `Hit Dice` / `XP` stat blocks do
+  not match the current `SIZE:`-driven importer assumptions.
 - `data/import_sources/` remains intentionally untracked and should continue to
   hold local-only source PDFs rather than versioned import assets.
+- White Dragon Run remains intentionally omitted from the current monster PDF
+  onboarding plan.
 - Save compatibility is actively maintained for v0.8.4+ data. Much older
   pre-v0.8.4 save experiments are no longer treated as a guaranteed migration
   target for new milestones.

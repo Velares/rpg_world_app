@@ -172,6 +172,21 @@
       "active_for_content": true
     },
     {
+      "source_id": "megadungeon_monster_manual",
+      "title": "Megadungeon Monster Manual",
+      "domain": "monsters",
+      "role": "content_source_only",
+      "status": "active",
+      "expected_path": "data/import_sources/MegadungeonMonsterManual.pdf",
+      "file_required": false,
+      "importer_family": "monster_content_pack_pdf",
+      "priority": 115,
+      "notes": "Registered as a pending dedicated content-pack parser source. Format uses title-case headings plus No. Enc / Movement / Armor Class / Hit Dice / XP stat blocks and does not match the current SIZE-based MandBmaster parser.",
+      "license_or_usage_note": "Local source PDF only; do not commit or redistribute.",
+      "active_for_rules": false,
+      "active_for_content": true
+    },
+    {
       "source_id": "swords_wizardry_monster_books_placeholder",
       "title": "Swords & Wizardry Monster Books (placeholder)",
       "domain": "monsters",
