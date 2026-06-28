@@ -3,6 +3,24 @@
 Notable project milestones are recorded here. Dates are omitted where the Git
 history is the more reliable source.
 
+## Unreleased - monster import roadmap realignment
+
+- Documented the revised long-term monster-import direction: all approved
+  monster sources should eventually feed one normalized master monster
+  catalog rather than remaining only as permanent side-pack outputs.
+- Clarified that current source-specific parsers, previews, and content-pack
+  outputs are staging layers that preserve raw source data and provenance
+  before a later normalization/merge step.
+- Documented a proposed standard normalized monster field set covering core
+  combat/stat data, provenance, raw source text, placeholder tracking,
+  mapping confidence, review state, and future user corrections.
+- Recorded placeholder and mapping policy so missing fields do not block
+  imports, guessed values stay flagged, aliases can map into shared fields,
+  and ambiguous source text remains reviewable.
+- Recorded future review/correction and deduplication expectations: keep
+  source variants distinct, support canonical grouping later, and avoid silent
+  overwrite while multiple sources are still being normalized.
+
 ## v0.8.14 - monster importer readiness and source-aware tooling
 
 - Added reusable source-registry lookup helpers so importer tooling can load

@@ -41,6 +41,16 @@ Treat the following as core systems unless a milestone explicitly changes them:
   before source variants are preserved.
 - Preserve original source title, source page when available, and raw text
   when practical.
+- For monsters, the long-term target is one unified master monster catalog
+  backed by a shared normalized schema. Source-specific parsers, dry runs,
+  previews, and content-pack outputs are staging layers, not the final target.
+- Keep monster import work layered: source-specific parser -> source-preserving
+  parsed record -> normalization/mapping layer -> later deduplication and
+  canonical master catalog merge. Do not collapse those responsibilities into
+  one opaque import step.
+- Missing monster fields should not block import. Preserve null/unknown or
+  explicit placeholder values, record mapping confidence, and flag uncertain
+  fields for later review instead of inventing exact values.
 - Normalize imported material toward the app's internal `Advanced Labyrinth
   Lord` / `Labyrinth Lord` terminology later, while keeping original source
   variants instead of overwriting them.
@@ -51,7 +61,8 @@ Treat the following as core systems unless a milestone explicitly changes them:
 - Do not build one giant generic PDF importer that tries to parse every source
   type the same way.
 - Current source-work priority order is: `source registry and path
-  validation`, `monster importer baseline`, `magic item importer`,
+  validation`, `monster importer baseline`, `normalized monster schema and
+  mapping layer`, `magic item importer`,
   `mundane equipment importer`, `spell importer`, `treasure-table importer`,
   `module / keyed-location importer`, then `generator/world-system importers`
   later.

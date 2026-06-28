@@ -7,6 +7,96 @@
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
+## Monster import direction
+
+The monster-import roadmap is now explicitly aimed at one unified master
+monster catalog built from multiple approved sources.
+
+- `MandBmaster.pdf` remains the stable baseline source and the current
+  source-preserving core import artifact.
+- Megadungeon and later sources may continue to use dedicated parsers, preview
+  reports, and separate staging or content-pack outputs while their mappings
+  are still under review.
+- Those staging outputs are not the final target. The final target is one
+  normalized monster catalog using a shared standard schema, preserved source
+  provenance, and a reviewable mapping pipeline.
+
+Planned monster-import layers:
+
+1. Source-specific parser that understands one PDF/source format well.
+2. Source-preserving parsed records or preview/content-pack output.
+3. A normalization/mapping layer that converts source fields into one shared
+   standard monster schema.
+4. Review and correction artifacts for uncertain, missing, or placeholder
+   fields.
+5. Later canonical grouping and deduplication so one monster concept can keep
+   multiple source variants without silent overwrite.
+
+Proposed normalized monster schema fields for the future master catalog:
+
+- `id`
+- `canonical_name`
+- `display_name`
+- `aliases`
+- `source_id`
+- `source_title`
+- `source_file`
+- `source_page_start`
+- `source_page_end`
+- `source_entry_id`
+- `source_slug`
+- `armor_class`
+- `hit_dice`
+- `hit_points`
+- `movement`
+- `attacks`
+- `damage`
+- `special_attacks`
+- `special_defenses`
+- `save`
+- `morale`
+- `alignment`
+- `intelligence`
+- `size`
+- `type`
+- `category`
+- `environment`
+- `terrain`
+- `region`
+- `number_appearing`
+- `no_enc`
+- `treasure`
+- `xp`
+- `challenge`
+- `level`
+- `description`
+- `raw_stat_block`
+- `raw_text`
+- `normalized_fields`
+- `missing_fields`
+- `placeholder_fields`
+- `mapping_confidence`
+- `review_status`
+- `review_notes`
+- `user_corrections`
+
+Placeholder and mapping policy for that future normalized layer:
+
+- Missing values should not block import.
+- Use explicit placeholders such as `null`, `unknown`, `not_provided`, or
+  later project-approved equivalents.
+- Record which fields are placeholders for later audit.
+- Do not invent exact values when the source does not provide them.
+- Logical guesses are allowed only when clearly marked with confidence and
+  review flags.
+- Confidence target meanings:
+  `high` for direct field matches,
+  `medium` for clear aliases or format conversions,
+  `low` for inferred guesses,
+  `missing` for placeholders.
+- Keep ambiguous source text raw and reviewable instead of forcing a false
+  exact mapping.
+
 ## Latest completed work
 
 Version 0.8.14 adds Step 2 monster-importer readiness work on `main`:
@@ -495,6 +585,11 @@ Version 0.7 hardened the data-driven generation foundation:
 - ADD Bestiary Milestone 1 importer scaffolding for actual-page parsing, raw
   page extraction, content-pack draft output, and combined alphabetical monster
   views across sources.
+- Megadungeon parser tooling with read-only probe mode, dry-run preview
+  output, separate content-pack writer output, and opt-in content-pack loading
+  through `app/monster_catalog.py`.
+- Conservative core-versus-imported catalog loading so imported packs remain
+  optional during the current staging phase.
 - Editable source registry plus local source-path validation tooling.
 - Lightweight equipment slots, carried bulk, and encumbrance states.
 - Optional text-seed control for reproducible world generation.
@@ -602,10 +697,14 @@ Version 0.7 hardened the data-driven generation foundation:
   as setup notes, not importer regressions, unless a later milestone marks a
   source as required.
 - `MandBmaster.pdf` remains the stable baseline monster-manual import source.
-- `MegadungeonMonsterManual.pdf` is now tracked as a registered
-  content-source-only PDF that needs a dedicated parser; its title-case
-  `No. Enc` / `Movement` / `Armor Class` / `Hit Dice` / `XP` stat blocks do
-  not match the current `SIZE:`-driven importer assumptions.
+- `MegadungeonMonsterManual.pdf` now has a dedicated parser, dry-run preview,
+  separate content-pack writer, and opt-in catalog loader path, but it still
+  is not merged into the live MandBmaster core catalog.
+- The current monster architecture does not yet provide a shared normalized
+  monster schema or a unified reviewable mapper that can take MandBmaster,
+  Megadungeon, ADD Bestiary, and later sources into one master catalog.
+- Later monster deduplication still needs canonical grouping and preferred
+  variant selection. Until that exists, source variants must remain distinct.
 - `data/import_sources/` remains intentionally untracked and should continue to
   hold local-only source PDFs rather than versioned import assets.
 - White Dragon Run remains intentionally omitted from the current monster PDF
@@ -620,26 +719,28 @@ Version 0.7 hardened the data-driven generation foundation:
 
 ## Next candidate goals
 
-1. Use the new source registry and validation layer as the gate for Step 2:
-   continue the monster importer baseline without changing the broader domain
-   roadmap yet.
-2. Place the user-provided ADD Bestiary PDF at the documented import_sources
-   path and run the new importer to measure real accepted versus deferred
-   monsters before tackling multi-variant parsing.
-3. Use the new JSON import preview path to test a second monster source with a
-   small common-monster sample before attempting a broader merged catalog.
-4. Review the remaining 395 unmatched appendix references and decide whether
-   the next follow-up should widen the monster catalog, improve the core
-   stat-block importer, or add a carefully reviewed manual alias layer for
-   appendix-only names before any app-facing use.
-5. Optionally revisit the one remaining `Worm, Furnace` intelligence gap only
-   if another extraction path reveals the missing line without special-casing
-   the record.
-6. Build the future Bestiary around the new import metadata and protection
-   hooks: list/search/filter, source/audit visibility, manual edits, and
-   preserved custom overrides.
-7. Add app-facing region/rarity-based monster selection only after Bestiary
-   patterns and multi-source catalog merge rules are proven stable.
+1. Add a normalized monster schema/model or schema module for the future master
+   monster catalog instead of relying only on source-specific output shapes.
+2. Add a mapper that converts Megadungeon preview/content-pack records into
+   that normalized schema while preserving raw source text, placeholders, and
+   mapping confidence.
+3. Produce a normalized preview report with explicit missing fields,
+   placeholder fields, confidence markers, and review flags without merging
+   into the live MandBmaster catalog yet.
+4. Extend the same normalization path to the stable MandBmaster records so the
+   project can compare multiple sources against one standard monster schema.
+5. Place the user-provided ADD Bestiary PDF at the documented import_sources
+   path and use the existing parser as another source-preserving feeder only
+   after the normalized schema/mapping layer is ready.
+6. Review the remaining appendix unmatched references and later decide whether
+   they should enrich normalized monster metadata, appendix-only encounter
+   indexes, or both.
+7. Build the future Bestiary/editor around source provenance, review queues,
+   user corrections, and canonical grouping rather than only around raw import
+   outputs.
+8. Add app-facing region/rarity-based monster selection only after normalized
+   monster schema, multi-source mapping, and canonical grouping rules are
+   stable.
 8. Add lightweight inventory actions beyond equipping, such as container-aware
    stash moves, simple drop/store behavior, or clearer repair/condition hooks,
    only if they stay compatible with the current rules-neutral model.

@@ -398,6 +398,112 @@ load the core monster catalog together with imported content packs and sort the
 records alphabetically by display name while keeping same-name, different-source
 records distinct by ID and source.
 
+Current catalog-loading behavior is intentionally conservative:
+
+- `app/monster_catalog.py` loads the stable core monster catalog by default
+- imported monster packs under `data/content_packs/imported/*/monsters.json`
+  are opt-in
+- malformed imported packs warn and are skipped instead of replacing live
+  catalog data
+
+The long-term direction is broader than optional side packs. The final target
+is one unified master monster catalog built from multiple approved sources.
+Source-specific parsers, dry-run previews, content-pack outputs, and opt-in
+pack loading are staging layers for that larger workflow.
+
+Planned monster-import workflow:
+
+1. Parse each source with a source-specific parser.
+2. Preserve source-facing output with raw text and provenance.
+3. Map parsed records into one shared normalized monster schema.
+4. Flag low-confidence, ambiguous, or placeholder fields for later review.
+5. Eventually merge reviewed normalized monsters into one master monster list
+   while still preserving source variants and user corrections.
+
+Proposed standard normalized monster fields include:
+
+- `id`
+- `canonical_name`
+- `display_name`
+- `aliases`
+- `source_id`
+- `source_title`
+- `source_file`
+- `source_page_start`
+- `source_page_end`
+- `source_entry_id`
+- `source_slug`
+- `armor_class`
+- `hit_dice`
+- `hit_points`
+- `movement`
+- `attacks`
+- `damage`
+- `special_attacks`
+- `special_defenses`
+- `save`
+- `morale`
+- `alignment`
+- `intelligence`
+- `size`
+- `type`
+- `category`
+- `environment`
+- `terrain`
+- `region`
+- `number_appearing`
+- `no_enc`
+- `treasure`
+- `xp`
+- `challenge`
+- `level`
+- `description`
+- `raw_stat_block`
+- `raw_text`
+- `normalized_fields`
+- `missing_fields`
+- `placeholder_fields`
+- `mapping_confidence`
+- `review_status`
+- `review_notes`
+- `user_corrections`
+
+Normalization and placeholder policy:
+
+- missing values should not block import
+- use explicit placeholders such as `null`, `unknown`, or `not_provided`
+- do not invent exact values when the source does not provide them
+- logical guesses are allowed only when marked with confidence and review
+  status
+- retain ambiguous raw source text rather than forcing a misleading exact
+  field value
+
+Expected mapping examples:
+
+- `No. Enc` -> `number_appearing`
+- `Movement` / `Move` -> `movement`
+- `Armor Class` / `AC` -> `armor_class`
+- `Hit Dice` / `HD` -> `hit_dice`
+- `Treasure Type` / `Treasure` -> `treasure`
+- `LEVEL/X.P.` / `XP` -> `xp` and optionally `level`
+
+Confidence guidance for the future mapper:
+
+- `high`: direct field match
+- `medium`: clear alias or format conversion
+- `low`: inferred or guessed value
+- `missing`: placeholder used
+
+Future review/correction expectations:
+
+- uncertain mappings should feed a user-reviewable queue or report
+- user corrections should be stored separately from raw imported data when
+  practical
+- user corrections should override parser guesses without deleting original
+  source text
+- duplicate or same-name monsters from different sources should remain
+  distinct until canonical grouping and preferred-variant handling exist
+
 Imported JSON records may carry optional source metadata and later-edit
 protection hints such as:
 
@@ -428,12 +534,13 @@ Current source/import roadmap:
 
 1. Source registry / source-path validation
 2. Monster importer baseline continuation and import readiness
-3. Magic item importer
-4. Mundane equipment importer
-5. Spell importer
-6. Treasure-table importer
-7. Module / keyed-location importer
-8. Generator/world-system importers later
+3. Normalized monster schema and mapping layer
+4. Magic item importer
+5. Mundane equipment importer
+6. Spell importer
+7. Treasure-table importer
+8. Module / keyed-location importer, then generator/world-system importers
+   later
 
 Version 0.8.13 completed Step 1. Version 0.8.14 keeps the current
 monster/manual/appendix/JSON/ADD parser behavior stable while adding
@@ -708,11 +815,16 @@ The app has a lightweight exploration game loop, calendar/downtime framework,
 and character scaffold, but not tactical combat. Visual maps, detailed combat
 resolution, multiplayer, and web/server features are intentionally deferred.
 
-Monster-system direction is also intentionally staged. The near-term sequence
-is: strengthen multi-source monster import architecture, add one more monster
-source, build a read/write Bestiary workflow, and only then wire region/rarity
-monster selection into regular play. Spells, gear, arms, armor, and all image
-support remain deferred until that monster-data pipeline is stable.
+Monster-system direction is also intentionally staged. The current codebase
+now has a stable MandBmaster baseline import, a Megadungeon parser and
+content-pack path, and opt-in imported-pack loading. The next architectural
+target is not more permanent side packs by themselves; it is a shared
+normalized monster schema and mapping layer that can feed one future master
+monster catalog while preserving source provenance, review flags, and user
+corrections. Region/rarity monster selection should wait until that
+normalization and canonical-grouping work is stable. Spells, gear, arms,
+armor, and all image support remain deferred until that monster-data pipeline
+is stable.
 
 Future direction: a player character may eventually retire and remain in the
 same generated world as an NPC. That should build on the existing world and NPC
