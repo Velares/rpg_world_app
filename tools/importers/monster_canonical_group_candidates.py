@@ -38,7 +38,7 @@ SOURCE_PDF_ROOT = PROJECT_ROOT / "data" / "import_sources"
 EXPECTED_SOURCE_PDFS = {
     "mandbmaster.pdf": "MandBmaster Combined Monster Manual",
     "MegadungeonMonsterManual.pdf": "Megadungeon Monster Manual",
-    "Adventures Dark and Deep Bestiaryforingestion.pdf": "Adventures Dark and Deep Bestiary",
+    "adventures_dark_and_deep_bestiary/Adventures Dark and Deep Bestiaryforingestion.pdf": "Adventures Dark and Deep Bestiary",
     "advanced_labyrinth_lord/Advanced Labyrinth Lord.pdf": "Advanced Labyrinth Lord",
     "labyrinth_lord_revised_edition/Labyrinth Lord Revised Edition.pdf": "Labyrinth Lord Revised Edition",
 }

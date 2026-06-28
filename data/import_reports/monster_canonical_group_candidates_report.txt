@@ -1,7 +1,7 @@
 Monster Canonical Group Candidates
 ==================================
 
-Generated at: 2026-06-28T21:44:55.128686+00:00
+Generated at: 2026-06-28T22:15:39.667361+00:00
 MandBmaster records read: 268
 Megadungeon records read: 253
 Total candidate groups emitted: 8
@@ -16,10 +16,10 @@ Output paths:
 
 Source PDF folder status:
 - PRESENT: MandBmaster Combined Monster Manual (mandbmaster.pdf)
-- MISSING: Megadungeon Monster Manual (MegadungeonMonsterManual.pdf)
-- MISSING: Adventures Dark and Deep Bestiary (Adventures Dark and Deep Bestiaryforingestion.pdf)
-- MISSING: Advanced Labyrinth Lord (advanced_labyrinth_lord/Advanced Labyrinth Lord.pdf)
-- MISSING: Labyrinth Lord Revised Edition (labyrinth_lord_revised_edition/Labyrinth Lord Revised Edition.pdf)
+- PRESENT: Megadungeon Monster Manual (MegadungeonMonsterManual.pdf)
+- PRESENT: Adventures Dark and Deep Bestiary (adventures_dark_and_deep_bestiary/Adventures Dark and Deep Bestiaryforingestion.pdf)
+- PRESENT: Advanced Labyrinth Lord (advanced_labyrinth_lord/Advanced Labyrinth Lord.pdf)
+- PRESENT: Labyrinth Lord Revised Edition (labyrinth_lord_revised_edition/Labyrinth Lord Revised Edition.pdf)
 
 IMPORTANT: This report is a review aid only.
 - No records were merged.
