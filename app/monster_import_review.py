@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import tempfile
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -10,6 +12,14 @@ from tools.importers.monster_manual_schema import PROJECT_ROOT
 DEFAULT_CANDIDATES_PATH = (
     PROJECT_ROOT / "data" / "import_reports" / "monster_canonical_group_candidates.json"
 )
+
+DECISIONS_DIR = PROJECT_ROOT / "data" / "import_reviews"
+DEFAULT_DECISIONS_PATH = DECISIONS_DIR / "monster_canonical_group_decisions.json"
+
+DECISION_SCHEMA_VERSION = 1
+VALID_DECISIONS = {"approved", "rejected", "needs_review"}
+DEFAULT_DECISION = "needs_review"
+DEFAULT_REVIEWER = "local_user"
 
 REQUIRED_TOP_LEVEL_FIELDS = {
     "generated_at",
@@ -131,7 +141,141 @@ def review_summary_text(payload: dict[str, Any]) -> str:
         f"Medium confidence: {confidence_counts.get('medium', 0)}",
         f"Low confidence: {confidence_counts.get('low', 0)}",
         "",
-        "This is a read-only review surface. No records are merged.",
-        "Select a candidate group from the list to inspect source variants.",
+        "Decisions are stored separately and do not merge records.",
+        "Select a candidate group from the list to inspect source variants and edit decisions.",
+    ]
+    return "\n".join(lines)
+
+
+def _now_utc_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _validate_decision(value: str) -> str:
+    normalized = str(value).strip().lower()
+    if normalized not in VALID_DECISIONS:
+        raise ValueError(
+            f"Invalid decision value '{value}'. Allowed values: {sorted(VALID_DECISIONS)}"
+        )
+    return normalized
+
+
+def load_decisions(path: Path | None = None) -> dict[str, Any]:
+    """Load persisted review decisions.
+
+    Returns an empty decisions container if the file is missing.
+    Raises ValueError if the file exists but is malformed.
+    """
+    decisions_path = path or DEFAULT_DECISIONS_PATH
+    if not decisions_path.exists():
+        return {
+            "schema_version": DECISION_SCHEMA_VERSION,
+            "source_report": str(DEFAULT_CANDIDATES_PATH),
+            "decisions": {},
+        }
+    try:
+        data = json.loads(decisions_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError(
+            f"Decision file at {decisions_path} is not valid JSON: {exc}"
+        ) from exc
+    if not isinstance(data, dict):
+        raise ValueError(f"Decision file at {decisions_path} must be a JSON object.")
+    if "decisions" not in data or not isinstance(data["decisions"], dict):
+        raise ValueError(
+            f"Decision file at {decisions_path} must contain a 'decisions' object."
+        )
+    return data
+
+
+def save_decisions(decisions: dict[str, Any], path: Path | None = None) -> None:
+    """Persist review decisions atomically using a temp file and rename.
+
+    The candidate report is not modified. Only the separate decision file is
+    written.
+    """
+    decisions_path = path or DEFAULT_DECISIONS_PATH
+    decisions_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "schema_version": decisions.get("schema_version", DECISION_SCHEMA_VERSION),
+        "source_report": decisions.get("source_report", str(DEFAULT_CANDIDATES_PATH)),
+        "decisions": decisions.get("decisions", {}),
+    }
+    fd, temp_name = tempfile.mkstemp(
+        dir=str(decisions_path.parent), suffix=".json", prefix=".tmp_"
+    )
+    try:
+        with open(fd, "w", encoding="utf-8") as handle:
+            json.dump(payload, handle, indent=2, ensure_ascii=False)
+            handle.flush()
+        temp_path = Path(temp_name)
+        temp_path.replace(decisions_path)
+    except Exception:
+        try:
+            Path(temp_name).unlink(missing_ok=True)
+        except OSError:
+            pass
+        raise
+
+
+def get_decision(decisions: dict[str, Any], group_id: str) -> dict[str, Any]:
+    """Return the stored decision for a candidate group, or a default."""
+    stored = decisions.get("decisions", {}).get(group_id, {})
+    return {
+        "decision": stored.get("decision", DEFAULT_DECISION),
+        "notes": stored.get("notes", ""),
+        "updated_at": stored.get("updated_at", ""),
+        "reviewer": stored.get("reviewer", DEFAULT_REVIEWER),
+    }
+
+
+def set_decision(
+    decisions: dict[str, Any],
+    group_id: str,
+    decision: str,
+    notes: str = "",
+    reviewer: str = DEFAULT_REVIEWER,
+) -> dict[str, Any]:
+    """Set a decision for a candidate group and return the updated container."""
+    normalized = _validate_decision(decision)
+    if "decisions" not in decisions or not isinstance(decisions["decisions"], dict):
+        decisions["decisions"] = {}
+    decisions["decisions"][group_id] = {
+        "decision": normalized,
+        "notes": str(notes).strip(),
+        "updated_at": _now_utc_iso(),
+        "reviewer": reviewer,
+    }
+    return decisions
+
+
+def build_candidate_rows(
+    payload: dict[str, Any], decisions: dict[str, Any] | None = None
+) -> list[tuple[str, dict[str, Any]]]:
+    """Build (label, group) tuples for a list-based UI."""
+    rows: list[tuple[str, dict[str, Any]]] = []
+    for group in payload.get("candidate_groups", []):
+        confidence = group.get("confidence", "unknown")
+        proposed = group.get("proposed_canonical_name", "Unknown")
+        score = group.get("match_score", "N/A")
+        group_id = group.get("candidate_group_id", "")
+        decision = get_decision(decisions or {}, group_id) if group_id else None
+        decision_tag = ""
+        if decision and decision.get("decision") and decision["decision"] != DEFAULT_DECISION:
+            decision_tag = f"[{decision['decision'].upper()}] "
+        label = f"{decision_tag}[{confidence.upper()}] {proposed} (score={score})"
+        rows.append((label, group))
+    return rows
+
+
+def format_decision_block(decision: dict[str, Any]) -> str:
+    """Return a readable text block for a stored decision."""
+    lines = [
+        "Stored Decision",
+        "---------------",
+        f"Decision: {decision.get('decision', DEFAULT_DECISION).upper()}",
+        f"Notes: {decision.get('notes', '') or 'None'}",
+        f"Updated: {decision.get('updated_at', 'N/A')}",
+        f"Reviewer: {decision.get('reviewer', DEFAULT_REVIEWER)}",
     ]
     return "\n".join(lines)

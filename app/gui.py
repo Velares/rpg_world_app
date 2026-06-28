@@ -4,6 +4,7 @@ import tkinter as tk
 from dataclasses import asdict
 from pathlib import Path
 from tkinter import filedialog, messagebox, simpledialog, ttk
+from typing import Callable
 
 from app.calendar import age_band, format_calendar
 from app.diary import (
@@ -28,7 +29,12 @@ from app.models import World
 from app.monster_import_review import (
     build_candidate_rows,
     format_candidate_group,
+    format_decision_block,
+    get_decision,
     load_canonical_group_report,
+    load_decisions,
+    save_decisions,
+    set_decision,
     review_summary_text,
 )
 from app.timeline import format_summary_timeline, format_verbose_timeline
@@ -1790,7 +1796,11 @@ class RPGWorldApp(tk.Tk):
         self.show("\n".join(reports), "Viewing generation data diagnostics.")
 
     def view_monster_import_review(self) -> None:
-        """Display a read-only review surface for canonical-group candidates."""
+        """Display an editable review surface for canonical-group candidates.
+
+        Decisions are stored separately in data/import_reviews/ and do not merge
+        source records or modify the live catalog.
+        """
         try:
             payload = load_canonical_group_report()
         except FileNotFoundError as exc:
@@ -1802,7 +1812,14 @@ class RPGWorldApp(tk.Tk):
             self.show(str(exc), "Canonical-group report is malformed.")
             return
 
-        rows = build_candidate_rows(payload)
+        try:
+            decisions = load_decisions()
+        except ValueError as exc:
+            self.hide_index()
+            self.show(str(exc), "Decision file is malformed.")
+            return
+
+        rows = build_candidate_rows(payload, decisions)
         if not rows:
             self.hide_index()
             self.show(
@@ -1814,11 +1831,93 @@ class RPGWorldApp(tk.Tk):
         labels = [label for label, _group in rows]
         groups = [group for _label, group in rows]
 
+        def refresh_labels() -> None:
+            self.index_list.delete(0, "end")
+            for label, _group in build_candidate_rows(payload, decisions):
+                self.index_list.insert("end", label)
+
         def show_detail(index: int) -> None:
-            self.show(format_candidate_group(groups[index]), "Viewing candidate group details.")
+            group = groups[index]
+            group_id = group.get("candidate_group_id", "")
+            self.open_candidate_review_dialog(group, decisions, refresh_labels)
 
         self.show_index("Candidate Groups", labels, show_detail)
         self.show(review_summary_text(payload), "Viewing monster import canonical-group review.")
+
+    def open_candidate_review_dialog(
+        self,
+        group: dict[str, Any],
+        decisions: dict[str, Any],
+        refresh_callback: Callable[[], None] | None = None,
+    ) -> None:
+        """Open a read-only detail + editable decision dialog for one candidate group."""
+        dialog = tk.Toplevel(self)
+        dialog.title(f"Review: {group.get('proposed_canonical_name', 'Candidate Group')}")
+        dialog.geometry("640x720")
+        dialog.transient(self)
+        dialog.grab_set()
+
+        group_id = group.get("candidate_group_id", "")
+        current = get_decision(decisions, group_id)
+
+        detail = tk.Text(dialog, wrap="word", font=("Consolas", 10), padx=12, pady=12)
+        detail.pack(side="top", fill="both", expand=True)
+        detail.insert("1.0", format_candidate_group(group))
+        detail.insert("end", "\n\n" + format_decision_block(current))
+        detail.configure(state="disabled")
+
+        controls = ttk.Frame(dialog, padding=12)
+        controls.pack(side="top", fill="x")
+
+        ttk.Label(controls, text="Decision:").grid(row=0, column=0, sticky="w")
+        decision_var = tk.StringVar(value=current.get("decision", "needs_review"))
+        decision_box = ttk.Combobox(
+            controls,
+            textvariable=decision_var,
+            values=["approved", "rejected", "needs_review"],
+            state="readonly",
+            width=18,
+        )
+        decision_box.grid(row=0, column=1, sticky="w", padx=(6, 0))
+
+        ttk.Label(controls, text="Notes:").grid(row=1, column=0, sticky="nw", pady=(8, 0))
+        notes_var = tk.StringVar(value=current.get("notes", ""))
+        notes_entry = ttk.Entry(controls, textvariable=notes_var, width=60)
+        notes_entry.grid(row=1, column=1, sticky="ew", padx=(6, 0), pady=(8, 0))
+        controls.columnconfigure(1, weight=1)
+
+        warning = ttk.Label(
+            dialog,
+            text="Decisions are stored separately. No records are merged yet.",
+            foreground="red",
+            wraplength=560,
+            justify="left",
+            padding=(12, 6),
+        )
+        warning.pack(side="top", fill="x")
+
+        buttons = ttk.Frame(dialog, padding=(12, 0, 12, 12))
+        buttons.pack(side="top", fill="x")
+
+        def save() -> None:
+            try:
+                set_decision(
+                    decisions,
+                    group_id,
+                    decision_var.get(),
+                    notes_var.get(),
+                )
+                save_decisions(decisions)
+            except ValueError as exc:
+                messagebox.showerror("Invalid Decision", str(exc), parent=dialog)
+                return
+            if refresh_callback:
+                refresh_callback()
+            self.status_var.set(f"Saved decision for {group_id}.")
+            dialog.destroy()
+
+        ttk.Button(buttons, text="Save Decision", command=save).pack(side="right")
+        ttk.Button(buttons, text="Close", command=dialog.destroy).pack(side="right", padx=(0, 8))
 
     def save_world(self) -> None:
         def action():

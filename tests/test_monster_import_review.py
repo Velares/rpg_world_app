@@ -8,8 +8,13 @@ from pathlib import Path
 from app.monster_import_review import (
     build_candidate_rows,
     format_candidate_group,
+    format_decision_block,
+    get_decision,
     load_canonical_group_report,
+    load_decisions,
     review_summary_text,
+    save_decisions,
+    set_decision,
 )
 from tools.importers.monster_manual_schema import (
     DEFAULT_MONSTER_APPENDIX_CATALOG_JSON,
@@ -159,7 +164,7 @@ class MonsterImportReviewTests(unittest.TestCase):
         self.assertIn("High confidence: 1", text)
         self.assertIn("Medium confidence: 1", text)
         self.assertIn("Low confidence: 1", text)
-        self.assertIn("read-only review surface", text)
+        self.assertIn("Decisions are stored separately and do not merge records", text)
 
     def test_review_does_not_modify_live_catalog_json(self) -> None:
         before_catalog = DEFAULT_MONSTER_CATALOG_JSON.read_text(encoding="utf-8")
@@ -187,6 +192,136 @@ class MonsterImportReviewTests(unittest.TestCase):
         group = self._make_group(user_decision=None)
         format_candidate_group(group)
         self.assertIsNone(group["user_decision"])
+
+    def test_missing_decision_file_loads_as_empty(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "decisions.json"
+            decisions = load_decisions(path)
+            self.assertEqual(decisions["decisions"], {})
+            self.assertEqual(decisions["schema_version"], 1)
+
+    def test_valid_decision_file_loads_correctly(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "decisions.json"
+            data = {
+                "schema_version": 1,
+                "source_report": "candidates.json",
+                "decisions": {
+                    "cg_test": {
+                        "decision": "approved",
+                        "notes": "Looks correct",
+                        "updated_at": "2026-01-01T00:00:00+00:00",
+                        "reviewer": "local_user",
+                    }
+                },
+            }
+            path.write_text(json.dumps(data), encoding="utf-8")
+            decisions = load_decisions(path)
+            self.assertEqual(decisions["decisions"]["cg_test"]["decision"], "approved")
+            self.assertEqual(decisions["decisions"]["cg_test"]["notes"], "Looks correct")
+
+    def test_malformed_decision_file_fails_gracefully(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "decisions.json"
+            path.write_text("not json", encoding="utf-8")
+            with self.assertRaises(ValueError) as ctx:
+                load_decisions(path)
+            self.assertIn("not valid JSON", str(ctx.exception))
+
+    def test_decision_file_missing_decisions_object_fails_gracefully(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "decisions.json"
+            path.write_text(json.dumps({"schema_version": 1}), encoding="utf-8")
+            with self.assertRaises(ValueError) as ctx:
+                load_decisions(path)
+            self.assertIn("must contain a 'decisions' object", str(ctx.exception))
+
+    def test_saving_decision_creates_decision_file(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "decisions.json"
+            decisions = load_decisions(path)
+            set_decision(decisions, "cg_test", "approved", "Confirmed match")
+            save_decisions(decisions, path)
+            self.assertTrue(path.exists())
+            loaded = load_decisions(path)
+            self.assertEqual(loaded["decisions"]["cg_test"]["decision"], "approved")
+            self.assertEqual(loaded["decisions"]["cg_test"]["notes"], "Confirmed match")
+
+    def test_saving_updates_only_selected_group(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "decisions.json"
+            decisions = load_decisions(path)
+            set_decision(decisions, "cg_one", "approved", "first")
+            set_decision(decisions, "cg_two", "rejected", "second")
+            save_decisions(decisions, path)
+            loaded = load_decisions(path)
+            self.assertEqual(loaded["decisions"]["cg_one"]["decision"], "approved")
+            self.assertEqual(loaded["decisions"]["cg_two"]["decision"], "rejected")
+            set_decision(loaded, "cg_one", "needs_review", "changed")
+            save_decisions(loaded, path)
+            reloaded = load_decisions(path)
+            self.assertEqual(reloaded["decisions"]["cg_one"]["decision"], "needs_review")
+            self.assertEqual(reloaded["decisions"]["cg_two"]["decision"], "rejected")
+
+    def test_notes_persist(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "decisions.json"
+            decisions = load_decisions(path)
+            set_decision(decisions, "cg_test", "approved", "Save these notes")
+            save_decisions(decisions, path)
+            loaded = load_decisions(path)
+            self.assertEqual(loaded["decisions"]["cg_test"]["notes"], "Save these notes")
+
+    def test_invalid_decision_value_is_rejected(self) -> None:
+        decisions = load_decisions(Path("/nonexistent/path/decisions.json"))
+        with self.assertRaises(ValueError) as ctx:
+            set_decision(decisions, "cg_test", "maybe")
+        self.assertIn("Invalid decision value", str(ctx.exception))
+
+    def test_candidate_report_not_modified_by_saving_decisions(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            candidates_path = Path(temp) / "candidates.json"
+            decisions_path = Path(temp) / "decisions.json"
+            original_payload = self._make_payload([self._make_group()])
+            candidates_path.write_text(json.dumps(original_payload), encoding="utf-8")
+            payload = load_canonical_group_report(candidates_path)
+            decisions = load_decisions(decisions_path)
+            set_decision(decisions, "cg_test", "approved", "notes")
+            save_decisions(decisions, decisions_path)
+            after_payload = load_canonical_group_report(candidates_path)
+            self.assertEqual(original_payload, after_payload)
+
+    def test_build_candidate_rows_include_decision_status(self) -> None:
+        payload = self._make_payload(
+            [
+                self._make_group(candidate_group_id="cg_approved"),
+                self._make_group(candidate_group_id="cg_rejected"),
+            ]
+        )
+        decisions = {
+            "schema_version": 1,
+            "source_report": "candidates.json",
+            "decisions": {
+                "cg_approved": {"decision": "approved"},
+                "cg_rejected": {"decision": "rejected"},
+            },
+        }
+        rows = build_candidate_rows(payload, decisions)
+        self.assertIn("[APPROVED]", rows[0][0])
+        self.assertIn("[REJECTED]", rows[1][0])
+
+    def test_get_decision_returns_default_for_missing_group(self) -> None:
+        decisions = {"decisions": {}}
+        decision = get_decision(decisions, "missing")
+        self.assertEqual(decision["decision"], "needs_review")
+        self.assertEqual(decision["notes"], "")
+
+    def test_format_decision_block(self) -> None:
+        text = format_decision_block(
+            {"decision": "approved", "notes": "OK", "updated_at": "2026-01-01", "reviewer": "local_user"}
+        )
+        self.assertIn("Decision: APPROVED", text)
+        self.assertIn("Notes: OK", text)
 
 
 if __name__ == "__main__":
