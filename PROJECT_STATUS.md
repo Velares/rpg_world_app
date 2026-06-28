@@ -3,7 +3,7 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.18`
+- Current development version on `main`: `v0.8.19`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
@@ -98,6 +98,46 @@ Placeholder and mapping policy for that future normalized layer:
   exact mapping.
 
 ## Latest completed work
+
+Version 0.8.19 adds persistent correction storage for normalized monster
+records on `main`:
+
+- Added correction-store helpers to `app/monster_editor.py`:
+  `load_corrections`, `save_corrections`, `get_record_correction`,
+  `set_field_correction`, `set_record_status`, `apply_corrections`,
+  `format_corrected_field`, `format_corrected_record`, and `correction_summary_text`.
+- Correction store path:
+  `data/import_reviews/monster_normalized_field_corrections.json`.
+- Correction schema version 1 with `source_reports`, `schema_version`, and a
+  `corrections` object keyed by normalized monster ID.
+- Each correction entry supports per-field `corrected_value`, `previous_value`,
+  `notes`, `updated_at`, and `reviewer`, plus record-level `record_status`
+  (`needs_review`, `corrected`, `approved`) and `record_notes`.
+- Missing correction files load as empty corrections. Malformed correction files
+  raise `ValueError` and are never overwritten by the load path. Saves are
+  atomic via a temp file and rename.
+- Invalid correctable field names are rejected with `ValueError`.
+- Corrections apply as an overlay to the displayed record; original generated
+  preview records are never modified in memory or on disk.
+- Updated `app/gui.py` so Normalized Monster Review loads the correction store,
+  displays a correction-store summary, shows corrected values with CORRECTED
+  markers, and adds a `Correct Fields` button below the index list that opens an
+  `Edit Corrections` dialog. The dialog shows every correctable field with its
+  original value, a value entry, and a notes entry, plus record status and
+  record notes.
+- Added a reusable `set_index_action_button` helper for view-specific index-frame
+  actions.
+- Added 18 focused correction tests to `tests/test_monster_editor.py` covering
+  missing/valid/malformed files, save behavior, field/record note persistence,
+  status validation, invalid field rejection, overlay behavior, original record
+  preservation, generated preview preservation, live catalog preservation, and
+  source-variant preservation.
+- Updated `tests/test_editor_hub.py` to verify the new dialog method exists.
+- Confirmed no generated preview JSON modification, no live catalog JSON
+  modification, no importer changes, and no record merging.
+- Raised the validated suite to 293 passing `unittest` tests while
+  `python -m compileall .`, `python tools/validate_sources.py`, and
+  `python tools/monster_import_status.py` continue to pass.
 
 Version 0.8.18 adds the Monster Editor / Normalized Monster Review surface on
 `main`:
@@ -686,6 +726,9 @@ Version 0.7 hardened the data-driven generation foundation:
   Review surfaces.
 - Read-only Normalized Monster Review of MandBmaster and Megadungeon preview
   records with missing/placeholder/low-confidence field highlighting.
+- Persistent field-level corrections for normalized monster records stored in
+  `data/import_reviews/monster_normalized_field_corrections.json`, applied as
+  an overlay without modifying generated previews or live catalogs.
 - Persistent review decisions for monster canonical-group candidates stored
   separately from generated reports and live catalog data.
 - Lightweight equipment slots, carried bulk, and encumbrance states.
@@ -734,7 +777,7 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 275 tests passing with
+- Current verification: 293 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.

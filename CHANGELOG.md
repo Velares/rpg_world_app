@@ -25,6 +25,38 @@ history is the more reliable source.
   for reusable logic; and a future combat test/stress harness for balance
   auditing.
 
+## v0.8.19 - Normalized Monster Field Correction Storage
+
+- Added correction-store helpers to `app/monster_editor.py`:
+  `load_corrections`, `save_corrections`, `get_record_correction`,
+  `set_field_correction`, `set_record_status`, `apply_corrections`,
+  `format_corrected_field`, `format_corrected_record`, and
+  `correction_summary_text`.
+- Correction store path:
+  `data/import_reviews/monster_normalized_field_corrections.json`.
+- Correction schema version 1 with `source_reports`, `schema_version`, and a
+  `corrections` object keyed by normalized monster ID.
+- Per-field correction support for `corrected_value`, `previous_value`, `notes`,
+  `updated_at`, and `reviewer`. Record-level support for `record_status`
+  (`needs_review`, `corrected`, `approved`) and `record_notes`.
+- Missing correction files load as empty corrections; malformed files raise
+  `ValueError` and are never overwritten by the load path. Saves are atomic.
+- Invalid correctable field names are rejected with `ValueError`.
+- Corrections apply as an overlay to the displayed record; original generated
+  preview records are never modified.
+- Updated `app/gui.py` so Normalized Monster Review loads the correction store,
+  displays a correction summary, highlights corrected fields, and adds a
+  `Correct Fields` button that opens an `Edit Corrections` dialog. The dialog
+  shows every correctable field with its original value, an editable value, and
+  a notes entry, plus record status and record notes.
+- Added a reusable `set_index_action_button` helper for view-specific index-frame
+  actions.
+- Added 18 focused correction tests to `tests/test_monster_editor.py` and
+  updated `tests/test_editor_hub.py` for the new dialog method.
+- Confirmed no generated preview JSON modification, no live catalog JSON
+  modification, no importer changes, and no record merging.
+- Raised the validated suite to 293 passing `unittest` tests.
+
 ## v0.8.18 - Normalized Monster Review
 
 - Added `app/monster_editor.py` with helpers to load the MandBmaster and

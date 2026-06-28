@@ -95,6 +95,9 @@ class EditorHubTests(unittest.TestCase):
     def test_app_has_view_normalized_monster_review_method(self) -> None:
         self.assertTrue(hasattr(app.gui.RPGWorldApp, "view_normalized_monster_review"))
 
+    def test_app_has_open_normalized_correction_dialog_method(self) -> None:
+        self.assertTrue(hasattr(app.gui.RPGWorldApp, "open_normalized_correction_dialog"))
+
 
 if __name__ == "__main__":
     unittest.main()

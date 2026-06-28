@@ -6,11 +6,18 @@ import unittest
 from pathlib import Path
 
 from app.monster_editor import (
+    apply_corrections,
     build_normalized_monster_rows,
+    format_corrected_record,
     format_normalized_monster,
+    get_record_correction,
     load_all_normalized_previews,
+    load_corrections,
     load_normalized_preview,
     review_summary_text,
+    save_corrections,
+    set_field_correction,
+    set_record_status,
 )
 from tools.importers.monster_manual_schema import (
     DEFAULT_MONSTER_APPENDIX_CATALOG_JSON,
@@ -260,6 +267,206 @@ class MonsterEditorTests(unittest.TestCase):
         self.assertIn("source_b: 1", text)
         self.assertIn("mapped: 1", text)
         self.assertIn("needs_review: 1", text)
+
+    def test_missing_correction_file_loads_empty_corrections(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "missing_corrections.json"
+            corrections = load_corrections(path)
+            self.assertEqual(corrections["schema_version"], 1)
+            self.assertEqual(corrections["corrections"], {})
+
+    def test_valid_correction_file_loads_correctly(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "corrections.json"
+            path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "source_reports": ["a.json"],
+                        "corrections": {
+                            "goblin": {
+                                "fields": {
+                                    "armor_class": {
+                                        "corrected_value": "5",
+                                        "previous_value": "6",
+                                        "notes": "better AC",
+                                        "updated_at": "2026-01-01T00:00:00+00:00",
+                                        "reviewer": "local_user",
+                                    }
+                                },
+                                "record_notes": "needs work",
+                                "record_status": "corrected",
+                                "updated_at": "2026-01-01T00:00:00+00:00",
+                                "reviewer": "local_user",
+                            }
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            corrections = load_corrections(path)
+            entry = get_record_correction(corrections, "goblin")
+            self.assertEqual(entry["record_status"], "corrected")
+            self.assertEqual(entry["record_notes"], "needs work")
+            self.assertEqual(entry["fields"]["armor_class"]["corrected_value"], "5")
+            self.assertEqual(entry["fields"]["armor_class"]["previous_value"], "6")
+            self.assertEqual(entry["fields"]["armor_class"]["notes"], "better AC")
+
+    def test_malformed_correction_file_fails_gracefully(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "bad_corrections.json"
+            path.write_text("not json", encoding="utf-8")
+            with self.assertRaises(ValueError) as ctx:
+                load_corrections(path)
+            self.assertIn("not valid JSON", str(ctx.exception))
+
+    def test_saving_creates_correction_file(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "corrections.json"
+            corrections = load_corrections(path)
+            set_field_correction(
+                corrections, "goblin", "armor_class", "5", "6", notes="better AC"
+            )
+            save_corrections(corrections, path)
+            self.assertTrue(path.exists())
+            loaded = load_corrections(path)
+            self.assertIn("goblin", loaded["corrections"])
+
+    def test_saving_updates_only_selected_record(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "corrections.json"
+            corrections = load_corrections(path)
+            set_field_correction(corrections, "goblin", "armor_class", "5", "6")
+            save_corrections(corrections, path)
+            corrections2 = load_corrections(path)
+            set_field_correction(corrections2, "orc", "armor_class", "7", "8")
+            save_corrections(corrections2, path)
+            loaded = load_corrections(path)
+            self.assertIn("goblin", loaded["corrections"])
+            self.assertIn("orc", loaded["corrections"])
+            self.assertEqual(loaded["corrections"]["goblin"]["fields"]["armor_class"]["corrected_value"], "5")
+            self.assertEqual(loaded["corrections"]["orc"]["fields"]["armor_class"]["corrected_value"], "7")
+
+    def test_corrected_field_values_persist(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "corrections.json"
+            corrections = load_corrections(path)
+            set_field_correction(corrections, "goblin", "armor_class", "5", "6")
+            save_corrections(corrections, path)
+            loaded = load_corrections(path)
+            entry = get_record_correction(loaded, "goblin")
+            self.assertEqual(entry["fields"]["armor_class"]["corrected_value"], "5")
+
+    def test_previous_value_is_preserved(self) -> None:
+        corrections = load_corrections()
+        set_field_correction(corrections, "goblin", "armor_class", "5", "6")
+        entry = get_record_correction(corrections, "goblin")
+        self.assertEqual(entry["fields"]["armor_class"]["previous_value"], "6")
+
+    def test_field_notes_persist(self) -> None:
+        corrections = load_corrections()
+        set_field_correction(corrections, "goblin", "armor_class", "5", "6", notes="better AC")
+        entry = get_record_correction(corrections, "goblin")
+        self.assertEqual(entry["fields"]["armor_class"]["notes"], "better AC")
+
+    def test_record_notes_persist(self) -> None:
+        corrections = load_corrections()
+        set_record_status(corrections, "goblin", "corrected", record_notes="needs work")
+        entry = get_record_correction(corrections, "goblin")
+        self.assertEqual(entry["record_notes"], "needs work")
+
+    def test_record_status_persist(self) -> None:
+        corrections = load_corrections()
+        set_record_status(corrections, "goblin", "approved")
+        entry = get_record_correction(corrections, "goblin")
+        self.assertEqual(entry["record_status"], "approved")
+
+    def test_invalid_record_status_is_rejected(self) -> None:
+        corrections = load_corrections()
+        with self.assertRaises(ValueError) as ctx:
+            set_record_status(corrections, "goblin", "invalid_status")
+        self.assertIn("Invalid record_status", str(ctx.exception))
+
+    def test_invalid_field_name_is_rejected(self) -> None:
+        corrections = load_corrections()
+        with self.assertRaises(ValueError) as ctx:
+            set_field_correction(corrections, "goblin", "not_a_field", "x", "y")
+        self.assertIn("not in the correctable field list", str(ctx.exception))
+
+    def test_corrections_overlay_without_modifying_original_record(self) -> None:
+        record = self._make_record(armor_class="6")
+        corrections = load_corrections()
+        set_field_correction(corrections, record["id"], "armor_class", "5", "6")
+        overlayed = apply_corrections(record, corrections)
+        self.assertEqual(overlayed["armor_class"], "5")
+        self.assertEqual(record["armor_class"], "6")
+
+    def test_corrected_record_format_shows_original_and_corrected(self) -> None:
+        record = self._make_record(armor_class="6")
+        corrections = load_corrections()
+        set_field_correction(corrections, record["id"], "armor_class", "5", "6", notes="better AC")
+        text = format_corrected_record({"source_id": "test", "source_title": "Test"}, record, corrections)
+        self.assertIn("CORRECTED", text)
+        self.assertIn("corrected: 5", text)
+        self.assertIn("armor_class: 6", text)
+        self.assertIn("better AC", text)
+
+    def test_generated_preview_files_not_modified_by_saving_corrections(self) -> None:
+        from app.monster_editor import DEFAULT_MANDBMASTER_PREVIEW_PATH, DEFAULT_MEGADUNGEON_PREVIEW_PATH
+
+        before_mandb = DEFAULT_MANDBMASTER_PREVIEW_PATH.read_text(encoding="utf-8")
+        before_mega = DEFAULT_MEGADUNGEON_PREVIEW_PATH.read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "corrections.json"
+            corrections = load_corrections(path)
+            set_field_correction(corrections, "goblin", "armor_class", "5", "6")
+            save_corrections(corrections, path)
+            after_mandb = DEFAULT_MANDBMASTER_PREVIEW_PATH.read_text(encoding="utf-8")
+            after_mega = DEFAULT_MEGADUNGEON_PREVIEW_PATH.read_text(encoding="utf-8")
+            self.assertEqual(before_mandb, after_mandb)
+            self.assertEqual(before_mega, after_mega)
+
+    def test_live_catalog_not_modified_by_saving_corrections(self) -> None:
+        before_catalog = DEFAULT_MONSTER_CATALOG_JSON.read_text(encoding="utf-8")
+        before_appendix = DEFAULT_MONSTER_APPENDIX_CATALOG_JSON.read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "corrections.json"
+            corrections = load_corrections(path)
+            set_field_correction(corrections, "goblin", "armor_class", "5", "6")
+            save_corrections(corrections, path)
+            after_catalog = DEFAULT_MONSTER_CATALOG_JSON.read_text(encoding="utf-8")
+            after_appendix = DEFAULT_MONSTER_APPENDIX_CATALOG_JSON.read_text(encoding="utf-8")
+            self.assertEqual(before_catalog, after_catalog)
+            self.assertEqual(before_appendix, after_appendix)
+
+    def test_source_variants_remain_distinct_after_corrections(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            path_a = Path(temp) / "a.json"
+            path_b = Path(temp) / "b.json"
+            path_a.write_text(
+                json.dumps(
+                    self._make_preview(
+                        [self._make_record(id="normalized.source_a.goblin", source_id="source_a")],
+                        source_id="source_a",
+                    )
+                ),
+                encoding="utf-8",
+            )
+            path_b.write_text(
+                json.dumps(
+                    self._make_preview(
+                        [self._make_record(id="normalized.source_b.goblin", source_id="source_b")],
+                        source_id="source_b",
+                    )
+                ),
+                encoding="utf-8",
+            )
+            records = load_all_normalized_previews([path_a, path_b])
+            corrections = load_corrections()
+            for record in [rec for _meta, rec in records]:
+                set_field_correction(corrections, record["id"], "armor_class", "5", "6")
+            ids = [record["id"] for _meta, record in records]
+            self.assertEqual(len(set(ids)), 2)
 
 
 if __name__ == "__main__":

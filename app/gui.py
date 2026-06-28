@@ -23,10 +23,19 @@ from app.editor_hub import (
     monster_editor_summary_text,
 )
 from app.monster_editor import (
+    DEFAULT_CORRECTABLE_FIELDS,
+    _present,
     build_normalized_monster_rows,
+    correction_summary_text,
+    format_corrected_record,
     format_normalized_monster,
+    get_record_correction,
     load_all_normalized_previews,
+    load_corrections,
     review_summary_text as normalized_review_summary_text,
+    save_corrections,
+    set_field_correction,
+    set_record_status,
 )
 from app.equipment import EQUIPMENT_SLOTS
 from app.exporters import (
@@ -728,6 +737,8 @@ class RPGWorldApp(tk.Tk):
         self.index_list.pack(side="left", fill="both", expand=True)
         index_scroll.pack(side="right", fill="y")
         self.index_list.bind("<<ListboxSelect>>", self._on_index_selected)
+        self.index_action_frame = ttk.Frame(self.index_frame)
+        self.index_action_button: ttk.Button | None = None
         self.display_frame = ttk.Frame(container)
         self.display_frame.pack(side="left", fill="both", expand=True)
         self.sidebar_command_map = {
@@ -999,6 +1010,11 @@ class RPGWorldApp(tk.Tk):
         self.index_frame.pack_forget()
         self.index_list.delete(0, "end")
         self.selection_handler = None
+        if self.index_action_button is not None:
+            self.index_action_button.destroy()
+            self.index_action_button = None
+        for widget in self.index_action_frame.winfo_children():
+            widget.destroy()
 
     def show_index(self, title: str, labels: list[str], handler) -> None:
         """Populate the reusable list pane and route selection to a detail renderer."""
@@ -1011,6 +1027,16 @@ class RPGWorldApp(tk.Tk):
             self.index_frame.pack(
                 side="left", fill="y", padx=(0, 10), before=self.display_frame
             )
+
+    def set_index_action_button(self, text: str, command) -> None:
+        """Add a single action button below the index list for the current view."""
+        for widget in self.index_action_frame.winfo_children():
+            widget.destroy()
+        self.index_action_button = ttk.Button(
+            self.index_action_frame, text=text, command=command
+        )
+        self.index_action_button.pack(fill="x", pady=(5, 0))
+        self.index_action_frame.pack(fill="x", pady=(5, 0))
 
     def _on_index_selected(self, _event=None) -> None:
         selection = self.index_list.curselection()
@@ -1975,7 +2001,7 @@ class RPGWorldApp(tk.Tk):
         self.show(monster_editor_summary_text(), "Viewing Monster Editor sub-hub.")
 
     def view_normalized_monster_review(self) -> None:
-        """Display a read-only review surface for normalized monster records."""
+        """Display a review surface for normalized monster records with correction overlay."""
         try:
             records = load_all_normalized_previews()
         except FileNotFoundError as exc:
@@ -1985,6 +2011,13 @@ class RPGWorldApp(tk.Tk):
         except ValueError as exc:
             self.hide_index()
             self.show(str(exc), "Normalized monster preview is malformed.")
+            return
+
+        try:
+            corrections = load_corrections()
+        except ValueError as exc:
+            self.hide_index()
+            self.show(str(exc), "Corrections file is malformed.")
             return
 
         rows = build_normalized_monster_rows(records)
@@ -1998,19 +2031,170 @@ class RPGWorldApp(tk.Tk):
 
         labels = [label for label, _metadata, _record in rows]
         entries = [(metadata, record) for _label, metadata, record in rows]
+        selected_index: int | None = None
 
-        def show_detail(index: int) -> None:
-            metadata, record = entries[index]
+        def refresh_detail() -> None:
+            if selected_index is None:
+                return
+            metadata, record = entries[selected_index]
             self.show(
-                format_normalized_monster(metadata, record),
-                "Viewing normalized monster record.",
+                format_corrected_record(metadata, record, corrections),
+                "Viewing normalized monster record with corrections.",
             )
 
+        def show_detail(index: int) -> None:
+            nonlocal selected_index
+            selected_index = index
+            refresh_detail()
+
+        def open_correct_fields() -> None:
+            if selected_index is None:
+                messagebox.showinfo(
+                    "No Selection", "Select a normalized monster record first.", parent=self
+                )
+                return
+            metadata, record = entries[selected_index]
+            self.open_normalized_correction_dialog(metadata, record, corrections, refresh_detail)
+
         self.show_index("Normalized Monsters", labels, show_detail)
-        self.show(
+        self.set_index_action_button("Correct Fields", open_correct_fields)
+        summary_lines = [
             normalized_review_summary_text(records),
-            "Viewing normalized monster review.",
+            "",
+            correction_summary_text(corrections),
+            "",
+            "Select a record to inspect values, then click Correct Fields to edit.",
+            "Corrections are stored separately and do not modify generated previews.",
+        ]
+        self.show("\n".join(summary_lines), "Viewing normalized monster review.")
+
+    def open_normalized_correction_dialog(
+        self,
+        metadata: dict[str, Any],
+        record: dict[str, Any],
+        corrections: dict[str, Any],
+        refresh_callback,
+    ) -> None:
+        """Open a dialog to edit corrections for a single normalized monster record."""
+        record_id = record.get("id", "")
+        entry = get_record_correction(corrections, record_id)
+        dialog = tk.Toplevel(self)
+        dialog.title(f"Correct Fields: {record.get('display_name', 'Unknown')}")
+        dialog.geometry("650x700")
+        dialog.transient(self)
+        dialog.grab_set()
+
+        main_frame = ttk.Frame(dialog, padding=10)
+        main_frame.pack(fill="both", expand=True)
+
+        ttk.Label(
+            main_frame,
+            text=f"Record ID: {record_id}",
+            font=("", 9, "bold"),
+        ).pack(anchor="w", pady=(0, 5))
+        ttk.Label(
+            main_frame,
+            text=f"Source: {metadata.get('source_title', 'N/A')} ({metadata.get('source_id', 'N/A')})",
+        ).pack(anchor="w")
+        ttk.Label(
+            main_frame,
+            text="Corrections are stored separately and do not modify the generated preview.",
+            wraplength=600,
+        ).pack(anchor="w", pady=(0, 10))
+
+        # Record-level status and notes
+        status_frame = ttk.LabelFrame(main_frame, text="Record Status", padding=6)
+        status_frame.pack(fill="x", pady=(0, 10))
+        status_var = tk.StringVar(value=entry.get("record_status", "needs_review"))
+        ttk.Combobox(
+            status_frame,
+            textvariable=status_var,
+            values=["needs_review", "corrected", "approved"],
+            state="readonly",
+            width=20,
+        ).pack(side="left", padx=(0, 10))
+        ttk.Label(status_frame, text="Status").pack(side="left")
+
+        notes_frame = ttk.LabelFrame(main_frame, text="Record Notes", padding=6)
+        notes_frame.pack(fill="x", pady=(0, 10))
+        record_notes_var = tk.StringVar(value=entry.get("record_notes", ""))
+        ttk.Entry(notes_frame, textvariable=record_notes_var).pack(fill="x")
+
+        # Scrollable field editor
+        canvas = tk.Canvas(main_frame)
+        scrollbar = ttk.Scrollbar(main_frame, orient="vertical", command=canvas.yview)
+        field_frame = ttk.Frame(canvas, padding=5)
+        field_frame.bind(
+            "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
         )
+        canvas.create_window((0, 0), window=field_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        field_vars: dict[str, tk.StringVar] = {}
+        field_notes_vars: dict[str, tk.StringVar] = {}
+        for field_name in DEFAULT_CORRECTABLE_FIELDS:
+            original_value = record.get(field_name)
+            correction = entry.get("fields", {}).get(field_name)
+            current_value = correction["corrected_value"] if correction else _present(original_value)
+
+            group = ttk.LabelFrame(field_frame, text=field_name, padding=4)
+            group.pack(fill="x", pady=(0, 6))
+
+            value_var = tk.StringVar(value=current_value)
+            field_vars[field_name] = value_var
+            ttk.Entry(group, textvariable=value_var).pack(fill="x")
+
+            notes_var = tk.StringVar(value=correction.get("notes", "") if correction else "")
+            field_notes_vars[field_name] = notes_var
+            ttk.Label(group, text="Notes:").pack(anchor="w")
+            ttk.Entry(group, textvariable=notes_var).pack(fill="x")
+
+            original_text = "<missing>" if original_value is None else str(original_value)
+            ttk.Label(group, text=f"Original: {original_text}", foreground="gray").pack(anchor="w")
+
+        def do_save() -> None:
+            reviewer = "local_user"
+            for field_name in DEFAULT_CORRECTABLE_FIELDS:
+                value = field_vars[field_name].get().strip()
+                notes = field_notes_vars[field_name].get().strip()
+                original_value = record.get(field_name)
+                original_present = _present(original_value)
+                if value and value != original_present:
+                    set_field_correction(
+                        corrections,
+                        record_id,
+                        field_name,
+                        value,
+                        original_value,
+                        notes=notes,
+                        reviewer=reviewer,
+                    )
+                elif field_name in entry.get("fields", {}):
+                    # User cleared the corrected value; remove the correction.
+                    corrections["corrections"][record_id]["fields"].pop(field_name, None)
+
+            set_record_status(
+                corrections,
+                record_id,
+                status_var.get(),
+                record_notes=record_notes_var.get().strip(),
+                reviewer=reviewer,
+            )
+            try:
+                save_corrections(corrections)
+            except Exception as exc:
+                messagebox.showerror("Save Error", f"Could not save corrections: {exc}", parent=dialog)
+                return
+            refresh_callback()
+            dialog.destroy()
+            self.status_var.set("Corrections saved.")
+
+        button_frame = ttk.Frame(main_frame, padding=(0, 10, 0, 0))
+        button_frame.pack(fill="x")
+        ttk.Button(button_frame, text="Save Corrections", command=do_save).pack(side="right", padx=(5, 0))
+        ttk.Button(button_frame, text="Cancel", command=dialog.destroy).pack(side="right")
 
     def save_world(self) -> None:
         def action():
