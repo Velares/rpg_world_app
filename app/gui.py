@@ -25,6 +25,12 @@ from app.game_state import GameState
 from app.inventory import equipped_slot_lines
 from app.leads import format_open_leads, format_recent_lead_changes, format_suggested_next_actions
 from app.models import World
+from app.monster_import_review import (
+    build_candidate_rows,
+    format_candidate_group,
+    load_canonical_group_report,
+    review_summary_text,
+)
 from app.timeline import format_summary_timeline, format_verbose_timeline
 
 
@@ -96,6 +102,7 @@ SHARED_ACTIONS = (
     "Save World",
     "Load World",
     "Data Diagnostics",
+    "Monster Import Review",
     "Clear Output",
 )
 
@@ -726,6 +733,7 @@ class RPGWorldApp(tk.Tk):
             "Export World": self.export_world,
             "Export Character": self.export_character,
             "Data Diagnostics": self.view_data_diagnostics,
+            "Monster Import Review": self.view_monster_import_review,
             "Save World": self.save_world,
             "Load World": self.load_world,
             "Clear Output": self.clear_output,
@@ -1780,6 +1788,37 @@ class RPGWorldApp(tk.Tk):
             reports.extend(["", "No name-data warnings."])
         self.hide_index()
         self.show("\n".join(reports), "Viewing generation data diagnostics.")
+
+    def view_monster_import_review(self) -> None:
+        """Display a read-only review surface for canonical-group candidates."""
+        try:
+            payload = load_canonical_group_report()
+        except FileNotFoundError as exc:
+            self.hide_index()
+            self.show(str(exc), "Canonical-group report not found.")
+            return
+        except ValueError as exc:
+            self.hide_index()
+            self.show(str(exc), "Canonical-group report is malformed.")
+            return
+
+        rows = build_candidate_rows(payload)
+        if not rows:
+            self.hide_index()
+            self.show(
+                review_summary_text(payload) + "\n\nNo candidate groups found.",
+                "No canonical-group candidates.",
+            )
+            return
+
+        labels = [label for label, _group in rows]
+        groups = [group for _label, group in rows]
+
+        def show_detail(index: int) -> None:
+            self.show(format_candidate_group(groups[index]), "Viewing candidate group details.")
+
+        self.show_index("Candidate Groups", labels, show_detail)
+        self.show(review_summary_text(payload), "Viewing monster import canonical-group review.")
 
     def save_world(self) -> None:
         def action():
