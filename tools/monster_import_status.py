@@ -54,7 +54,7 @@ def recommended_commands(source_id: str) -> list[str]:
     if source_id == ADD_BESTIARY_SOURCE_ID:
         return ["python tools/import_add_bestiary.py"]
     if source_id == MEGADUNGEON_MONSTER_SOURCE_ID:
-        return ["python tools/importers/megadungeon_monster_importer.py --probe --pages 9 11 83"]
+        return ["python tools/importers/megadungeon_monster_importer.py --dry-run-preview"]
     return ["No importer command assigned yet."]
 
 

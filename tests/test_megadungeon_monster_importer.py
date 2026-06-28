@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import json
 import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
@@ -8,13 +9,20 @@ from pathlib import Path
 
 from tools.importers.megadungeon_monster_importer import (
     DEFAULT_MEGADUNGEON_MONSTER_PDF,
+    DEFAULT_PREVIEW_OUTPUT_PATH,
+    DEFAULT_PREVIEW_REPORT_PATH,
     DISPLAY_LABELS,
     MEGADUNGEON_MONSTER_SOURCE_ID,
     ProbePage,
     extract_probe_pages,
+    generate_dry_run_preview,
     main,
     probe_megadungeon,
     split_entries_from_pages,
+)
+from tools.importers.monster_manual_schema import (
+    DEFAULT_MONSTER_APPENDIX_CATALOG_JSON,
+    DEFAULT_MONSTER_CATALOG_JSON,
 )
 
 
@@ -63,7 +71,7 @@ class MegadungeonMonsterImporterTests(unittest.TestCase):
 
     def test_non_monster_contents_page_is_rejected(self):
         pages = extract_probe_pages(DEFAULT_MEGADUNGEON_MONSTER_PDF, actual_pages=[5])
-        entries = split_entries_from_pages(pages)
+        entries, _, _ = split_entries_from_pages(pages)
         self.assertEqual(entries, [])
 
     def test_missing_pdf_fails_cleanly(self):
@@ -86,6 +94,144 @@ class MegadungeonMonsterImporterTests(unittest.TestCase):
             self.assertFalse((temp_root / "monster_appendix_catalog.json").exists())
         self.assertIn("Megadungeon Monster Probe", stdout.getvalue())
 
+    def test_dry_run_preview_writes_separate_preview_outputs(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            preview_path = temp_root / "megadungeon_preview.json"
+            report_path = temp_root / "megadungeon_preview_report.txt"
+            result = generate_dry_run_preview(
+                actual_pages=[9, 11, 83],
+                preview_output_path=preview_path,
+                preview_report_path=report_path,
+            )
+            self.assertTrue(preview_path.exists())
+            self.assertTrue(report_path.exists())
+            self.assertNotEqual(preview_path.resolve(), DEFAULT_MONSTER_CATALOG_JSON.resolve())
+            self.assertNotEqual(report_path.resolve(), DEFAULT_MONSTER_APPENDIX_CATALOG_JSON.resolve())
+            payload = json.loads(preview_path.read_text(encoding="utf-8"))
+            self.assertGreaterEqual(len(payload), 2)
+            self.assertEqual(result.preview_path, preview_path)
+            self.assertEqual(result.report_path, report_path)
+
+    def test_aarakocra_appears_in_preview_with_expected_fields(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            result = generate_dry_run_preview(
+                actual_pages=[9],
+                preview_output_path=temp_root / "preview.json",
+                preview_report_path=temp_root / "preview_report.txt",
+            )
+            by_name = {record["name"]: record for record in result.preview_records}
+            self.assertIn("Aarakocra", by_name)
+            aarakocra = by_name["Aarakocra"]
+            self.assertEqual(aarakocra["source_id"], MEGADUNGEON_MONSTER_SOURCE_ID)
+            self.assertEqual(aarakocra["actual_page_start"], 9)
+            self.assertEqual(aarakocra["actual_page_end"], 9)
+            self.assertEqual(aarakocra["no_enc"], "2d4")
+            self.assertEqual(aarakocra["movement"], "30 (Fly 120)")
+            self.assertEqual(aarakocra["status"], "parsed")
+
+    def test_rock_manta_preview_preserves_multiple_xp_values(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            result = generate_dry_run_preview(
+                actual_pages=[83],
+                preview_output_path=temp_root / "preview.json",
+                preview_report_path=temp_root / "preview_report.txt",
+            )
+            by_name = {record["name"]: record for record in result.preview_records}
+            self.assertIn("Rock Manta", by_name)
+            rock_manta = by_name["Rock Manta"]
+            self.assertEqual(rock_manta["source_title"], "Megadungeon Monster Manual")
+            self.assertEqual(rock_manta["actual_page_start"], 83)
+            self.assertEqual(rock_manta["actual_page_end"], 83)
+            self.assertEqual(rock_manta["xp"], "47 , 95, 220, 650")
+            self.assertEqual(rock_manta["status"], "parsed")
+
+    def test_dry_run_preview_does_not_modify_live_catalog_files(self):
+        before_catalog = DEFAULT_MONSTER_CATALOG_JSON.read_text(encoding="utf-8")
+        before_appendix = DEFAULT_MONSTER_APPENDIX_CATALOG_JSON.read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            generate_dry_run_preview(
+                actual_pages=[9, 11, 83],
+                preview_output_path=temp_root / "preview.json",
+                preview_report_path=temp_root / "preview_report.txt",
+            )
+        after_catalog = DEFAULT_MONSTER_CATALOG_JSON.read_text(encoding="utf-8")
+        after_appendix = DEFAULT_MONSTER_APPENDIX_CATALOG_JSON.read_text(encoding="utf-8")
+        self.assertEqual(before_catalog, after_catalog)
+        self.assertEqual(before_appendix, after_appendix)
+
+    def test_preview_output_path_defaults_are_separate_from_live_catalog_paths(self):
+        self.assertNotEqual(DEFAULT_PREVIEW_OUTPUT_PATH.resolve(), DEFAULT_MONSTER_CATALOG_JSON.resolve())
+        self.assertNotEqual(DEFAULT_PREVIEW_REPORT_PATH.resolve(), DEFAULT_MONSTER_APPENDIX_CATALOG_JSON.resolve())
+
+    def test_preview_records_include_metadata_and_page_numbers(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            result = generate_dry_run_preview(
+                actual_pages=[9, 11],
+                preview_output_path=temp_root / "preview.json",
+                preview_report_path=temp_root / "preview_report.txt",
+            )
+            record = result.preview_records[0]
+            self.assertIn("source_id", record)
+            self.assertIn("source_title", record)
+            self.assertIn("slug", record)
+            self.assertIn("actual_page_start", record)
+            self.assertIn("actual_page_end", record)
+            self.assertIn("raw_stat_block", record)
+            self.assertIn("raw_text_excerpt", record)
+            self.assertIn("status", record)
+            self.assertIn("confidence", record)
+
+    def test_brobdingnagian_fungi_is_parsed_with_treasure_type_alias(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            result = generate_dry_run_preview(
+                actual_pages=[21],
+                preview_output_path=temp_root / "preview.json",
+                preview_report_path=temp_root / "preview_report.txt",
+            )
+            by_name = {record["name"]: record for record in result.preview_records}
+            self.assertIn("Brobdingnagian Fungi", by_name)
+            record = by_name["Brobdingnagian Fungi"]
+            self.assertEqual(record["treasure"], "See below")
+            self.assertEqual(record["xp"], "38, 110, 145, 650")
+            self.assertEqual(record["status"], "parsed")
+
+    def test_cerepod_is_parsed_with_parenthetical_attack_continuation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            result = generate_dry_run_preview(
+                actual_pages=[25],
+                preview_output_path=temp_root / "preview.json",
+                preview_report_path=temp_root / "preview_report.txt",
+            )
+            by_name = {record["name"]: record for record in result.preview_records}
+            self.assertIn("Cerepod", by_name)
+            record = by_name["Cerepod"]
+            self.assertEqual(record["attacks"], "11 (10 tentacles & beak)")
+            self.assertEqual(record["damage"], "See below")
+            self.assertEqual(record["save"], "F6")
+            self.assertEqual(record["morale"], "10")
+            self.assertEqual(record["treasure"], "W (Lair)")
+            self.assertEqual(record["xp"], "1,250")
+            self.assertEqual(record["status"], "parsed")
+
+    def test_full_preview_counts_are_tracked(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            result = generate_dry_run_preview(
+                preview_output_path=temp_root / "preview.json",
+                preview_report_path=temp_root / "preview_report.txt",
+            )
+            self.assertEqual(result.detected_entries, 253)
+            self.assertGreaterEqual(result.parsed_entries, 251)
+            self.assertLessEqual(result.partial_entries, 2)
+            self.assertGreaterEqual(result.rejected_headings, 1)
+
     def test_synthetic_page_requires_multiple_stat_labels_before_accepting_heading(self):
         pages = [
             ProbePage(
@@ -97,7 +243,7 @@ Movement through the dungeon is dangerous.
 """,
             )
         ]
-        entries = split_entries_from_pages(pages)
+        entries, _, _ = split_entries_from_pages(pages)
         self.assertEqual(entries, [])
 
 

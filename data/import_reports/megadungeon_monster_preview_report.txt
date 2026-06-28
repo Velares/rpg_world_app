@@ -1,0 +1,34 @@
+Megadungeon Monster Dry-Run Preview
+===================================
+
+Source ID: megadungeon_monster_manual
+Source title: Megadungeon Monster Manual
+Source status: active
+Source path mode: registry default
+Source path: data/import_sources/MegadungeonMonsterManual.pdf
+Pages scanned: 9-105
+Candidate headings detected: 334
+Rejected headings: 81
+Preview records: 253
+Parsed entries: 253
+Partial entries: 0
+Preview output: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_reports\megadungeon_monster_preview.json
+Preview report: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_reports\megadungeon_monster_preview_report.txt
+
+Aarakocra preview sample
+- slug: aarakocra
+- pages: 9-9
+- no_enc: 2d4
+- movement: 30 (Fly 120)
+- xp: 33
+- status: parsed
+- warnings: None
+
+Rock Manta preview sample
+- slug: rockmanta
+- pages: 83-83
+- no_enc: 1d2
+- movement: See Below
+- xp: 47 , 95, 220, 650
+- status: parsed
+- warnings: None

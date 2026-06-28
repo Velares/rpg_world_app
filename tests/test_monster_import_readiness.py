@@ -119,7 +119,7 @@ class MonsterImportReadinessTests(unittest.TestCase):
         self.assertIn("mandbmaster_combined_monster_manual", report)
         self.assertIn("python tools/importers/monster_manual_importer.py", report)
         self.assertIn("python tools/import_add_bestiary.py", report)
-        self.assertIn("python tools/importers/megadungeon_monster_importer.py --probe", report)
+        self.assertIn("python tools/importers/megadungeon_monster_importer.py --dry-run-preview", report)
 
     def test_json_import_unknown_registry_source_is_rejected(self):
         with tempfile.TemporaryDirectory() as temp:

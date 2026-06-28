@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -15,11 +16,20 @@ from tools.importers.monster_manual_importer import is_page_marker_line, normali
 from tools.importers.monster_manual_schema import (
     DEFAULT_MEGADUNGEON_MONSTER_PDF,
     MEGADUNGEON_MONSTER_SOURCE_ID,
+    PROJECT_ROOT,
     ResolvedMonsterSource,
     resolve_registered_monster_source,
 )
 
 
+MEGADUNGEON_MONSTER_SECTION_PAGES = (9, 105)
+DEFAULT_PREVIEW_OUTPUT_PATH = (
+    PROJECT_ROOT / "data" / "import_reports" / "megadungeon_monster_preview.json"
+)
+DEFAULT_PREVIEW_REPORT_PATH = (
+    PROJECT_ROOT / "data" / "import_reports" / "megadungeon_monster_preview_report.txt"
+)
+DEFAULT_RAW_TEXT_EXCERPT_LENGTH = 500
 LABEL_ALIASES = {
     "noenc": "number_encountered",
     "alignment": "alignment",
@@ -31,6 +41,7 @@ LABEL_ALIASES = {
     "save": "save",
     "morale": "morale",
     "treasure": "treasure",
+    "treasuretype": "treasure",
     "xp": "xp",
 }
 DISPLAY_LABELS = {
@@ -45,6 +56,19 @@ DISPLAY_LABELS = {
     "morale": "Morale",
     "treasure": "Treasure",
     "xp": "XP",
+}
+PREVIEW_FIELD_MAP = {
+    "number_encountered": "no_enc",
+    "alignment": "alignment",
+    "movement": "movement",
+    "armor_class": "armor_class",
+    "hit_dice": "hit_dice",
+    "attacks": "attacks",
+    "damage": "damage",
+    "save": "save",
+    "morale": "morale",
+    "treasure": "treasure",
+    "xp": "xp",
 }
 REQUIRED_STAT_KEYS = tuple(DISPLAY_LABELS.keys())
 MUST_HAVE_STAT_KEYS = {
@@ -61,12 +85,15 @@ HEADING_IGNORE = {
     "MEGADUNGEON",
     "MONSTER MANUAL",
     "Greg Gillespie",
+    "Introduction",
+    "Legal",
 }
 GENERIC_LABEL_PATTERN = re.compile(r"^\s*([A-Za-z. ]{2,40})\s*:\s*(.*)$")
 TITLE_WORD_PATTERN = re.compile(r"^[A-Z][a-z]+(?:['-][A-Z][a-z]+)*$")
 UPPERCASE_WORD_PATTERN = re.compile(r"^[A-Z]{2,}$")
 HEADING_TOKEN_PATTERN = re.compile(r"[A-Za-z]+(?:['-][A-Za-z]+)*|[A-Z]{2,}|&|\d+")
 LABEL_TOKEN_NORMALIZER = re.compile(r"[^a-z]+")
+SLUG_TOKEN_PATTERN = re.compile(r"[^a-z0-9]+")
 
 
 @dataclass
@@ -79,12 +106,34 @@ class ProbePage:
 class MegadungeonMonsterEntry:
     name: str
     source_id: str
+    source_title: str
     actual_page_start: int
     actual_page_end: int
     raw_stat_block: str
     raw_text: str
     fields: dict[str, str]
     warnings: list[str] = field(default_factory=list)
+    status: str = "parsed"
+    confidence: str = "high"
+
+    def to_preview_record(self, *, raw_text_excerpt_length: int = DEFAULT_RAW_TEXT_EXCERPT_LENGTH) -> dict[str, Any]:
+        record = {
+            "source_id": self.source_id,
+            "source_title": self.source_title,
+            "name": self.name,
+            "slug": slugify_name(self.name),
+            "actual_page_start": self.actual_page_start,
+            "actual_page_end": self.actual_page_end,
+            "raw_stat_block": self.raw_stat_block,
+            "raw_text_excerpt": self.raw_text[:raw_text_excerpt_length],
+            "raw_text": self.raw_text,
+            "warnings": list(self.warnings),
+            "status": self.status,
+            "confidence": self.confidence,
+        }
+        for source_key, target_key in PREVIEW_FIELD_MAP.items():
+            record[target_key] = self.fields.get(source_key, "")
+        return record
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -96,11 +145,28 @@ class MegadungeonProbeResult:
     pages: list[int]
     entries: list[MegadungeonMonsterEntry]
     report_text: str
+    candidate_headings_detected: int
+    rejected_heading_count: int
+    rejected_headings: list[str] = field(default_factory=list)
+
+
+@dataclass
+class MegadungeonDryRunPreviewResult:
+    source: ResolvedMonsterSource
+    pages: list[int]
+    preview_records: list[dict[str, Any]]
+    preview_path: Path
+    report_path: Path
+    report_text: str
+    detected_entries: int
+    parsed_entries: int
+    partial_entries: int
+    rejected_headings: int
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Probe the Megadungeon Monster Manual PDF without writing catalog output."
+        description="Probe or generate dry-run preview output for the Megadungeon Monster Manual PDF."
     )
     parser.add_argument(
         "pdf_path",
@@ -111,7 +177,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--probe",
         action="store_true",
-        help="Run read-only probe mode. This milestone supports probe mode only.",
+        help="Run read-only probe mode and print detected entries without writing preview files.",
+    )
+    parser.add_argument(
+        "--dry-run-preview",
+        action="store_true",
+        help="Write a separate preview JSON/report pair without modifying live monster catalogs.",
     )
     parser.add_argument(
         "--pages",
@@ -119,6 +190,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         type=int,
         default=None,
         help="Actual PDF pages to probe, for example --pages 9 11 83.",
+    )
+    parser.add_argument(
+        "--preview-output",
+        default=str(DEFAULT_PREVIEW_OUTPUT_PATH),
+        help="Path for the dry-run preview JSON output.",
+    )
+    parser.add_argument(
+        "--preview-report",
+        default=str(DEFAULT_PREVIEW_REPORT_PATH),
+        help="Path for the dry-run preview text report.",
     )
     parser.add_argument(
         "--source-id",
@@ -131,6 +212,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Allow probing a source registry entry marked inactive or comparison-only.",
     )
     return parser.parse_args(argv)
+
+
+def default_actual_pages() -> list[int]:
+    start, end = MEGADUNGEON_MONSTER_SECTION_PAGES
+    return list(range(start, end + 1))
 
 
 def resolve_probe_source(
@@ -161,10 +247,7 @@ def extract_probe_pages(
         ) from exc
 
     reader = PdfReader(str(pdf_path))
-    if actual_pages is None:
-        pages_to_read = list(range(1, len(reader.pages) + 1))
-    else:
-        pages_to_read = actual_pages
+    pages_to_read = actual_pages or default_actual_pages()
 
     pages: list[ProbePage] = []
     for actual_page in pages_to_read:
@@ -178,8 +261,7 @@ def extract_probe_pages(
 
 
 def normalize_label_token(label: str) -> str:
-    compact = LABEL_TOKEN_NORMALIZER.sub("", normalize_line(label).lower())
-    return compact
+    return LABEL_TOKEN_NORMALIZER.sub("", normalize_line(label).lower())
 
 
 def parse_stat_label_line(line: str) -> tuple[str, str] | None:
@@ -192,8 +274,40 @@ def parse_stat_label_line(line: str) -> tuple[str, str] | None:
     return key, normalize_line(match.group(2))
 
 
+def is_stat_continuation_line(line: str) -> bool:
+    stripped = normalize_line(line)
+    if not stripped:
+        return False
+    if stripped.startswith("("):
+        return True
+    return False
+
+
 def tokenize_heading(line: str) -> list[str]:
     return HEADING_TOKEN_PATTERN.findall(line)
+
+
+def slugify_name(name: str) -> str:
+    base = SLUG_TOKEN_PATTERN.sub("", name.lower())
+    return base or "unknown_megadungeon_monster"
+
+
+def page_looks_like_non_monster_frontmatter(page: ProbePage) -> bool:
+    lines = [normalize_line(line) for line in page.text.replace("\r\n", "\n").replace("\r", "\n").splitlines()]
+    lines = [line for line in lines if line and not is_page_marker_line(line)]
+    if not lines:
+        return True
+    combined = "\n".join(lines[:20])
+    if "Introduction" in combined:
+        return True
+    if "Credits and Acknowledgements" in combined:
+        return True
+    if "Legal" in combined:
+        return True
+    dot_leader_hits = sum(1 for line in lines[:40] if "..." in line or " . " in line or "................................" in line)
+    if dot_leader_hits >= 3:
+        return True
+    return False
 
 
 def is_title_case_heading_candidate(line: str) -> bool:
@@ -252,6 +366,8 @@ def has_required_stat_block_nearby(
 def build_normalized_line_index(pages: list[ProbePage]) -> list[tuple[int, str]]:
     indexed_lines: list[tuple[int, str]] = []
     for page in pages:
+        if page_looks_like_non_monster_frontmatter(page):
+            continue
         for raw_line in page.text.replace("\r\n", "\n").replace("\r", "\n").splitlines():
             line = normalize_line(raw_line)
             if not line or is_page_marker_line(line):
@@ -260,14 +376,32 @@ def build_normalized_line_index(pages: list[ProbePage]) -> list[tuple[int, str]]
     return indexed_lines
 
 
-def split_entries_from_pages(pages: list[ProbePage]) -> list[MegadungeonMonsterEntry]:
+def classify_entry_status(fields: dict[str, str], warnings: list[str]) -> tuple[str, str]:
+    if not fields:
+        return "rejected", "low"
+    if any(warning.startswith("missing_stat_labels:") for warning in warnings):
+        return "partial", "medium"
+    return "parsed", "high"
+
+
+def split_entries_from_pages(
+    pages: list[ProbePage],
+) -> tuple[list[MegadungeonMonsterEntry], int, list[str]]:
     indexed_lines = build_normalized_line_index(pages)
-    heading_indexes = [
-        index
-        for index, (_, line) in enumerate(indexed_lines)
+    heading_candidates = [
+        line
+        for _, line in indexed_lines
         if is_title_case_heading_candidate(line)
-        and has_required_stat_block_nearby(indexed_lines, index)
     ]
+    heading_indexes: list[int] = []
+    rejected_headings: list[str] = []
+    for index, (_, line) in enumerate(indexed_lines):
+        if not is_title_case_heading_candidate(line):
+            continue
+        if has_required_stat_block_nearby(indexed_lines, index):
+            heading_indexes.append(index)
+        else:
+            rejected_headings.append(line)
 
     entries: list[MegadungeonMonsterEntry] = []
     for position, start_index in enumerate(heading_indexes):
@@ -280,7 +414,7 @@ def split_entries_from_pages(pages: list[ProbePage]) -> list[MegadungeonMonsterE
         if not entry_lines:
             continue
         entries.append(parse_entry_lines(entry_lines))
-    return entries
+    return entries, len(heading_candidates), rejected_headings
 
 
 def parse_entry_lines(entry_lines: list[tuple[int, str]]) -> MegadungeonMonsterEntry:
@@ -295,6 +429,7 @@ def parse_entry_lines(entry_lines: list[tuple[int, str]]) -> MegadungeonMonsterE
     raw_stat_lines: list[str] = []
     duplicate_keys: list[str] = []
     collecting_stat_block = True
+    last_key: str | None = None
 
     for line in body_lines:
         parsed = parse_stat_label_line(line)
@@ -303,6 +438,11 @@ def parse_entry_lines(entry_lines: list[tuple[int, str]]) -> MegadungeonMonsterE
             if key in fields:
                 duplicate_keys.append(key)
             fields[key] = value
+            raw_stat_lines.append(line)
+            last_key = key
+            continue
+        if collecting_stat_block and last_key is not None and is_stat_continuation_line(line):
+            fields[last_key] = f"{fields[last_key]} {normalize_line(line)}".strip()
             raw_stat_lines.append(line)
             continue
         collecting_stat_block = False
@@ -323,15 +463,19 @@ def parse_entry_lines(entry_lines: list[tuple[int, str]]) -> MegadungeonMonsterE
     if end_page > start_page:
         warnings.append("entry_spans_multiple_pages")
 
+    status, confidence = classify_entry_status(fields, warnings)
     return MegadungeonMonsterEntry(
         name=name,
         source_id=MEGADUNGEON_MONSTER_SOURCE_ID,
+        source_title="Megadungeon Monster Manual",
         actual_page_start=start_page,
         actual_page_end=end_page,
         raw_stat_block="\n".join(raw_stat_lines),
         raw_text=raw_text,
         fields=fields,
         warnings=warnings,
+        status=status,
+        confidence=confidence,
     )
 
 
@@ -339,7 +483,12 @@ def build_probe_report(
     source: ResolvedMonsterSource,
     pages: list[ProbePage],
     entries: list[MegadungeonMonsterEntry],
+    *,
+    candidate_headings_detected: int,
+    rejected_headings: list[str],
 ) -> str:
+    parsed_entries = sum(1 for entry in entries if entry.status == "parsed")
+    partial_entries = sum(1 for entry in entries if entry.status == "partial")
     lines = [
         "Megadungeon Monster Probe",
         "=========================",
@@ -350,19 +499,88 @@ def build_probe_report(
         f"Source path mode: {'direct override' if source.used_path_override else 'registry default'}",
         f"Source path: {source.path_display}",
         f"Pages probed: {', '.join(str(page.actual_page) for page in pages) if pages else '(none)'}",
+        f"Candidate headings detected: {candidate_headings_detected}",
+        f"Rejected headings: {len(rejected_headings)}",
         f"Entries detected: {len(entries)}",
+        f"Parsed entries: {parsed_entries}",
+        f"Partial entries: {partial_entries}",
     ]
     for entry in entries:
         lines.extend(
             [
                 "",
                 f"{entry.name} (pages {entry.actual_page_start}-{entry.actual_page_end})",
+                f"Status: {entry.status}",
+                f"Confidence: {entry.confidence}",
                 f"Warnings: {', '.join(entry.warnings) if entry.warnings else 'None'}",
             ]
         )
         for key in REQUIRED_STAT_KEYS:
             if key in entry.fields:
                 lines.append(f"- {DISPLAY_LABELS[key]}: {entry.fields[key]}")
+    if rejected_headings:
+        lines.extend(["", "Rejected headings:", *[f"- {heading}" for heading in rejected_headings[:20]]])
+    return "\n".join(lines) + "\n"
+
+
+def build_preview_report(
+    source: ResolvedMonsterSource,
+    pages: list[int],
+    preview_records: list[dict[str, Any]],
+    *,
+    candidate_headings_detected: int,
+    rejected_heading_count: int,
+    preview_path: Path,
+    report_path: Path,
+) -> str:
+    parsed_entries = sum(1 for record in preview_records if record["status"] == "parsed")
+    partial_entries = sum(1 for record in preview_records if record["status"] == "partial")
+    lines = [
+        "Megadungeon Monster Dry-Run Preview",
+        "===================================",
+        "",
+        f"Source ID: {source.source_id}",
+        f"Source title: {source.source_title}",
+        f"Source status: {source.source_status}",
+        f"Source path mode: {'direct override' if source.used_path_override else 'registry default'}",
+        f"Source path: {source.path_display}",
+        f"Pages scanned: {pages[0]}-{pages[-1]}" if pages else "Pages scanned: (none)",
+        f"Candidate headings detected: {candidate_headings_detected}",
+        f"Rejected headings: {rejected_heading_count}",
+        f"Preview records: {len(preview_records)}",
+        f"Parsed entries: {parsed_entries}",
+        f"Partial entries: {partial_entries}",
+        f"Preview output: {preview_path}",
+        f"Preview report: {report_path}",
+    ]
+    sample_names = ("Aarakocra", "Rock Manta")
+    by_name = {record["name"]: record for record in preview_records}
+    for sample_name in sample_names:
+        record = by_name.get(sample_name)
+        if record is None:
+            continue
+        lines.extend(
+            [
+                "",
+                f"{sample_name} preview sample",
+                f"- slug: {record['slug']}",
+                f"- pages: {record['actual_page_start']}-{record['actual_page_end']}",
+                f"- no_enc: {record['no_enc']}",
+                f"- movement: {record['movement']}",
+                f"- xp: {record['xp']}",
+                f"- status: {record['status']}",
+                f"- warnings: {', '.join(record['warnings']) if record['warnings'] else 'None'}",
+            ]
+        )
+    partial_records = [record for record in preview_records if record["status"] != "parsed"]
+    if partial_records:
+        lines.append("")
+        lines.append("Partial record review")
+        for record in partial_records[:10]:
+            lines.append(
+                f"- {record['name']} (pages {record['actual_page_start']}-{record['actual_page_end']}): "
+                f"{', '.join(record['warnings']) if record['warnings'] else 'No warnings recorded'}"
+            )
     return "\n".join(lines) + "\n"
 
 
@@ -379,31 +597,109 @@ def probe_megadungeon(
         allow_inactive_source=allow_inactive_source,
     )
     pages = extract_probe_pages(source.source_path, actual_pages=actual_pages)
-    entries = split_entries_from_pages(pages)
-    report_text = build_probe_report(source, pages, entries)
+    entries, candidate_headings_detected, rejected_headings = split_entries_from_pages(pages)
+    for entry in entries:
+        entry.source_title = source.source_title or "Megadungeon Monster Manual"
+    report_text = build_probe_report(
+        source,
+        pages,
+        entries,
+        candidate_headings_detected=candidate_headings_detected,
+        rejected_headings=rejected_headings,
+    )
     return MegadungeonProbeResult(
         source=source,
         pages=[page.actual_page for page in pages],
         entries=entries,
         report_text=report_text,
+        candidate_headings_detected=candidate_headings_detected,
+        rejected_heading_count=len(rejected_headings),
+        rejected_headings=rejected_headings,
+    )
+
+
+def write_text_file(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content, encoding="utf-8")
+
+
+def write_json_file(path: Path, payload: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
+
+
+def generate_dry_run_preview(
+    *,
+    pdf_path: Path | None = None,
+    actual_pages: list[int] | None = None,
+    preview_output_path: Path = DEFAULT_PREVIEW_OUTPUT_PATH,
+    preview_report_path: Path = DEFAULT_PREVIEW_REPORT_PATH,
+    source_id: str = MEGADUNGEON_MONSTER_SOURCE_ID,
+    allow_inactive_source: bool = False,
+) -> MegadungeonDryRunPreviewResult:
+    probe_result = probe_megadungeon(
+        pdf_path=pdf_path,
+        actual_pages=actual_pages,
+        source_id=source_id,
+        allow_inactive_source=allow_inactive_source,
+    )
+    preview_records = [
+        entry.to_preview_record()
+        for entry in probe_result.entries
+    ]
+    report_text = build_preview_report(
+        probe_result.source,
+        probe_result.pages,
+        preview_records,
+        candidate_headings_detected=probe_result.candidate_headings_detected,
+        rejected_heading_count=probe_result.rejected_heading_count,
+        preview_path=preview_output_path,
+        report_path=preview_report_path,
+    )
+    write_json_file(preview_output_path, preview_records)
+    write_text_file(preview_report_path, report_text)
+    parsed_entries = sum(1 for record in preview_records if record["status"] == "parsed")
+    partial_entries = sum(1 for record in preview_records if record["status"] == "partial")
+    return MegadungeonDryRunPreviewResult(
+        source=probe_result.source,
+        pages=probe_result.pages,
+        preview_records=preview_records,
+        preview_path=preview_output_path,
+        report_path=preview_report_path,
+        report_text=report_text,
+        detected_entries=len(preview_records),
+        parsed_entries=parsed_entries,
+        partial_entries=partial_entries,
+        rejected_headings=probe_result.rejected_heading_count,
     )
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
-    if not args.probe:
+    if bool(args.probe) == bool(args.dry_run_preview):
         print(
-            "Only --probe mode is supported in this milestone. "
-            "No catalog-writing import has been implemented yet.",
+            "Choose exactly one mode: --probe or --dry-run-preview.",
             file=sys.stderr,
         )
         return 2
 
     override_path = Path(args.pdf_path) if args.pdf_path else None
     try:
-        result = probe_megadungeon(
+        if args.probe:
+            result = probe_megadungeon(
+                pdf_path=override_path,
+                actual_pages=args.pages,
+                source_id=args.source_id,
+                allow_inactive_source=args.allow_inactive_source,
+            )
+            print(result.report_text, end="")
+            return 0
+
+        result = generate_dry_run_preview(
             pdf_path=override_path,
             actual_pages=args.pages,
+            preview_output_path=Path(args.preview_output),
+            preview_report_path=Path(args.preview_report),
             source_id=args.source_id,
             allow_inactive_source=args.allow_inactive_source,
         )
