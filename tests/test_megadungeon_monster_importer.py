@@ -8,7 +8,10 @@ from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
 from tools.importers.megadungeon_monster_importer import (
+    DEFAULT_CONTENT_MONSTERS_JSON,
+    DEFAULT_CONTENT_PACK_JSON,
     DEFAULT_MEGADUNGEON_MONSTER_PDF,
+    DEFAULT_CONTENT_PACK_REPORT_PATH,
     DEFAULT_PREVIEW_OUTPUT_PATH,
     DEFAULT_PREVIEW_REPORT_PATH,
     DISPLAY_LABELS,
@@ -16,6 +19,7 @@ from tools.importers.megadungeon_monster_importer import (
     ProbePage,
     extract_probe_pages,
     generate_dry_run_preview,
+    write_content_pack,
     main,
     probe_megadungeon,
     split_entries_from_pages,
@@ -163,9 +167,33 @@ class MegadungeonMonsterImporterTests(unittest.TestCase):
         self.assertEqual(before_catalog, after_catalog)
         self.assertEqual(before_appendix, after_appendix)
 
+    def test_write_content_pack_does_not_modify_live_catalog_files(self):
+        before_catalog = DEFAULT_MONSTER_CATALOG_JSON.read_text(encoding="utf-8")
+        before_appendix = DEFAULT_MONSTER_APPENDIX_CATALOG_JSON.read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            write_content_pack(
+                actual_pages=[9, 11, 83],
+                preview_output_path=temp_root / "preview.json",
+                preview_report_path=temp_root / "preview_report.txt",
+                pack_json_path=temp_root / "pack.json",
+                monsters_json_path=temp_root / "monsters.json",
+                report_path=temp_root / "content_pack_report.txt",
+                generated_at="2026-06-28T00:00:00+00:00",
+            )
+        after_catalog = DEFAULT_MONSTER_CATALOG_JSON.read_text(encoding="utf-8")
+        after_appendix = DEFAULT_MONSTER_APPENDIX_CATALOG_JSON.read_text(encoding="utf-8")
+        self.assertEqual(before_catalog, after_catalog)
+        self.assertEqual(before_appendix, after_appendix)
+
     def test_preview_output_path_defaults_are_separate_from_live_catalog_paths(self):
         self.assertNotEqual(DEFAULT_PREVIEW_OUTPUT_PATH.resolve(), DEFAULT_MONSTER_CATALOG_JSON.resolve())
         self.assertNotEqual(DEFAULT_PREVIEW_REPORT_PATH.resolve(), DEFAULT_MONSTER_APPENDIX_CATALOG_JSON.resolve())
+
+    def test_content_pack_paths_are_separate_from_live_catalog_paths(self):
+        self.assertNotEqual(DEFAULT_CONTENT_PACK_JSON.resolve(), DEFAULT_MONSTER_CATALOG_JSON.resolve())
+        self.assertNotEqual(DEFAULT_CONTENT_MONSTERS_JSON.resolve(), DEFAULT_MONSTER_APPENDIX_CATALOG_JSON.resolve())
+        self.assertNotEqual(DEFAULT_CONTENT_PACK_REPORT_PATH.resolve(), DEFAULT_PREVIEW_REPORT_PATH.resolve())
 
     def test_preview_records_include_metadata_and_page_numbers(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -231,6 +259,107 @@ class MegadungeonMonsterImporterTests(unittest.TestCase):
             self.assertGreaterEqual(result.parsed_entries, 251)
             self.assertLessEqual(result.partial_entries, 2)
             self.assertGreaterEqual(result.rejected_headings, 1)
+
+    def test_write_content_pack_contains_expected_metadata_and_records(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            result = write_content_pack(
+                preview_output_path=temp_root / "preview.json",
+                preview_report_path=temp_root / "preview_report.txt",
+                pack_json_path=temp_root / "pack.json",
+                monsters_json_path=temp_root / "monsters.json",
+                report_path=temp_root / "content_pack_report.txt",
+                generated_at="2026-06-28T00:00:00+00:00",
+            )
+            self.assertEqual(result.pack_metadata["pack_id"], MEGADUNGEON_MONSTER_SOURCE_ID)
+            self.assertEqual(result.pack_metadata["id"], "imported.megadungeon_monster_manual")
+            self.assertEqual(result.pack_metadata["source_id"], MEGADUNGEON_MONSTER_SOURCE_ID)
+            self.assertEqual(result.pack_metadata["record_count"], 253)
+            self.assertEqual(result.pack_metadata["generated_at"], "2026-06-28T00:00:00+00:00")
+            self.assertEqual(result.monsters_payload["monster_count"], 253)
+            self.assertEqual(result.monsters_payload["source_pack"], "imported.megadungeon_monster_manual")
+            self.assertTrue(result.pack_json_path.exists())
+            self.assertTrue(result.monsters_json_path.exists())
+            self.assertTrue(result.report_path.exists())
+
+    def test_content_pack_contains_aarakocra_record(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            result = write_content_pack(
+                preview_output_path=temp_root / "preview.json",
+                preview_report_path=temp_root / "preview_report.txt",
+                pack_json_path=temp_root / "pack.json",
+                monsters_json_path=temp_root / "monsters.json",
+                report_path=temp_root / "content_pack_report.txt",
+                generated_at="2026-06-28T00:00:00+00:00",
+            )
+            by_name = {record["name"]: record for record in result.monsters_payload["monsters"]}
+            aarakocra = by_name["Aarakocra"]
+            self.assertEqual(aarakocra["source_id"], MEGADUNGEON_MONSTER_SOURCE_ID)
+            self.assertEqual(aarakocra["source_file"], "MegadungeonMonsterManual.pdf")
+            self.assertEqual(aarakocra["actual_page_start"], 9)
+            self.assertEqual(aarakocra["actual_page_end"], 9)
+            self.assertEqual(aarakocra["no_enc"], "2d4")
+            self.assertEqual(aarakocra["movement"], "30 (Fly 120)")
+            self.assertEqual(aarakocra["parser_status"], "parsed")
+
+    def test_content_pack_contains_rock_manta_record_with_multiple_xp_values(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            result = write_content_pack(
+                preview_output_path=temp_root / "preview.json",
+                preview_report_path=temp_root / "preview_report.txt",
+                pack_json_path=temp_root / "pack.json",
+                monsters_json_path=temp_root / "monsters.json",
+                report_path=temp_root / "content_pack_report.txt",
+                generated_at="2026-06-28T00:00:00+00:00",
+            )
+            by_name = {record["name"]: record for record in result.monsters_payload["monsters"]}
+            rock_manta = by_name["Rock Manta"]
+            self.assertEqual(rock_manta["xp"], "47 , 95, 220, 650")
+            self.assertEqual(rock_manta["source_page_actual"], 83)
+            self.assertEqual(rock_manta["source_page_end"], 83)
+            self.assertEqual(rock_manta["parser_status"], "parsed")
+
+    def test_all_content_pack_records_include_source_and_page_metadata(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            result = write_content_pack(
+                preview_output_path=temp_root / "preview.json",
+                preview_report_path=temp_root / "preview_report.txt",
+                pack_json_path=temp_root / "pack.json",
+                monsters_json_path=temp_root / "monsters.json",
+                report_path=temp_root / "content_pack_report.txt",
+                generated_at="2026-06-28T00:00:00+00:00",
+            )
+            for record in result.monsters_payload["monsters"]:
+                self.assertEqual(record["source_id"], MEGADUNGEON_MONSTER_SOURCE_ID)
+                self.assertTrue(record["source_title"])
+                self.assertTrue(record["source_file"])
+                self.assertGreaterEqual(record["actual_page_start"], 9)
+                self.assertGreaterEqual(record["actual_page_end"], record["actual_page_start"])
+
+    def test_content_pack_write_is_reproducible_except_timestamp(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            result_one = write_content_pack(
+                preview_output_path=temp_root / "preview1.json",
+                preview_report_path=temp_root / "preview1_report.txt",
+                pack_json_path=temp_root / "pack1.json",
+                monsters_json_path=temp_root / "monsters1.json",
+                report_path=temp_root / "content_pack1_report.txt",
+                generated_at="2026-06-28T00:00:00+00:00",
+            )
+            result_two = write_content_pack(
+                preview_output_path=temp_root / "preview2.json",
+                preview_report_path=temp_root / "preview2_report.txt",
+                pack_json_path=temp_root / "pack2.json",
+                monsters_json_path=temp_root / "monsters2.json",
+                report_path=temp_root / "content_pack2_report.txt",
+                generated_at="2026-06-28T00:00:00+00:00",
+            )
+            self.assertEqual(result_one.pack_metadata, result_two.pack_metadata)
+            self.assertEqual(result_one.monsters_payload, result_two.monsters_payload)
 
     def test_synthetic_page_requires_multiple_stat_labels_before_accepting_heading(self):
         pages = [

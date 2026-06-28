@@ -54,7 +54,10 @@ def recommended_commands(source_id: str) -> list[str]:
     if source_id == ADD_BESTIARY_SOURCE_ID:
         return ["python tools/import_add_bestiary.py"]
     if source_id == MEGADUNGEON_MONSTER_SOURCE_ID:
-        return ["python tools/importers/megadungeon_monster_importer.py --dry-run-preview"]
+        return [
+            "python tools/importers/megadungeon_monster_importer.py --dry-run-preview",
+            "python tools/importers/megadungeon_monster_importer.py --write-content-pack",
+        ]
     return ["No importer command assigned yet."]
 
 
@@ -71,6 +74,21 @@ def output_paths(source_id: str) -> list[str]:
             str(DEFAULT_ADD_BESTIARY_PACK_JSON),
             str(DEFAULT_ADD_BESTIARY_MONSTERS_JSON),
             str(DEFAULT_ADD_BESTIARY_IMPORT_REPORT),
+        ]
+    if source_id == MEGADUNGEON_MONSTER_SOURCE_ID:
+        from tools.importers.megadungeon_monster_importer import (
+            DEFAULT_CONTENT_MONSTERS_JSON,
+            DEFAULT_CONTENT_PACK_JSON,
+            DEFAULT_CONTENT_PACK_REPORT_PATH,
+            DEFAULT_PREVIEW_OUTPUT_PATH,
+            DEFAULT_PREVIEW_REPORT_PATH,
+        )
+        return [
+            str(DEFAULT_PREVIEW_OUTPUT_PATH),
+            str(DEFAULT_PREVIEW_REPORT_PATH),
+            str(DEFAULT_CONTENT_PACK_JSON),
+            str(DEFAULT_CONTENT_MONSTERS_JSON),
+            str(DEFAULT_CONTENT_PACK_REPORT_PATH),
         ]
     return []
 

@@ -1,0 +1,22 @@
+Megadungeon Monster Content Pack Report
+=======================================
+
+Importer: megadungeon_monster_importer
+Source ID: megadungeon_monster_manual
+Source title: Megadungeon Monster Manual
+Source status: active
+Source path used: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_sources\MegadungeonMonsterManual.pdf
+Source path mode: registry default
+Registered expected path: data/import_sources/MegadungeonMonsterManual.pdf
+Generated at: 2026-06-28T19:10:40.995846+00:00
+Preview JSON path: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_reports\megadungeon_monster_preview.json
+Preview report path: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_reports\megadungeon_monster_preview_report.txt
+Pack metadata path: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\content_packs\imported\megadungeon_monster_manual\pack.json
+Pack monsters path: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\content_packs\imported\megadungeon_monster_manual\monsters.json
+
+Record count: 253
+Parsed count: 253
+Partial count: 0
+Rejected heading count: 81
+
+Reminder: this is a separate imported content pack and does not modify the core MandBmaster monster catalog.
