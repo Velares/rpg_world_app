@@ -6,8 +6,8 @@ Source title: Megadungeon Monster Manual
 Source file: MegadungeonMonsterManual.pdf
 Source pack: imported.megadungeon_monster_manual
 Normalized preview records: 253
-Preview output: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_reports\megadungeon_normalized_monster_preview.json
-Preview report: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_reports\megadungeon_normalized_monster_preview_report.txt
+Preview output: C:\Users\chrismata\CascadeProjects\rpg_world_app\data\import_reports\megadungeon_normalized_monster_preview.json
+Preview report: C:\Users\chrismata\CascadeProjects\rpg_world_app\data\import_reports\megadungeon_normalized_monster_preview_report.txt
 
 Review status counts:
 - mapped_with_placeholders: 139

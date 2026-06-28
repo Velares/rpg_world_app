@@ -3,10 +3,10 @@ MandBmaster Normalized Monster Preview
 
 Source ID: mandbmaster_combined_monster_manual
 Source title: MandBmaster Combined Monster Manual
-Source catalog: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\catalogs\monsters\monster_catalog.json
+Source catalog: C:\Users\chrismata\CascadeProjects\rpg_world_app\data\catalogs\monsters\monster_catalog.json
 Normalized records: 268
-Preview output: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_reports\mandbmaster_normalized_monster_preview.json
-Preview report: C:\Users\chrismata\Documents\Codex\2026-06-19\continue-development-on-https-github-com\repo\data\import_reports\mandbmaster_normalized_monster_preview_report.txt
+Preview output: C:\Users\chrismata\CascadeProjects\rpg_world_app\data\import_reports\mandbmaster_normalized_monster_preview.json
+Preview report: C:\Users\chrismata\CascadeProjects\rpg_world_app\data\import_reports\mandbmaster_normalized_monster_preview_report.txt
 
 Review status counts:
 - mapped_with_placeholders: 268

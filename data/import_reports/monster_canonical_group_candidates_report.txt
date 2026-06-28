@@ -1,0 +1,118 @@
+Monster Canonical Group Candidates
+==================================
+
+Generated at: 2026-06-28T21:44:55.128686+00:00
+MandBmaster records read: 268
+Megadungeon records read: 253
+Total candidate groups emitted: 8
+High-confidence candidates: 1
+Medium-confidence candidates: 4
+Low-confidence candidates: 3
+Exact-name match count: 0
+
+Output paths:
+- JSON: C:\Users\chrismata\CascadeProjects\rpg_world_app\data\import_reports\monster_canonical_group_candidates.json
+- Report: C:\Users\chrismata\CascadeProjects\rpg_world_app\data\import_reports\monster_canonical_group_candidates_report.txt
+
+Source PDF folder status:
+- PRESENT: MandBmaster Combined Monster Manual (mandbmaster.pdf)
+- MISSING: Megadungeon Monster Manual (MegadungeonMonsterManual.pdf)
+- MISSING: Adventures Dark and Deep Bestiary (Adventures Dark and Deep Bestiaryforingestion.pdf)
+- MISSING: Advanced Labyrinth Lord (advanced_labyrinth_lord/Advanced Labyrinth Lord.pdf)
+- MISSING: Labyrinth Lord Revised Edition (labyrinth_lord_revised_edition/Labyrinth Lord Revised Edition.pdf)
+
+IMPORTANT: This report is a review aid only.
+- No records were merged.
+- No live catalog JSON was modified.
+- No final master monster catalog was created or changed.
+- Each candidate group defaults to review_status='needs_review'.
+- A user_decision field is reserved for later approval/rejection.
+
+Top 20 candidate groups by confidence and score:
+------------------------------------------------
+
+1. [HIGH] Medusa, Greater (score=0.95)
+    Group ID: cg_medusa_greater_1
+    Reasons: case_punctuation_spacing_insensitive_name_match
+    - Medusa, Greater [mandbmaster_combined_monster_manual] AC=1, HD=9, MV=150 ft., XP=8 / 1600 + 12/HP
+    - Medusa (Greater) [megadungeon_monster_manual] AC=3, HD=8, MV=30, XP=550
+
+2. [MEDIUM] Skeleton, Black (score=1.0)
+    Group ID: cg_skeleton_black
+    Reasons: name_similarity_with_field_match, matched_fields: hit_dice
+    - Skeleton, Black [mandbmaster_combined_monster_manual] AC=0, HD=6, MV=120 ft., XP=5 / 370 + 6/hp
+    - Black Skeleton [megadungeon_monster_manual] AC=4, HD=6, MV=20, XP=400
+
+3. [MEDIUM] Troll, Shrieking (score=0.5)
+    Group ID: cg_troll_shrieking
+    Reasons: name_similarity_with_field_match, matched_fields: armor_class
+    - Troll, Shrieking [mandbmaster_combined_monster_manual] AC=4, HD=7+7, MV=120 ft., XP=7 / 1,250 + 10/hp
+    - Troll [megadungeon_monster_manual] AC=4, HD=6+6, MV=40, XP=600
+
+4. [MEDIUM] Medusa, Greater (score=0.5)
+    Group ID: cg_medusa_greater
+    Reasons: name_similarity_with_field_match, matched_fields: armor_class
+    - Medusa, Greater [mandbmaster_combined_monster_manual] AC=1, HD=9, MV=150 ft., XP=8 / 1600 + 12/HP
+    - (Greater) [megadungeon_monster_manual] AC=1, HD=6, MV=20, XP=650
+
+5. [MEDIUM] Spider, Shadow (score=0.5)
+    Group ID: cg_spider_shadow
+    Reasons: name_similarity_with_field_match, matched_fields: armor_class
+    - Spider, Shadow [mandbmaster_combined_monster_manual] AC=7, HD=1-7 hit points, MV=60 ft., in web 150 ft., XP=1 / 11 + 1/hp
+    - Shadow [megadungeon_monster_manual] AC=7, HD=2+2, MV=30, XP=83
+
+6. [LOW] Scorpion, Giant Black (score=0.667)
+    Group ID: cg_scorpion_giant_black
+    Reasons: name_similarity_only
+    - Scorpion, Giant Black [mandbmaster_combined_monster_manual] AC=3, HD=5+5, MV=60 ft., XP=5 / 415 + 6/hp
+    - Giant Scorpion [megadungeon_monster_manual] AC=5, HD=2+2, MV=20, XP=100
+
+7. [LOW] Snake, Ice Glare (score=0.667)
+    Group ID: cg_snake_ice_glare
+    Reasons: name_similarity_only
+    - Snake, Ice Glare [mandbmaster_combined_monster_manual] AC=3, HD=10, MV=90 ft., XP=7 / 1,500 + 13/hp
+    - Ice Snake [megadungeon_monster_manual] AC=6, HD=2, MV=20, XP=47
+
+8. [LOW] Ant, Giant Fungal (score=0.667)
+    Group ID: cg_ant_giant_fungal
+    Reasons: name_similarity_only
+    - Ant, Giant Fungal [mandbmaster_combined_monster_manual] AC=6, HD=2, MV=60 ft., XP=2 / 30 + 1/hp
+    - Giant Ant [megadungeon_monster_manual] AC=Varies, HD=Varies, MV=20, XP=20 per hit die
+
+Ambiguous / needs-review cases: 7
+------------------------------------------------
+
+- [MEDIUM] Skeleton, Black (score=1.0)
+  Reasons: name_similarity_with_field_match, matched_fields: hit_dice
+    * Skeleton, Black [mandbmaster_combined_monster_manual]
+    * Black Skeleton [megadungeon_monster_manual]
+
+- [MEDIUM] Troll, Shrieking (score=0.5)
+  Reasons: name_similarity_with_field_match, matched_fields: armor_class
+    * Troll, Shrieking [mandbmaster_combined_monster_manual]
+    * Troll [megadungeon_monster_manual]
+
+- [MEDIUM] Medusa, Greater (score=0.5)
+  Reasons: name_similarity_with_field_match, matched_fields: armor_class
+    * Medusa, Greater [mandbmaster_combined_monster_manual]
+    * (Greater) [megadungeon_monster_manual]
+
+- [MEDIUM] Spider, Shadow (score=0.5)
+  Reasons: name_similarity_with_field_match, matched_fields: armor_class
+    * Spider, Shadow [mandbmaster_combined_monster_manual]
+    * Shadow [megadungeon_monster_manual]
+
+- [LOW] Scorpion, Giant Black (score=0.667)
+  Reasons: name_similarity_only
+    * Scorpion, Giant Black [mandbmaster_combined_monster_manual]
+    * Giant Scorpion [megadungeon_monster_manual]
+
+- [LOW] Snake, Ice Glare (score=0.667)
+  Reasons: name_similarity_only
+    * Snake, Ice Glare [mandbmaster_combined_monster_manual]
+    * Ice Snake [megadungeon_monster_manual]
+
+- [LOW] Ant, Giant Fungal (score=0.667)
+  Reasons: name_similarity_only
+    * Ant, Giant Fungal [mandbmaster_combined_monster_manual]
+    * Giant Ant [megadungeon_monster_manual]

@@ -21,6 +21,26 @@ history is the more reliable source.
   source variants distinct, support canonical grouping later, and avoid silent
   overwrite while multiple sources are still being normalized.
 
+## v0.8.15 - cross-source canonical monster group candidates
+
+- Added `tools/importers/monster_canonical_group_candidates.py` to generate a
+  review-only, non-merging comparison of MandBmaster and Megadungeon
+  normalized monster previews.
+- Implemented deterministic, conservative matching: exact name, normalized-key
+  (case/punctuation/spacing), singular/plural, parenthetical, and name
+  similarity with optional `armor_class`/`hit_dice`/`movement`/`xp` field match.
+- Emitted `data/import_reports/monster_canonical_group_candidates.json` and
+  `data/import_reports/monster_canonical_group_candidates_report.txt` as
+  review-only outputs with 8 candidate groups (1 high, 4 medium, 3 low).
+- Preserved every source variant in each candidate group; set all groups to
+  `review_status='needs_review'` and reserved a `user_decision` field.
+- Added `tests/test_monster_canonical_group_candidates.py` with focused
+  coverage for exact, case/punctuation, singular/plural, parenthetical, and
+  field-similarity matches, plus live-catalog preservation and determinism.
+- Confirmed `data/catalogs/monsters/*.json` is unchanged and no master monster
+  catalog is created or modified by the tool.
+- Raised the validated suite to 225 passing `unittest` tests.
+
 ## v0.8.14 - monster importer readiness and source-aware tooling
 
 - Added reusable source-registry lookup helpers so importer tooling can load

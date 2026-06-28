@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-06-28T20:40:11.879329+00:00",
+  "generated_at": "2026-06-28T21:44:41.787302+00:00",
   "source_id": "mandbmaster_combined_monster_manual",
   "source_title": "MandBmaster Combined Monster Manual",
-  "source_catalog": "C:\\Users\\chrismata\\Documents\\Codex\\2026-06-19\\continue-development-on-https-github-com\\repo\\data\\catalogs\\monsters\\monster_catalog.json",
+  "source_catalog": "C:\\Users\\chrismata\\CascadeProjects\\rpg_world_app\\data\\catalogs\\monsters\\monster_catalog.json",
   "record_count": 268,
   "review_status_counts": {
     "mapped_with_placeholders": 268

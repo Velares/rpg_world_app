@@ -3,7 +3,7 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.14`
+- Current development version on `main`: `v0.8.15`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
@@ -98,6 +98,28 @@ Placeholder and mapping policy for that future normalized layer:
   exact mapping.
 
 ## Latest completed work
+
+Version 0.8.15 adds the first cross-source canonical monster group candidate
+report on `main`:
+
+- Added `tools/importers/monster_canonical_group_candidates.py` to compare the
+  MandBmaster and Megadungeon normalized monster previews without merging them.
+- Implemented conservative, deterministic matching for exact-name,
+  case/punctuation/spacing, singular/plural, parenthetical, and name-similarity
+  (with optional field-match) candidate groups.
+- Kept every source variant distinct; candidate groups are review suggestions
+  with `review_status='needs_review'` and a reserved `user_decision` field.
+- Emitted `data/import_reports/monster_canonical_group_candidates.json` and
+  `data/import_reports/monster_canonical_group_candidates_report.txt` as
+  review-only outputs.
+- Added `tests/test_monster_canonical_group_candidates.py` covering exact,
+  case/punctuation, singular/plural, parenthetical, field-similarity, and
+  live-catalog preservation behavior.
+- Confirmed that live catalog JSON (`data/catalogs/monsters/*.json`) is not
+  modified and no final master monster catalog is created by the new tool.
+- Raised the validated suite to 225 passing `unittest` tests while
+  `python -m compileall .`, `python tools/validate_sources.py`, and
+  `python tools/monster_import_status.py` continue to pass.
 
 Version 0.8.14 adds Step 2 monster-importer readiness work on `main`:
 
