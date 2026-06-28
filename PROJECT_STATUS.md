@@ -3,7 +3,7 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.17`
+- Current development version on `main`: `v0.8.18`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
@@ -98,6 +98,37 @@ Placeholder and mapping policy for that future normalized layer:
   exact mapping.
 
 ## Latest completed work
+
+Version 0.8.18 adds the Monster Editor / Normalized Monster Review surface on
+`main`:
+
+- Added `app/monster_editor.py` with helpers to load the MandBmaster and
+  Megadungeon normalized monster preview files without merging them.
+- Added `load_normalized_preview`, `load_all_normalized_previews`,
+  `build_normalized_monster_rows`, `format_normalized_monster`, and
+  `review_summary_text` for read-only review of normalized records.
+- Extended `app/editor_hub.py` so the Monster Editor entry has two sub-options:
+  Canonical Candidate Review and Normalized Monster Review.
+- Updated `app/gui.py` with `view_monster_editor` and
+  `view_normalized_monster_review` methods. The normalized review screen lists
+  all source records with source, name, review status, missing-field count, and
+  placeholder-field count, then displays normalized fields, missing/placeholder
+  markers, low-confidence markers, review notes, raw stat blocks, and raw text
+  previews for the selected record.
+- Added clear warnings that the screen is review-only and does not modify source
+  records or catalogs.
+- Added graceful handling for missing or malformed normalized preview files.
+- Added `tests/test_monster_editor.py` with focused coverage for loading both
+  preview files, combining records without overwriting, preserving source
+  variants, building display rows, missing/placeholder/low-confidence
+  highlighting, missing/malformed file handling, and live-catalog preservation.
+- Updated `tests/test_editor_hub.py` to verify the new monster editor
+  sub-categories and the new GUI methods.
+- Confirmed no live catalog JSON modification, no importer changes, and no
+  record merging.
+- Raised the validated suite to 275 passing `unittest` tests while
+  `python -m compileall .`, `python tools/validate_sources.py`, and
+  `python tools/monster_import_status.py` continue to pass.
 
 Version 0.8.17 adds the Editors hub to the GUI on `main`:
 
@@ -651,6 +682,10 @@ Version 0.7 hardened the data-driven generation foundation:
 - Editable source registry plus local source-path validation tooling.
 - In-app `Editors` hub with a live Monster Import Review entry point and
   placeholders for NPC, PC, Item, and Spell editors.
+- Monster Editor sub-hub with Canonical Candidate Review and Normalized Monster
+  Review surfaces.
+- Read-only Normalized Monster Review of MandBmaster and Megadungeon preview
+  records with missing/placeholder/low-confidence field highlighting.
 - Persistent review decisions for monster canonical-group candidates stored
   separately from generated reports and live catalog data.
 - Lightweight equipment slots, carried bulk, and encumbrance states.
@@ -699,7 +734,7 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 258 tests passing with
+- Current verification: 275 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.
@@ -877,6 +912,7 @@ Version 0.7 hardened the data-driven generation foundation:
 - `app/monster_import_review.py` - canonical-group review helper and decision store
 - `app/editor_hub.py` - editor category list and placeholder messages for the
   in-app Editors hub
+- `app/monster_editor.py` - normalized monster preview loading and review helpers
 - `data/catalogs/monsters/monster_appendix_catalog.json` - parsed appendix
   encounter/location rows
 - `data/source_registry.json` - editable source registry and expected local

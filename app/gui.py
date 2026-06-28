@@ -19,6 +19,14 @@ from app.editor_hub import (
     editors_hub_summary_text,
     get_editor_categories,
     get_editor_placeholder_text,
+    get_monster_editor_subcategories,
+    monster_editor_summary_text,
+)
+from app.monster_editor import (
+    build_normalized_monster_rows,
+    format_normalized_monster,
+    load_all_normalized_previews,
+    review_summary_text as normalized_review_summary_text,
 )
 from app.equipment import EQUIPMENT_SLOTS
 from app.exporters import (
@@ -1935,7 +1943,7 @@ class RPGWorldApp(tk.Tk):
         def show_editor_detail(index: int) -> None:
             key = keys[index]
             if key == "monsters":
-                self.view_monster_import_review()
+                self.view_monster_editor()
                 return
             self.show(
                 get_editor_placeholder_text(key),
@@ -1944,6 +1952,65 @@ class RPGWorldApp(tk.Tk):
 
         self.show_index("Editors", labels, show_editor_detail)
         self.show(editors_hub_summary_text(), "Viewing Editors hub.")
+
+    def view_monster_editor(self) -> None:
+        """Display the Monster Editor sub-hub with canonical and normalized review."""
+        subcategories = get_monster_editor_subcategories()
+        labels = [label for label, _key in subcategories]
+        keys = [key for _label, key in subcategories]
+
+        def show_monster_editor_detail(index: int) -> None:
+            key = keys[index]
+            if key == "canonical_candidate_review":
+                self.view_monster_import_review()
+            elif key == "normalized_monster_review":
+                self.view_normalized_monster_review()
+            else:
+                self.show(
+                    "Not implemented yet.",
+                    f"{labels[index]} is not implemented yet.",
+                )
+
+        self.show_index("Monster Editor", labels, show_monster_editor_detail)
+        self.show(monster_editor_summary_text(), "Viewing Monster Editor sub-hub.")
+
+    def view_normalized_monster_review(self) -> None:
+        """Display a read-only review surface for normalized monster records."""
+        try:
+            records = load_all_normalized_previews()
+        except FileNotFoundError as exc:
+            self.hide_index()
+            self.show(str(exc), "Normalized monster preview not found.")
+            return
+        except ValueError as exc:
+            self.hide_index()
+            self.show(str(exc), "Normalized monster preview is malformed.")
+            return
+
+        rows = build_normalized_monster_rows(records)
+        if not rows:
+            self.hide_index()
+            self.show(
+                normalized_review_summary_text(records) + "\n\nNo normalized records found.",
+                "No normalized monster records.",
+            )
+            return
+
+        labels = [label for label, _metadata, _record in rows]
+        entries = [(metadata, record) for _label, metadata, record in rows]
+
+        def show_detail(index: int) -> None:
+            metadata, record = entries[index]
+            self.show(
+                format_normalized_monster(metadata, record),
+                "Viewing normalized monster record.",
+            )
+
+        self.show_index("Normalized Monsters", labels, show_detail)
+        self.show(
+            normalized_review_summary_text(records),
+            "Viewing normalized monster review.",
+        )
 
     def save_world(self) -> None:
         def action():

@@ -5,9 +5,12 @@ import unittest
 import app.gui
 from app.editor_hub import (
     EDITOR_CATEGORIES,
+    MONSTER_EDITOR_SUBCATEGORIES,
     editors_hub_summary_text,
     get_editor_categories,
     get_editor_placeholder_text,
+    get_monster_editor_subcategories,
+    monster_editor_summary_text,
 )
 from tools.importers.monster_manual_schema import (
     DEFAULT_MONSTER_APPENDIX_CATALOG_JSON,
@@ -72,6 +75,25 @@ class EditorHubTests(unittest.TestCase):
         after_appendix = DEFAULT_MONSTER_APPENDIX_CATALOG_JSON.read_text(encoding="utf-8")
         self.assertEqual(before_catalog, after_catalog)
         self.assertEqual(before_appendix, after_appendix)
+
+    def test_monster_editor_subcategories(self) -> None:
+        categories = get_monster_editor_subcategories()
+        keys = [key for _label, key in categories]
+        self.assertIn("canonical_candidate_review", keys)
+        self.assertIn("normalized_monster_review", keys)
+
+    def test_monster_editor_summary_text(self) -> None:
+        text = monster_editor_summary_text()
+        self.assertIn("MONSTER EDITOR", text)
+        self.assertIn("Canonical Candidate Review", text)
+        self.assertIn("Normalized Monster Review", text)
+        self.assertIn("Review only", text)
+
+    def test_app_has_view_monster_editor_method(self) -> None:
+        self.assertTrue(hasattr(app.gui.RPGWorldApp, "view_monster_editor"))
+
+    def test_app_has_view_normalized_monster_review_method(self) -> None:
+        self.assertTrue(hasattr(app.gui.RPGWorldApp, "view_normalized_monster_review"))
 
 
 if __name__ == "__main__":

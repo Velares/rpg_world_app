@@ -25,6 +25,31 @@ history is the more reliable source.
   for reusable logic; and a future combat test/stress harness for balance
   auditing.
 
+## v0.8.18 - Normalized Monster Review
+
+- Added `app/monster_editor.py` with helpers to load the MandBmaster and
+  Megadungeon normalized monster preview files without merging them.
+- Added `load_normalized_preview`, `load_all_normalized_previews`,
+  `build_normalized_monster_rows`, `format_normalized_monster`, and
+  `review_summary_text` for read-only review of normalized records.
+- Extended `app/editor_hub.py` so the Monster Editor entry has two sub-options:
+  Canonical Candidate Review and Normalized Monster Review.
+- Updated `app/gui.py` with `view_monster_editor` and
+  `view_normalized_monster_review` methods. The normalized review screen lists
+  all source records and displays normalized fields, missing/placeholder markers,
+  low-confidence markers, review notes, raw stat blocks, and raw text previews.
+- Added clear warnings that the screen is review-only and does not modify source
+  records or catalogs.
+- Added graceful handling for missing or malformed normalized preview files.
+- Added `tests/test_monster_editor.py` with focused coverage for loading both
+  preview files, combining records, preserving source variants, building display
+  rows, missing/placeholder/low-confidence highlighting, and live-catalog
+  preservation.
+- Updated `tests/test_editor_hub.py` for the new monster editor sub-categories.
+- Confirmed no live catalog JSON modification, no importer changes, and no
+  record merging.
+- Raised the validated suite to 275 passing `unittest` tests.
+
 ## v0.8.17 - Editors hub
 
 - Added `app/editor_hub.py` with the canonical editor category list and

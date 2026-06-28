@@ -9,6 +9,11 @@ EDITOR_CATEGORIES = [
     ("Spell Editor", "spells"),
 ]
 
+MONSTER_EDITOR_SUBCATEGORIES = [
+    ("Canonical Candidate Review", "canonical_candidate_review"),
+    ("Normalized Monster Review", "normalized_monster_review"),
+]
+
 _PLACEHOLDER_TEXT = {
     "npcs": (
         "NPC Editor\n==========\n\n"
@@ -59,7 +64,30 @@ def editors_hub_summary_text() -> str:
         "Select an editor category from the list.",
         "",
         "- Monster Editor / Monster Import Review: inspect and approve/reject "
-        "monster canonical-group candidates.",
+        "monster canonical-group candidates or review normalized monster records.",
         "- NPC Editor, PC Editor, Item Editor, Spell Editor: placeholders for future work.",
+    ]
+    return "\n".join(lines)
+
+
+def get_monster_editor_subcategories() -> list[tuple[str, str]]:
+    """Return the list of monster editor sub-category labels and keys."""
+    return list(MONSTER_EDITOR_SUBCATEGORIES)
+
+
+def monster_editor_summary_text() -> str:
+    """Return the summary text for the Monster Editor sub-hub."""
+    lines = [
+        "MONSTER EDITOR",
+        "==============",
+        "",
+        "Select a review surface.",
+        "",
+        "- Canonical Candidate Review: compare cross-source monster groups and "
+        "approve, reject, or mark them as needing review.",
+        "- Normalized Monster Review: inspect normalized records from each source "
+        "without merging them.",
+        "",
+        "Review only. No source records or catalogs are modified.",
     ]
     return "\n".join(lines)
