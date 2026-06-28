@@ -20,6 +20,43 @@ history is the more reliable source.
 - Recorded future review/correction and deduplication expectations: keep
   source variants distinct, support canonical grouping later, and avoid silent
   overwrite while multiple sources are still being normalized.
+- Documented combat-model roadmap: a modular, rules-neutral d20 OSR-style combat
+  resolution layer; inspection of earlier combat/social solo-play spreadsheets
+  for reusable logic; and a future combat test/stress harness for balance
+  auditing.
+
+## v0.8.17 - Editors hub
+
+- Added `app/editor_hub.py` with the canonical editor category list and
+  placeholder messages for not-yet-implemented editors.
+- Added an `Editors` shared action in `app/gui.py` that opens a list/detail hub.
+- Editor categories: Monster Editor / Monster Import Review, NPC Editor,
+  PC Editor, Item Editor, Spell Editor.
+- Wired the existing `Monster Import Review` (with persistent decisions) as the
+  first live editor entry point.
+- Placeholder editors display clear "Not implemented yet" messages with their
+  intended future purpose instead of failing silently.
+- Added `tests/test_editor_hub.py` with focused coverage for categories,
+  placeholders, summary text, and live-catalog preservation.
+- Confirmed no live catalog JSON modification, no importer changes, and no
+  record merging.
+- Raised the validated suite to 258 passing `unittest` tests.
+
+## v0.8.16 - persistent monster canonical-group review decisions
+
+- Added separate decision storage at
+  `data/import_reviews/monster_canonical_group_decisions.json`.
+- Added `load_decisions`, `save_decisions`, `get_decision`, `set_decision`, and
+  `format_decision_block` helpers in `app/monster_import_review.py`.
+- Decisions are written atomically via a temp file and rename; malformed files
+  fail gracefully and are never overwritten by the load path.
+- Updated `app/gui.py` so the `Monster Import Review` screen supports
+  approve/reject/needs-review choices and free-text notes per candidate group.
+- The candidate list shows saved decision status (e.g., `[APPROVED]`).
+- Added focused tests in `tests/test_monster_import_review.py` for missing,
+  valid, and malformed decision files; save behavior; notes persistence; and
+  live-catalog preservation.
+- Raised the validated suite to 249 passing `unittest` tests.
 
 ## v0.8.15 - cross-source canonical monster group candidates
 

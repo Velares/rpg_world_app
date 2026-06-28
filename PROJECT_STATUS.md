@@ -3,7 +3,7 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.15`
+- Current development version on `main`: `v0.8.17`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
@@ -98,6 +98,42 @@ Placeholder and mapping policy for that future normalized layer:
   exact mapping.
 
 ## Latest completed work
+
+Version 0.8.17 adds the Editors hub to the GUI on `main`:
+
+- Added `app/editor_hub.py` with the canonical editor category list and
+  placeholder messages for not-yet-implemented editors.
+- Added an `Editors` shared action in `app/gui.py` that opens a list/detail
+  hub with entries for Monster, NPC, PC, Item, and Spell editors.
+- Wired the existing `Monster Import Review` / canonical-group review (with
+  persistent decisions) as the first live editor entry point.
+- Added clear placeholder messages for NPC, PC, Item, and Spell editors that
+  explain their intended future purpose instead of failing silently.
+- Added `tests/test_editor_hub.py` with focused coverage for category list,
+  placeholder messages, summary text, and live-catalog preservation.
+- Confirmed no live catalog JSON modification, no importer changes, and no
+  record merging.
+- Raised the validated suite to 258 passing `unittest` tests while
+  `python -m compileall .`, `python tools/validate_sources.py`, and
+  `python tools/monster_import_status.py` continue to pass.
+
+Version 0.8.16 adds persistent review decisions for monster canonical-group
+_candidates on `main`:
+
+- Added separate decision storage at
+  `data/import_reviews/monster_canonical_group_decisions.json`.
+- Added `load_decisions`, `save_decisions`, `get_decision`, `set_decision`, and
+  `format_decision_block` helpers in `app/monster_import_review.py`.
+- Decisions are written atomically via a temp file and rename; malformed files
+  fail gracefully and are never overwritten by the load path.
+- Updated `app/gui.py` so the `Monster Import Review` screen supports
+  approve/reject/needs-review choices and free-text notes per candidate group.
+- Updated the candidate list to show saved decision status (e.g.,
+  `[APPROVED] Medusa, Greater`).
+- Added focused tests in `tests/test_monster_import_review.py` for missing,
+  valid, and malformed decision files; save behavior; notes persistence; and
+  live-catalog preservation.
+- Raised the validated suite to 249 passing `unittest` tests.
 
 Version 0.8.15 adds the first cross-source canonical monster group candidate
 report on `main`:
@@ -613,6 +649,10 @@ Version 0.7 hardened the data-driven generation foundation:
 - Conservative core-versus-imported catalog loading so imported packs remain
   optional during the current staging phase.
 - Editable source registry plus local source-path validation tooling.
+- In-app `Editors` hub with a live Monster Import Review entry point and
+  placeholders for NPC, PC, Item, and Spell editors.
+- Persistent review decisions for monster canonical-group candidates stored
+  separately from generated reports and live catalog data.
 - Lightweight equipment slots, carried bulk, and encumbrance states.
 - Optional text-seed control for reproducible world generation.
 - Plain-text export for active world summaries, character sheets, and event logs.
@@ -659,7 +699,7 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 172 tests passing with
+- Current verification: 258 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.
@@ -759,24 +799,43 @@ Version 0.7 hardened the data-driven generation foundation:
    indexes, or both.
 7. Build the future Bestiary/editor around source provenance, review queues,
    user corrections, and canonical grouping rather than only around raw import
-   outputs.
+   outputs. Expand editor categories over time to include Treasure, Classes,
+   Factions, Locations, and generator Tables alongside Monsters, NPCs, PCs,
+   Items, and Spells.
 8. Add app-facing region/rarity-based monster selection only after normalized
    monster schema, multi-source mapping, and canonical grouping rules are
    stable.
-8. Add lightweight inventory actions beyond equipping, such as container-aware
+9. Add lightweight inventory actions beyond equipping, such as container-aware
    stash moves, simple drop/store behavior, or clearer repair/condition hooks,
    only if they stay compatible with the current rules-neutral model.
-9. Add a small simulated-time helper or preset-driven town-side fast-forward
-   flow only if it can reuse the current calendar/downtime framework without
-   bloating the GUI.
-10. Design later character retirement so retired protagonists can remain in the
-   same world as NPCs after the calendar/downtime layer settles.
-11. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
-   available in the local environment.
-12. Consider a small seed-copy or seed-regenerate affordance only if players
-   actually need more than the current single text entry.
-13. Deepen key NPCs with optional world-aware quest hooks before considering
-   any broader relationship or faction system.
+10. Add a small simulated-time helper or preset-driven town-side fast-forward
+    flow only if it can reuse the current calendar/downtime framework without
+    bloating the GUI.
+11. Design later character retirement so retired protagonists can remain in the
+    same world as NPCs after the calendar/downtime layer settles.
+12. Add GUI-layer guard tests only if a reliable headless Tk/Tcl setup becomes
+    available in the local environment.
+13. Consider a small seed-copy or seed-regenerate affordance only if players
+    actually need more than the current single text entry.
+14. Deepen key NPCs with optional world-aware quest hooks before considering
+    any broader relationship or faction system.
+15. Add a modular d20 OSR-style combat resolution model. Keep it rules-neutral
+    and modular enough to change later: initiative, attack rolls, damage,
+    morale, retreat, surprise, saving throws, rank/positioning, terrain
+    constraints, and flying/aerial ranks. Use imported monster data only after
+    it is reliable and normalized; do not start with a hard-coded final ruleset.
+16. Inspect earlier uploaded combat/social solo-play spreadsheets for useful
+    logic and algorithms to mine for combat simulation, monster/NPC behavior,
+    encounter decisions, social reactions, solo-play resolution, and stress
+    testing. Preserve the goal of extracting logic, not blindly copying data.
+17. Add a combat test/stress harness module (not a normal player-facing screen at
+    first) that runs simulated combats between generic parties and randomly
+    generated encounters. Support variable party sizes and classes, selectable
+    party sources (generic placeholders, imported NPCs, imported PCs, stock
+    templates), and verbose combat logging. Capture notable events such as
+    high-damage single attacks, max-damage spells, multi-target spells, fast
+    wipes, morale failures, repeated misses, and impactful special abilities so
+    balance issues and overly lethal encounters can be detected early.
 
 ## Important files and directories
 
@@ -815,6 +874,9 @@ Version 0.7 hardened the data-driven generation foundation:
 - `app/monster_catalog.py` - lightweight combined monster loading and
   alphabetical sorting helpers across sources
 - `app/source_registry.py` - source registry loading and validation helpers
+- `app/monster_import_review.py` - canonical-group review helper and decision store
+- `app/editor_hub.py` - editor category list and placeholder messages for the
+  in-app Editors hub
 - `data/catalogs/monsters/monster_appendix_catalog.json` - parsed appendix
   encounter/location rows
 - `data/source_registry.json` - editable source registry and expected local

@@ -15,6 +15,11 @@ from app.diary import (
     recent_entries_text,
 )
 from app.downtime import DowntimeEngine
+from app.editor_hub import (
+    editors_hub_summary_text,
+    get_editor_categories,
+    get_editor_placeholder_text,
+)
 from app.equipment import EQUIPMENT_SLOTS
 from app.exporters import (
     export_character_text,
@@ -109,6 +114,7 @@ SHARED_ACTIONS = (
     "Load World",
     "Data Diagnostics",
     "Monster Import Review",
+    "Editors",
     "Clear Output",
 )
 
@@ -740,6 +746,7 @@ class RPGWorldApp(tk.Tk):
             "Export Character": self.export_character,
             "Data Diagnostics": self.view_data_diagnostics,
             "Monster Import Review": self.view_monster_import_review,
+            "Editors": self.view_editors,
             "Save World": self.save_world,
             "Load World": self.load_world,
             "Clear Output": self.clear_output,
@@ -1918,6 +1925,25 @@ class RPGWorldApp(tk.Tk):
 
         ttk.Button(buttons, text="Save Decision", command=save).pack(side="right")
         ttk.Button(buttons, text="Close", command=dialog.destroy).pack(side="right", padx=(0, 8))
+
+    def view_editors(self) -> None:
+        """Display the Editors hub with entry points for import/review tools."""
+        editor_categories = get_editor_categories()
+        labels = [label for label, _key in editor_categories]
+        keys = [key for _label, key in editor_categories]
+
+        def show_editor_detail(index: int) -> None:
+            key = keys[index]
+            if key == "monsters":
+                self.view_monster_import_review()
+                return
+            self.show(
+                get_editor_placeholder_text(key),
+                f"{labels[index]} is not implemented yet.",
+            )
+
+        self.show_index("Editors", labels, show_editor_detail)
+        self.show(editors_hub_summary_text(), "Viewing Editors hub.")
 
     def save_world(self) -> None:
         def action():

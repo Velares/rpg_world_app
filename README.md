@@ -1,6 +1,6 @@
 # RPG World App
 
-Version 0.8.14 is a local, single-player weird-fantasy starting-region generator
+Version 0.8.17 is a local, single-player weird-fantasy starting-region generator
 with a basic playable exploration loop.
 It creates a settlement, its people and locations, a connected cave dungeon,
 a wilderness encounter table, and a linked adventure hook. Combat information
@@ -542,6 +542,19 @@ Current source/import roadmap:
 8. Module / keyed-location importer, then generator/world-system importers
    later
 
+An in-app **Editors** hub is now available from the shared actions. It lists
+Monster, NPC, PC, Item, and Spell editor categories. The Monster editor opens
+the canonical-group review tool with persistent review decisions; the other
+categories are placeholders with clear "not implemented yet" messages.
+
+Combat roadmap: the project is preparing a modular, rules-neutral d20 OSR-style
+combat resolution model. After monster data is imported and reviewed, earlier
+combat/social solo-play spreadsheets will be inspected for reusable logic and
+algorithms. A future combat test/stress harness will run simulated encounters
+between generic parties and generated monsters to detect balance issues,
+overpowered spells, weak monsters, and overly lethal encounters before combat
+becomes a normal player-facing screen.
+
 Version 0.8.13 completed Step 1. Version 0.8.14 keeps the current
 monster/manual/appendix/JSON/ADD parser behavior stable while adding
 source-registry-aware command/report behavior, a dedicated monster import
@@ -582,8 +595,8 @@ Current GUI mode split:
   Inspect Room, Rest, Retreat, encounter choices, and action checks.
 - Shared in both modes: View Character, Journal / World Recap, Event Log,
   Export Event Log, Export World, Export Character, Save World, Load World,
-  Data Diagnostics, plus the always-visible player state, seed field, status,
-  and output panel.
+  Data Diagnostics, Monster Import Review, Editors, plus the always-visible
+  player state, seed field, status, and output panel.
 
 Initial usability rules:
 
@@ -631,6 +644,9 @@ database on its next launch.
 - `app/exporters.py`: plain-text export formatting helpers
 - `app/source_registry.py`: source registry loading and validation helpers
 - `app/timeline.py`: structured timeline logging and recurring-NPC helpers
+- `app/monster_import_review.py`: canonical-group review helper and decision store
+- `app/editor_hub.py`: editor category list and placeholder messages for the
+  in-app Editors hub
 - `app/checks.py`: generic d20 checks, outcomes, and state consequences
 - `app/generators/`: focused procedural generators
 - `data/tables/`: editable generation content
