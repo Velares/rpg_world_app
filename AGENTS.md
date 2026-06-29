@@ -1,81 +1,24 @@
 # AGENTS.md
 
-## Project
-
 RPG World App is a dependency-free Python 3/Tkinter procedural weird-fantasy
 application with SQLite persistence and editable generation data. Changes
 should remain small, rules-neutral, testable, and compatible with older saves.
 The supported save-compatibility baseline begins at `v0.8.4`.
 
-The names below are coordinated roles for Codex sessions, not independent
-developers. Each task should identify its active role or roles.
+## Authority boundary
 
-Treat the following as core systems unless a milestone explicitly changes them:
+- ChatGPT/project owner controls process design, gameplay design, rules design,
+  source priority, and product direction.
+- Devin handles implementation and may suggest improvements for security,
+  stability, efficiency, maintainability, test coverage, and code organization.
+- Do not describe Devin as the source of product/gameplay design decisions.
 
-- structured inventory records and resource counters
-- equipment slots, bulk tracking, and encumbrance placeholders
-- plain-text export helpers and export actions
-- variable-size editable JSON tables and weighted table entries
-- JSON-driven interaction text and encounter/dialogue content
-- shared calendar/time tracking, character aging, and downtime state
-- event log and known/discovered content tracking
-- older-save compatibility defaults and state reconstruction
-- stress/error-handling coverage for messy or illogical action ordering
+## Project roles (workflow lenses)
 
-## Rules and Source Guidance
+The names below are coordinated workflow lenses for implementation sessions,
+not independent developers. Each task may identify one or more active lenses.
 
-- Primary rules baseline: `Advanced Labyrinth Lord`.
-- Core/basic reference: `Labyrinth Lord Revised Edition`.
-- Comparison/reference only: `OSE`; do not treat it as the main baseline for
-  new work.
-- The following PDFs are removed or inactive as current rules sources and
-  should not be used as active project baselines: `Swords & Wizardry Core
-  Rules`, `Swords & Wizardry Companion / Supplemental Lore`, `Swords &
-  Wizardry Players Companion`, `AD&D 2e Player's Handbook`, `AD&D 2e Dungeon
-  Master Guide`, and `AD&D 2e Monstrous Manual OCR`.
-- `Swords & Wizardry` monster books may still be used as monster/content
-  sources when present, but the deleted `Swords & Wizardry` rules PDFs above
-  should not be treated as active rule references.
-- Imported content should preserve source records first. Do not blindly merge
-  duplicate monsters, spells, magic items, mundane items, or treasure records
-  before source variants are preserved.
-- Preserve original source title, source page when available, and raw text
-  when practical.
-- For monsters, the long-term target is one unified master monster catalog
-  backed by a shared normalized schema. Source-specific parsers, dry runs,
-  previews, and content-pack outputs are staging layers, not the final target.
-- Keep monster import work layered: source-specific parser -> source-preserving
-  parsed record -> normalization/mapping layer -> later deduplication and
-  canonical master catalog merge. Do not collapse those responsibilities into
-  one opaque import step.
-- Missing monster fields should not block import. Preserve null/unknown or
-  explicit placeholder values, record mapping confidence, and flag uncertain
-  fields for later review instead of inventing exact values.
-- Normalize imported material toward the app's internal `Advanced Labyrinth
-  Lord` / `Labyrinth Lord` terminology later, while keeping original source
-  variants instead of overwriting them.
-- Keep future importer work separated by content domain. Current durable
-  domains are: `rules references`, `monsters`, `spells`, `magic_items`,
-  `mundane_equipment`, `treasure_tables`, `modules / keyed locations`,
-  `generator tables`, and `factions / religions / cults`.
-- Do not build one giant generic PDF importer that tries to parse every source
-  type the same way.
-- Current source-work priority order is: `source registry and path
-  validation`, `monster importer baseline`, `normalized monster schema and
-  mapping layer`, `magic item importer`,
-  `mundane equipment importer`, `spell importer`, `treasure-table importer`,
-  `module / keyed-location importer`, then `generator/world-system importers`
-  later.
-- `AGENTS.md` should hold durable Codex behavior and workflow guidance.
-  `PROJECT_STATUS.md` should hold current status and next milestone guidance.
-  A source registry, when present, should hold detailed source metadata.
-  Do not turn `AGENTS.md` into a full PDF inventory.
-- Before path-sensitive setup or importer work, verify the active repository
-  root with `git rev-parse --show-toplevel` and compare it to any user-shared
-  VS Code or filesystem path. If they do not match, stop and confirm the
-  correct clone before editing files.
-
-## Atlas - Project Planner Agent
+### Atlas - Project Planner
 
 - Read the current codebase and project documentation before proposing work.
 - Break major features into small, safe milestones and identify affected files.
@@ -85,7 +28,7 @@ Treat the following as core systems unless a milestone explicitly changes them:
 - Review `AGENTS.md` lightly every 3-5 milestones or after major architecture
   shifts.
 
-## Forge - Core Game Logic Agent
+### Forge - Core Game Logic
 
 - Implement rules-neutral procedural and game-state logic.
 - Work on characters, towns, regions, factions, encounters, inventory, travel,
@@ -94,24 +37,21 @@ Treat the following as core systems unless a milestone explicitly changes them:
 - Avoid unrelated changes to UI and persistence.
 - Add or update tests for each logic feature.
 
-## Scribe - Content and Data Agent
+### Scribe - Content and Data
 
 - Manage human-editable JSON, CSV, TXT, and table-driven content.
 - Maintain names, classes, backgrounds, supplies, locations, rumors,
   encounters, NPCs, items, factions, interaction text, and downtime data.
-- Prefer editable JSON tables for RPG content whenever practical, including
-  inventory, weapons, armor, gear, containers, equipment slots, encumbrance
-  thresholds, and future item traits where reasonable.
+- Prefer editable JSON tables for RPG content whenever practical.
 - Prevent duplicate, malformed, or unusable entries.
 - Keep content extensible and avoid large hard-coded Python lists.
 - Placeholder content is acceptable when structure is needed before final data
   exists; prefer clear IDs such as `weapon_001`, `armor_001`, `gear_001`, or
   `container_001`.
-- Preserve variable-size table support instead of assuming fixed `d30` tables
-  or 30-entry categories.
+- Preserve variable-size table support instead of assuming fixed `d30` tables.
 - Add validation and fallback tests for new tables.
 
-## Windowwright - GUI Agent
+### Windowwright - GUI
 
 - Work on Tkinter/interface code unless coordination requires otherwise.
 - Add dialogs, panels, buttons, labels, menus, and display updates.
@@ -125,7 +65,7 @@ Treat the following as core systems unless a milestone explicitly changes them:
   usable `init.tcl`; report the limitation clearly instead.
 - Do not alter procedural logic unless specifically requested.
 
-## Keeper - Persistence and Compatibility Agent
+### Keeper - Persistence and Compatibility
 
 - Own save/load behavior and backward compatibility.
 - Add migration defaults when persistent models gain fields.
@@ -141,7 +81,7 @@ Treat the following as core systems unless a milestone explicitly changes them:
 - Add tests for loading older save structures.
 - Review every feature that changes persistent state.
 
-## Warden - Test and Validation Agent
+### Warden - Test and Validation
 
 - Add targeted tests and run the complete suite after meaningful changes.
 - Validate JSON/table data and check compile/import errors.
@@ -151,17 +91,7 @@ Treat the following as core systems unless a milestone explicitly changes them:
   actions, persistence changes, exports, calendar/time, downtime, inventory,
   and action checks when those areas change.
 
-Standard validation:
-
-```powershell
-python -m unittest discover -s tests -v
-python -m compileall .
-```
-
-When tables change, parse every file under `data/tables/` and confirm
-`TableLoader` has no unexpected warnings.
-
-## Redline - Reviewer and Refactor Agent
+### Redline - Reviewer and Refactor
 
 - Review the full diff before commit.
 - Look for unrelated edits, duplicate logic, fragile assumptions, missing
@@ -171,7 +101,7 @@ When tables change, parse every file under `data/tables/` and confirm
 - Check that public actions guard missing world/character state and that
   repeated or illogical action ordering does not crash.
 
-## Ledger - Documentation and Release Agent
+### Ledger - Documentation and Release
 
 - Maintain `README.md`, `AGENTS.md`, `PROJECT_STATUS.md`, and `CHANGELOG.md`.
 - Record the workflow and summarize each completed milestone.
@@ -181,19 +111,92 @@ When tables change, parse every file under `data/tables/` and confirm
 - Never claim completion without passing validation or documented failures.
 - Never commit, push, or tag unless the user explicitly requests it.
 
+## Core durable rules
+
+- Work in small, safe milestones.
+- Preserve `v0.8.4+` save compatibility.
+- Keep data table-driven where practical.
+- Keep GUI logic separated from core logic where practical.
+- Include or update tests for every feature.
+- Run validation and report exact results.
+- Do not commit PDFs.
+- Do not commit `data/saves/worlds.db` unless explicitly requested.
+- Do not commit generated timestamp churn from unrelated reports.
+- Do not modify live catalog JSON unless explicitly requested.
+- Do not modify importer behavior except when the task is specifically importer work.
+- Do not redirect toward mobile, Windows porting, web/browser work, packaging,
+  or combat implementation unless explicitly requested.
+
+## Current import pipeline guardrails
+
+- Continue the import/review/editor pipeline before combat.
+- Monsters are the current import focus.
+- Active pipeline stages: source registry and path validation, source-specific
+  parsers, normalized monster previews, canonical-group candidate report,
+  Monster Import Review, persistent canonical-group decisions, Normalized
+  Monster Review, persistent field corrections, corrected staging preview,
+  combat-ready monster projection.
+- Do not merge records into a master catalog until explicitly requested.
+- Keep source variants distinct.
+- Store corrections and decisions separately from generated import data.
+- Keep generated previews, staging outputs, and combat projections separate from
+  live catalog JSON.
+
+## Rules and source guidance
+
+- Primary rules baseline: `Advanced Labyrinth Lord`.
+- Core/basic reference: `Labyrinth Lord Revised Edition`.
+- Comparison/reference only: `OSE`; do not treat it as the main baseline for
+  new work.
+- `Swords & Wizardry` monster books may be used as monster/content sources
+  when present, but the Swords & Wizardry rules PDFs should not be treated as
+  active rules references.
+- Preserve source records first; do not blindly merge duplicates before source
+  variants are preserved.
+- Preserve original source title, source page, and raw text when practical.
+- Missing fields should not block import. Preserve null/unknown or explicit
+  placeholders, record mapping confidence, and flag uncertain fields for review.
+- Normalize imported material toward LL terminology later, while keeping
+  original source variants instead of overwriting them.
+- Keep future importer work separated by content domain (monsters, spells, magic
+  items, mundane equipment, treasure tables, modules/keyed locations, generator
+  tables, factions/religions/cults).
+- Do not build one giant generic PDF importer.
+- Detailed source priority and status belong in `PROJECT_STATUS.md` or
+  `data/source_registry.json`, not here.
+
+## Do not commit
+
+- PDFs.
+- `data/saves/worlds.db` unless explicitly requested.
+- Generated timestamp churn from unrelated reports.
+- Live catalog JSON unless explicitly requested.
+
+## Validation
+
+Run after meaningful changes:
+
+```powershell
+python -m unittest discover -s tests -v
+python -m compileall .
+python tools/validate_sources.py
+python tools/monster_import_status.py
+```
+
+Also run any touched importer or report-generation tool when importer/report
+outputs change.
+
+When tables change, parse every file under `data/tables/` and confirm
+`TableLoader` has no unexpected warnings.
+
 ## Operating model
 
-Use this sequence:
+Plan → Implement → Test → Review → Document → Commit/Tag
 
-**Plan -> Implement -> Test -> Review -> Document -> Commit/Tag**
-
-- Agents do not work randomly or simultaneously without coordination.
-- Name the active role or roles for each task.
-- Only one role modifies a given area at a time unless coordination is explicit.
 - Keep changes small and reviewable.
-- Implement new systems as thin vertical slices whenever practical:
-  data model, table support, core logic, GUI exposure, save/load compatibility,
-  exports or summaries when relevant, tests, and documentation.
+- Implement new systems as thin vertical slices: data model, table support, core
+  logic, GUI exposure, save/load compatibility, exports or summaries when
+  relevant, tests, and documentation.
 - Do not rewrite working systems unless the task asks for a refactor.
 - Do not break supported older saves or silently remove existing features.
 - Do not add dependencies without explaining why they are necessary.
@@ -205,22 +208,18 @@ Use this sequence:
   keep working.
 - Preserve `TableLoader` diagnostics and safe fallbacks when content is
   malformed, missing, or empty.
-- Raw local PDF source files for this repository belong under
-  `data/import_sources/` unless a milestone explicitly changes that setup
-  guidance. They are local-only inputs and should not be committed.
-- Keep the project weird-fantasy / sword-and-sorcery compatible. Combat and
-  travel preparation should matter, and inventory or encumbrance systems
-  should support meaningful preparation without becoming overly complex too
-  early.
-- Public actions should guard missing world/character state instead of
-  crashing.
+- Raw local PDF source files belong under `data/import_sources/` and are
+  local-only inputs; they should not be committed.
+- Keep the project weird-fantasy / sword-and-sorcery compatible.
+- Public actions should guard missing world/character state instead of crashing.
 - Repeated, illogical, or out-of-order actions should no-op safely, return a
   guarded message, or preserve valid state.
 - Every new feature should include or update tests.
 - Every milestone should update relevant documentation.
 - Do not remove existing repair/default logic unless it is clearly only for
   pre-`v0.8.4` saves and tests confirm no supported save path is broken.
-- For small work, one Codex session may perform several roles in sequence.
+- For small work, one implementation session may perform several roles in
+  sequence.
 - Split larger work into separate prompts or milestones.
 
 ## Maintenance triggers
@@ -228,6 +227,6 @@ Use this sequence:
 - Review `AGENTS.md` lightly every 3-5 milestones.
 - Review it immediately after major architecture shifts or before release-prep
   work.
-- Update it when Codex repeatedly makes the same kind of mistake.
+- Update it when the same kind of implementation mistake repeats.
 - Keep it concise; it should remain a workflow guide, not a full design
   document.
