@@ -1,0 +1,2304 @@
+Monster Classification Suggestions Report
+=========================================
+
+Generated at: 2026-06-29T22:43:01.902634+00:00
+Records with suggestions: 487
+Total suggestions: 1320
+
+These suggestions are conservative best-guesses only. They do not modify
+source previews, live catalogs, or existing user corrections. Review each
+suggestion before applying it through the Normalized Monster Review dialog.
+
+Acanopyornis  (id=normalized.mandbmaster_combined_monster_manual.acanopyornis, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Aculean  (id=normalized.mandbmaster_combined_monster_manual.aculean, source=mandbmaster_combined_monster_manual)
+  environment: ruins  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Addlevetch  (id=normalized.mandbmaster_combined_monster_manual.addlevetch, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Arcanoplasm  (id=normalized.mandbmaster_combined_monster_manual.arcanoplasm, source=mandbmaster_combined_monster_manual)
+  environment: ruins  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Astral Web  (id=normalized.mandbmaster_combined_monster_manual.astralweb, source=mandbmaster_combined_monster_manual)
+  terrain: subterranean  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Autumnal Mourner  (id=normalized.mandbmaster_combined_monster_manual.autumnalmourner, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Avatar Of Famine  (id=normalized.mandbmaster_combined_monster_manual.avataroffamine, source=mandbmaster_combined_monster_manual)
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Avmar  (id=normalized.mandbmaster_combined_monster_manual.avmar, source=mandbmaster_combined_monster_manual)
+  environment: ruins  [low]  keyword match in name/description
+
+Barathelar  (id=normalized.mandbmaster_combined_monster_manual.barathelar, source=mandbmaster_combined_monster_manual)
+  terrain: wooded  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Blackwater Slough  (id=normalized.mandbmaster_combined_monster_manual.blackwaterslough, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Blessed Ring  (id=normalized.mandbmaster_combined_monster_manual.blessedring, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Blight Belcher  (id=normalized.mandbmaster_combined_monster_manual.blightbelcher, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Blood Bowler  (id=normalized.mandbmaster_combined_monster_manual.bloodbowler, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Blood Worm  (id=normalized.mandbmaster_combined_monster_manual.bloodworm, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+
+Bog Beast  (id=normalized.mandbmaster_combined_monster_manual.bogbeast, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: marsh  [low]  keyword match in name/description
+  region: swamp  [low]  keyword match in name/description
+
+Bogwing  (id=normalized.mandbmaster_combined_monster_manual.bogwing, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Bone Sovereign  (id=normalized.mandbmaster_combined_monster_manual.bonesovereign, source=mandbmaster_combined_monster_manual)
+  environment: ruins  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Brainlock Mold (Spider)  (id=normalized.mandbmaster_combined_monster_manual.brainlockmoldspider, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Brine Crust  (id=normalized.mandbmaster_combined_monster_manual.brinecrust, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: aquatic  [low]  keyword match in name/description
+
+Bull Of Heaven  (id=normalized.mandbmaster_combined_monster_manual.bullofheaven, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  monster_type: elemental  [low]  keyword match in name/description
+
+Cadaver  (id=normalized.mandbmaster_combined_monster_manual.cadaver, source=mandbmaster_combined_monster_manual)
+  environment: graveyard  [low]  keyword match in name/description
+  terrain: crypt  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Canopy Kraken  (id=normalized.mandbmaster_combined_monster_manual.canopykraken, source=mandbmaster_combined_monster_manual)
+  environment: ruins  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Cave Hermit  (id=normalized.mandbmaster_combined_monster_manual.cavehermit, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Ceilidh Horror  (id=normalized.mandbmaster_combined_monster_manual.ceilidhhorror, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Clamor  (id=normalized.mandbmaster_combined_monster_manual.clamor, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Coblynau  (id=normalized.mandbmaster_combined_monster_manual.coblynau, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Dark Voyeur  (id=normalized.mandbmaster_combined_monster_manual.darkvoyeur, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Dark Woodsman  (id=normalized.mandbmaster_combined_monster_manual.darkwoodsman, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Deadwood  (id=normalized.mandbmaster_combined_monster_manual.deadwood, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Delusion Hummer  (id=normalized.mandbmaster_combined_monster_manual.delusionhummer, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: aerial  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Dioctopus  (id=normalized.mandbmaster_combined_monster_manual.dioctopus, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: aquatic  [low]  keyword match in name/description
+
+Dragon, Amohaji  (id=normalized.mandbmaster_combined_monster_manual.dragonamohaji, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Dryad, Treelost  (id=normalized.mandbmaster_combined_monster_manual.dryadtreelost, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: aquatic  [low]  keyword match in name/description
+
+Elemental Prince, Water  (id=normalized.mandbmaster_combined_monster_manual.elementalprincewater, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Engraved  (id=normalized.mandbmaster_combined_monster_manual.engraved, source=mandbmaster_combined_monster_manual)
+  environment: graveyard  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: construct  [low]  keyword match in name/description
+
+Epicurean  (id=normalized.mandbmaster_combined_monster_manual.epicurean, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Erolth  (id=normalized.mandbmaster_combined_monster_manual.erolth, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Faceless One  (id=normalized.mandbmaster_combined_monster_manual.facelessone, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Fluttering Ooze  (id=normalized.mandbmaster_combined_monster_manual.flutteringooze, source=mandbmaster_combined_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  terrain: vertical  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Foul Spawner  (id=normalized.mandbmaster_combined_monster_manual.foulspawner, source=mandbmaster_combined_monster_manual)
+  environment: graveyard  [low]  keyword match in name/description
+  terrain: crypt  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Fungal Render  (id=normalized.mandbmaster_combined_monster_manual.fungalrender, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Furrower  (id=normalized.mandbmaster_combined_monster_manual.furrower, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Ganyadi  (id=normalized.mandbmaster_combined_monster_manual.ganyadi, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Gargoyle, Madsome  (id=normalized.mandbmaster_combined_monster_manual.gargoylemadsome, source=mandbmaster_combined_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Gehzin  (id=normalized.mandbmaster_combined_monster_manual.gehzin, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+
+Ghoulfruit Tree  (id=normalized.mandbmaster_combined_monster_manual.ghoulfruittree, source=mandbmaster_combined_monster_manual)
+  terrain: wooded  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Giant, Nephilim  (id=normalized.mandbmaster_combined_monster_manual.giantnephilim, source=mandbmaster_combined_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Giant, Rime  (id=normalized.mandbmaster_combined_monster_manual.giantrime, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant, Sea  (id=normalized.mandbmaster_combined_monster_manual.giantsea, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant, Wood  (id=normalized.mandbmaster_combined_monster_manual.giantwood, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Golem, Amalgam  (id=normalized.mandbmaster_combined_monster_manual.golemamalgam, source=mandbmaster_combined_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Golem, Dragonship  (id=normalized.mandbmaster_combined_monster_manual.golemdragonship, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: construct  [low]  keyword match in name/description
+
+Golem, Furnace  (id=normalized.mandbmaster_combined_monster_manual.golemfurnace, source=mandbmaster_combined_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Golem, Ioun  (id=normalized.mandbmaster_combined_monster_manual.golemioun, source=mandbmaster_combined_monster_manual)
+  environment: ruins  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Golem, Labyrinthine  (id=normalized.mandbmaster_combined_monster_manual.golemlabyrinthine, source=mandbmaster_combined_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Golem, Resin  (id=normalized.mandbmaster_combined_monster_manual.golemresin, source=mandbmaster_combined_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Golem, Wax  (id=normalized.mandbmaster_combined_monster_manual.golemwax, source=mandbmaster_combined_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  terrain: aerial  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Gray Lady  (id=normalized.mandbmaster_combined_monster_manual.graylady, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Greenfeeder  (id=normalized.mandbmaster_combined_monster_manual.greenfeeder, source=mandbmaster_combined_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Groundling  (id=normalized.mandbmaster_combined_monster_manual.groundling, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Haemovorid  (id=normalized.mandbmaster_combined_monster_manual.haemovorid, source=mandbmaster_combined_monster_manual)
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Hag, Blood  (id=normalized.mandbmaster_combined_monster_manual.hagblood, source=mandbmaster_combined_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: giant  [low]  keyword match in name/description
+
+Hag, Doom  (id=normalized.mandbmaster_combined_monster_manual.hagdoom, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: aerial  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Harbinger  (id=normalized.mandbmaster_combined_monster_manual.harbinger, source=mandbmaster_combined_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Harmoai  (id=normalized.mandbmaster_combined_monster_manual.harmoai, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Haze Horror  (id=normalized.mandbmaster_combined_monster_manual.hazehorror, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Hearth Horror  (id=normalized.mandbmaster_combined_monster_manual.hearthhorror, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Heartless  (id=normalized.mandbmaster_combined_monster_manual.heartless, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Heliokarabos  (id=normalized.mandbmaster_combined_monster_manual.heliokarabos, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Hellscorn  (id=normalized.mandbmaster_combined_monster_manual.hellscorn, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Hephaestan  (id=normalized.mandbmaster_combined_monster_manual.hephaestan, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Herald Of Armageddon  (id=normalized.mandbmaster_combined_monster_manual.heraldofarmageddon, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: aerial  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Hold Creeper  (id=normalized.mandbmaster_combined_monster_manual.holdcreeper, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: vertical  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Hydracnid  (id=normalized.mandbmaster_combined_monster_manual.hydracnid, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Hydramnion  (id=normalized.mandbmaster_combined_monster_manual.hydramnion, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Inscriber  (id=normalized.mandbmaster_combined_monster_manual.inscriber, source=mandbmaster_combined_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Jellyhive  (id=normalized.mandbmaster_combined_monster_manual.jellyhive, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: vertical  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: fungus  [low]  keyword match in name/description
+
+Kingmaker Swan  (id=normalized.mandbmaster_combined_monster_manual.kingmakerswan, source=mandbmaster_combined_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Klorthack Spine  (id=normalized.mandbmaster_combined_monster_manual.klorthackspine, source=mandbmaster_combined_monster_manual)
+  environment: ruins  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Lassoo  (id=normalized.mandbmaster_combined_monster_manual.lassoo, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Latch Frog  (id=normalized.mandbmaster_combined_monster_manual.latchfrog, source=mandbmaster_combined_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Lostling  (id=normalized.mandbmaster_combined_monster_manual.lostling, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+
+Magpine  (id=normalized.mandbmaster_combined_monster_manual.magpine, source=mandbmaster_combined_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Maliganti  (id=normalized.mandbmaster_combined_monster_manual.maliganti, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: vertical  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Marloc  (id=normalized.mandbmaster_combined_monster_manual.marloc, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Marshlight Ooze  (id=normalized.mandbmaster_combined_monster_manual.marshlightooze, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: swamp  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Mus Maximus  (id=normalized.mandbmaster_combined_monster_manual.musmaximus, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Myrcloud  (id=normalized.mandbmaster_combined_monster_manual.myrcloud, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: fungus  [low]  keyword match in name/description
+
+Naga, Blood  (id=normalized.mandbmaster_combined_monster_manual.nagablood, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Naga, Molt  (id=normalized.mandbmaster_combined_monster_manual.nagamolt, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Neverlasting  (id=normalized.mandbmaster_combined_monster_manual.neverlasting, source=mandbmaster_combined_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Noctuar  (id=normalized.mandbmaster_combined_monster_manual.noctuar, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Noja  (id=normalized.mandbmaster_combined_monster_manual.noja, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Nokker  (id=normalized.mandbmaster_combined_monster_manual.nokker, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Oakman  (id=normalized.mandbmaster_combined_monster_manual.oakman, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Oathbroken  (id=normalized.mandbmaster_combined_monster_manual.oathbroken, source=mandbmaster_combined_monster_manual)
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Otyugh, Corrupted  (id=normalized.mandbmaster_combined_monster_manual.otyughcorrupted, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Pallemon  (id=normalized.mandbmaster_combined_monster_manual.pallemon, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Phase Stallion  (id=normalized.mandbmaster_combined_monster_manual.phasestallion, source=mandbmaster_combined_monster_manual)
+  terrain: vertical  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Prism Ward  (id=normalized.mandbmaster_combined_monster_manual.prismward, source=mandbmaster_combined_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Puddle Stalker  (id=normalized.mandbmaster_combined_monster_manual.puddlestalker, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Quickener  (id=normalized.mandbmaster_combined_monster_manual.quickener, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Quickgrass  (id=normalized.mandbmaster_combined_monster_manual.quickgrass, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Quisloi  (id=normalized.mandbmaster_combined_monster_manual.quisloi, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: marsh  [low]  keyword match in name/description
+  region: swamp  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Rancid  (id=normalized.mandbmaster_combined_monster_manual.rancid, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Sabulous Husk  (id=normalized.mandbmaster_combined_monster_manual.sabuloushusk, source=mandbmaster_combined_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+
+Scorpion, Giant Black  (id=normalized.mandbmaster_combined_monster_manual.scorpiongiantblack, source=mandbmaster_combined_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Scorpion Swarm  (id=normalized.mandbmaster_combined_monster_manual.scorpionswarm, source=mandbmaster_combined_monster_manual)
+  monster_type: arachnid  [low]  keyword match in name/description
+
+Seeder  (id=normalized.mandbmaster_combined_monster_manual.seeder, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+
+Shadow Lord  (id=normalized.mandbmaster_combined_monster_manual.shadowlord, source=mandbmaster_combined_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Shadowcap  (id=normalized.mandbmaster_combined_monster_manual.shadowcap, source=mandbmaster_combined_monster_manual)
+  terrain: subterranean  [low]  keyword match in name/description
+  monster_type: fungus  [low]  keyword match in name/description
+
+Shrieking Savage  (id=normalized.mandbmaster_combined_monster_manual.shriekingsavage, source=mandbmaster_combined_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Silent Reaper  (id=normalized.mandbmaster_combined_monster_manual.silentreaper, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Skeleton, Black  (id=normalized.mandbmaster_combined_monster_manual.skeletonblack, source=mandbmaster_combined_monster_manual)
+  environment: ruins  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Skresh  (id=normalized.mandbmaster_combined_monster_manual.skresh, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: swamp  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Skyshark  (id=normalized.mandbmaster_combined_monster_manual.skyshark, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Slavering Mouther  (id=normalized.mandbmaster_combined_monster_manual.slaveringmouther, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Slithervine  (id=normalized.mandbmaster_combined_monster_manual.slithervine, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Snail Man  (id=normalized.mandbmaster_combined_monster_manual.snailman, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: aerial  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Snake, Crown Coiler  (id=normalized.mandbmaster_combined_monster_manual.snakecrowncoiler, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Soultrapper  (id=normalized.mandbmaster_combined_monster_manual.soultrapper, source=mandbmaster_combined_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  terrain: aerial  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Spider, Acidweaver  (id=normalized.mandbmaster_combined_monster_manual.spideracidweaver, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: arachnid  [low]  keyword match in name/description
+
+Spider, Primal  (id=normalized.mandbmaster_combined_monster_manual.spiderprimal, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Spider, Time  (id=normalized.mandbmaster_combined_monster_manual.spidertime, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: arachnid  [low]  keyword match in name/description
+
+Stinging Woodfly  (id=normalized.mandbmaster_combined_monster_manual.stingingwoodfly, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Stonestrider  (id=normalized.mandbmaster_combined_monster_manual.stonestrider, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: vertical  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: elemental  [low]  keyword match in name/description
+
+Stranglebark  (id=normalized.mandbmaster_combined_monster_manual.stranglebark, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: aquatic  [low]  keyword match in name/description
+
+Suicide Plant  (id=normalized.mandbmaster_combined_monster_manual.suicideplant, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Teo-Selerai  (id=normalized.mandbmaster_combined_monster_manual.teoselerai, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: vertical  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Troll, Shrieking  (id=normalized.mandbmaster_combined_monster_manual.trollshrieking, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  monster_type: giant  [low]  keyword match in name/description
+
+Tulgorth  (id=normalized.mandbmaster_combined_monster_manual.tulgorth, source=mandbmaster_combined_monster_manual)
+  monster_type: plant  [low]  keyword match in name/description
+
+Uberous Guardian  (id=normalized.mandbmaster_combined_monster_manual.uberousguardian, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: construct  [low]  keyword match in name/description
+
+Undal  (id=normalized.mandbmaster_combined_monster_manual.undal, source=mandbmaster_combined_monster_manual)
+  monster_type: undead  [low]  keyword match in name/description
+
+Vampire Moss  (id=normalized.mandbmaster_combined_monster_manual.vampiremoss, source=mandbmaster_combined_monster_manual)
+  monster_type: undead  [low]  keyword match in name/description
+
+Vermin Dog  (id=normalized.mandbmaster_combined_monster_manual.vermindog, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Volley Flower  (id=normalized.mandbmaster_combined_monster_manual.volleyflower, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Vorpa  (id=normalized.mandbmaster_combined_monster_manual.vorpa, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Vulture, Grimdeath  (id=normalized.mandbmaster_combined_monster_manual.vulturegrimdeath, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+White Foam  (id=normalized.mandbmaster_combined_monster_manual.whitefoam, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Wodewose  (id=normalized.mandbmaster_combined_monster_manual.wodewose, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+
+Wyrdwolf  (id=normalized.mandbmaster_combined_monster_manual.wyrdwolf, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Agarinid  (id=normalized.mandbmaster_combined_monster_manual.agarinid, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: aerial  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Annexing Digitalis  (id=normalized.mandbmaster_combined_monster_manual.annexingdigitalis, source=mandbmaster_combined_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+
+Ant, Giant Fungal  (id=normalized.mandbmaster_combined_monster_manual.antgiantfungal, source=mandbmaster_combined_monster_manual)
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Autumnal Rider  (id=normalized.mandbmaster_combined_monster_manual.autumnalrider, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: aerial  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: aquatic  [low]  keyword match in name/description
+
+Avenging Angel  (id=normalized.mandbmaster_combined_monster_manual.avengingangel, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Awakened  (id=normalized.mandbmaster_combined_monster_manual.awakened, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Banfaet  (id=normalized.mandbmaster_combined_monster_manual.banfaet, source=mandbmaster_combined_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Barrow Lord  (id=normalized.mandbmaster_combined_monster_manual.barrowlord, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: crypt  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Blob, Sewer  (id=normalized.mandbmaster_combined_monster_manual.blobsewer, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+
+Blue Cap  (id=normalized.mandbmaster_combined_monster_manual.bluecap, source=mandbmaster_combined_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Book Guardian  (id=normalized.mandbmaster_combined_monster_manual.bookguardian, source=mandbmaster_combined_monster_manual)
+  environment: graveyard  [low]  keyword match in name/description
+  terrain: crypt  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+
+Boulder Kind  (id=normalized.mandbmaster_combined_monster_manual.boulderkind, source=mandbmaster_combined_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Caducean  (id=normalized.mandbmaster_combined_monster_manual.caducean, source=mandbmaster_combined_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  terrain: aerial  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Cantrip  (id=normalized.mandbmaster_combined_monster_manual.cantrip, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Cavern Crawler  (id=normalized.mandbmaster_combined_monster_manual.caverncrawler, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Ceiling Anemone  (id=normalized.mandbmaster_combined_monster_manual.ceilinganemone, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Children Of Coyle  (id=normalized.mandbmaster_combined_monster_manual.childrenofcoyle, source=mandbmaster_combined_monster_manual)
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Chrotomaton  (id=normalized.mandbmaster_combined_monster_manual.chrotomaton, source=mandbmaster_combined_monster_manual)
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Crossbreed, Ogre/Bugbear  (id=normalized.mandbmaster_combined_monster_manual.crossbreedogrebugbear, source=mandbmaster_combined_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Crossbreed, Shrieker/Shambling Mound  (id=normalized.mandbmaster_combined_monster_manual.crossbreedshriekershamblingmound, source=mandbmaster_combined_monster_manual)
+  monster_type: plant  [low]  keyword match in name/description
+
+Crossbreed, Snake/Basilisk  (id=normalized.mandbmaster_combined_monster_manual.crossbreedsnakebasilisk, source=mandbmaster_combined_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Crow, Cavern  (id=normalized.mandbmaster_combined_monster_manual.crowcavern, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Deep Spirit  (id=normalized.mandbmaster_combined_monster_manual.deepspirit, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Deformed Ones  (id=normalized.mandbmaster_combined_monster_manual.deformedones, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Dust Centurion  (id=normalized.mandbmaster_combined_monster_manual.dustcenturion, source=mandbmaster_combined_monster_manual)
+  environment: ruins  [low]  keyword match in name/description
+  terrain: crypt  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Dust Weird  (id=normalized.mandbmaster_combined_monster_manual.dustweird, source=mandbmaster_combined_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Elepaio  (id=normalized.mandbmaster_combined_monster_manual.elepaio, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+
+Eloko  (id=normalized.mandbmaster_combined_monster_manual.eloko, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+
+Exhumed  (id=normalized.mandbmaster_combined_monster_manual.exhumed, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: crypt  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Fish-Folk  (id=normalized.mandbmaster_combined_monster_manual.fishfolk, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Foreboding  (id=normalized.mandbmaster_combined_monster_manual.foreboding, source=mandbmaster_combined_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Fromple  (id=normalized.mandbmaster_combined_monster_manual.fromple, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Fulgurant  (id=normalized.mandbmaster_combined_monster_manual.fulgurant, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Ghoul, Skin Thief  (id=normalized.mandbmaster_combined_monster_manual.ghoulskinthief, source=mandbmaster_combined_monster_manual)
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Giant, Gigantes  (id=normalized.mandbmaster_combined_monster_manual.giantgigantes, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant, Guardian  (id=normalized.mandbmaster_combined_monster_manual.giantguardian, source=mandbmaster_combined_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Gnart  (id=normalized.mandbmaster_combined_monster_manual.gnart, source=mandbmaster_combined_monster_manual)
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Golem, Barrow  (id=normalized.mandbmaster_combined_monster_manual.golembarrow, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: crypt  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Guishu  (id=normalized.mandbmaster_combined_monster_manual.guishu, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Hakutaku  (id=normalized.mandbmaster_combined_monster_manual.hakutaku, source=mandbmaster_combined_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Haugbui  (id=normalized.mandbmaster_combined_monster_manual.haugbui, source=mandbmaster_combined_monster_manual)
+  environment: graveyard  [low]  keyword match in name/description
+  terrain: crypt  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Hedge Creeper  (id=normalized.mandbmaster_combined_monster_manual.hedgecreeper, source=mandbmaster_combined_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Hercinia  (id=normalized.mandbmaster_combined_monster_manual.hercinia, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Iele  (id=normalized.mandbmaster_combined_monster_manual.iele, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Jelly, Formaldehyde  (id=normalized.mandbmaster_combined_monster_manual.jellyformaldehyde, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: aerial  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Kneebiters  (id=normalized.mandbmaster_combined_monster_manual.kneebiters, source=mandbmaster_combined_monster_manual)
+  environment: dungeon  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Kooshdakhaa  (id=normalized.mandbmaster_combined_monster_manual.kooshdakhaa, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Krabben  (id=normalized.mandbmaster_combined_monster_manual.krabben, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Lares  (id=normalized.mandbmaster_combined_monster_manual.lares, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Laurel Guardian  (id=normalized.mandbmaster_combined_monster_manual.laurelguardian, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Leech, Anemonal  (id=normalized.mandbmaster_combined_monster_manual.leechanemonal, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: swamp  [low]  keyword match in name/description
+  monster_type: aquatic  [low]  keyword match in name/description
+
+Lesser Golem, Leather  (id=normalized.mandbmaster_combined_monster_manual.lessergolemleather, source=mandbmaster_combined_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: construct  [low]  keyword match in name/description
+
+Lesser Golem, Rope  (id=normalized.mandbmaster_combined_monster_manual.lessergolemrope, source=mandbmaster_combined_monster_manual)
+  monster_type: construct  [low]  keyword match in name/description
+
+Lesser Golem, Straw  (id=normalized.mandbmaster_combined_monster_manual.lessergolemstraw, source=mandbmaster_combined_monster_manual)
+  monster_type: construct  [low]  keyword match in name/description
+
+Lesser Golem, Wood  (id=normalized.mandbmaster_combined_monster_manual.lessergolemwood, source=mandbmaster_combined_monster_manual)
+  environment: ruins  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: construct  [low]  keyword match in name/description
+
+Makara  (id=normalized.mandbmaster_combined_monster_manual.makara, source=mandbmaster_combined_monster_manual)
+  monster_type: elemental  [low]  keyword match in name/description
+
+Meliae  (id=normalized.mandbmaster_combined_monster_manual.meliae, source=mandbmaster_combined_monster_manual)
+  environment: ruins  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Minnikin  (id=normalized.mandbmaster_combined_monster_manual.minnikin, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Monster Vestige  (id=normalized.mandbmaster_combined_monster_manual.monstervestige, source=mandbmaster_combined_monster_manual)
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Mummy, Medusa  (id=normalized.mandbmaster_combined_monster_manual.mummymedusa, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Nariphon  (id=normalized.mandbmaster_combined_monster_manual.nariphon, source=mandbmaster_combined_monster_manual)
+  terrain: wooded  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Nekomata  (id=normalized.mandbmaster_combined_monster_manual.nekomata, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Osseopod  (id=normalized.mandbmaster_combined_monster_manual.osseopod, source=mandbmaster_combined_monster_manual)
+  environment: graveyard  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Pelisit  (id=normalized.mandbmaster_combined_monster_manual.pelisit, source=mandbmaster_combined_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+
+Peluda  (id=normalized.mandbmaster_combined_monster_manual.peluda, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Pishacha  (id=normalized.mandbmaster_combined_monster_manual.pishacha, source=mandbmaster_combined_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+
+Quasi-Elemental, Ash  (id=normalized.mandbmaster_combined_monster_manual.quasielementalash, source=mandbmaster_combined_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: elemental  [low]  keyword match in name/description
+
+Quasi-Elemental, Dust  (id=normalized.mandbmaster_combined_monster_manual.quasielementaldust, source=mandbmaster_combined_monster_manual)
+  monster_type: elemental  [low]  keyword match in name/description
+
+Quasi-Elemental, Mineral  (id=normalized.mandbmaster_combined_monster_manual.quasielementalmineral, source=mandbmaster_combined_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: elemental  [low]  keyword match in name/description
+
+Quasi-Elemental, Radiant  (id=normalized.mandbmaster_combined_monster_manual.quasielementalradiant, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Quasi-Elemental, Salt  (id=normalized.mandbmaster_combined_monster_manual.quasielementalsalt, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Quasi-Elemental, Steam  (id=normalized.mandbmaster_combined_monster_manual.quasielementalsteam, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: elemental  [low]  keyword match in name/description
+
+Quasi-Elemental, Vacuum  (id=normalized.mandbmaster_combined_monster_manual.quasielementalvacuum, source=mandbmaster_combined_monster_manual)
+  monster_type: elemental  [low]  keyword match in name/description
+
+Red Cap  (id=normalized.mandbmaster_combined_monster_manual.redcap, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: aquatic  [low]  keyword match in name/description
+
+Sakabashira  (id=normalized.mandbmaster_combined_monster_manual.sakabashira, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+
+Sandman, Obsidian  (id=normalized.mandbmaster_combined_monster_manual.sandmanobsidian, source=mandbmaster_combined_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Satori  (id=normalized.mandbmaster_combined_monster_manual.satori, source=mandbmaster_combined_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+
+Serpentian  (id=normalized.mandbmaster_combined_monster_manual.serpentian, source=mandbmaster_combined_monster_manual)
+  environment: ruins  [low]  keyword match in name/description
+  terrain: aerial  [low]  keyword match in name/description
+
+Shadow Weird  (id=normalized.mandbmaster_combined_monster_manual.shadowweird, source=mandbmaster_combined_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Skeleton, Fungal  (id=normalized.mandbmaster_combined_monster_manual.skeletonfungal, source=mandbmaster_combined_monster_manual)
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Snake, Giant Translucent  (id=normalized.mandbmaster_combined_monster_manual.snakegianttranslucent, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: marsh  [low]  keyword match in name/description
+  region: swamp  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Spider, Crystalline  (id=normalized.mandbmaster_combined_monster_manual.spidercrystalline, source=mandbmaster_combined_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: elemental  [low]  keyword match in name/description
+
+Spider, Shadow  (id=normalized.mandbmaster_combined_monster_manual.spidershadow, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: marsh  [low]  keyword match in name/description
+  region: swamp  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Sprite, Grass  (id=normalized.mandbmaster_combined_monster_manual.spritegrass, source=mandbmaster_combined_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Sprite, Leaf  (id=normalized.mandbmaster_combined_monster_manual.spriteleaf, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Squatgrunk  (id=normalized.mandbmaster_combined_monster_manual.squatgrunk, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Squidhead  (id=normalized.mandbmaster_combined_monster_manual.squidhead, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Squid, Ice  (id=normalized.mandbmaster_combined_monster_manual.squidice, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Squonk  (id=normalized.mandbmaster_combined_monster_manual.squonk, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Stuhac  (id=normalized.mandbmaster_combined_monster_manual.stuhac, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Svart Alfar  (id=normalized.mandbmaster_combined_monster_manual.svartalfar, source=mandbmaster_combined_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Terplip  (id=normalized.mandbmaster_combined_monster_manual.terplip, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Three-Legged Crow  (id=normalized.mandbmaster_combined_monster_manual.threeleggedcrow, source=mandbmaster_combined_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Tikbalang  (id=normalized.mandbmaster_combined_monster_manual.tikbalang, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: swamp  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Troll, Black  (id=normalized.mandbmaster_combined_monster_manual.trollblack, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Troll, Northern  (id=normalized.mandbmaster_combined_monster_manual.trollnorthern, source=mandbmaster_combined_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Undead Rat, Ghoulrat  (id=normalized.mandbmaster_combined_monster_manual.undeadratghoulrat, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Undead Rat, Skelirat  (id=normalized.mandbmaster_combined_monster_manual.undeadratskelirat, source=mandbmaster_combined_monster_manual)
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Undead Rat, Wightrat  (id=normalized.mandbmaster_combined_monster_manual.undeadratwightrat, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Undead Rat, Zombirat  (id=normalized.mandbmaster_combined_monster_manual.undeadratzombirat, source=mandbmaster_combined_monster_manual)
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Unihorn Jackal  (id=normalized.mandbmaster_combined_monster_manual.unihornjackal, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Venus Flytrap, Giant  (id=normalized.mandbmaster_combined_monster_manual.venusflytrapgiant, source=mandbmaster_combined_monster_manual)
+  terrain: vertical  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Vine, Warrior  (id=normalized.mandbmaster_combined_monster_manual.vinewarrior, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Wasp, Spark  (id=normalized.mandbmaster_combined_monster_manual.waspspark, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Weggeest  (id=normalized.mandbmaster_combined_monster_manual.weggeest, source=mandbmaster_combined_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Wendigo  (id=normalized.mandbmaster_combined_monster_manual.wendigo, source=mandbmaster_combined_monster_manual)
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Worm, Cave  (id=normalized.mandbmaster_combined_monster_manual.wormcave, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Worm, Furnace  (id=normalized.mandbmaster_combined_monster_manual.wormfurnace, source=mandbmaster_combined_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+
+Wyrm, Crystalline  (id=normalized.mandbmaster_combined_monster_manual.wyrmcrystalline, source=mandbmaster_combined_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Wyrm, Enslaving  (id=normalized.mandbmaster_combined_monster_manual.wyrmenslaving, source=mandbmaster_combined_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: swamp  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Wyrm, Kurgan  (id=normalized.mandbmaster_combined_monster_manual.wyrmkurgan, source=mandbmaster_combined_monster_manual)
+  environment: ruins  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Xiaroen  (id=normalized.mandbmaster_combined_monster_manual.xiaroen, source=mandbmaster_combined_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Ziburinis  (id=normalized.mandbmaster_combined_monster_manual.ziburinis, source=mandbmaster_combined_monster_manual)
+  environment: forest  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: forest  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Zombie, Hound  (id=normalized.mandbmaster_combined_monster_manual.zombiehound, source=mandbmaster_combined_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: aerial  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Aarakocra  (id=normalized.megadungeon_monster_manual.aarakocra, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: mountain  [low]  keyword match in name/description
+
+Acolyte of Orcus  (id=normalized.megadungeon_monster_manual.acolyteoforcus, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Amber Bulk  (id=normalized.megadungeon_monster_manual.amberbulk, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Amber Mold  (id=normalized.megadungeon_monster_manual.ambermold, source=megadungeon_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: fungus  [low]  keyword match in name/description
+
+Amphisbaena  (id=normalized.megadungeon_monster_manual.amphisbaena, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Archaian Sentinel  (id=normalized.megadungeon_monster_manual.archaiansentinel, source=megadungeon_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+(Greater)  (id=normalized.megadungeon_monster_manual.greater, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Axe Bleak  (id=normalized.megadungeon_monster_manual.axebleak, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Azer  (id=normalized.megadungeon_monster_manual.azer, source=megadungeon_monster_manual)
+  monster_type: elemental  [low]  keyword match in name/description
+
+Barrow Abomination  (id=normalized.megadungeon_monster_manual.barrowabomination, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Barrow Ghast  (id=normalized.megadungeon_monster_manual.barrowghast, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Barrow Guardian  (id=normalized.megadungeon_monster_manual.barrowguardian, source=megadungeon_monster_manual)
+  environment: graveyard  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: construct  [low]  keyword match in name/description
+
+(Greater)  (id=normalized.megadungeon_monster_manual.greater, source=megadungeon_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Barrow Harpy  (id=normalized.megadungeon_monster_manual.barrowharpy, source=megadungeon_monster_manual)
+  environment: graveyard  [low]  keyword match in name/description
+  terrain: crypt  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+
+Barrow Mimic  (id=normalized.megadungeon_monster_manual.barrowmimic, source=megadungeon_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+
+Barrow Mummy  (id=normalized.megadungeon_monster_manual.barrowmummy, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Basidirond  (id=normalized.megadungeon_monster_manual.basidirond, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Behir  (id=normalized.megadungeon_monster_manual.behir, source=megadungeon_monster_manual)
+  terrain: vertical  [low]  keyword match in name/description
+
+Biyakk  (id=normalized.megadungeon_monster_manual.biyakk, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: mountain  [low]  keyword match in name/description
+
+Black Skeleton  (id=normalized.megadungeon_monster_manual.blackskeleton, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Black Tentacles  (id=normalized.megadungeon_monster_manual.blacktentacles, source=megadungeon_monster_manual)
+  monster_type: aquatic  [low]  keyword match in name/description
+
+Black Witches’ Butter  (id=normalized.megadungeon_monster_manual.blackwitchesbutter, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  monster_type: fungus  [low]  keyword match in name/description
+
+Blood-Thirsty Spider  (id=normalized.megadungeon_monster_manual.bloodthirstyspider, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Blooderfly  (id=normalized.megadungeon_monster_manual.blooderfly, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: fungus  [low]  keyword match in name/description
+
+Bodak  (id=normalized.megadungeon_monster_manual.bodak, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Brain Fungus  (id=normalized.megadungeon_monster_manual.brainfungus, source=megadungeon_monster_manual)
+  monster_type: fungus  [low]  keyword match in name/description
+
+Brass Jackal  (id=normalized.megadungeon_monster_manual.brassjackal, source=megadungeon_monster_manual)
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Brobdingnagian Fungi  (id=normalized.megadungeon_monster_manual.brobdingnagianfungi, source=megadungeon_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: aquatic  [low]  keyword match in name/description
+
+Brown Mold  (id=normalized.megadungeon_monster_manual.brownmold, source=megadungeon_monster_manual)
+  monster_type: fungus  [low]  keyword match in name/description
+
+Brown Pudding  (id=normalized.megadungeon_monster_manual.brownpudding, source=megadungeon_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: marsh  [low]  keyword match in name/description
+  region: swamp  [low]  keyword match in name/description
+
+Bugbear  (id=normalized.megadungeon_monster_manual.bugbear, source=megadungeon_monster_manual)
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Bullywug  (id=normalized.megadungeon_monster_manual.bullywug, source=megadungeon_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: marsh  [low]  keyword match in name/description
+  region: swamp  [low]  keyword match in name/description
+  monster_type: amphibian  [low]  keyword match in name/description
+
+Carnivorous Vines  (id=normalized.megadungeon_monster_manual.carnivorousvines, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Caryatid Column  (id=normalized.megadungeon_monster_manual.caryatidcolumn, source=megadungeon_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: construct  [low]  keyword match in name/description
+
+Cave Fisher  (id=normalized.megadungeon_monster_manual.cavefisher, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: vertical  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Cave Moray  (id=normalized.megadungeon_monster_manual.cavemoray, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: aquatic  [low]  keyword match in name/description
+
+Cerepod  (id=normalized.megadungeon_monster_manual.cerepod, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Chrysmal  (id=normalized.megadungeon_monster_manual.chrysmal, source=megadungeon_monster_manual)
+  monster_type: elemental  [low]  keyword match in name/description
+
+Cinnamon Mold  (id=normalized.megadungeon_monster_manual.cinnamonmold, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  monster_type: fungus  [low]  keyword match in name/description
+
+Cloaker  (id=normalized.megadungeon_monster_manual.cloaker, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+
+Clockwork Centipede  (id=normalized.megadungeon_monster_manual.clockworkcentipede, source=megadungeon_monster_manual)
+  monster_type: construct  [low]  keyword match in name/description
+
+Clockwork Cobra  (id=normalized.megadungeon_monster_manual.clockworkcobra, source=megadungeon_monster_manual)
+  environment: graveyard  [low]  keyword match in name/description
+  terrain: crypt  [low]  keyword match in name/description
+  monster_type: construct  [low]  keyword match in name/description
+
+Clockwork Scorpion  (id=normalized.megadungeon_monster_manual.clockworkscorpion, source=megadungeon_monster_manual)
+  environment: graveyard  [low]  keyword match in name/description
+  terrain: crypt  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Clockwork Stirge  (id=normalized.megadungeon_monster_manual.clockworkstirge, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: construct  [low]  keyword match in name/description
+
+Coffer Corpse  (id=normalized.megadungeon_monster_manual.coffercorpse, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Coldbold  (id=normalized.megadungeon_monster_manual.coldbold, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Corpse Candle  (id=normalized.megadungeon_monster_manual.corpsecandle, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Crypt Knight  (id=normalized.megadungeon_monster_manual.cryptknight, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Crypt Shade  (id=normalized.megadungeon_monster_manual.cryptshade, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Crypt Shade (Greater)  (id=normalized.megadungeon_monster_manual.cryptshadegreater, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Crypt Thing  (id=normalized.megadungeon_monster_manual.cryptthing, source=megadungeon_monster_manual)
+  environment: graveyard  [low]  keyword match in name/description
+  terrain: crypt  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Crystal Ooze  (id=normalized.megadungeon_monster_manual.crystalooze, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: aquatic  [low]  keyword match in name/description
+
+Crystalline Cluster  (id=normalized.megadungeon_monster_manual.crystallinecluster, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+
+Cyclopsman  (id=normalized.megadungeon_monster_manual.cyclopsman, source=megadungeon_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: giant  [low]  keyword match in name/description
+
+Darg  (id=normalized.megadungeon_monster_manual.darg, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+
+Darkmantle  (id=normalized.megadungeon_monster_manual.darkmantle, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Death Knight  (id=normalized.megadungeon_monster_manual.deathknight, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Derro  (id=normalized.megadungeon_monster_manual.derro, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+
+Dervish Nomad  (id=normalized.megadungeon_monster_manual.dervishnomad, source=megadungeon_monster_manual)
+  monster_type: arachnid  [low]  keyword match in name/description
+
+Dimetradon  (id=normalized.megadungeon_monster_manual.dimetradon, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Dracolich  (id=normalized.megadungeon_monster_manual.dracolich, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Dracolisk  (id=normalized.megadungeon_monster_manual.dracolisk, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+
+Dragonman  (id=normalized.megadungeon_monster_manual.dragonman, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Duergar  (id=normalized.megadungeon_monster_manual.duergar, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Dust Digger  (id=normalized.megadungeon_monster_manual.dustdigger, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Dwargoyle  (id=normalized.megadungeon_monster_manual.dwargoyle, source=megadungeon_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: construct  [low]  keyword match in name/description
+
+Elemental  (id=normalized.megadungeon_monster_manual.elemental, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Ettercap  (id=normalized.megadungeon_monster_manual.ettercap, source=megadungeon_monster_manual)
+  terrain: vertical  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Exploding Bone Skeleton  (id=normalized.megadungeon_monster_manual.explodingboneskeleton, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Fanged Legion of Impurax  (id=normalized.megadungeon_monster_manual.fangedlegionofimpurax, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Faze Fungus  (id=normalized.megadungeon_monster_manual.fazefungus, source=megadungeon_monster_manual)
+  monster_type: fungus  [low]  keyword match in name/description
+
+Fire Bat  (id=normalized.megadungeon_monster_manual.firebat, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: elemental  [low]  keyword match in name/description
+
+Fire Crab  (id=normalized.megadungeon_monster_manual.firecrab, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Fire Salamander  (id=normalized.megadungeon_monster_manual.firesalamander, source=megadungeon_monster_manual)
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Fire Snake  (id=normalized.megadungeon_monster_manual.firesnake, source=megadungeon_monster_manual)
+  monster_type: elemental  [low]  keyword match in name/description
+
+Fire Toad  (id=normalized.megadungeon_monster_manual.firetoad, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Flagstone Golem  (id=normalized.megadungeon_monster_manual.flagstonegolem, source=megadungeon_monster_manual)
+  environment: graveyard  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Flail Snail  (id=normalized.megadungeon_monster_manual.flailsnail, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+
+Fog Giant  (id=normalized.megadungeon_monster_manual.foggiant, source=megadungeon_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Forbidden Fruit Fungus  (id=normalized.megadungeon_monster_manual.forbiddenfruitfungus, source=megadungeon_monster_manual)
+  monster_type: fungus  [low]  keyword match in name/description
+
+Fossil Skeleton  (id=normalized.megadungeon_monster_manual.fossilskeleton, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Fourgoyle  (id=normalized.megadungeon_monster_manual.fourgoyle, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+
+Freant  (id=normalized.megadungeon_monster_manual.freant, source=megadungeon_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Frettin  (id=normalized.megadungeon_monster_manual.frettin, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Frost Man  (id=normalized.megadungeon_monster_manual.frostman, source=megadungeon_monster_manual)
+  monster_type: devil  [low]  keyword match in name/description
+
+Frost Salamander  (id=normalized.megadungeon_monster_manual.frostsalamander, source=megadungeon_monster_manual)
+  monster_type: elemental  [low]  keyword match in name/description
+
+Frozen Fungi  (id=normalized.megadungeon_monster_manual.frozenfungi, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Funeral Pyre Zombie  (id=normalized.megadungeon_monster_manual.funeralpyrezombie, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Fungus Man  (id=normalized.megadungeon_monster_manual.fungusman, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Galeb Duhr  (id=normalized.megadungeon_monster_manual.galebduhr, source=megadungeon_monster_manual)
+  environment: mountain  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+  monster_type: elemental  [low]  keyword match in name/description
+
+Gas Spore Fungus  (id=normalized.megadungeon_monster_manual.gassporefungus, source=megadungeon_monster_manual)
+  monster_type: fungus  [low]  keyword match in name/description
+
+Gehennian Goat  (id=normalized.megadungeon_monster_manual.gehenniangoat, source=megadungeon_monster_manual)
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Gemstone Golem  (id=normalized.megadungeon_monster_manual.gemstonegolem, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: grave-realm  [low]  keyword match in name/description
+
+Ghaist  (id=normalized.megadungeon_monster_manual.ghaist, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: grave-realm  [low]  keyword match in name/description
+
+Giant Ant  (id=normalized.megadungeon_monster_manual.giantant, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Exploding Ant  (id=normalized.megadungeon_monster_manual.giantexplodingant, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Beetle Exoskeleton  (id=normalized.megadungeon_monster_manual.giantbeetleexoskeleton, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Giant Blister Beetle  (id=normalized.megadungeon_monster_manual.giantblisterbeetle, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Cave Cricket  (id=normalized.megadungeon_monster_manual.giantcavecricket, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Cockroach  (id=normalized.megadungeon_monster_manual.giantcockroach, source=megadungeon_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  region: coastal  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Crab  (id=normalized.megadungeon_monster_manual.giantcrab, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Dragonfly  (id=normalized.megadungeon_monster_manual.giantdragonfly, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+
+Giant Earthworm  (id=normalized.megadungeon_monster_manual.giantearthworm, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Flagstone Spider  (id=normalized.megadungeon_monster_manual.giantflagstonespider, source=megadungeon_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Jumping Spider  (id=normalized.megadungeon_monster_manual.giantjumpingspider, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Leech  (id=normalized.megadungeon_monster_manual.giantleech, source=megadungeon_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: marsh  [low]  keyword match in name/description
+  region: swamp  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Mosquito  (id=normalized.megadungeon_monster_manual.giantmosquito, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Pterodactyl  (id=normalized.megadungeon_monster_manual.giantpterodactyl, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Saw-Toothed Beetle  (id=normalized.megadungeon_monster_manual.giantsawtoothedbeetle, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Scorpion  (id=normalized.megadungeon_monster_manual.giantscorpion, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Huge Scorpion  (id=normalized.megadungeon_monster_manual.hugescorpion, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Slicer Beetle  (id=normalized.megadungeon_monster_manual.giantslicerbeetle, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Snowy Owl  (id=normalized.megadungeon_monster_manual.giantsnowyowl, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Giant Vulture  (id=normalized.megadungeon_monster_manual.giantvulture, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Huge Vulture  (id=normalized.megadungeon_monster_manual.hugevulture, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Gnoll  (id=normalized.megadungeon_monster_manual.gnoll, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Goblin  (id=normalized.megadungeon_monster_manual.goblin, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Grub Globule  (id=normalized.megadungeon_monster_manual.grubglobule, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: plant  [low]  keyword match in name/description
+
+Hobgoblin  (id=normalized.megadungeon_monster_manual.hobgoblin, source=megadungeon_monster_manual)
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Hook Horror  (id=normalized.megadungeon_monster_manual.hookhorror, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Huecuva  (id=normalized.megadungeon_monster_manual.huecuva, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Ice Hag  (id=normalized.megadungeon_monster_manual.icehag, source=megadungeon_monster_manual)
+  monster_type: elemental  [low]  keyword match in name/description
+
+Ice Snake  (id=normalized.megadungeon_monster_manual.icesnake, source=megadungeon_monster_manual)
+  monster_type: elemental  [low]  keyword match in name/description
+
+Ice Spider  (id=normalized.megadungeon_monster_manual.icespider, source=megadungeon_monster_manual)
+  monster_type: arachnid  [low]  keyword match in name/description
+
+Ice Toad  (id=normalized.megadungeon_monster_manual.icetoad, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Ice Troll  (id=normalized.megadungeon_monster_manual.icetroll, source=megadungeon_monster_manual)
+  monster_type: giant  [low]  keyword match in name/description
+
+Icterine Fungi  (id=normalized.megadungeon_monster_manual.icterinefungi, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Incendiary Fungus  (id=normalized.megadungeon_monster_manual.incendiaryfungus, source=megadungeon_monster_manual)
+  monster_type: fungus  [low]  keyword match in name/description
+
+Juju Zombie  (id=normalized.megadungeon_monster_manual.jujuzombie, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Kalas-Toa  (id=normalized.megadungeon_monster_manual.kalastoa, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Kobold  (id=normalized.megadungeon_monster_manual.kobold, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Lizardman  (id=normalized.megadungeon_monster_manual.lizardman, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Luft Baboon  (id=normalized.megadungeon_monster_manual.luftbaboon, source=megadungeon_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+
+Luft Banderlog  (id=normalized.megadungeon_monster_manual.luftbanderlog, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Maggog Gargoyle  (id=normalized.megadungeon_monster_manual.maggoggargoyle, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+
+Magman  (id=normalized.megadungeon_monster_manual.magman, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Mantrap  (id=normalized.megadungeon_monster_manual.mantrap, source=megadungeon_monster_manual)
+  monster_type: plant  [low]  keyword match in name/description
+
+Margoyle  (id=normalized.megadungeon_monster_manual.margoyle, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+
+Medusa (Greater)  (id=normalized.megadungeon_monster_manual.medusagreater, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Megalocentipede  (id=normalized.megadungeon_monster_manual.megalocentipede, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Mephical Mold  (id=normalized.megadungeon_monster_manual.mephicalmold, source=megadungeon_monster_manual)
+  monster_type: fungus  [low]  keyword match in name/description
+
+Mephit (Fire)  (id=normalized.megadungeon_monster_manual.mephitfire, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: elemental  [low]  keyword match in name/description
+
+Mephit (Steam)  (id=normalized.megadungeon_monster_manual.mephitsteam, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Minotaur  (id=normalized.megadungeon_monster_manual.minotaur, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Mongrelman  (id=normalized.megadungeon_monster_manual.mongrelman, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Morlock  (id=normalized.megadungeon_monster_manual.morlock, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Mudman  (id=normalized.megadungeon_monster_manual.mudman, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Muggle  (id=normalized.megadungeon_monster_manual.muggle, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Mummy Lord  (id=normalized.megadungeon_monster_manual.mummylord, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Mummy of Zuul  (id=normalized.megadungeon_monster_manual.mummyofzuul, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Myrmidyte  (id=normalized.megadungeon_monster_manual.myrmidyte, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Naga-Ti  (id=normalized.megadungeon_monster_manual.nagati, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Neanderthal  (id=normalized.megadungeon_monster_manual.neanderthal, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Neb’Enakhet  (id=normalized.megadungeon_monster_manual.nebenakhet, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Necromancer of Set  (id=normalized.megadungeon_monster_manual.necromancerofset, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Nematoad  (id=normalized.megadungeon_monster_manual.nematoad, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  monster_type: amphibian  [low]  keyword match in name/description
+
+Norker  (id=normalized.megadungeon_monster_manual.norker, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Ogre  (id=normalized.megadungeon_monster_manual.ogre, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Oozie  (id=normalized.megadungeon_monster_manual.oozie, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Orc  (id=normalized.megadungeon_monster_manual.orc, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Orc (Black)  (id=normalized.megadungeon_monster_manual.orcblack, source=megadungeon_monster_manual)
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Pack Lizard  (id=normalized.megadungeon_monster_manual.packlizard, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  region: mountain  [low]  keyword match in name/description
+
+Pech  (id=normalized.megadungeon_monster_manual.pech, source=megadungeon_monster_manual)
+  monster_type: elemental  [low]  keyword match in name/description
+
+Penanggalen  (id=normalized.megadungeon_monster_manual.penanggalen, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Peryton  (id=normalized.megadungeon_monster_manual.peryton, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: mountain  [low]  keyword match in name/description
+
+Phantom  (id=normalized.megadungeon_monster_manual.phantom, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Phantom Stalker  (id=normalized.megadungeon_monster_manual.phantomstalker, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Phase Ghoul  (id=normalized.megadungeon_monster_manual.phaseghoul, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Phycomid  (id=normalized.megadungeon_monster_manual.phycomid, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  monster_type: fungus  [low]  keyword match in name/description
+
+Phycomid (Advanced)  (id=normalized.megadungeon_monster_manual.phycomidadvanced, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  monster_type: fungus  [low]  keyword match in name/description
+
+Piercer  (id=normalized.megadungeon_monster_manual.piercer, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Poltergeist  (id=normalized.megadungeon_monster_manual.poltergeist, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+
+Purple Moss  (id=normalized.megadungeon_monster_manual.purplemoss, source=megadungeon_monster_manual)
+  monster_type: fungus  [low]  keyword match in name/description
+
+Raven  (id=normalized.megadungeon_monster_manual.raven, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Ravenous Zombie  (id=normalized.megadungeon_monster_manual.ravenouszombie, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: grave-realm  [low]  keyword match in name/description
+
+Red Snappers  (id=normalized.megadungeon_monster_manual.redsnappers, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: wooded  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Reliquary Guardian  (id=normalized.megadungeon_monster_manual.reliquaryguardian, source=megadungeon_monster_manual)
+  environment: ruins  [low]  keyword match in name/description
+  terrain: crypt  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Rock Clam  (id=normalized.megadungeon_monster_manual.rockclam, source=megadungeon_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+
+Rock Lobster  (id=normalized.megadungeon_monster_manual.rocklobster, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: aquatic  [low]  keyword match in name/description
+
+Rock Manta  (id=normalized.megadungeon_monster_manual.rockmanta, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Rock Reptile  (id=normalized.megadungeon_monster_manual.rockreptile, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Rot Pudding  (id=normalized.megadungeon_monster_manual.rotpudding, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Rothe  (id=normalized.megadungeon_monster_manual.rothe, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Runestone Golem  (id=normalized.megadungeon_monster_manual.runestonegolem, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Runestone Skeleton  (id=normalized.megadungeon_monster_manual.runestoneskeleton, source=megadungeon_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  region: grave-realm  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Runic Golem  (id=normalized.megadungeon_monster_manual.runicgolem, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: grave-realm  [low]  keyword match in name/description
+
+Russet Mold  (id=normalized.megadungeon_monster_manual.russetmold, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  monster_type: fungus  [low]  keyword match in name/description
+
+Sallow Cyst  (id=normalized.megadungeon_monster_manual.sallowcyst, source=megadungeon_monster_manual)
+  monster_type: plant  [low]  keyword match in name/description
+
+Salt Bat  (id=normalized.megadungeon_monster_manual.saltbat, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Salt Golem  (id=normalized.megadungeon_monster_manual.saltgolem, source=megadungeon_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: construct  [low]  keyword match in name/description
+
+Salt Pudding  (id=normalized.megadungeon_monster_manual.saltpudding, source=megadungeon_monster_manual)
+  environment: dungeon  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: aquatic  [low]  keyword match in name/description
+
+Salt Skeleton  (id=normalized.megadungeon_monster_manual.saltskeleton, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Salt Zombie  (id=normalized.megadungeon_monster_manual.saltzombie, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Sand Stalker  (id=normalized.megadungeon_monster_manual.sandstalker, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Sandling  (id=normalized.megadungeon_monster_manual.sandling, source=megadungeon_monster_manual)
+  environment: aquatic  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Sandman  (id=normalized.megadungeon_monster_manual.sandman, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Sapphire Skeleton  (id=normalized.megadungeon_monster_manual.sapphireskeleton, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Sentinel of the Ancestors  (id=normalized.megadungeon_monster_manual.sentineloftheancestors, source=megadungeon_monster_manual)
+  environment: graveyard  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+(Advanced)  (id=normalized.megadungeon_monster_manual.advanced, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Shade  (id=normalized.megadungeon_monster_manual.shade, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Shadow  (id=normalized.megadungeon_monster_manual.shadow, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Shadow Demon  (id=normalized.megadungeon_monster_manual.shadowdemon, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Shadow Dragon  (id=normalized.megadungeon_monster_manual.shadowdragon, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+
+Shadow Mastiff  (id=normalized.megadungeon_monster_manual.shadowmastiff, source=megadungeon_monster_manual)
+  monster_type: humanoid  [low]  keyword match in name/description
+
+Shambling Filth  (id=normalized.megadungeon_monster_manual.shamblingfilth, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Skeletal Naga  (id=normalized.megadungeon_monster_manual.skeletalnaga, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Skeletal Warrior  (id=normalized.megadungeon_monster_manual.skeletalwarrior, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Son of Gaxx  (id=normalized.megadungeon_monster_manual.sonofgaxx, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Spectator  (id=normalized.megadungeon_monster_manual.spectator, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+
+Spectral Dead  (id=normalized.megadungeon_monster_manual.spectraldead, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Stalagbite  (id=normalized.megadungeon_monster_manual.stalagbite, source=megadungeon_monster_manual)
+  terrain: rocky  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Steeder  (id=normalized.megadungeon_monster_manual.steeder, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: vertical  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Steel Skeleton  (id=normalized.megadungeon_monster_manual.steelskeleton, source=megadungeon_monster_manual)
+  environment: graveyard  [medium]  affinity from monster_type 'undead'
+  terrain: crypt  [medium]  affinity from monster_type 'undead'
+  region: grave-realm  [medium]  affinity from monster_type 'undead'
+
+Storoper  (id=normalized.megadungeon_monster_manual.storoper, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: rocky  [low]  keyword match in name/description
+
+Stun Jelly  (id=normalized.megadungeon_monster_manual.stunjelly, source=megadungeon_monster_manual)
+  environment: dungeon  [low]  keyword match in name/description
+
+Sunburst Lichen  (id=normalized.megadungeon_monster_manual.sunburstlichen, source=megadungeon_monster_manual)
+  monster_type: undead  [low]  keyword match in name/description
+
+Taer  (id=normalized.megadungeon_monster_manual.taer, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+
+Terrordactyl  (id=normalized.megadungeon_monster_manual.terrordactyl, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Troglodyte  (id=normalized.megadungeon_monster_manual.troglodyte, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Troll  (id=normalized.megadungeon_monster_manual.troll, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: insect  [low]  keyword match in name/description
+
+Troll (Cave)  (id=normalized.megadungeon_monster_manual.trollcave, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: giant  [low]  keyword match in name/description
+
+Vargouhille  (id=normalized.megadungeon_monster_manual.vargouhille, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+  monster_type: demon  [low]  keyword match in name/description
+
+Vegepygmy  (id=normalized.megadungeon_monster_manual.vegepygmy, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Velociraptor  (id=normalized.megadungeon_monster_manual.velociraptor, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Volsectum Cultist  (id=normalized.megadungeon_monster_manual.volsectumcultist, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+
+Volt  (id=normalized.megadungeon_monster_manual.volt, source=megadungeon_monster_manual)
+  terrain: aerial  [low]  keyword match in name/description
+
+Vortex  (id=normalized.megadungeon_monster_manual.vortex, source=megadungeon_monster_manual)
+  monster_type: insect  [low]  keyword match in name/description
+
+Water Weird  (id=normalized.megadungeon_monster_manual.waterweird, source=megadungeon_monster_manual)
+  environment: swamp  [low]  keyword match in name/description
+  terrain: flooded  [low]  keyword match in name/description
+  monster_type: elemental  [low]  keyword match in name/description
+
+Weevil-Man Drone  (id=normalized.megadungeon_monster_manual.weevilmandrone, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: civilized lands  [low]  affinity from monster_type 'humanoid'
+
+Xorn  (id=normalized.megadungeon_monster_manual.xorn, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: elemental  [low]  keyword match in name/description
+
+Yellow Musk Creeper  (id=normalized.megadungeon_monster_manual.yellowmuskcreeper, source=megadungeon_monster_manual)
+  environment: underground  [low]  keyword match in name/description
+  terrain: subterranean  [low]  keyword match in name/description
+  region: underground  [low]  keyword match in name/description
+  monster_type: undead  [low]  keyword match in name/description
+
+Yellow Musk Zombie  (id=normalized.megadungeon_monster_manual.yellowmuskzombie, source=megadungeon_monster_manual)
+  environment: wilderness  [low]  affinity from monster_type 'humanoid'
+  terrain: road  [low]  affinity from monster_type 'humanoid'
+  region: grave-realm  [low]  keyword match in name/description

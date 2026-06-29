@@ -3,7 +3,7 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.22`
+- Current development version on `main`: `v0.8.23`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
@@ -98,6 +98,35 @@ Placeholder and mapping policy for that future normalized layer:
   exact mapping.
 
 ## Latest completed work
+
+Version 0.8.23 adds controlled monster classification dropdowns and a
+conservative suggestion pass on `main`:
+
+- Added `tools/report_table_inventory.py` scanning 29 data/table/config files
+  across 10 domains and writing:
+  - `data/import_reports/table_inventory.json`
+  - `data/import_reports/table_inventory_report.txt`
+- Added `data/tables/monster_classification_options.json` with controlled lists
+  for `monster_types`, `environments`, `terrains`, `regions`, and `affinity_values`.
+- Added `data/configs/monster_classification_affinities.json` with seed
+  affinities for undead, aquatic, amphibian, aerial, construct, demon, devil,
+  elemental, plant, fungus, insect, arachnid, giant, and humanoid.
+- Added `app/monster_classification.py` with loaders, validation, and
+  `dropdown_values_for_field` helper for dropdown behavior.
+- Added `tools/importers/monster_classification_suggestions.py` generating
+  conservative best-guess suggestions for missing classification fields.
+  - Output: `data/import_reports/monster_classification_suggestions.json`
+  - Report: `data/import_reports/monster_classification_suggestions_report.txt`
+  - Current run: 1320 suggestions across 487 records.
+- Added `Classification Suggestions` to the Monster Editor hub and a
+  `view_classification_suggestions` method in `app/gui.py`.
+- Converted `environment`, `terrain`, `region`, and `monster_type` in the
+  Normalized Monster Review → Correct Fields dialog to editable Comboboxes.
+- Added `tests/test_table_inventory_and_classification.py` with 26 tests and
+  updated `tests/test_editor_hub.py` for the new sub-category.
+- Confirmed no live catalog, preview, or correction data modification; no
+  importer behavior changes; no record merging; no PDFs added.
+- Validation suite: 363 passing `unittest` tests.
 
 Version 0.8.22 adds a non-live combat-ready monster projection on `main`:
 

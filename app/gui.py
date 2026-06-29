@@ -22,6 +22,10 @@ from app.editor_hub import (
     get_monster_editor_subcategories,
     monster_editor_summary_text,
 )
+from app.monster_classification import (
+    CLASSIFICATION_OPTION_FIELDS,
+    dropdown_values_for_field,
+)
 from app.monster_editor import (
     DEFAULT_CORRECTABLE_FIELDS,
     _present,
@@ -65,6 +69,13 @@ from tools.importers.monster_corrected_staging_preview import (
     build_staging_preview,
     format_report as format_staging_report,
     write_staging_preview,
+)
+from tools.importers.monster_classification_suggestions import (
+    DEFAULT_SUGGESTIONS_JSON,
+    DEFAULT_SUGGESTIONS_REPORT,
+    generate_suggestions,
+    format_suggestions_report,
+    write_suggestions,
 )
 from tools.importers.monster_combat_projection import (
     DEFAULT_COMBAT_PROJECTION_JSON,
@@ -2105,6 +2116,8 @@ class RPGWorldApp(tk.Tk):
                 self.view_monster_import_review()
             elif key == "normalized_monster_review":
                 self.view_normalized_monster_review()
+            elif key == "classification_suggestions":
+                self.view_classification_suggestions()
             elif key == "corrected_staging_preview":
                 self.view_corrected_staging_preview()
             elif key == "combat_projection_preview":
@@ -2185,6 +2198,33 @@ class RPGWorldApp(tk.Tk):
             "Corrections are stored separately and do not modify generated previews.",
         ]
         self.show("\n".join(summary_lines), "Viewing normalized monster review.")
+
+    def view_classification_suggestions(self) -> None:
+        """Display a read-only summary of conservative monster classification suggestions."""
+        try:
+            suggestions = generate_suggestions()
+            json_path, report_path = write_suggestions(suggestions)
+        except (FileNotFoundError, ValueError) as exc:
+            self.hide_index()
+            self.show(str(exc), "Classification suggestion input not available or malformed.")
+            return
+        except Exception as exc:
+            self.hide_index()
+            self.show(
+                f"Could not generate classification suggestions: {exc}",
+                "Classification suggestion generation failed.",
+            )
+            return
+
+        self.hide_index()
+        report_text = format_suggestions_report(suggestions)
+        self.show(
+            report_text
+            + f"\n\nJSON: {json_path}\nReport: {report_path}\n\n"
+            "These are conservative best-guess suggestions only. "
+            "Review each suggestion before applying it manually in Normalized Monster Review.",
+            "Viewing classification suggestions.",
+        )
 
     def view_corrected_staging_preview(self) -> None:
         """Display a read-only non-live corrected monster staging preview."""
@@ -2328,7 +2368,19 @@ class RPGWorldApp(tk.Tk):
 
             value_var = tk.StringVar(value=current_value)
             field_vars[field_name] = value_var
-            ttk.Entry(group, textvariable=value_var).pack(fill="x")
+            if field_name in CLASSIFICATION_OPTION_FIELDS:
+                values, selected = dropdown_values_for_field(
+                    field_name, current_value
+                )
+                value_var.set(selected)
+                ttk.Combobox(
+                    group,
+                    textvariable=value_var,
+                    values=values,
+                    width=40,
+                ).pack(fill="x")
+            else:
+                ttk.Entry(group, textvariable=value_var).pack(fill="x")
 
             notes_var = tk.StringVar(value=correction.get("notes", "") if correction else "")
             field_notes_vars[field_name] = notes_var

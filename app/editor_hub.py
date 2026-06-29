@@ -12,6 +12,7 @@ EDITOR_CATEGORIES = [
 MONSTER_EDITOR_SUBCATEGORIES = [
     ("Canonical Candidate Review", "canonical_candidate_review"),
     ("Normalized Monster Review", "normalized_monster_review"),
+    ("Classification Suggestions", "classification_suggestions"),
     ("Corrected Staging Preview", "corrected_staging_preview"),
     ("Combat Projection Preview", "combat_projection_preview"),
 ]
@@ -91,6 +92,7 @@ def monster_editor_summary_text() -> str:
         "",
         "- Canonical Candidate Review: approve/reject likely same-monster matches.",
         "- Normalized Monster Review: inspect imported monster records and correct fields.",
+        "- Classification Suggestions: view conservative best-guess classifications before applying them.",
         "- Corrected Staging Preview: view a non-live corrected dataset built from "
         "normalized records and stored corrections.",
         "- Combat Projection Preview: view a non-live combat-ready projection built "
@@ -98,6 +100,7 @@ def monster_editor_summary_text() -> str:
         "",
         "Use Canonical Candidate Review to approve/reject likely same-monster matches.",
         "Use Normalized Monster Review to inspect imported monster records and correct fields.",
+        "Use Classification Suggestions to review conservative best-guess classifications. Apply them manually in Normalized Monster Review.",
         "Use Corrected Staging Preview to inspect a non-live corrected monster dataset.",
         "Use Combat Projection Preview to inspect a non-live combat-ready projection.",
         "Corrections are stored separately and do not modify source imports or the live catalog.",

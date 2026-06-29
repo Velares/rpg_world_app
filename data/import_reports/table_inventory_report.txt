@@ -1,0 +1,681 @@
+Table Inventory Report
+======================
+
+Project root: C:\Users\chrismata\CascadeProjects\rpg_world_app
+Files scanned: 29
+
+Generated report files are NOT intended for manual editing.
+User-editable tables live under data/tables/.
+
+NPC GENERATION
+--------------
+key_npc_tables.json  [generation content]
+  NOTE: user-editable
+  - key_npc_reasons
+    entries: 3
+    type: text list
+  - key_npc_notes
+    entries: 3
+    type: text list
+  - ally_phase_events
+    entries: 3
+    type: text list
+  - at_odds_phase_events
+    entries: 3
+    type: text list
+  - neutral_phase_events
+    entries: 3
+    type: text list
+  referenced by: app\key_npcs.py, app\table_schemas.py, tools\report_table_inventory.py
+
+npc_depth_tables.json  [generation content]
+  NOTE: user-editable
+  - deeper_backstories
+    entries: 3
+    type: text list
+  - personal_motives
+    entries: 3
+    type: text list
+  - hidden_pressures
+    entries: 3
+    type: text list
+  - relationship_to_player
+    entries: 3
+    type: text list
+  - ongoing_threads
+    entries: 3
+    type: text list
+  - prominence_notes
+    entries: 3
+    type: text list
+  referenced by: app\table_schemas.py, app\timeline.py, tools\report_table_inventory.py
+
+npc_tables.json  [generation content]
+  NOTE: user-editable
+  - male_names
+    entries: 6
+    type: text list
+  - female_names
+    entries: 6
+    type: text list
+  - neutral_names
+    entries: 6
+    type: text list
+  - surnames
+    entries: 7
+    type: text list
+  - ancestries
+    entries: 6
+    type: text list
+  - professions
+    entries: 8
+    type: text list
+  - appearances
+    entries: 5
+    type: text list
+  - personalities
+    entries: 6
+    type: text list
+  - motivations
+    entries: 6
+    type: text list
+  - fears
+    entries: 6
+    type: text list
+  - secrets
+    entries: 6
+    type: text list
+  - relationships
+    entries: 5
+    type: text list
+  - attitudes
+    entries: 5
+    type: text list
+  - useful_information
+    entries: 5
+    type: text list
+  - possible_services
+    entries: 6
+    type: text list
+  referenced by: app\game_state.py, app\generators\npc_generator.py, app\key_npcs.py
+
+
+CHARACTER GENERATION
+--------------------
+class_tables.json  [generation content]
+  NOTE: user-editable
+  - backgrounds
+    entries: 10
+    type: text list
+  - classes
+    entries: 10
+    fields: bonuses, class_name, role_description, special_ability_placeholder, starting_coin, starting_food, starting_supplies, starting_torches...
+    ids: present
+  referenced by: app\characters.py, app\table_loader.py, app\table_schemas.py
+
+player_background_tables.json  [generation content]
+  NOTE: user-editable
+  - origins
+    entries: 8
+    type: text list
+  - formative_events
+    entries: 8
+    type: text list
+  - personality_traits
+    entries: 8
+    type: text list
+  - ideals
+    entries: 8
+    type: text list
+  - bonds
+    entries: 8
+    type: text list
+  - flaws
+    entries: 8
+    type: text list
+  referenced by: app\character_profiles.py, app\table_schemas.py, tests\test_core.py
+
+
+ENCOUNTERS / LEADS / ADVENTURE CONTENT
+----------------------------------
+adventure_tables.json  [generation content]
+  NOTE: user-editable
+  - triggers
+    entries: 4
+    type: text list
+  - major_goals
+    entries: 4
+    type: text list
+  - obstacles
+    entries: 4
+    type: text list
+  - locales
+    entries: 4
+    type: text list
+  - locale_features
+    entries: 4
+    type: text list
+  - phenomena
+    entries: 4
+    type: text list
+  - villain_goals
+    entries: 4
+    type: text list
+  - artifacts_or_relics
+    entries: 4
+    type: text list
+  - themes
+    entries: 4
+    type: text list
+  - key_npcs
+    entries: 4
+    type: text list
+  - first_clues
+    entries: 4
+    type: text list
+  - failure_consequences
+    entries: 4
+    type: text list
+  - time_pressures
+    entries: 4
+    type: text list
+  - noncombat_paths
+    entries: 4
+    type: text list
+  referenced by: app\generators\adventure_generator.py, app\table_schemas.py, tools\report_table_inventory.py
+
+weird_tables.json  [generation content]
+  NOTE: user-editable
+  - ominous_signs
+    entries: 4
+    type: text list
+  - disturbing_sights
+    entries: 4
+    type: text list
+  - weird_mutations
+    entries: 4
+    type: text list
+  - forbidden_magic_effects
+    entries: 4
+    type: text list
+  - dark_prophecies
+    entries: 4
+    type: text list
+  - strange_weather
+    entries: 4
+    type: text list
+  - eerie_sounds
+    entries: 4
+    type: text list
+  - supernatural_marks
+    entries: 4
+    type: text list
+  referenced by: app\generators\dungeon_generator.py, app\generators\settlement_generator.py, app\generators\wilderness_generator.py
+
+
+FUTURE CLASSIFICATION TABLES
+----------------------------
+monster_classification_options.json  [generation content]
+  NOTE: user-editable
+  - monster_types
+    entries: 26
+    type: text list
+  - environments
+    entries: 22
+    type: text list
+  - terrains
+    entries: 23
+    type: text list
+  - regions
+    entries: 18
+    type: text list
+  - affinity_values
+    entries: 6
+    type: text list
+  referenced by: app\monster_classification.py, tests\test_table_inventory_and_classification.py, tools\report_table_inventory.py
+
+monster_classification_affinities.json  [config data]
+  NOTE: user-editable
+  - affinity_values
+    entries: 6
+    type: text list
+  referenced by: app\monster_classification.py, tests\test_table_inventory_and_classification.py, tools\report_table_inventory.py
+
+
+INTERACTION / DIALOGUE / DOWNTIME TEXT
+----------------------------------
+downtime_tables.json  [generation content]
+  NOTE: user-editable
+  - tasks
+    entries: 10
+    fields: allowed_contexts, category, completion_outcomes, completion_text, complication_outcomes, complication_text, default_duration_days, description...
+    ids: present
+  referenced by: app\downtime.py, app\table_loader.py, app\table_schemas.py
+
+interaction_tables.json  [generation content]
+  NOTE: user-editable
+  - npc_dialogue_rumor
+    entries: 3
+    type: text list
+  - npc_dialogue_warning
+    entries: 3
+    type: text list
+  - npc_dialogue_request
+    entries: 3
+    type: text list
+  - npc_dialogue_secret
+    entries: 3
+    type: text list
+  - npc_dialogue_local_trouble
+    entries: 3
+    type: text list
+  - npc_dialogue_faction_hint
+    entries: 3
+    type: text list
+  - npc_dialogue_dungeon_clue
+    entries: 3
+    type: text list
+  - npc_dialogue_wilderness_clue
+    entries: 3
+    type: text list
+  - npc_dialogue_trade_lead
+    entries: 3
+    type: text list
+  - npc_dialogue_personal_oddity
+    entries: 3
+    type: text list
+  - encounter_avoid_success
+    entries: 3
+    type: text list
+  - encounter_approach_success
+    entries: 3
+    type: text list
+  - encounter_approach_trade
+    entries: 3
+    type: text list
+  - encounter_approach_help
+    entries: 3
+    type: text list
+  - encounter_investigate_success
+    entries: 3
+    type: text list
+  - encounter_investigate_follow
+    entries: 3
+    type: text list
+  - encounter_failed_forward
+    entries: 3
+    type: text list
+  - encounter_costly_success
+    entries: 3
+    type: text list
+  - encounter_strange_omen
+    entries: 3
+    type: text list
+  - search_discovery
+    entries: 3
+    type: text list
+  - inspect_discovery
+    entries: 3
+    type: text list
+  - town_explore_discovery
+    entries: 3
+    type: text list
+  - wilderness_explore_discovery
+    entries: 3
+    type: text list
+  - retreat_consequences
+    entries: 3
+    type: text list
+  - check_critical_failure_additions
+    entries: 3
+    type: text list
+  - check_failure_additions
+    entries: 3
+    type: text list
+  - check_partial_success_additions
+    entries: 3
+    type: text list
+  - check_success_additions
+    entries: 3
+    type: text list
+  - check_critical_success_additions
+    entries: 3
+    type: text list
+  referenced by: app\interaction_text.py, app\table_schemas.py, tests\test_core.py
+
+
+INVENTORY / EQUIPMENT / RESOURCES
+-----------------------------
+item_tables.json  [generation content]
+  NOTE: user-editable
+  - item_definitions
+    entries: 18
+    fields: bulk, capacity_bulk, category, description, equipped, handedness, item_key, mode...
+    ids: present
+  - common_loadout
+    entries: 3
+    fields: item_key, quantity
+    ids: present
+  - class_loadouts
+    entries: 10
+    fields: class_name, items
+    ids: present
+  referenced by: app\inventory.py, app\table_loader.py, app\table_schemas.py
+
+treasure_tables.json  [generation content]
+  NOTE: user-editable
+  - coins
+    entries: 4
+    type: text list
+  - mundane_treasure
+    entries: 4
+    type: text list
+  - useful_items
+    entries: 5
+    type: text list
+  - weird_relics
+    entries: 4
+    type: text list
+  - minor_magic_items
+    entries: 4
+    type: text list
+  - cursed_items
+    entries: 4
+    type: text list
+  - clue_items
+    entries: 4
+    type: text list
+  referenced by: app\generators\dungeon_generator.py, app\generators\encounter_generator.py, app\generators\treasure_generator.py
+
+
+MONSTER CATALOGS / IMPORT PREVIEWS / REVIEW DATA
+--------------------------------------------
+monster_tables.json  [generation content]
+  NOTE: user-editable
+  - monster_names
+    entries: 6
+    type: text list
+  - monster_types
+    entries: 6
+    type: text list
+  - monster_intents
+    entries: 5
+    type: text list
+  - monster_signs
+    entries: 5
+    type: text list
+  - monster_weaknesses
+    entries: 5
+    type: text list
+  - monster_morale
+    entries: 5
+    type: text list
+  - monster_reactions
+    entries: 5
+    type: text list
+  - noncombat_options
+    entries: 5
+    type: text list
+  - avoidance_options
+    entries: 5
+    type: text list
+  - safe_combat_options
+    entries: 5
+    type: text list
+  referenced by: app\generators\dungeon_generator.py, app\generators\encounter_generator.py, app\generators\wilderness_generator.py
+
+mandbmaster_normalized_monster_preview.json  [import data]
+  NOTE: generated report; do not edit manually
+  - normalized_monsters
+    entries: 268
+    fields: aliases, alignment, armor_class, attacks, canonical_name, category, challenge, damage...
+    ids: present
+  referenced by: app\monster_editor.py, tests\test_table_inventory_and_classification.py, tools\importers\mandbmaster_normalized_preview.py
+
+megadungeon_monster_preview.json  [import data]
+  - megadungeon_monster_preview
+    entries: 253
+    fields: actual_page_end, actual_page_start, alignment, armor_class, attacks, confidence, damage, hit_dice...
+  referenced by: tools\importers\megadungeon_monster_importer.py
+
+megadungeon_normalized_monster_preview.json  [import data]
+  NOTE: generated report; do not edit manually
+  - normalized_monsters
+    entries: 253
+    fields: aliases, alignment, armor_class, attacks, canonical_name, category, challenge, damage...
+    ids: present
+    duplicate ids: normalized.megadungeon_monster_manual.greater
+  WARNING: normalized_monsters: duplicate ids: normalized.megadungeon_monster_manual.greater
+  referenced by: app\monster_editor.py, tests\test_table_inventory_and_classification.py, tools\importers\megadungeon_monster_importer.py
+
+monster_canonical_group_candidates.json  [import data]
+  NOTE: generated report; do not edit manually
+  - candidate_groups
+    entries: 8
+    fields: candidate_group_id, confidence, match_reasons, match_score, notes, proposed_canonical_name, records, review_status...
+  referenced by: app\monster_import_review.py, tests\test_monster_canonical_group_candidates.py, tools\importers\monster_canonical_group_candidates.py
+
+monster_classification_suggestions.json  [import data]
+  - suggestions
+    entries: 487
+    fields: display_name, record_id, source_id, suggestions
+    duplicate ids: normalized.megadungeon_monster_manual.greater
+  WARNING: suggestions: duplicate ids: normalized.megadungeon_monster_manual.greater
+  referenced by: app\gui.py, tests\test_table_inventory_and_classification.py, tools\importers\monster_classification_suggestions.py
+
+monster_combat_projection.json  [import data]
+  NOTE: generated report; do not edit manually
+  - projections
+    entries: 521
+    fields: alignment, armor_class_model, armor_class_raw, armor_class_type, attacks_model, attacks_raw, canonical_name, challenge...
+    ids: present
+    duplicate ids: normalized.megadungeon_monster_manual.greater
+  WARNING: projections: duplicate ids: normalized.megadungeon_monster_manual.greater
+  referenced by: app\gui.py, tests\test_monster_combat_projection.py, tools\importers\monster_combat_projection.py
+
+monster_corrected_staging_preview.json  [import data]
+  NOTE: generated report; do not edit manually
+  - source_reports
+    entries: 2
+    type: text list
+  - staged_records
+    entries: 521
+    fields: corrections, display_name, effective, id, original, raw_stat_block, raw_text, review_metadata...
+    ids: present
+    duplicate ids: normalized.megadungeon_monster_manual.greater
+  WARNING: staged_records: duplicate ids: normalized.megadungeon_monster_manual.greater
+  referenced by: app\gui.py, tests\test_monster_corrected_staging_preview.py, tests\test_table_inventory_and_classification.py
+
+table_inventory.json  [import data]
+  NOTE: generated report; do not edit manually
+  - domains
+    entries: 10
+    type: text list
+  - warnings
+    entries: 0
+  WARNING: warnings: empty table
+  referenced by: tests\test_table_inventory_and_classification.py, tools\report_table_inventory.py
+
+monster_canonical_group_decisions.json  [review data]
+  referenced by: app\monster_import_review.py
+
+monster_normalized_field_corrections.json  [review data]
+  - source_reports
+    entries: 2
+    type: text list
+  referenced by: app\monster_editor.py
+
+
+OTHER / UNKNOWN
+-------------
+placeholder_master_tables.json  [generation content]
+  NOTE: user-editable
+  - about
+    entries: 3
+    type: text list
+  - future_hex_features
+    entries: 6
+    type: text list
+  - future_faction_states
+    entries: 5
+    type: text list
+
+
+SETTLEMENT / LOCATION GENERATION
+------------------------------
+dungeon_tables.json  [generation content]
+  NOTE: user-editable
+  - dungeon_names
+    entries: 5
+    type: text list
+  - cave_descriptions
+    entries: 4
+    type: text list
+  - dungeon_themes
+    entries: 5
+    type: text list
+  - room_names
+    entries: 8
+    type: text list
+  - room_descriptions
+    entries: 5
+    type: text list
+  - exits
+    entries: 5
+    type: text list
+  - hazards
+    entries: 5
+    type: text list
+  - traps
+    entries: 5
+    type: text list
+  - clues
+    entries: 5
+    type: text list
+  - treasures
+    entries: 5
+    type: text list
+  - dungeon_monsters
+    entries: 5
+    type: text list
+  - weird_room_details
+    entries: 5
+    type: text list
+  - retreat_options
+    entries: 5
+    type: text list
+  referenced by: app\generators\dungeon_generator.py, app\table_schemas.py, tools\report_table_inventory.py
+
+settlement_tables.json  [generation content]
+  NOTE: user-editable
+  - settlement_names_prefix
+    entries: 8
+    type: text list
+  - settlement_names_suffix
+    entries: 8
+    type: text list
+  - settlement_types
+    entries: 4
+    type: text list
+  - government_types
+    entries: 5
+    type: text list
+  - wealth_levels
+    entries: 5
+    type: text list
+  - industries
+    entries: 7
+    type: text list
+  - settlement_conditions
+    entries: 6
+    type: text list
+  - local_problems
+    entries: 5
+    type: text list
+  - local_secrets
+    entries: 5
+    type: text list
+  - nearby_dangers
+    entries: 5
+    type: text list
+  - building_types
+    entries: 8
+    type: text list
+  - tavern_names
+    entries: 4
+    type: text list
+  - inn_names
+    entries: 4
+    type: text list
+  - shop_names
+    entries: 4
+    type: text list
+  - local_laws
+    entries: 4
+    type: text list
+  - local_events
+    entries: 4
+    type: text list
+  - rumors
+    entries: 6
+    type: text list
+  - location_descriptions
+    entries: 5
+    type: text list
+  - useful_resources
+    entries: 6
+    type: text list
+  referenced by: app\generators\common.py, app\generators\settlement_generator.py, app\table_schemas.py
+
+wilderness_tables.json  [generation content]
+  NOTE: user-editable
+  - wilderness_names
+    entries: 5
+    type: text list
+  - terrain_types
+    entries: 6
+    type: text list
+  - weather
+    entries: 5
+    type: text list
+  - dominant_features
+    entries: 5
+    type: text list
+  - resources
+    entries: 5
+    type: text list
+  - travel_hazards
+    entries: 5
+    type: text list
+  - animal_encounters
+    entries: 5
+    type: text list
+  - monster_encounters
+    entries: 5
+    type: text list
+  - npc_encounters
+    entries: 5
+    type: text list
+  - landmarks
+    entries: 5
+    type: text list
+  - tracks_and_signs
+    entries: 5
+    type: text list
+  - camp_events
+    entries: 5
+    type: text list
+  referenced by: app\generators\encounter_generator.py, app\generators\hex_generator.py, app\generators\wilderness_generator.py
+
+
+SOURCE REGISTRY
+---------------
+source_registry.json  [source registry]
+  - notes
+    entries: 3
+    type: text list
+  - sources
+    entries: 20
+    fields: active_for_content, active_for_rules, domain, expected_path, file_required, importer_family, license_or_usage_note, notes...
+  referenced by: app\source_registry.py, tests\test_monster_import_readiness.py, tests\test_source_registry.py
+

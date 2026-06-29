@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "affinity_values": [
+    "always",
+    "usually",
+    "sometimes",
+    "rarely",
+    "never",
+    "unknown"
+  ],
+  "monster_type_affinities": {
+    "undead": {
+      "environment": {
+        "graveyard": "usually",
+        "ruins": "sometimes",
+        "underground": "sometimes",
+        "temple": "sometimes",
+        "dungeon": "sometimes"
+      },
+      "terrain": {
+        "crypt": "usually",
+        "chamber": "sometimes",
+        "ruins": "sometimes",
+        "tunnel": "sometimes"
+      },
+      "region": {
+        "grave-realm": "usually",
+        "underworld": "sometimes",
+        "wasteland": "sometimes"
+      }
+    },
+    "aquatic": {
+      "environment": {
+        "aquatic": "always",
+        "coast": "sometimes",
+        "underground": "rarely"
+      },
+      "terrain": {
+        "flooded": "usually",
+        "river": "sometimes",
+        "shore": "sometimes"
+      },
+      "region": {
+        "coastal": "usually",
+        "underground": "rarely"
+      }
+    },
+    "amphibian": {
+      "environment": {
+        "swamp": "usually",
+        "aquatic": "sometimes",
+        "forest": "sometimes"
+      },
+      "terrain": {
+        "marsh": "usually",
+        "flooded": "sometimes",
+        "shore": "sometimes"
+      },
+      "region": {
+        "swamp": "usually",
+        "temperate": "sometimes"
+      }
+    },
+    "aerial": {
+      "environment": {
+        "wilderness": "usually",
+        "cavern": "sometimes",
+        "mountain": "sometimes"
+      },
+      "terrain": {
+        "aerial": "always",
+        "vertical": "sometimes",
+        "cliff": "sometimes"
+      },
+      "region": {
+        "mountain": "sometimes",
+        "any": "usually"
+      }
+    },
+    "construct": {
+      "environment": {
+        "dungeon": "sometimes",
+        "ruins": "sometimes",
+        "temple": "sometimes",
+        "settlement": "sometimes"
+      },
+      "terrain": {
+        "chamber": "sometimes",
+        "corridor": "sometimes",
+        "ruins": "sometimes"
+      },
+      "region": {
+        "civilized lands": "sometimes",
+        "wasteland": "sometimes"
+      }
+    },
+    "demon": {
+      "environment": {
+        "extraplanar": "usually",
+        "dungeon": "sometimes",
+        "temple": "sometimes"
+      },
+      "terrain": {
+        "chamber": "sometimes",
+        "crypt": "rarely"
+      },
+      "region": {
+        "extraplanar": "usually",
+        "underworld": "sometimes"
+      }
+    },
+    "devil": {
+      "environment": {
+        "extraplanar": "usually",
+        "dungeon": "sometimes",
+        "temple": "sometimes"
+      },
+      "terrain": {
+        "chamber": "sometimes",
+        "crypt": "rarely"
+      },
+      "region": {
+        "extraplanar": "usually",
+        "underworld": "sometimes"
+      }
+    },
+    "elemental": {
+      "environment": {
+        "extraplanar": "usually",
+        "dungeon": "sometimes",
+        "wilderness": "sometimes"
+      },
+      "terrain": {
+        "open": "sometimes",
+        "chamber": "sometimes",
+        "flooded": "sometimes"
+      },
+      "region": {
+        "extraplanar": "usually",
+        "any": "sometimes"
+      }
+    },
+    "plant": {
+      "environment": {
+        "forest": "usually",
+        "swamp": "sometimes",
+        "jungle": "sometimes"
+      },
+      "terrain": {
+        "wooded": "usually",
+        "marsh": "sometimes",
+        "dense": "sometimes"
+      },
+      "region": {
+        "forest": "usually",
+        "swamp": "sometimes"
+      }
+    },
+    "fungus": {
+      "environment": {
+        "cavern": "usually",
+        "underground": "usually",
+        "swamp": "sometimes"
+      },
+      "terrain": {
+        "cave": "usually",
+        "tunnel": "sometimes",
+        "marsh": "sometimes"
+      },
+      "region": {
+        "underground": "usually",
+        "swamp": "sometimes"
+      }
+    },
+    "insect": {
+      "environment": {
+        "wilderness": "usually",
+        "underground": "sometimes",
+        "forest": "sometimes"
+      },
+      "terrain": {
+        "open": "sometimes",
+        "cave": "sometimes",
+        "tunnel": "sometimes"
+      },
+      "region": {
+        "any": "usually",
+        "underground": "sometimes"
+      }
+    },
+    "arachnid": {
+      "environment": {
+        "cavern": "usually",
+        "underground": "usually",
+        "forest": "sometimes"
+      },
+      "terrain": {
+        "cave": "usually",
+        "tunnel": "usually",
+        "wooded": "sometimes"
+      },
+      "region": {
+        "underground": "usually",
+        "forest": "sometimes"
+      }
+    },
+    "giant": {
+      "environment": {
+        "mountain": "sometimes",
+        "wilderness": "sometimes",
+        "dungeon": "sometimes"
+      },
+      "terrain": {
+        "open": "sometimes",
+        "rocky": "sometimes",
+        "vertical": "sometimes"
+      },
+      "region": {
+        "mountain": "sometimes",
+        "borderlands": "sometimes"
+      }
+    },
+    "humanoid": {
+      "environment": {
+        "settlement": "sometimes",
+        "wilderness": "sometimes",
+        "dungeon": "sometimes"
+      },
+      "terrain": {
+        "open": "sometimes",
+        "road": "sometimes",
+        "ruins": "sometimes"
+      },
+      "region": {
+        "civilized lands": "sometimes",
+        "borderlands": "sometimes",
+        "any": "sometimes"
+      }
+    }
+  }
+}

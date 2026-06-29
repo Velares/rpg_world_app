@@ -549,7 +549,12 @@ sub-options for **Canonical Candidate Review** (persistent approve/reject/needs-
 decisions), **Normalized Monster Review** (read-only inspection of MandBmaster
 and Megadungeon normalized records with missing/placeholder/low-confidence
 highlighting, plus a `Correct Fields` dialog that stores field-level corrections
-in `data/import_reviews/monster_normalized_field_corrections.json`),
+in `data/import_reviews/monster_normalized_field_corrections.json` and uses
+controlled dropdowns for `environment`, `terrain`, `region`, and `monster_type`),
+**Classification Suggestions** (a read-only conservative best-guess report for
+missing classification fields, output to
+`data/import_reports/monster_classification_suggestions_report.txt` without
+modifying the live catalog or corrections),
 **Corrected Staging Preview** (a non-live read-only corrected dataset built from
 the normalized records and stored corrections, output to
 `data/import_reports/monster_corrected_staging_preview.json`), and

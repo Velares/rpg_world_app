@@ -111,20 +111,27 @@ class EditorHubTests(unittest.TestCase):
         keys = [key for _label, key in categories]
         self.assertIn("canonical_candidate_review", keys)
         self.assertIn("normalized_monster_review", keys)
+        self.assertIn("classification_suggestions", keys)
         self.assertIn("corrected_staging_preview", keys)
         self.assertIn("combat_projection_preview", keys)
+        self.assertEqual(len(categories), 5)
 
     def test_monster_editor_summary_text(self) -> None:
         text = monster_editor_summary_text()
         self.assertIn("MONSTER EDITOR", text)
         self.assertIn("Canonical Candidate Review", text)
         self.assertIn("Normalized Monster Review", text)
+        self.assertIn("Classification Suggestions", text)
         self.assertIn(
             "Use Canonical Candidate Review to approve/reject likely same-monster matches.",
             text,
         )
         self.assertIn(
             "Use Normalized Monster Review to inspect imported monster records and correct fields.",
+            text,
+        )
+        self.assertIn(
+            "Use Classification Suggestions to review conservative best-guess classifications.",
             text,
         )
         self.assertIn(
@@ -137,6 +144,9 @@ class EditorHubTests(unittest.TestCase):
 
     def test_app_has_view_normalized_monster_review_method(self) -> None:
         self.assertTrue(hasattr(app.gui.RPGWorldApp, "view_normalized_monster_review"))
+
+    def test_app_has_view_classification_suggestions_method(self) -> None:
+        self.assertTrue(hasattr(app.gui.RPGWorldApp, "view_classification_suggestions"))
 
     def test_app_has_open_normalized_correction_dialog_method(self) -> None:
         self.assertTrue(hasattr(app.gui.RPGWorldApp, "open_normalized_correction_dialog"))

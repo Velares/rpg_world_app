@@ -25,6 +25,49 @@ history is the more reliable source.
   for reusable logic; and a future combat test/stress harness for balance
   auditing.
 
+## v0.8.23 - Controlled Monster Classification Dropdowns and Suggestions
+
+- Added `tools/report_table_inventory.py` to scan data/table/config files and
+  produce `data/import_reports/table_inventory.json` and
+  `data/import_reports/table_inventory_report.txt`.
+- Inventory report groups files by domain (character generation, NPC generation,
+  settlement/location generation, encounters/leads/adventure content,
+  inventory/equipment/resources, interaction/dialogue/downtime text,
+  monster catalogs/import previews/review data, source registry,
+  future classification tables, and other/unknown).
+- Added `data/tables/monster_classification_options.json` with controlled lists for
+  `monster_types`, `environments`, `terrains`, `regions`, and `affinity_values`.
+- Added `data/configs/monster_classification_affinities.json` with
+  `schema_version`, `affinity_values`, and `monster_type_affinities` seeded for
+  undead, aquatic, amphibian, aerial, construct, demon, devil, elemental, plant,
+  fungus, insect, arachnid, giant, and humanoid.
+- Added `app/monster_classification.py` with helpers to load and validate the
+  options and affinities tables, plus `dropdown_values_for_field` for dropdown
+  behavior (select known option, default to `unknown`, preserve unknown values).
+- Added `tools/importers/monster_classification_suggestions.py` to generate
+  conservative best-guess classification suggestions for missing `environment`,
+  `terrain`, `region`, and `monster_type` fields based on affinity rules and
+  keyword hints.
+- Suggestion outputs:
+  - `data/import_reports/monster_classification_suggestions.json`
+  - `data/import_reports/monster_classification_suggestions_report.txt`
+- Suggestions never overwrite existing corrections, live catalogs, or generated
+  previews; they are intended for review before manual application.
+- Added `Classification Suggestions` as a Monster Editor sub-category and a new
+  `view_classification_suggestions` method in `app/gui.py`.
+- Converted `environment`, `terrain`, `region`, and `monster_type` fields in the
+  Normalized Monster Review → Correct Fields dialog to editable Comboboxes.
+- Added `tests/test_table_inventory_and_classification.py` with 26 focused tests
+  for inventory, options, affinities, dropdown values, and the suggestion tool.
+- Updated `tests/test_editor_hub.py` for the new Classification Suggestions
+  sub-category and related GUI method.
+- Confirmed no live catalog JSON modification, no normalized preview file
+  modification, no staging preview modification unless regenerated, no importer
+  behavior changes, no record merging, and no PDFs added.
+- Generated current reports: table inventory (29 files across 10 domains) and
+  classification suggestions (1320 suggestions across 487 records).
+- Raised the validated suite to 363 passing `unittest` tests.
+
 ## v0.8.22 - Combat-Ready Monster Projection
 
 - Added `tools/importers/monster_combat_projection.py` to build a non-live

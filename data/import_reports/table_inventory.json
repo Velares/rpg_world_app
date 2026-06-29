@@ -1,0 +1,2708 @@
+{
+  "project_root": "C:\\Users\\chrismata\\CascadeProjects\\rpg_world_app",
+  "total_files": 29,
+  "domains": [
+    "NPC generation",
+    "character generation",
+    "encounters/leads/adventure content",
+    "future classification tables",
+    "interaction/dialogue/downtime text",
+    "inventory/equipment/resources",
+    "monster catalogs/import previews/review data",
+    "other/unknown",
+    "settlement/location generation",
+    "source registry"
+  ],
+  "by_domain": {
+    "encounters/leads/adventure content": [
+      {
+        "path": "data\\tables\\adventure_tables.json",
+        "file": "adventure_tables.json",
+        "table_name": "adventure_tables",
+        "domain": "encounters/leads/adventure content",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "triggers",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "major_goals",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "obstacles",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "locales",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "locale_features",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "phenomena",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "villain_goals",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "artifacts_or_relics",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "themes",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "key_npcs",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "first_clues",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "failure_consequences",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "time_pressures",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "noncombat_paths",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\generators\\adventure_generator.py",
+          "app\\table_schemas.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\tables\\weird_tables.json",
+        "file": "weird_tables.json",
+        "table_name": "weird_tables",
+        "domain": "encounters/leads/adventure content",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "ominous_signs",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "disturbing_sights",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "weird_mutations",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "forbidden_magic_effects",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "dark_prophecies",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "strange_weather",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "eerie_sounds",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          },
+          {
+            "name": "supernatural_marks",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "encounters/leads/adventure content",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\generators\\dungeon_generator.py",
+          "app\\generators\\settlement_generator.py",
+          "app\\generators\\wilderness_generator.py",
+          "app\\table_schemas.py",
+          "tools\\report_table_inventory.py"
+        ]
+      }
+    ],
+    "character generation": [
+      {
+        "path": "data\\tables\\class_tables.json",
+        "file": "class_tables.json",
+        "table_name": "class_tables",
+        "domain": "character generation",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "backgrounds",
+            "entry_count": 10,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "character generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "classes",
+            "entry_count": 10,
+            "is_empty": false,
+            "fields": [
+              "bonuses",
+              "class_name",
+              "role_description",
+              "special_ability_placeholder",
+              "starting_coin",
+              "starting_food",
+              "starting_supplies",
+              "starting_torches",
+              "starting_water"
+            ],
+            "id_present": true,
+            "weighted": false,
+            "is_text_list": false,
+            "domain": "character generation",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\characters.py",
+          "app\\table_loader.py",
+          "app\\table_schemas.py",
+          "tests\\test_core.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\tables\\player_background_tables.json",
+        "file": "player_background_tables.json",
+        "table_name": "player_background_tables",
+        "domain": "character generation",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "origins",
+            "entry_count": 8,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "character generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "formative_events",
+            "entry_count": 8,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "character generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "personality_traits",
+            "entry_count": 8,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "character generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "ideals",
+            "entry_count": 8,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "character generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "bonds",
+            "entry_count": 8,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "character generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "flaws",
+            "entry_count": 8,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "character generation",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\character_profiles.py",
+          "app\\table_schemas.py",
+          "tests\\test_core.py",
+          "tools\\report_table_inventory.py"
+        ]
+      }
+    ],
+    "interaction/dialogue/downtime text": [
+      {
+        "path": "data\\tables\\downtime_tables.json",
+        "file": "downtime_tables.json",
+        "table_name": "downtime_tables",
+        "domain": "interaction/dialogue/downtime text",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "tasks",
+            "entry_count": 10,
+            "is_empty": false,
+            "fields": [
+              "allowed_contexts",
+              "category",
+              "completion_outcomes",
+              "completion_text",
+              "complication_outcomes",
+              "complication_text",
+              "default_duration_days",
+              "description",
+              "name",
+              "progress_outcomes",
+              "progress_text",
+              "tags",
+              "task_key"
+            ],
+            "id_present": true,
+            "weighted": false,
+            "is_text_list": false,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\downtime.py",
+          "app\\table_loader.py",
+          "app\\table_schemas.py",
+          "tests\\test_core.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\tables\\interaction_tables.json",
+        "file": "interaction_tables.json",
+        "table_name": "interaction_tables",
+        "domain": "interaction/dialogue/downtime text",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "npc_dialogue_rumor",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "npc_dialogue_warning",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "npc_dialogue_request",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "npc_dialogue_secret",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "npc_dialogue_local_trouble",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "npc_dialogue_faction_hint",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "npc_dialogue_dungeon_clue",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "npc_dialogue_wilderness_clue",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "npc_dialogue_trade_lead",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "npc_dialogue_personal_oddity",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "encounter_avoid_success",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "encounter_approach_success",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "encounter_approach_trade",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "encounter_approach_help",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "encounter_investigate_success",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "encounter_investigate_follow",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "encounter_failed_forward",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "encounter_costly_success",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "encounter_strange_omen",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "search_discovery",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "inspect_discovery",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "town_explore_discovery",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "wilderness_explore_discovery",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "retreat_consequences",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "check_critical_failure_additions",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "check_failure_additions",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "check_partial_success_additions",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "check_success_additions",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "check_critical_success_additions",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\interaction_text.py",
+          "app\\table_schemas.py",
+          "tests\\test_core.py",
+          "tests\\test_stress.py",
+          "tools\\report_table_inventory.py"
+        ]
+      }
+    ],
+    "settlement/location generation": [
+      {
+        "path": "data\\tables\\dungeon_tables.json",
+        "file": "dungeon_tables.json",
+        "table_name": "dungeon_tables",
+        "domain": "settlement/location generation",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "dungeon_names",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "cave_descriptions",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "dungeon_themes",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "room_names",
+            "entry_count": 8,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "room_descriptions",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "exits",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "hazards",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "traps",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "clues",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "treasures",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "dungeon_monsters",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "weird_room_details",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "retreat_options",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\generators\\dungeon_generator.py",
+          "app\\table_schemas.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\tables\\settlement_tables.json",
+        "file": "settlement_tables.json",
+        "table_name": "settlement_tables",
+        "domain": "settlement/location generation",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "settlement_names_prefix",
+            "entry_count": 8,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "settlement_names_suffix",
+            "entry_count": 8,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "settlement_types",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "government_types",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "wealth_levels",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "industries",
+            "entry_count": 7,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "settlement_conditions",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "local_problems",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "local_secrets",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "nearby_dangers",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "building_types",
+            "entry_count": 8,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "tavern_names",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "inn_names",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "shop_names",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "local_laws",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "local_events",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "rumors",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "location_descriptions",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "useful_resources",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\generators\\common.py",
+          "app\\generators\\settlement_generator.py",
+          "app\\table_schemas.py",
+          "tests\\test_core.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\tables\\wilderness_tables.json",
+        "file": "wilderness_tables.json",
+        "table_name": "wilderness_tables",
+        "domain": "settlement/location generation",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "wilderness_names",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "terrain_types",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "weather",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "dominant_features",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "resources",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "travel_hazards",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "animal_encounters",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "monster_encounters",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "npc_encounters",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "landmarks",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "tracks_and_signs",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "camp_events",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "settlement/location generation",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\generators\\encounter_generator.py",
+          "app\\generators\\hex_generator.py",
+          "app\\generators\\wilderness_generator.py",
+          "app\\table_schemas.py",
+          "tools\\report_table_inventory.py"
+        ]
+      }
+    ],
+    "inventory/equipment/resources": [
+      {
+        "path": "data\\tables\\item_tables.json",
+        "file": "item_tables.json",
+        "table_name": "item_tables",
+        "domain": "inventory/equipment/resources",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "item_definitions",
+            "entry_count": 18,
+            "is_empty": false,
+            "fields": [
+              "bulk",
+              "capacity_bulk",
+              "category",
+              "description",
+              "equipped",
+              "handedness",
+              "item_key",
+              "mode",
+              "name",
+              "placeholder_condition",
+              "placeholder_damage",
+              "placeholder_special_rules",
+              "placeholder_value",
+              "range_profile",
+              "speed_factor",
+              "tags",
+              "tradeable",
+              "valid_slots"
+            ],
+            "id_present": true,
+            "weighted": false,
+            "is_text_list": false,
+            "domain": "inventory/equipment/resources",
+            "duplicate_ids": []
+          },
+          {
+            "name": "common_loadout",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [
+              "item_key",
+              "quantity"
+            ],
+            "id_present": true,
+            "weighted": false,
+            "is_text_list": false,
+            "domain": "inventory/equipment/resources",
+            "duplicate_ids": []
+          },
+          {
+            "name": "class_loadouts",
+            "entry_count": 10,
+            "is_empty": false,
+            "fields": [
+              "class_name",
+              "items"
+            ],
+            "id_present": true,
+            "weighted": false,
+            "is_text_list": false,
+            "domain": "inventory/equipment/resources",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\inventory.py",
+          "app\\table_loader.py",
+          "app\\table_schemas.py",
+          "tests\\test_core.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\tables\\treasure_tables.json",
+        "file": "treasure_tables.json",
+        "table_name": "treasure_tables",
+        "domain": "inventory/equipment/resources",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "coins",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "inventory/equipment/resources",
+            "duplicate_ids": []
+          },
+          {
+            "name": "mundane_treasure",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "inventory/equipment/resources",
+            "duplicate_ids": []
+          },
+          {
+            "name": "useful_items",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "inventory/equipment/resources",
+            "duplicate_ids": []
+          },
+          {
+            "name": "weird_relics",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "inventory/equipment/resources",
+            "duplicate_ids": []
+          },
+          {
+            "name": "minor_magic_items",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "inventory/equipment/resources",
+            "duplicate_ids": []
+          },
+          {
+            "name": "cursed_items",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "inventory/equipment/resources",
+            "duplicate_ids": []
+          },
+          {
+            "name": "clue_items",
+            "entry_count": 4,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "inventory/equipment/resources",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\generators\\dungeon_generator.py",
+          "app\\generators\\encounter_generator.py",
+          "app\\generators\\treasure_generator.py",
+          "app\\source_registry.py",
+          "app\\table_schemas.py",
+          "tools\\report_table_inventory.py"
+        ]
+      }
+    ],
+    "NPC generation": [
+      {
+        "path": "data\\tables\\key_npc_tables.json",
+        "file": "key_npc_tables.json",
+        "table_name": "key_npc_tables",
+        "domain": "NPC generation",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "key_npc_reasons",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "key_npc_notes",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "ally_phase_events",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "at_odds_phase_events",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "neutral_phase_events",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\key_npcs.py",
+          "app\\table_schemas.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\tables\\npc_depth_tables.json",
+        "file": "npc_depth_tables.json",
+        "table_name": "npc_depth_tables",
+        "domain": "NPC generation",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "deeper_backstories",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "personal_motives",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "hidden_pressures",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "relationship_to_player",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "ongoing_threads",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "prominence_notes",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\table_schemas.py",
+          "app\\timeline.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\tables\\npc_tables.json",
+        "file": "npc_tables.json",
+        "table_name": "npc_tables",
+        "domain": "NPC generation",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "male_names",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "female_names",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "neutral_names",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "surnames",
+            "entry_count": 7,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "ancestries",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "professions",
+            "entry_count": 8,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "appearances",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "personalities",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "motivations",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "fears",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "secrets",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "relationships",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "attitudes",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "useful_information",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          },
+          {
+            "name": "possible_services",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "NPC generation",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\game_state.py",
+          "app\\generators\\npc_generator.py",
+          "app\\key_npcs.py",
+          "app\\table_schemas.py",
+          "tools\\report_table_inventory.py"
+        ]
+      }
+    ],
+    "future classification tables": [
+      {
+        "path": "data\\tables\\monster_classification_options.json",
+        "file": "monster_classification_options.json",
+        "table_name": "monster_classification_options",
+        "domain": "future classification tables",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "monster_types",
+            "entry_count": 26,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          },
+          {
+            "name": "environments",
+            "entry_count": 22,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "future classification tables",
+            "duplicate_ids": []
+          },
+          {
+            "name": "terrains",
+            "entry_count": 23,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "future classification tables",
+            "duplicate_ids": []
+          },
+          {
+            "name": "regions",
+            "entry_count": 18,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "future classification tables",
+            "duplicate_ids": []
+          },
+          {
+            "name": "affinity_values",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "future classification tables",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\monster_classification.py",
+          "tests\\test_table_inventory_and_classification.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\configs\\monster_classification_affinities.json",
+        "file": "monster_classification_affinities.json",
+        "table_name": "monster_classification_affinities",
+        "domain": "future classification tables",
+        "role": "config data",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "affinity_values",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "future classification tables",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\monster_classification.py",
+          "tests\\test_table_inventory_and_classification.py",
+          "tools\\report_table_inventory.py"
+        ]
+      }
+    ],
+    "monster catalogs/import previews/review data": [
+      {
+        "path": "data\\tables\\monster_tables.json",
+        "file": "monster_tables.json",
+        "table_name": "monster_tables",
+        "domain": "monster catalogs/import previews/review data",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "monster_names",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          },
+          {
+            "name": "monster_types",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          },
+          {
+            "name": "monster_intents",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          },
+          {
+            "name": "monster_signs",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          },
+          {
+            "name": "monster_weaknesses",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          },
+          {
+            "name": "monster_morale",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          },
+          {
+            "name": "monster_reactions",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          },
+          {
+            "name": "noncombat_options",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "avoidance_options",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          },
+          {
+            "name": "safe_combat_options",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "interaction/dialogue/downtime text",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\generators\\dungeon_generator.py",
+          "app\\generators\\encounter_generator.py",
+          "app\\generators\\wilderness_generator.py",
+          "app\\table_schemas.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\import_reports\\mandbmaster_normalized_monster_preview.json",
+        "file": "mandbmaster_normalized_monster_preview.json",
+        "table_name": "mandbmaster_normalized_monster_preview",
+        "domain": "monster catalogs/import previews/review data",
+        "role": "import data",
+        "generated_report": true,
+        "user_editable": false,
+        "categories": [
+          {
+            "name": "normalized_monsters",
+            "entry_count": 268,
+            "is_empty": false,
+            "fields": [
+              "aliases",
+              "alignment",
+              "armor_class",
+              "attacks",
+              "canonical_name",
+              "category",
+              "challenge",
+              "damage",
+              "description",
+              "display_name",
+              "environment",
+              "hit_dice",
+              "hit_points",
+              "id",
+              "intelligence",
+              "level",
+              "mapping_confidence",
+              "missing_fields",
+              "monster_type",
+              "morale",
+              "movement",
+              "normalized_fields",
+              "number_appearing",
+              "placeholder_fields",
+              "raw_stat_block",
+              "raw_text",
+              "region",
+              "review_notes",
+              "review_status",
+              "save",
+              "size",
+              "source_entry_id",
+              "source_file",
+              "source_id",
+              "source_page_end",
+              "source_page_start",
+              "source_slug",
+              "source_title",
+              "special_attacks",
+              "special_defenses",
+              "terrain",
+              "treasure",
+              "user_corrections",
+              "xp"
+            ],
+            "id_present": true,
+            "weighted": false,
+            "is_text_list": false,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\monster_editor.py",
+          "tests\\test_table_inventory_and_classification.py",
+          "tools\\importers\\mandbmaster_normalized_preview.py",
+          "tools\\importers\\monster_canonical_group_candidates.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\import_reports\\megadungeon_monster_preview.json",
+        "file": "megadungeon_monster_preview.json",
+        "table_name": "megadungeon_monster_preview",
+        "domain": "monster catalogs/import previews/review data",
+        "role": "import data",
+        "generated_report": false,
+        "user_editable": false,
+        "categories": [
+          {
+            "name": "megadungeon_monster_preview",
+            "entry_count": 253,
+            "is_empty": false,
+            "fields": [
+              "actual_page_end",
+              "actual_page_start",
+              "alignment",
+              "armor_class",
+              "attacks",
+              "confidence",
+              "damage",
+              "hit_dice",
+              "morale",
+              "movement",
+              "name",
+              "no_enc",
+              "raw_stat_block",
+              "raw_text",
+              "raw_text_excerpt",
+              "save",
+              "slug",
+              "source_id",
+              "source_title",
+              "status",
+              "treasure",
+              "warnings",
+              "xp"
+            ],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": false,
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "tools\\importers\\megadungeon_monster_importer.py"
+        ]
+      },
+      {
+        "path": "data\\import_reports\\megadungeon_normalized_monster_preview.json",
+        "file": "megadungeon_normalized_monster_preview.json",
+        "table_name": "megadungeon_normalized_monster_preview",
+        "domain": "monster catalogs/import previews/review data",
+        "role": "import data",
+        "generated_report": true,
+        "user_editable": false,
+        "categories": [
+          {
+            "name": "normalized_monsters",
+            "entry_count": 253,
+            "is_empty": false,
+            "fields": [
+              "aliases",
+              "alignment",
+              "armor_class",
+              "attacks",
+              "canonical_name",
+              "category",
+              "challenge",
+              "damage",
+              "description",
+              "display_name",
+              "environment",
+              "hit_dice",
+              "hit_points",
+              "id",
+              "intelligence",
+              "level",
+              "mapping_confidence",
+              "missing_fields",
+              "monster_type",
+              "morale",
+              "movement",
+              "normalized_fields",
+              "number_appearing",
+              "placeholder_fields",
+              "raw_stat_block",
+              "raw_text",
+              "region",
+              "review_notes",
+              "review_status",
+              "save",
+              "size",
+              "source_entry_id",
+              "source_file",
+              "source_id",
+              "source_page_end",
+              "source_page_start",
+              "source_slug",
+              "source_title",
+              "special_attacks",
+              "special_defenses",
+              "terrain",
+              "treasure",
+              "user_corrections",
+              "xp"
+            ],
+            "id_present": true,
+            "weighted": false,
+            "is_text_list": false,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": [
+              "normalized.megadungeon_monster_manual.greater"
+            ]
+          }
+        ],
+        "warnings": [
+          "normalized_monsters: duplicate ids: normalized.megadungeon_monster_manual.greater"
+        ],
+        "references": [
+          "app\\monster_editor.py",
+          "tests\\test_table_inventory_and_classification.py",
+          "tools\\importers\\megadungeon_monster_importer.py",
+          "tools\\importers\\monster_canonical_group_candidates.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\import_reports\\monster_canonical_group_candidates.json",
+        "file": "monster_canonical_group_candidates.json",
+        "table_name": "monster_canonical_group_candidates",
+        "domain": "monster catalogs/import previews/review data",
+        "role": "import data",
+        "generated_report": true,
+        "user_editable": false,
+        "categories": [
+          {
+            "name": "candidate_groups",
+            "entry_count": 8,
+            "is_empty": false,
+            "fields": [
+              "candidate_group_id",
+              "confidence",
+              "match_reasons",
+              "match_score",
+              "notes",
+              "proposed_canonical_name",
+              "records",
+              "review_status",
+              "user_decision"
+            ],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": false,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\monster_import_review.py",
+          "tests\\test_monster_canonical_group_candidates.py",
+          "tools\\importers\\monster_canonical_group_candidates.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\import_reports\\monster_classification_suggestions.json",
+        "file": "monster_classification_suggestions.json",
+        "table_name": "monster_classification_suggestions",
+        "domain": "monster catalogs/import previews/review data",
+        "role": "import data",
+        "generated_report": false,
+        "user_editable": false,
+        "categories": [
+          {
+            "name": "suggestions",
+            "entry_count": 487,
+            "is_empty": false,
+            "fields": [
+              "display_name",
+              "record_id",
+              "source_id",
+              "suggestions"
+            ],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": false,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": [
+              "normalized.megadungeon_monster_manual.greater"
+            ]
+          }
+        ],
+        "warnings": [
+          "suggestions: duplicate ids: normalized.megadungeon_monster_manual.greater"
+        ],
+        "references": [
+          "app\\gui.py",
+          "tests\\test_table_inventory_and_classification.py",
+          "tools\\importers\\monster_classification_suggestions.py"
+        ]
+      },
+      {
+        "path": "data\\import_reports\\monster_combat_projection.json",
+        "file": "monster_combat_projection.json",
+        "table_name": "monster_combat_projection",
+        "domain": "monster catalogs/import previews/review data",
+        "role": "import data",
+        "generated_report": true,
+        "user_editable": false,
+        "categories": [
+          {
+            "name": "projections",
+            "entry_count": 521,
+            "is_empty": false,
+            "fields": [
+              "alignment",
+              "armor_class_model",
+              "armor_class_raw",
+              "armor_class_type",
+              "attacks_model",
+              "attacks_raw",
+              "canonical_name",
+              "challenge",
+              "combat_tags",
+              "damage_model",
+              "damage_raw",
+              "display_name",
+              "hit_dice_model",
+              "hit_dice_raw",
+              "hit_points_formula",
+              "id",
+              "intelligence",
+              "level",
+              "monster_type",
+              "morale_model",
+              "morale_raw",
+              "movement_model",
+              "movement_raw",
+              "number_appearing",
+              "original_record_id",
+              "projection_status",
+              "projection_warnings",
+              "review_metadata",
+              "save_raw",
+              "size",
+              "source_id",
+              "source_provenance",
+              "source_title",
+              "special_attacks",
+              "special_defenses",
+              "tag_sources",
+              "treasure",
+              "xp_raw"
+            ],
+            "id_present": true,
+            "weighted": false,
+            "is_text_list": false,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": [
+              "normalized.megadungeon_monster_manual.greater"
+            ]
+          }
+        ],
+        "warnings": [
+          "projections: duplicate ids: normalized.megadungeon_monster_manual.greater"
+        ],
+        "references": [
+          "app\\gui.py",
+          "tests\\test_monster_combat_projection.py",
+          "tools\\importers\\monster_combat_projection.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\import_reports\\monster_corrected_staging_preview.json",
+        "file": "monster_corrected_staging_preview.json",
+        "table_name": "monster_corrected_staging_preview",
+        "domain": "monster catalogs/import previews/review data",
+        "role": "import data",
+        "generated_report": true,
+        "user_editable": false,
+        "categories": [
+          {
+            "name": "source_reports",
+            "entry_count": 2,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          },
+          {
+            "name": "staged_records",
+            "entry_count": 521,
+            "is_empty": false,
+            "fields": [
+              "corrections",
+              "display_name",
+              "effective",
+              "id",
+              "original",
+              "raw_stat_block",
+              "raw_text",
+              "review_metadata",
+              "source_id",
+              "source_provenance",
+              "source_title"
+            ],
+            "id_present": true,
+            "weighted": false,
+            "is_text_list": false,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": [
+              "normalized.megadungeon_monster_manual.greater"
+            ]
+          }
+        ],
+        "warnings": [
+          "staged_records: duplicate ids: normalized.megadungeon_monster_manual.greater"
+        ],
+        "references": [
+          "app\\gui.py",
+          "tests\\test_monster_corrected_staging_preview.py",
+          "tests\\test_table_inventory_and_classification.py",
+          "tools\\importers\\monster_combat_projection.py",
+          "tools\\importers\\monster_corrected_staging_preview.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\import_reports\\table_inventory.json",
+        "file": "table_inventory.json",
+        "table_name": "table_inventory",
+        "domain": "monster catalogs/import previews/review data",
+        "role": "import data",
+        "generated_report": true,
+        "user_editable": false,
+        "categories": [
+          {
+            "name": "domains",
+            "entry_count": 10,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          },
+          {
+            "name": "warnings",
+            "entry_count": 0,
+            "is_empty": true,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": false,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [
+          "warnings: empty table"
+        ],
+        "references": [
+          "tests\\test_table_inventory_and_classification.py",
+          "tools\\report_table_inventory.py"
+        ]
+      },
+      {
+        "path": "data\\import_reviews\\monster_canonical_group_decisions.json",
+        "file": "monster_canonical_group_decisions.json",
+        "table_name": "monster_canonical_group_decisions",
+        "domain": "monster catalogs/import previews/review data",
+        "role": "review data",
+        "generated_report": false,
+        "user_editable": false,
+        "categories": [],
+        "warnings": [],
+        "references": [
+          "app\\monster_import_review.py"
+        ]
+      },
+      {
+        "path": "data\\import_reviews\\monster_normalized_field_corrections.json",
+        "file": "monster_normalized_field_corrections.json",
+        "table_name": "monster_normalized_field_corrections",
+        "domain": "monster catalogs/import previews/review data",
+        "role": "review data",
+        "generated_report": false,
+        "user_editable": false,
+        "categories": [
+          {
+            "name": "source_reports",
+            "entry_count": 2,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\monster_editor.py"
+        ]
+      }
+    ],
+    "other/unknown": [
+      {
+        "path": "data\\tables\\placeholder_master_tables.json",
+        "file": "placeholder_master_tables.json",
+        "table_name": "placeholder_master_tables",
+        "domain": "other/unknown",
+        "role": "generation content",
+        "generated_report": false,
+        "user_editable": true,
+        "categories": [
+          {
+            "name": "about",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "other/unknown",
+            "duplicate_ids": []
+          },
+          {
+            "name": "future_hex_features",
+            "entry_count": 6,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "other/unknown",
+            "duplicate_ids": []
+          },
+          {
+            "name": "future_faction_states",
+            "entry_count": 5,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "other/unknown",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": []
+      }
+    ],
+    "source registry": [
+      {
+        "path": "data\\source_registry.json",
+        "file": "source_registry.json",
+        "table_name": "source_registry",
+        "domain": "source registry",
+        "role": "source registry",
+        "generated_report": false,
+        "user_editable": false,
+        "categories": [
+          {
+            "name": "notes",
+            "entry_count": 3,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "source registry",
+            "duplicate_ids": []
+          },
+          {
+            "name": "sources",
+            "entry_count": 20,
+            "is_empty": false,
+            "fields": [
+              "active_for_content",
+              "active_for_rules",
+              "domain",
+              "expected_path",
+              "file_required",
+              "importer_family",
+              "license_or_usage_note",
+              "notes",
+              "priority",
+              "role",
+              "source_id",
+              "status",
+              "title"
+            ],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": false,
+            "domain": "source registry",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "app\\source_registry.py",
+          "tests\\test_monster_import_readiness.py",
+          "tests\\test_source_registry.py",
+          "tools\\importers\\monster_json_importer.py",
+          "tools\\importers\\monster_manual_schema.py",
+          "tools\\monster_import_status.py",
+          "tools\\report_table_inventory.py",
+          "tools\\validate_sources.py"
+        ]
+      }
+    ]
+  },
+  "warnings": []
+}
