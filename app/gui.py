@@ -59,6 +59,13 @@ from app.monster_import_review import (
     set_decision,
     review_summary_text,
 )
+from tools.importers.monster_corrected_staging_preview import (
+    DEFAULT_STAGING_PREVIEW_JSON,
+    DEFAULT_STAGING_PREVIEW_REPORT,
+    build_staging_preview,
+    format_report,
+    write_staging_preview,
+)
 from app.timeline import format_summary_timeline, format_verbose_timeline
 
 
@@ -1993,6 +2000,8 @@ class RPGWorldApp(tk.Tk):
                 self.view_monster_import_review()
             elif key == "normalized_monster_review":
                 self.view_normalized_monster_review()
+            elif key == "corrected_staging_preview":
+                self.view_corrected_staging_preview()
             else:
                 self.show(
                     "Not implemented yet.",
@@ -2069,6 +2078,36 @@ class RPGWorldApp(tk.Tk):
             "Corrections are stored separately and do not modify generated previews.",
         ]
         self.show("\n".join(summary_lines), "Viewing normalized monster review.")
+
+    def view_corrected_staging_preview(self) -> None:
+        """Display a read-only non-live corrected monster staging preview."""
+        try:
+            preview = build_staging_preview(
+                preview_paths=None,
+                corrections_path=None,
+            )
+            json_path, report_path = write_staging_preview(preview)
+        except (FileNotFoundError, ValueError) as exc:
+            self.hide_index()
+            self.show(str(exc), "Staging preview input not available or malformed.")
+            return
+        except Exception as exc:
+            self.hide_index()
+            self.show(
+                f"Could not build corrected staging preview: {exc}",
+                "Staging preview generation failed.",
+            )
+            return
+
+        self.hide_index()
+        report_text = format_report(preview)
+        self.show(
+            report_text
+            + f"\n\nJSON: {json_path}\nReport: {report_path}\n\n"
+            "This is a non-live staging preview. No master catalog was created and "
+            "no live catalog data was modified.",
+            "Viewing corrected staging preview.",
+        )
 
     def open_normalized_correction_dialog(
         self,

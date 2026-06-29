@@ -110,6 +110,7 @@ class EditorHubTests(unittest.TestCase):
         keys = [key for _label, key in categories]
         self.assertIn("canonical_candidate_review", keys)
         self.assertIn("normalized_monster_review", keys)
+        self.assertIn("corrected_staging_preview", keys)
 
     def test_monster_editor_summary_text(self) -> None:
         text = monster_editor_summary_text()
@@ -137,6 +138,9 @@ class EditorHubTests(unittest.TestCase):
 
     def test_app_has_open_normalized_correction_dialog_method(self) -> None:
         self.assertTrue(hasattr(app.gui.RPGWorldApp, "open_normalized_correction_dialog"))
+
+    def test_app_has_view_corrected_staging_preview_method(self) -> None:
+        self.assertTrue(hasattr(app.gui.RPGWorldApp, "view_corrected_staging_preview"))
 
 
 if __name__ == "__main__":

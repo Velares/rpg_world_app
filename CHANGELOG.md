@@ -25,6 +25,33 @@ history is the more reliable source.
   for reusable logic; and a future combat test/stress harness for balance
   auditing.
 
+## v0.8.21 - Staged Corrected Monster Dataset Preview
+
+- Added `tools/importers/monster_corrected_staging_preview.py` to build a
+  non-live corrected monster dataset from MandBmaster and Megadungeon normalized
+  previews and the saved correction store.
+- Output files:
+  - `data/import_reports/monster_corrected_staging_preview.json`
+  - `data/import_reports/monster_corrected_staging_preview_report.txt`
+- Each staged record includes `original`, `corrections`, `effective`,
+  `source_provenance`, and `review_metadata` sections. Corrections are applied as
+  an overlay; original values are preserved.
+- The tool preserves source variants, does not merge records, does not modify
+  generated previews, and does not modify live catalog JSON. Canonical group
+  decisions are included as metadata/context only.
+- Report text includes counts, correction status, most-corrected fields, missing
+  and placeholder counts, a no-master-catalog warning, and sample records.
+- Added `Corrected Staging Preview` as a sub-option in the Monster Editor hub
+  and a new `view_corrected_staging_preview` method in `app/gui.py` that
+  regenerates the preview and displays the report.
+- Added `tests/test_monster_corrected_staging_preview.py` with 17 focused tests.
+- Updated `tests/test_editor_hub.py` for the new sub-category and GUI method.
+- Confirmed no live catalog JSON modification, no normalized preview file
+  modification, no importer changes, and no record merging.
+- Generated a current staging preview with 521 records (268 MandBmaster, 253
+  Megadungeon).
+- Raised the validated suite to 313 passing `unittest` tests.
+
 ## v0.8.20 - Direct Monster Editor Action
 
 - Added a direct, clearly visible **Monster Editor** shared action in

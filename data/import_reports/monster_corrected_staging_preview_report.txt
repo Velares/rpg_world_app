@@ -1,0 +1,27 @@
+Corrected Monster Staging Preview
+=================================
+
+Generated at: 2026-06-29T00:10:09.702380+00:00
+Total normalized records read: 521
+- mandbmaster_combined_monster_manual: 268
+- megadungeon_monster_manual: 253
+
+Correction records loaded: 0
+
+Correction status counts:
+- uncorrected: 521
+
+Records still having missing fields: 521
+Records still having placeholder fields: 521
+
+WARNING: This is a non-live staging preview. No master catalog was created.
+Source variants remain distinct. No records were merged.
+
+No corrected records found.
+
+Sample uncorrected records:
+- normalized.mandbmaster_combined_monster_manual.acanopyornis: Acanopyornis [mandbmaster_combined_monster_manual]
+- normalized.mandbmaster_combined_monster_manual.aculean: Aculean [mandbmaster_combined_monster_manual]
+- normalized.mandbmaster_combined_monster_manual.addlevetch: Addlevetch [mandbmaster_combined_monster_manual]
+- normalized.mandbmaster_combined_monster_manual.arcanoplasm: Arcanoplasm [mandbmaster_combined_monster_manual]
+- normalized.mandbmaster_combined_monster_manual.astralweb: Astral Web [mandbmaster_combined_monster_manual]

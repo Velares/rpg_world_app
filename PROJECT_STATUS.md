@@ -3,7 +3,7 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.20`
+- Current development version on `main`: `v0.8.21`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
@@ -98,6 +98,52 @@ Placeholder and mapping policy for that future normalized layer:
   exact mapping.
 
 ## Latest completed work
+
+Version 0.8.21 adds a non-live staged corrected monster dataset preview on
+`main`:
+
+- Added `tools/importers/monster_corrected_staging_preview.py` to build a staged
+  corrected monster dataset from the MandBmaster and Megadungeon normalized
+  previews and the saved correction store.
+- Output paths:
+  - `data/import_reports/monster_corrected_staging_preview.json`
+  - `data/import_reports/monster_corrected_staging_preview_report.txt`
+- Each staged record contains:
+  - `id`, `display_name`, `source_id`, `source_title`
+  - `original` — original normalized field values
+  - `corrections` — stored correction block per record
+  - `effective` — same fields with corrections overlaid
+  - `source_provenance` — source metadata, pages, and generated timestamp
+  - `review_metadata` — missing/placeholder fields, mapping confidence, review
+    status, and correction status
+  - `raw_stat_block` and `raw_text` for review
+- The tool preserves every source variant, does not merge records, and does not
+  modify generated normalized preview files or live catalog JSON. Canonical
+  group decisions are loaded as metadata/context only.
+- The report text includes total records, source counts, correction counts,
+  correction status counts, most-often-corrected fields, records still missing
+  or placeholder fields, a no-master-catalog warning, and sample corrected and
+  uncorrected records.
+- Updated `app/editor_hub.py` to add a `Corrected Staging Preview` sub-category
+  under the Monster Editor hub and updated the Monster Editor summary text to
+  explain the three review surfaces.
+- Updated `app/gui.py` to route `Corrected Staging Preview` to a new
+  `view_corrected_staging_preview` method that regenerates the staging output and
+  displays the report text in the main output pane.
+- Added `tests/test_monster_corrected_staging_preview.py` with 17 focused tests
+  covering loading, missing/valid/malformed correction files, original/effective
+  value preservation, source-variant distinctness, no merge behavior, canonical
+  decisions as metadata only, live catalog preservation, normalized preview
+  preservation, deterministic output, report content, invalid correction targets
+  and fields, and output file creation.
+- Updated `tests/test_editor_hub.py` for the new sub-category and GUI method.
+- Confirmed no live catalog JSON modification, no normalized preview file
+  modification, no importer changes, and no record merging.
+- Generated a current staging preview with 521 records (268 MandBmaster, 253
+  Megadungeon) and 0 correction records loaded.
+- Raised the validated suite to 313 passing `unittest` tests while
+  `python -m compileall .`, `python tools/validate_sources.py`, and
+  `python tools/monster_import_status.py` continue to pass.
 
 Version 0.8.20 adds a direct, clearly visible **Monster Editor** shared action
 on `main`:
@@ -748,10 +794,13 @@ Version 0.7 hardened the data-driven generation foundation:
   placeholders for NPC, PC, Item, and Spell editors.
 - Direct **Monster Editor** shared action in the sidebar, plus the same Monster
   Editor sub-hub reachable from the Editors hub.
-- Monster Editor sub-hub with Canonical Candidate Review and Normalized Monster
-  Review surfaces.
+- Monster Editor sub-hub with Canonical Candidate Review, Normalized Monster
+  Review, and Corrected Staging Preview surfaces.
 - Read-only Normalized Monster Review of MandBmaster and Megadungeon preview
   records with missing/placeholder/low-confidence field highlighting.
+- Non-live Corrected Staging Preview of MandBmaster and Megadungeon records with
+  correction overlays, written to
+  `data/import_reports/monster_corrected_staging_preview.json`.
 - Persistent field-level corrections for normalized monster records stored in
   `data/import_reviews/monster_normalized_field_corrections.json`, applied as
   an overlay without modifying generated previews or live catalogs.
@@ -803,7 +852,7 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 295 tests passing with
+- Current verification: 313 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.

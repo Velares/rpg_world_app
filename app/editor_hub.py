@@ -12,6 +12,7 @@ EDITOR_CATEGORIES = [
 MONSTER_EDITOR_SUBCATEGORIES = [
     ("Canonical Candidate Review", "canonical_candidate_review"),
     ("Normalized Monster Review", "normalized_monster_review"),
+    ("Corrected Staging Preview", "corrected_staging_preview"),
 ]
 
 _PLACEHOLDER_TEXT = {
@@ -89,9 +90,12 @@ def monster_editor_summary_text() -> str:
         "",
         "- Canonical Candidate Review: approve/reject likely same-monster matches.",
         "- Normalized Monster Review: inspect imported monster records and correct fields.",
+        "- Corrected Staging Preview: view a non-live corrected dataset built from "
+        "normalized records and stored corrections.",
         "",
         "Use Canonical Candidate Review to approve/reject likely same-monster matches.",
         "Use Normalized Monster Review to inspect imported monster records and correct fields.",
+        "Use Corrected Staging Preview to inspect a non-live corrected monster dataset.",
         "Corrections are stored separately and do not modify source imports or the live catalog.",
         "",
         "Review only. No source records or catalogs are modified.",
