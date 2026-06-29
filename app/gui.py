@@ -150,6 +150,11 @@ SHARED_ACTIONS = (
     "Clear Output",
 )
 
+EDITOR_TOOLS_ACTIONS = (
+    "Monster Editor",
+    "Editors",
+)
+
 ACTION_CHECKS = (
     ("Search Area", "search_area"),
     ("Sneak Past Danger", "sneak_past_danger"),
@@ -237,6 +242,43 @@ def block(title: str, values: dict, skip: set[str] | None = None) -> str:
 
 def shared_action_labels() -> tuple[str, ...]:
     return SHARED_ACTIONS
+
+
+def editor_tools_labels() -> tuple[str, ...]:
+    return EDITOR_TOOLS_ACTIONS
+
+
+def _get_app_version() -> str:
+    """Read the current development version from PROJECT_STATUS.md if possible."""
+    status_file = Path(__file__).resolve().parents[1] / "PROJECT_STATUS.md"
+    if not status_file.exists():
+        return "unknown"
+    try:
+        text = status_file.read_text(encoding="utf-8")
+    except Exception:
+        return "unknown"
+    for line in text.splitlines():
+        if "Current development version on" in line and "`v" in line:
+            start = line.find("`v")
+            if start != -1:
+                end = line.find("`", start + 1)
+                if end != -1:
+                    return line[start + 1 : end]
+    return "unknown"
+
+
+def _get_app_diagnostics() -> dict[str, str | bool]:
+    """Return lightweight build/repo diagnostics for the running app."""
+    root = Path(__file__).resolve().parents[1]
+    return {
+        "version": _get_app_version(),
+        "repo_root": str(root),
+        "working_directory": str(Path.cwd()),
+        "combat_projection_exists": (root / "data" / "import_reports" / "monster_combat_projection.json").exists(),
+        "staging_preview_exists": (root / "data" / "import_reports" / "monster_corrected_staging_preview.json").exists(),
+        "monster_editor_registered": "Monster Editor" in SHARED_ACTIONS and "Monster Editor" in EDITOR_TOOLS_ACTIONS,
+        "editors_registered": "Editors" in SHARED_ACTIONS and "Editors" in EDITOR_TOOLS_ACTIONS,
+    }
 
 
 def mode_sidebar_labels(mode: str) -> tuple[str, ...]:
@@ -709,8 +751,31 @@ class RPGWorldApp(tk.Tk):
     def _build(self) -> None:
         container = ttk.Frame(self, padding=10)
         container.pack(fill="both", expand=True)
-        sidebar = ttk.Frame(container)
-        sidebar.pack(side="left", fill="y", padx=(0, 10))
+
+        # Make the sidebar scrollable so a long Shared Actions list cannot hide
+        # the new always-visible Editor Tools section above it.
+        sidebar_outer = ttk.Frame(container)
+        sidebar_outer.pack(side="left", fill="y", padx=(0, 10))
+        sidebar_canvas = tk.Canvas(sidebar_outer, width=230, highlightthickness=0)
+        sidebar_canvas.pack(side="left", fill="y", expand=True)
+        sidebar_scroll = ttk.Scrollbar(
+            sidebar_outer, orient="vertical", command=sidebar_canvas.yview
+        )
+        sidebar_scroll.pack(side="right", fill="y")
+        sidebar_canvas.configure(yscrollcommand=sidebar_scroll.set)
+        sidebar = ttk.Frame(sidebar_canvas, padding=0)
+        sidebar_canvas.create_window((0, 0), window=sidebar, anchor="nw")
+        sidebar.bind(
+            "<Configure>",
+            lambda _event: sidebar_canvas.configure(
+                scrollregion=sidebar_canvas.bbox("all")
+            ),
+        )
+        # Mouse-wheel scrolling for the sidebar canvas.
+        def _on_sidebar_mousewheel(event):
+            sidebar_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        sidebar_canvas.bind("<MouseWheel>", _on_sidebar_mousewheel)
+
         seed_box = ttk.LabelFrame(sidebar, text="Generation Seed", padding=6)
         seed_box.pack(fill="x", pady=(0, 8))
         ttk.Entry(seed_box, textvariable=self.seed_var).pack(fill="x")
@@ -735,10 +800,22 @@ class RPGWorldApp(tk.Tk):
             text=ADVENTURE_MODE,
             command=lambda: self.set_mode(ADVENTURE_MODE),
         ).pack(side="left", fill="x", expand=True)
+        self.editor_tools_frame = ttk.LabelFrame(
+            sidebar, text="Editor Tools", padding=4
+        )
+        self.editor_tools_frame.pack(fill="x", pady=(0, 8))
         self.mode_sidebar_frame = ttk.LabelFrame(sidebar, text="Mode Views", padding=4)
         self.mode_sidebar_frame.pack(fill="x", pady=(0, 8))
         self.shared_sidebar_frame = ttk.LabelFrame(sidebar, text="Shared Actions", padding=4)
         self.shared_sidebar_frame.pack(fill="x", pady=(0, 8))
+        self.version_label = ttk.Label(
+            sidebar,
+            text=f"RPG World App {_get_app_version()}",
+            font=("", 8),
+            anchor="w",
+            foreground="#555555",
+        )
+        self.version_label.pack(fill="x", pady=(4, 0))
         # Version 0.2 adds a lightweight record browser between navigation
         # and the detail pane. It is reused for NPCs, locations, rooms, and encounters.
         self.index_frame = ttk.Frame(container)
@@ -920,9 +997,19 @@ class RPGWorldApp(tk.Tk):
             self.diary_lists[scope] = listbox
 
     def _render_sidebar_actions(self) -> None:
+        self._clear_children(self.editor_tools_frame)
         self._clear_children(self.mode_sidebar_frame)
         self._clear_children(self.shared_sidebar_frame)
         self.sidebar_buttons = {}
+        for text in editor_tools_labels():
+            button = ttk.Button(
+                self.editor_tools_frame,
+                text=text,
+                command=self.sidebar_command_map[text],
+                width=24,
+            )
+            button.pack(fill="x", pady=2)
+            self.sidebar_buttons[text] = button
         for text in mode_sidebar_labels(self.mode_var.get()):
             button = ttk.Button(
                 self.mode_sidebar_frame,
@@ -1836,7 +1923,18 @@ class RPGWorldApp(tk.Tk):
 
     def view_data_diagnostics(self) -> None:
         """Expose startup data problems without interrupting normal generation."""
+        diagnostics = _get_app_diagnostics()
         reports = [
+            "APP DIAGNOSTICS",
+            "=================",
+            f"Version: {diagnostics.get('version', 'unknown')}",
+            f"Repo root: {diagnostics.get('repo_root', 'unknown')}",
+            f"Working directory: {diagnostics.get('working_directory', 'unknown')}",
+            f"Combat projection present: {diagnostics.get('combat_projection_exists', False)}",
+            f"Staging preview present: {diagnostics.get('staging_preview_exists', False)}",
+            f"Monster Editor registered: {diagnostics.get('monster_editor_registered', False)}",
+            f"Editors registered: {diagnostics.get('editors_registered', False)}",
+            "",
             self.state.tables.validation_report(),
             "",
             "NAME DATA",

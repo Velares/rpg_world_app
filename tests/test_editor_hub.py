@@ -13,6 +13,7 @@ from app.editor_hub import (
     get_monster_editor_subcategories,
     monster_editor_summary_text,
 )
+from app.gui import _get_app_diagnostics, _get_app_version, editor_tools_labels
 from tools.importers.monster_manual_schema import (
     DEFAULT_MONSTER_APPENDIX_CATALOG_JSON,
     DEFAULT_MONSTER_CATALOG_JSON,
@@ -145,6 +146,67 @@ class EditorHubTests(unittest.TestCase):
 
     def test_app_has_view_combat_projection_preview_method(self) -> None:
         self.assertTrue(hasattr(app.gui.RPGWorldApp, "view_combat_projection_preview"))
+
+    def test_editor_tools_section_is_visible_and_includes_monster_editor(self) -> None:
+        labels = editor_tools_labels()
+        self.assertIn("Monster Editor", labels)
+        self.assertIn("Editors", labels)
+        self.assertEqual(labels[0], "Monster Editor")
+        self.assertEqual(labels[1], "Editors")
+
+    def test_editor_tools_buttons_in_top_level_sidebar(self) -> None:
+        try:
+            import tkinter as tk
+            from tkinter import ttk
+            from app.database import Database
+            from app.game_state import GameState
+            from app.table_loader import TableLoader
+
+            tables = TableLoader(TABLES)
+            database = Database(ROOT / "data" / "saves" / "worlds.db")
+            game_state = GameState(tables, database)
+            instance = app.gui.RPGWorldApp(game_state)
+            self.assertIn("Monster Editor", instance.sidebar_command_map)
+            self.assertEqual(instance.sidebar_command_map["Monster Editor"], instance.view_monster_editor)
+            self.assertIn("Editors", instance.sidebar_command_map)
+            self.assertEqual(instance.sidebar_command_map["Editors"], instance.view_editors)
+            # Verify the dedicated Editor Tools frame exists and contains buttons.
+            children = instance.editor_tools_frame.winfo_children()
+            self.assertTrue(len(children) >= 2)
+            button_texts = [child.cget("text") for child in children if isinstance(child, ttk.Button)]
+            self.assertIn("Monster Editor", button_texts)
+            self.assertIn("Editors", button_texts)
+            instance.destroy()
+        except tk.TclError as exc:
+            self.skipTest(f"Tk not available for sidebar inspection: {exc}")
+
+    def test_app_version_diagnostic(self) -> None:
+        version = _get_app_version()
+        self.assertTrue(version.startswith("v0.8."))
+
+    def test_app_diagnostics_report_expected_fields(self) -> None:
+        diagnostics = _get_app_diagnostics()
+        self.assertIn("version", diagnostics)
+        self.assertIn("repo_root", diagnostics)
+        self.assertIn("working_directory", diagnostics)
+        self.assertIn("combat_projection_exists", diagnostics)
+        self.assertIn("staging_preview_exists", diagnostics)
+        self.assertIn("monster_editor_registered", diagnostics)
+        self.assertIn("editors_registered", diagnostics)
+        self.assertTrue(diagnostics["monster_editor_registered"])
+        self.assertTrue(diagnostics["editors_registered"])
+        self.assertIsInstance(diagnostics["combat_projection_exists"], bool)
+        self.assertIsInstance(diagnostics["staging_preview_exists"], bool)
+
+    def test_no_live_catalog_modification_by_app_diagnostics(self) -> None:
+        before_catalog = DEFAULT_MONSTER_CATALOG_JSON.read_text(encoding="utf-8")
+        before_appendix = DEFAULT_MONSTER_APPENDIX_CATALOG_JSON.read_text(encoding="utf-8")
+        _get_app_diagnostics()
+        _get_app_version()
+        after_catalog = DEFAULT_MONSTER_CATALOG_JSON.read_text(encoding="utf-8")
+        after_appendix = DEFAULT_MONSTER_APPENDIX_CATALOG_JSON.read_text(encoding="utf-8")
+        self.assertEqual(before_catalog, after_catalog)
+        self.assertEqual(before_appendix, after_appendix)
 
 
 if __name__ == "__main__":
