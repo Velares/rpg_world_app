@@ -63,8 +63,15 @@ from tools.importers.monster_corrected_staging_preview import (
     DEFAULT_STAGING_PREVIEW_JSON,
     DEFAULT_STAGING_PREVIEW_REPORT,
     build_staging_preview,
-    format_report,
+    format_report as format_staging_report,
     write_staging_preview,
+)
+from tools.importers.monster_combat_projection import (
+    DEFAULT_COMBAT_PROJECTION_JSON,
+    DEFAULT_COMBAT_PROJECTION_REPORT,
+    build_combat_projection,
+    format_report as format_combat_report,
+    write_combat_projection,
 )
 from app.timeline import format_summary_timeline, format_verbose_timeline
 
@@ -2002,6 +2009,8 @@ class RPGWorldApp(tk.Tk):
                 self.view_normalized_monster_review()
             elif key == "corrected_staging_preview":
                 self.view_corrected_staging_preview()
+            elif key == "combat_projection_preview":
+                self.view_combat_projection_preview()
             else:
                 self.show(
                     "Not implemented yet.",
@@ -2100,13 +2109,49 @@ class RPGWorldApp(tk.Tk):
             return
 
         self.hide_index()
-        report_text = format_report(preview)
+        report_text = format_staging_report(preview)
         self.show(
             report_text
             + f"\n\nJSON: {json_path}\nReport: {report_path}\n\n"
             "This is a non-live staging preview. No master catalog was created and "
             "no live catalog data was modified.",
             "Viewing corrected staging preview.",
+        )
+
+    def view_combat_projection_preview(self) -> None:
+        """Display a read-only non-live combat-ready monster projection."""
+        if not DEFAULT_STAGING_PREVIEW_JSON.exists():
+            self.hide_index()
+            self.show(
+                "Corrected staging preview is not available. Generate it first via "
+                "Monster Editor → Corrected Staging Preview.",
+                "Combat projection needs a staging preview.",
+            )
+            return
+
+        try:
+            projection = build_combat_projection()
+            json_path, report_path = write_combat_projection(projection)
+        except (FileNotFoundError, ValueError) as exc:
+            self.hide_index()
+            self.show(str(exc), "Combat projection input not available or malformed.")
+            return
+        except Exception as exc:
+            self.hide_index()
+            self.show(
+                f"Could not build combat projection: {exc}",
+                "Combat projection generation failed.",
+            )
+            return
+
+        self.hide_index()
+        report_text = format_combat_report(projection)
+        self.show(
+            report_text
+            + f"\n\nJSON: {json_path}\nReport: {report_path}\n\n"
+            "This is a non-live combat projection. No master catalog was created and "
+            "no live catalog data was modified.",
+            "Viewing combat projection preview.",
         )
 
     def open_normalized_correction_dialog(

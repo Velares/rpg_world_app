@@ -3,7 +3,7 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.21`
+- Current development version on `main`: `v0.8.22`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
@@ -98,6 +98,51 @@ Placeholder and mapping policy for that future normalized layer:
   exact mapping.
 
 ## Latest completed work
+
+Version 0.8.22 adds a non-live combat-ready monster projection on `main`:
+
+- Added `tools/importers/monster_combat_projection.py` to build a combat-ready
+  projection from the staged corrected monster preview.
+- Output paths:
+  - `data/import_reports/monster_combat_projection.json`
+  - `data/import_reports/monster_combat_projection_report.txt`
+- Each projection record contains:
+  - identity and provenance fields (`id`, `source_id`, `source_title`,
+    `display_name`, `canonical_name`, `original_record_id`)
+  - raw combat fields (`armor_class_raw`, `hit_dice_raw`, `movement_raw`,
+    `attacks_raw`, `damage_raw`, `save_raw`, `morale_raw`, `xp_raw`)
+  - parsed models (`armor_class_model`, `hit_dice_model`, `hit_points_formula`,
+    `movement_model`, `attacks_model`, `damage_model`, `morale_model`)
+  - `armor_class_type` with conservative descending/inference
+  - `combat_tags` and `tag_sources` inferred conservatively from type,
+    movement, and special abilities
+  - `projection_status` (`ready`, `missing_combat_fields`, `parse_warning`,
+    `needs_review`) and `projection_warnings`
+- Parsers are conservative: damage supports `NdN`, `N-N`, and comma-separated
+  multi-attack lists; hit dice supports `N`, `N+M`, `N-M`, and `NdN`; movement
+  extracts numeric values; AC parses integers and infers descending only inside
+  the classic 0-9 band. Unparseable values become model `null` and warnings.
+- Updated `app/editor_hub.py` to add `Combat Projection Preview` as a Monster
+  Editor sub-category and updated the summary text.
+- Updated `app/gui.py` to route `Combat Projection Preview` to a new
+  `view_combat_projection_preview` method that generates the projection and
+  displays the report. It also shows a helpful message if the staging preview
+  has not been generated yet.
+- Added `tests/test_monster_combat_projection.py` with 17 focused tests covering
+  loading, per-record projection, source-variant preservation, effective value
+  use, raw preservation, model creation, missing-field warnings, parse warnings,
+  no master catalog, live catalog preservation, preview file preservation,
+  staging preview non-modification, report content, output file creation,
+  malformed input handling, combat tag inference, and conservative AC type.
+- Updated `tests/test_editor_hub.py` for the new sub-category and GUI method.
+- Confirmed no live catalog JSON modification, no normalized preview file
+  modification, no staging preview file modification (unless explicitly
+  regenerated), no importer changes, and no record merging.
+- Generated a current combat projection with 521 records (268 MandBmaster, 253
+  Megadungeon), 220 ready, 301 needing review.
+- Raised the validated suite to 331 passing `unittest` tests while
+  `python -m compileall .`, `python tools/validate_sources.py`, and
+  `python tools/monster_import_status.py` continue to pass.
 
 Version 0.8.21 adds a non-live staged corrected monster dataset preview on
 `main`:
@@ -795,12 +840,15 @@ Version 0.7 hardened the data-driven generation foundation:
 - Direct **Monster Editor** shared action in the sidebar, plus the same Monster
   Editor sub-hub reachable from the Editors hub.
 - Monster Editor sub-hub with Canonical Candidate Review, Normalized Monster
-  Review, and Corrected Staging Preview surfaces.
+  Review, Corrected Staging Preview, and Combat Projection Preview surfaces.
 - Read-only Normalized Monster Review of MandBmaster and Megadungeon preview
   records with missing/placeholder/low-confidence field highlighting.
 - Non-live Corrected Staging Preview of MandBmaster and Megadungeon records with
   correction overlays, written to
   `data/import_reports/monster_corrected_staging_preview.json`.
+- Non-live Combat Projection Preview of the corrected staging preview, with
+  conservative parsing of AC, HD, movement, attacks, and damage, written to
+  `data/import_reports/monster_combat_projection.json`.
 - Persistent field-level corrections for normalized monster records stored in
   `data/import_reviews/monster_normalized_field_corrections.json`, applied as
   an overlay without modifying generated previews or live catalogs.
@@ -852,7 +900,7 @@ Version 0.7 hardened the data-driven generation foundation:
 
 - Test suite: `tests/test_core.py`
 - Additional stress suite: `tests/test_stress.py`
-- Current verification: 313 tests passing with
+- Current verification: 331 tests passing with
   `python -m unittest discover -s tests -v`.
 - `python -m compileall .` passes, and all 16 JSON table files parse with zero
   `TableLoader` warnings.

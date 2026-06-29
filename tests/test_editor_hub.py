@@ -111,6 +111,7 @@ class EditorHubTests(unittest.TestCase):
         self.assertIn("canonical_candidate_review", keys)
         self.assertIn("normalized_monster_review", keys)
         self.assertIn("corrected_staging_preview", keys)
+        self.assertIn("combat_projection_preview", keys)
 
     def test_monster_editor_summary_text(self) -> None:
         text = monster_editor_summary_text()
@@ -141,6 +142,9 @@ class EditorHubTests(unittest.TestCase):
 
     def test_app_has_view_corrected_staging_preview_method(self) -> None:
         self.assertTrue(hasattr(app.gui.RPGWorldApp, "view_corrected_staging_preview"))
+
+    def test_app_has_view_combat_projection_preview_method(self) -> None:
+        self.assertTrue(hasattr(app.gui.RPGWorldApp, "view_combat_projection_preview"))
 
 
 if __name__ == "__main__":

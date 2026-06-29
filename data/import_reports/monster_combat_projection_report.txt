@@ -1,0 +1,39 @@
+Combat-Ready Monster Projection
+==============================
+
+Generated at: 2026-06-29T01:09:46.605182+00:00
+Source staging preview: C:\Users\chrismata\CascadeProjects\rpg_world_app\data\import_reports\monster_corrected_staging_preview.json
+Total staged records read: 521
+
+Source counts:
+- mandbmaster_combined_monster_manual: 268
+- megadungeon_monster_manual: 253
+
+Projection readiness counts:
+- ready: 228
+- needs_review: 0
+- missing_combat_fields: 0
+- parse_warning: 293
+
+Top projection warnings:
+- damage could not be parsed: 241
+- hit_dice could not be parsed: 94
+- attacks could not be parsed: 83
+- armor_class could not be parsed: 47
+
+WARNING: This is a non-live combat projection. No master catalog was created.
+Live catalog JSON was not modified. Source variants remain distinct. No records were merged.
+
+Sample ready records:
+- normalized.mandbmaster_combined_monster_manual.acanopyornis: Acanopyornis [AC 8, HD 3, Atk 3, Dmg 1-4, 1-4, 1-2]
+- normalized.mandbmaster_combined_monster_manual.aculean: Aculean [AC 3, HD 7+2, Atk 4, Dmg By weapon, 1-10, 1-10, 1-4]
+- normalized.mandbmaster_combined_monster_manual.arcanoplasm: Arcanoplasm [AC 6, HD 7, Atk 1, Dmg 3-18]
+- normalized.mandbmaster_combined_monster_manual.autumnalmourner: Autumnal Mourner [AC 0, HD 2+2, Atk 1, Dmg 1-8]
+- normalized.mandbmaster_combined_monster_manual.avataroffamine: Avatar Of Famine [AC 2, HD 7, Atk 1, Dmg 2-8]
+
+Sample records needing review:
+- normalized.mandbmaster_combined_monster_manual.addlevetch: Addlevetch (attacks could not be parsed; damage could not be parsed)
+- normalized.mandbmaster_combined_monster_manual.astralweb: Astral Web (attacks could not be parsed; damage could not be parsed)
+- normalized.mandbmaster_combined_monster_manual.brainlockmoldspider: Brainlock Mold (Spider) (damage could not be parsed)
+- normalized.mandbmaster_combined_monster_manual.canopykraken: Canopy Kraken (armor_class could not be parsed)
+- normalized.mandbmaster_combined_monster_manual.cavehermit: Cave Hermit (armor_class could not be parsed)

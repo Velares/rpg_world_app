@@ -25,6 +25,33 @@ history is the more reliable source.
   for reusable logic; and a future combat test/stress harness for balance
   auditing.
 
+## v0.8.22 - Combat-Ready Monster Projection
+
+- Added `tools/importers/monster_combat_projection.py` to build a non-live
+  combat-ready projection from the corrected staging preview.
+- Output files:
+  - `data/import_reports/monster_combat_projection.json`
+  - `data/import_reports/monster_combat_projection_report.txt`
+- Each projection record includes identity/provenance, raw combat fields, parsed
+  models (AC, HD, movement, attacks, damage, morale), `hit_points_formula`,
+  conservative `armor_class_type`, `combat_tags`, `tag_sources`, and a
+  `projection_status` (`ready`, `missing_combat_fields`, `parse_warning`,
+  `needs_review`) with `projection_warnings`.
+- Parsers are conservative: damage supports `NdN`, `N-N`, and comma-separated
+  multi-attack lists; hit dice supports `N`, `N+M`, `N-M`, and `NdN`; movement
+  extracts numeric values; AC parses integers and infers descending only inside the
+  classic 0-9 band. Unparseable values become model `null` and warnings.
+- Added `Combat Projection Preview` as a Monster Editor sub-category and a new
+  `view_combat_projection_preview` method in `app/gui.py`.
+- Added `tests/test_monster_combat_projection.py` with 17 focused tests and
+  updated `tests/test_editor_hub.py`.
+- Confirmed no live catalog JSON modification, no normalized preview file
+  modification, no staging preview modification unless regenerated, no importer
+  changes, and no record merging.
+- Generated a current combat projection with 521 records (268 MandBmaster, 253
+  Megadungeon), 220 ready and 301 needing review.
+- Raised the validated suite to 331 passing `unittest` tests.
+
 ## v0.8.21 - Staged Corrected Monster Dataset Preview
 
 - Added `tools/importers/monster_corrected_staging_preview.py` to build a
