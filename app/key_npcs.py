@@ -4,6 +4,7 @@ import random
 
 from app.calendar import append_timeline_entry, format_calendar
 from app.models import NPC, NpcRelationship, World
+from app.shared import find_npc_by_id, key_npcs as get_key_npcs
 from app.table_loader import TableLoader
 
 
@@ -66,11 +67,11 @@ def run_key_npc_interaction_phase(
     tables: TableLoader,
     trigger: str = "manual",
 ) -> str:
-    key_npcs = [npc for npc in world.npcs if npc.is_key_npc]
-    if len(key_npcs) < 2:
+    key_npc_list = get_key_npcs(world)
+    if len(key_npc_list) < 2:
         return ""
-    for index, npc_a in enumerate(key_npcs):
-        for npc_b in key_npcs[index + 1 :]:
+    for index, npc_a in enumerate(key_npc_list):
+        for npc_b in key_npc_list[index + 1 :]:
             ensure_relationship_record(world, npc_a, npc_b, rng)
     relationships = [item for item in world.npc_relationships if _relationship_live(world, item)]
     if not relationships:
@@ -275,7 +276,7 @@ def _relationship_live(world: World, relationship: NpcRelationship) -> bool:
 
 
 def _find_npc(world: World, npc_id: str) -> NPC | None:
-    return next((npc for npc in world.npcs if npc.entity_id == npc_id), None)
+    return find_npc_by_id(world, npc_id)
 
 
 def _format_text(

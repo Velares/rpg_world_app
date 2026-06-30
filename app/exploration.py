@@ -7,6 +7,7 @@ from app.interaction_text import choose_interaction_text
 from app.key_npcs import run_key_npc_interaction_phase
 from app.leads import add_lead
 from app.models import DungeonRoom, Encounter, NPC, World
+from app.shared import find_encounter_by_id, find_location_by_id, find_npc_by_id
 from app.table_loader import TableLoader
 from app.timeline import record_npc_interaction
 
@@ -177,14 +178,7 @@ class ExplorationEngine:
         return result
 
     def travel_to_location(self, location_id: str) -> str:
-        location = next(
-            (
-                item
-                for item in self.world.settlement.important_locations
-                if item.entity_id == location_id
-            ),
-            None,
-        )
+        location = find_location_by_id(self.world, location_id)
         if location is None:
             raise ValueError("Unknown town location.")
         self.player.current_location = "town"
@@ -222,10 +216,7 @@ class ExplorationEngine:
             self._discover(
                 player.known_location_ids, location.entity_id, f"location: {location.name}"
             )
-            owner = next(
-                (npc for npc in self.world.npcs if npc.entity_id == location.owner_npc_id),
-                None,
-            )
+            owner = find_npc_by_id(self.world, location.owner_npc_id)
             if owner:
                 self._discover(player.known_npc_ids, owner.entity_id, f"NPC: {owner.name}")
             return self.log(
@@ -291,14 +282,7 @@ class ExplorationEngine:
         )
 
     def pending_encounter(self) -> Encounter:
-        encounter = next(
-            (
-                item
-                for item in self.world.wilderness.encounter_table
-                if item.entity_id == self.player.pending_encounter_id
-            ),
-            None,
-        )
+        encounter = find_encounter_by_id(self.world, self.player.pending_encounter_id)
         if encounter is None:
             raise RuntimeError("There is no pending wilderness encounter.")
         return encounter
@@ -692,10 +676,7 @@ class ExplorationEngine:
         self._discover(
             self.player.known_location_ids, location.entity_id, f"location: {location.name}"
         )
-        owner = next(
-            (npc for npc in self.world.npcs if npc.entity_id == location.owner_npc_id),
-            None,
-        )
+        owner = find_npc_by_id(self.world, location.owner_npc_id)
         if owner:
             self._discover(self.player.known_npc_ids, owner.entity_id, f"NPC: {owner.name}")
         self._add_lead(
@@ -799,14 +780,7 @@ class ExplorationEngine:
         return self._interaction(category, **context)
 
     def _current_or_random_location(self):
-        location = next(
-            (
-                item
-                for item in self.world.settlement.important_locations
-                if item.entity_id == self.player.current_location_id
-            ),
-            None,
-        )
+        location = find_location_by_id(self.world, self.player.current_location_id)
         return location or self.rng.choice(self.world.settlement.important_locations)
 
     def rest(self, rest_type: str = "short") -> str:

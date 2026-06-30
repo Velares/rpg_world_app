@@ -10,6 +10,15 @@ from app.leads import (
     format_suggested_next_actions,
 )
 from app.models import InventoryItem, World
+from app.shared import (
+    NO_WORLD_TEXT,
+    body_only,
+    bulleted_lines,
+    key_npcs as get_key_npcs,
+    numbered_lines,
+    prominent_npcs as get_prominent_npcs,
+    seed_text,
+)
 from app.timeline import format_summary_timeline, format_verbose_timeline
 
 
@@ -33,11 +42,7 @@ def inventory_item_text(item: InventoryItem, detailed: bool = False) -> str:
 
 def export_world_summary(world: World | None) -> str:
     if world is None:
-        return (
-            "NO ACTIVE WORLD\n"
-            "===============\n"
-            "Generate or load a world first."
-        )
+        return NO_WORLD_TEXT
     settlement = world.settlement
     player = world.player_state
     threats = ", ".join(player.known_threats) or "Unknown"
@@ -46,12 +51,12 @@ def export_world_summary(world: World | None) -> str:
         for index in player.known_rumor_indices
         if index < len(settlement.rumors)
     ]
-    prominent_npcs = [npc for npc in world.npcs if npc.prominent]
-    key_npcs = [npc for npc in world.npcs if npc.is_key_npc]
+    prominent_npc_list = get_prominent_npcs(world)
+    key_npc_list = get_key_npcs(world)
     return (
         f"{world.name.upper()}\n{'=' * len(world.name)}\n"
         f"Created: {world.created_at}\n"
-        f"Seed: {_seed_text(world)}\n"
+        f"Seed: {seed_text(world)}\n"
         f"Calendar: {format_calendar(player.day, player.time_period)}\n"
         f"Downtime: {DowntimeEngine.summarize(player.active_downtime_task)}\n"
         f"Settlement: {settlement.name} ({settlement.type})\n"
@@ -74,7 +79,7 @@ def export_world_summary(world: World | None) -> str:
         f"Discovered rooms: {len(player.discovered_room_ids)} of {len(world.dungeon.rooms)}\n\n"
         f"RUMOR LEADS\n"
         f"===========\n"
-        f"{_numbered_lines(known_rumors) or 'No rumors learned yet.'}\n\n"
+        f"{numbered_lines(known_rumors) or 'No rumors learned yet.'}\n\n"
         f"OPEN LEADS\n"
         f"==========\n"
         f"{format_open_leads(world)}\n\n"
@@ -86,13 +91,13 @@ def export_world_summary(world: World | None) -> str:
         f"{format_suggested_next_actions(world)}\n\n"
         f"JOURNAL SUMMARY\n"
         f"===============\n"
-        f"{_body_only(format_summary_timeline(world))}\n\n"
+        f"{body_only(format_summary_timeline(world))}\n\n"
         f"PROMINENT NPCS\n"
         f"==============\n"
-        f"{_prominent_npc_lines(prominent_npcs)}\n\n"
+        f"{_prominent_npc_lines(prominent_npc_list)}\n\n"
         f"KEY NPCS AND RELATIONSHIPS\n"
         f"==========================\n"
-        f"{_key_npc_lines(key_npcs)}\n\n"
+        f"{_key_npc_lines(key_npc_list)}\n\n"
         f"RELATIONSHIP RECORDS\n"
         f"====================\n"
         f"{_relationship_lines(world)}\n\n"
@@ -104,11 +109,7 @@ def export_world_summary(world: World | None) -> str:
 
 def export_character_text(world: World | None) -> str:
     if world is None:
-        return (
-            "NO ACTIVE WORLD\n"
-            "===============\n"
-            "Generate or load a world first."
-        )
+        return NO_WORLD_TEXT
     player = world.player_state
     character = player.character
     if character is None:
@@ -140,7 +141,7 @@ def export_character_text(world: World | None) -> str:
         f"Class Role: {character.class_role}\n"
         f"Class Type: {character.class_type}\n"
         f"Class Subtype: {character.class_subtype or 'None recorded'}\n"
-        f"Seed: {_seed_text(world)}\n"
+        f"Seed: {seed_text(world)}\n"
         f"Age: {character.age_years}\n"
         f"Age Band: {age_band(character.age_years)}\n"
         f"Current Calendar: {format_calendar(player.day, player.time_period)}\n"
@@ -191,7 +192,7 @@ def export_character_text(world: World | None) -> str:
         f"{character.special_ability_placeholder}\n\n"
         f"RECENT MAJOR ACTIONS\n"
         f"====================\n"
-        f"{_bulleted_lines(recent_actions[-5:]) or 'No major actions recorded yet.'}\n\n"
+        f"{bulleted_lines(recent_actions[-5:]) or 'No major actions recorded yet.'}\n\n"
         f"OPEN LEADS\n"
         f"==========\n"
         f"{format_open_leads(world)}\n\n"
@@ -203,23 +204,19 @@ def export_character_text(world: World | None) -> str:
         f"{recent_entries_text(player)}\n\n"
         f"JOURNAL SUMMARY\n"
         f"===============\n"
-        f"{_body_only(format_summary_timeline(world))}"
+        f"{body_only(format_summary_timeline(world))}"
     )
 
 
 def export_event_log_text(world: World | None) -> str:
     if world is None:
-        return (
-            "NO ACTIVE WORLD\n"
-            "===============\n"
-            "Generate or load a world first."
-        )
+        return NO_WORLD_TEXT
     player = world.player_state
     lines = [
         "EVENT LOG",
         "=========",
         "",
-        f"Seed: {_seed_text(world)}",
+        f"Seed: {seed_text(world)}",
         f"Calendar: {format_calendar(player.day, player.time_period)}",
         f"Downtime: {DowntimeEngine.summarize(player.active_downtime_task)}",
         "",
@@ -251,26 +248,15 @@ def export_event_log_text(world: World | None) -> str:
             "",
             "TIMELINE SUMMARY",
             "================",
-            _body_only(format_summary_timeline(world)),
+            body_only(format_summary_timeline(world)),
             "",
             "VERBOSE TIMELINE",
             "================",
-            _body_only(format_verbose_timeline(world)),
+            body_only(format_verbose_timeline(world)),
         ]
     )
     return "\n".join(lines)
 
-
-def _bulleted_lines(values: list[str]) -> str:
-    return "\n".join(f"- {value}" for value in values)
-
-
-def _numbered_lines(values: list[str]) -> str:
-    return "\n".join(f"{index}. {value}" for index, value in enumerate(values, 1))
-
-
-def _seed_text(world: World) -> str:
-    return world.generation_seed or "Random / not recorded"
 
 
 def _score_block(values: dict[str, int]) -> str:
@@ -280,13 +266,6 @@ def _score_block(values: dict[str, int]) -> str:
         f"{key.replace('_', ' ').title()} {value}"
         for key, value in sorted(values.items())
     )
-
-
-def _body_only(text: str) -> str:
-    lines = text.splitlines()
-    if len(lines) <= 3:
-        return text
-    return "\n".join(lines[4:]).strip() or text
 
 
 def _prominent_npc_lines(npcs) -> str:
