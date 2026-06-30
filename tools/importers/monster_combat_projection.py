@@ -56,7 +56,7 @@ def _parse_dice(value: str | None) -> dict[str, Any] | None:
             "count": count,
             "sides": sides,
             "modifier": modifier,
-            "average": count * (sides / 2) + modifier,
+            "average": count * ((sides + 1) / 2) + modifier,
             "formula": text,
         }
 

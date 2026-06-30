@@ -320,7 +320,7 @@ def _keyword_to_confidence(
     if location == "name":
         high_keywords = _HIGH_CONFIDENCE_NAME_KEYWORDS.get(field, {}).get(value, [])
         if high_keywords and any(_text_contains_keyword(name, keyword) for keyword in high_keywords):
-            return "medium"
+            return "high"
         return "medium"
     # description-only matches are low-confidence hints
     return "low"
@@ -558,7 +558,7 @@ def write_suggestions(
     suggestions: dict[str, Any] | None = None,
     json_path: Path | None = None,
     report_path: Path | None = None,
-) -> dict[str, Any]:
+) -> tuple[Path, Path]:
     """Write suggestion JSON and report to the import_reports directory."""
     suggestions = suggestions or generate_suggestions()
     json_path = json_path or DEFAULT_SUGGESTIONS_JSON
@@ -569,13 +569,14 @@ def write_suggestions(
     )
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(format_suggestions_report(suggestions), encoding="utf-8")
-    return suggestions
+    return json_path, report_path
 
 
 def main() -> int:
-    suggestions = write_suggestions()
-    print(f"Wrote suggestions to {DEFAULT_SUGGESTIONS_JSON}")
-    print(f"Wrote suggestions report to {DEFAULT_SUGGESTIONS_REPORT}")
+    suggestions = generate_suggestions()
+    json_path, report_path = write_suggestions(suggestions)
+    print(f"Wrote suggestions to {json_path}")
+    print(f"Wrote suggestions report to {report_path}")
     print(
         f"Generated {suggestions['total_suggestions']} suggestions "
         f"across {suggestions['record_count']} records"
