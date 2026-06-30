@@ -3,7 +3,7 @@
 ## Current version
 
 - Current tag: `v0.7.3`
-- Current development version on `main`: `v0.8.23`
+- Current development version on `main`: `v0.8.24`
 - Current branch at this update: `main`
 - Runtime: Python 3.11-compatible standard library, Tkinter, and SQLite
 
@@ -98,6 +98,44 @@ Placeholder and mapping policy for that future normalized layer:
   exact mapping.
 
 ## Latest completed work
+
+Version 0.8.24 tightens monster classification vocabulary and suggestion
+confidence on `main`:
+
+- Expanded `data/tables/monster_classification_options.json` with new monster
+  types (avian, fish, worm, shapechanger, lycanthrope, celestial, vermin),
+  environments (sky, river, lake, sea, volcanic, ethereal, shadow, faerie),
+  terrains (underwater, ice, snow, sand, dune, lava, burrow, reef, canopy, rubble),
+  regions (ocean, island, riverlands, volcanic, sky-realm, faerie, shadow-realm,
+  elemental plane, hell, abyss, jungle), and affinity values unchanged.
+- Removed `aerial` as a monster type; it remains a terrain/movement value.
+  Flying/winged/bird-like creatures now suggest `monster_type: avian` and
+  `terrain: aerial`.
+- Overhauled `data/configs/monster_classification_affinities.json` with new
+  conservative affinities for avian, fish, worm, vermin, shapechanger,
+  lycanthrope, and celestial, and strengthened existing type affinities using
+  the new placement values.
+- Replaced raw substring matching in
+  `tools/importers/monster_classification_suggestions.py` with token/phrase
+  word-boundary matching, reducing false positives (e.g. `ant` inside unrelated
+  words, golems as insects, lichens as undead).
+- Confidence now depends on match location (name vs description) and evidence
+  source (corrected vs imported/generated monster type). Imported/generated types
+  cap affinity-derived confidence to `low`.
+- Suggestions preserve confidence ties as `alternatives` and include a reason
+  for every candidate.
+- Added a `suggest_for_record` helper and chained keyword-suggested types to
+  affinity-derived placement suggestions when no imported/corrected type exists.
+- Regenerated reports:
+  - `data/import_reports/table_inventory.json` and `.txt`
+  - `data/import_reports/monster_classification_suggestions.json` and `.txt`
+- Current suggestion run: 1049 suggestions across 438 records.
+- Validation: 377 passing `unittest` tests, `compileall`, `validate_sources.py`,
+  `monster_import_status.py`, `report_table_inventory.py`, and
+  `monster_classification_suggestions.py` all completed cleanly.
+- Safety: no live catalog JSON changes, no preview/staging/combat projection
+  changes, no correction store writes, no record merging, no importer behavior
+  changes, and no PDFs added.
 
 Version 0.8.23 adds controlled monster classification dropdowns and a
 conservative suggestion pass on `main`:

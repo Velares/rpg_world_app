@@ -31,50 +31,159 @@
     },
     "aquatic": {
       "environment": {
-        "aquatic": "always",
-        "coast": "sometimes",
-        "underground": "rarely"
+        "aquatic": "usually",
+        "sea": "usually",
+        "river": "sometimes",
+        "lake": "sometimes",
+        "coast": "sometimes"
       },
       "terrain": {
-        "flooded": "usually",
+        "underwater": "usually",
+        "flooded": "sometimes",
         "river": "sometimes",
         "shore": "sometimes"
       },
       "region": {
+        "ocean": "usually",
         "coastal": "usually",
-        "underground": "rarely"
+        "riverlands": "sometimes"
       }
     },
     "amphibian": {
       "environment": {
         "swamp": "usually",
-        "aquatic": "sometimes",
+        "river": "sometimes",
+        "lake": "sometimes",
         "forest": "sometimes"
       },
       "terrain": {
         "marsh": "usually",
         "flooded": "sometimes",
-        "shore": "sometimes"
+        "shore": "sometimes",
+        "river": "sometimes"
       },
       "region": {
         "swamp": "usually",
+        "riverlands": "sometimes",
         "temperate": "sometimes"
       }
     },
-    "aerial": {
+    "fish": {
       "environment": {
-        "wilderness": "usually",
-        "cavern": "sometimes",
+        "aquatic": "usually",
+        "sea": "usually",
+        "river": "usually",
+        "lake": "usually"
+      },
+      "terrain": {
+        "underwater": "usually",
+        "river": "sometimes",
+        "reef": "sometimes"
+      },
+      "region": {
+        "ocean": "usually",
+        "coastal": "usually",
+        "riverlands": "sometimes"
+      }
+    },
+    "avian": {
+      "environment": {
+        "sky": "usually",
+        "wilderness": "sometimes",
+        "forest": "sometimes",
         "mountain": "sometimes"
       },
       "terrain": {
-        "aerial": "always",
-        "vertical": "sometimes",
+        "aerial": "usually",
+        "canopy": "sometimes",
         "cliff": "sometimes"
       },
       "region": {
-        "mountain": "sometimes",
-        "any": "usually"
+        "any": "usually",
+        "sky-realm": "rarely",
+        "mountain": "sometimes"
+      }
+    },
+    "worm": {
+      "environment": {
+        "underground": "usually",
+        "cavern": "sometimes",
+        "swamp": "sometimes"
+      },
+      "terrain": {
+        "burrow": "usually",
+        "tunnel": "usually",
+        "cave": "sometimes"
+      },
+      "region": {
+        "underground": "usually",
+        "underworld": "sometimes"
+      }
+    },
+    "vermin": {
+      "environment": {
+        "wilderness": "sometimes",
+        "underground": "sometimes",
+        "dungeon": "sometimes"
+      },
+      "terrain": {
+        "open": "sometimes",
+        "cave": "sometimes",
+        "sewer": "sometimes"
+      },
+      "region": {
+        "any": "sometimes",
+        "underground": "sometimes"
+      }
+    },
+    "shapechanger": {
+      "environment": {
+        "settlement": "sometimes",
+        "wilderness": "sometimes",
+        "dungeon": "sometimes"
+      },
+      "terrain": {
+        "open": "sometimes",
+        "road": "sometimes",
+        "ruins": "sometimes"
+      },
+      "region": {
+        "civilized lands": "sometimes",
+        "borderlands": "sometimes",
+        "any": "sometimes"
+      }
+    },
+    "lycanthrope": {
+      "environment": {
+        "wilderness": "usually",
+        "settlement": "sometimes",
+        "forest": "sometimes"
+      },
+      "terrain": {
+        "wooded": "sometimes",
+        "open": "sometimes",
+        "road": "sometimes"
+      },
+      "region": {
+        "temperate": "sometimes",
+        "borderlands": "sometimes",
+        "forest": "sometimes"
+      }
+    },
+    "celestial": {
+      "environment": {
+        "extraplanar": "usually",
+        "temple": "sometimes",
+        "sky": "sometimes"
+      },
+      "terrain": {
+        "aerial": "sometimes",
+        "open": "sometimes"
+      },
+      "region": {
+        "elemental plane": "sometimes",
+        "extraplanar": "usually",
+        "any": "rarely"
       }
     },
     "construct": {
@@ -105,6 +214,7 @@
         "crypt": "rarely"
       },
       "region": {
+        "abyss": "usually",
         "extraplanar": "usually",
         "underworld": "sometimes"
       }
@@ -120,6 +230,7 @@
         "crypt": "rarely"
       },
       "region": {
+        "hell": "usually",
         "extraplanar": "usually",
         "underworld": "sometimes"
       }
@@ -133,9 +244,11 @@
       "terrain": {
         "open": "sometimes",
         "chamber": "sometimes",
-        "flooded": "sometimes"
+        "flooded": "sometimes",
+        "lava": "sometimes"
       },
       "region": {
+        "elemental plane": "usually",
         "extraplanar": "usually",
         "any": "sometimes"
       }
@@ -153,7 +266,8 @@
       },
       "region": {
         "forest": "usually",
-        "swamp": "sometimes"
+        "swamp": "sometimes",
+        "jungle": "sometimes"
       }
     },
     "fungus": {
@@ -174,7 +288,7 @@
     },
     "insect": {
       "environment": {
-        "wilderness": "usually",
+        "wilderness": "sometimes",
         "underground": "sometimes",
         "forest": "sometimes"
       },
@@ -184,7 +298,7 @@
         "tunnel": "sometimes"
       },
       "region": {
-        "any": "usually",
+        "any": "sometimes",
         "underground": "sometimes"
       }
     },

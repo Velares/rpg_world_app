@@ -218,16 +218,16 @@ FUTURE CLASSIFICATION TABLES
 monster_classification_options.json  [generation content]
   NOTE: user-editable
   - monster_types
-    entries: 26
+    entries: 33
     type: text list
   - environments
-    entries: 22
+    entries: 30
     type: text list
   - terrains
-    entries: 23
+    entries: 33
     type: text list
   - regions
-    entries: 18
+    entries: 29
     type: text list
   - affinity_values
     entries: 6
@@ -471,7 +471,7 @@ monster_combat_projection.json  [import data]
     ids: present
     duplicate ids: normalized.megadungeon_monster_manual.greater
   WARNING: projections: duplicate ids: normalized.megadungeon_monster_manual.greater
-  referenced by: app\gui.py, tests\test_monster_combat_projection.py, tools\importers\monster_combat_projection.py
+  referenced by: app\gui.py, tests\test_monster_combat_projection.py, tests\test_table_inventory_and_classification.py
 
 monster_corrected_staging_preview.json  [import data]
   NOTE: generated report; do not edit manually
@@ -503,7 +503,7 @@ monster_normalized_field_corrections.json  [review data]
   - source_reports
     entries: 2
     type: text list
-  referenced by: app\monster_editor.py
+  referenced by: app\monster_editor.py, tests\test_table_inventory_and_classification.py
 
 
 OTHER / UNKNOWN

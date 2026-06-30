@@ -25,6 +25,50 @@ history is the more reliable source.
   for reusable logic; and a future combat test/stress harness for balance
   auditing.
 
+## v0.8.24 - Tightened Monster Classification Vocabulary and Suggestion Confidence
+
+- Expanded `data/tables/monster_classification_options.json` with new monster
+  types (avian, fish, worm, shapechanger, lycanthrope, celestial, vermin),
+  environments (sky, river, lake, sea, volcanic, ethereal, shadow, faerie),
+  terrains (underwater, ice, snow, sand, dune, lava, burrow, reef, canopy, rubble),
+  and regions (ocean, island, riverlands, volcanic, sky-realm, faerie, shadow-realm,
+  elemental plane, hell, abyss, jungle).
+- Clarified `monster_type` vs `category` in code comments: `monster_type` is the
+  primary nature/body/origin; `category` remains a broader future
+  gameplay/catalog bucket and is not merged with `monster_type`.
+- Removed `aerial` as a monster type from affinities and keyword matching; it
+  is preserved as a terrain/movement value. Flying/winged/bird-like creatures
+  now suggest `monster_type: avian` and `terrain: aerial` instead.
+- Overhauled `data/configs/monster_classification_affinities.json`:
+  - removed the `aerial` monster_type entry;
+  - added conservative affinities for avian, fish, worm, vermin, shapechanger,
+    lycanthrope, and celestial;
+  - strengthened aquatic, amphibian, construct, demon, devil, elemental, plant,
+    fungus, insect, arachnid, giant, and humanoid affinities with new placement
+    values (abyss, hell, elemental plane, ocean, riverlands, etc.).
+- Replaced raw substring keyword matching in
+  `tools/importers/monster_classification_suggestions.py` with token/phrase
+  word-boundary matching to eliminate false positives (e.g. `ant` inside
+  unrelated words, golems classified as insects, lichens as undead).
+- Added confidence rules that distinguish title/name matches from
+  description-only matches and treat corrected monster_type as stronger evidence
+  than imported/generated type. Imported/generated types now cap affinity-based
+  confidence to `low`.
+- Suggestion output now preserves tied candidates as `alternatives` and includes
+  a reason for every suggestion.
+- Added `suggest_for_record` helper for testing and chaining keyword-suggested
+  monster types to affinity-derived placement suggestions.
+- Regenerated `data/import_reports/table_inventory.json`,
+  `data/import_reports/table_inventory_report.txt`,
+  `data/import_reports/monster_classification_suggestions.json`, and
+  `data/import_reports/monster_classification_suggestions_report.txt`.
+- Updated `tests/test_table_inventory_and_classification.py` with additional
+  keyword-boundary, false-positive, explicit type, and safety tests (40 focused
+  tests in the module, 377 total passing).
+- Confirmed no live catalog JSON modification, no preview/staging/combat
+  projection modification, no correction store writes, no record merging, no
+  importer behavior changes, and no PDFs added.
+
 ## v0.8.23 - Controlled Monster Classification Dropdowns and Suggestions
 
 - Added `tools/report_table_inventory.py` to scan data/table/config files and

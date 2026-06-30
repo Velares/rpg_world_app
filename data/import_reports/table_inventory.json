@@ -1885,7 +1885,7 @@
         "categories": [
           {
             "name": "monster_types",
-            "entry_count": 26,
+            "entry_count": 33,
             "is_empty": false,
             "fields": [],
             "id_present": false,
@@ -1896,7 +1896,7 @@
           },
           {
             "name": "environments",
-            "entry_count": 22,
+            "entry_count": 30,
             "is_empty": false,
             "fields": [],
             "id_present": false,
@@ -1907,7 +1907,7 @@
           },
           {
             "name": "terrains",
-            "entry_count": 23,
+            "entry_count": 33,
             "is_empty": false,
             "fields": [],
             "id_present": false,
@@ -1918,7 +1918,7 @@
           },
           {
             "name": "regions",
-            "entry_count": 18,
+            "entry_count": 29,
             "is_empty": false,
             "fields": [],
             "id_present": false,
@@ -2452,6 +2452,7 @@
         "references": [
           "app\\gui.py",
           "tests\\test_monster_combat_projection.py",
+          "tests\\test_table_inventory_and_classification.py",
           "tools\\importers\\monster_combat_projection.py",
           "tools\\report_table_inventory.py"
         ]
@@ -2591,7 +2592,8 @@
         ],
         "warnings": [],
         "references": [
-          "app\\monster_editor.py"
+          "app\\monster_editor.py",
+          "tests\\test_table_inventory_and_classification.py"
         ]
       }
     ],

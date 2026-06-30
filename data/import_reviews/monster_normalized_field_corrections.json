@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "source_reports": [
+    "C:\\Users\\chrismata\\CascadeProjects\\rpg_world_app\\data\\import_reports\\mandbmaster_normalized_monster_preview.json",
+    "C:\\Users\\chrismata\\CascadeProjects\\rpg_world_app\\data\\import_reports\\megadungeon_normalized_monster_preview.json"
+  ],
+  "corrections": {
+    "normalized.megadungeon_monster_manual.toadhuge": {
+      "fields": {
+        "special_attacks": {
+          "corrected_value": "Swallow Attack",
+          "previous_value": null,
+          "notes": "Huge poisonous toads have a swallow attack that is \neffective against small-sized opponents (dwarf or \nsmaller). Swallowed opponents suffer 1d6 hit points of \ndamage per round. Their treasure is most often strewn \naround their lair or in their belly.",
+          "updated_at": "2026-06-29T11:28:41.560020+00:00",
+          "reviewer": "local_user"
+        },
+        "special_defenses": {
+          "corrected_value": "None",
+          "previous_value": null,
+          "notes": "",
+          "updated_at": "2026-06-29T11:28:41.560020+00:00",
+          "reviewer": "local_user"
+        },
+        "monster_type": {
+          "corrected_value": "Animal",
+          "previous_value": null,
+          "notes": "",
+          "updated_at": "2026-06-29T11:28:41.560020+00:00",
+          "reviewer": "local_user"
+        }
+      },
+      "record_notes": "",
+      "record_status": "needs_review",
+      "updated_at": "2026-06-29T11:28:41.560020+00:00",
+      "reviewer": "local_user"
+    }
+  }
+}

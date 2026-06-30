@@ -550,7 +550,10 @@ decisions), **Normalized Monster Review** (read-only inspection of MandBmaster
 and Megadungeon normalized records with missing/placeholder/low-confidence
 highlighting, plus a `Correct Fields` dialog that stores field-level corrections
 in `data/import_reviews/monster_normalized_field_corrections.json` and uses
-controlled dropdowns for `environment`, `terrain`, `region`, and `monster_type`),
+controlled dropdowns for `environment`, `terrain`, `region`, and `monster_type`.
+`monster_type` describes the monster's primary nature/body/origin; the separate
+`category` field is a broader gameplay/catalog bucket and is not controlled by the
+same dropdown),
 **Classification Suggestions** (a read-only conservative best-guess report for
 missing classification fields, output to
 `data/import_reports/monster_classification_suggestions_report.txt` without

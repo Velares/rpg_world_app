@@ -13,8 +13,12 @@ from app.monster_classification import (
     validate_affinities_against_options,
 )
 from tools.importers.monster_classification_suggestions import (
+    _keyword_map,
+    _keyword_suggestions,
     _missing_or_unknown,
+    _text_contains_keyword,
     generate_suggestions,
+    suggest_for_record,
     write_suggestions,
 )
 from tools.importers.monster_manual_schema import PROJECT_ROOT
@@ -32,6 +36,8 @@ DEFAULT_MONSTER_APPENDIX_CATALOG_JSON = PROJECT_ROOT / "data" / "catalogs" / "mo
 MANDBMASTER_PREVIEW = PROJECT_ROOT / "data" / "import_reports" / "mandbmaster_normalized_monster_preview.json"
 MEGADUNGEON_PREVIEW = PROJECT_ROOT / "data" / "import_reports" / "megadungeon_normalized_monster_preview.json"
 STAGING_PREVIEW = PROJECT_ROOT / "data" / "import_reports" / "monster_corrected_staging_preview.json"
+COMBAT_PROJECTION = PROJECT_ROOT / "data" / "import_reports" / "monster_combat_projection.json"
+DEFAULT_CORRECTIONS_PATH = PROJECT_ROOT / "data" / "import_reviews" / "monster_normalized_field_corrections.json"
 
 
 class TableInventoryTests(unittest.TestCase):
@@ -151,8 +157,8 @@ class ClassificationAffinitiesTests(unittest.TestCase):
     def test_affinity_lookup(self) -> None:
         affinities = load_classification_affinities()
         self.assertEqual(affinities.get_affinity("undead", "environment", "graveyard"), "usually")
-        self.assertEqual(affinities.get_affinity("aquatic", "environment", "aquatic"), "always")
-        self.assertEqual(affinities.get_affinity("aerial", "terrain", "aerial"), "always")
+        self.assertEqual(affinities.get_affinity("aquatic", "environment", "aquatic"), "usually")
+        self.assertEqual(affinities.get_affinity("avian", "terrain", "aerial"), "usually")
         self.assertIsNone(affinities.get_affinity("undead", "environment", "forest"))
 
     def test_affinity_domains(self) -> None:
@@ -232,6 +238,117 @@ class SuggestionToolTests(unittest.TestCase):
         self.assertFalse(_missing_or_unknown("forest"))
 
 
+class KeywordMatchingTests(unittest.TestCase):
+    def test_word_boundary_does_not_match_ant_inside_unrelated_words(self) -> None:
+        self.assertFalse(_text_contains_keyword("Giant", "ant"))
+        self.assertFalse(_text_contains_keyword("Mantle Wraith", "ant"))
+        self.assertFalse(_text_contains_keyword("Antelope", "ant"))
+        self.assertTrue(_text_contains_keyword("Giant Ant", "ant"))
+
+    def test_phrase_matching_for_multi_word_keywords(self) -> None:
+        self.assertTrue(_text_contains_keyword("Shambling Mound", "shambling mound"))
+        self.assertFalse(_text_contains_keyword("Shambling", "shambling mound"))
+        self.assertTrue(_text_contains_keyword("Animated Statue", "animated statue"))
+
+    def test_golem_name_suggests_construct_not_insect(self) -> None:
+        options = load_classification_options()
+        keyword_map = _keyword_map()
+        result = _keyword_suggestions("Iron Golem", "", keyword_map, options)
+        types = {value for value, _affinity, _location in result.get("monster_type", [])}
+        self.assertIn("construct", types)
+        self.assertNotIn("insect", types)
+
+    def test_skeleton_name_suggests_undead(self) -> None:
+        options = load_classification_options()
+        keyword_map = _keyword_map()
+        for name in ("Skeleton Warrior", "Zombie Lord", "Ghoul Pack", "Wight", "Vampire", "Lich", "Mummy"):
+            with self.subTest(name=name):
+                result = _keyword_suggestions(name, "", keyword_map, options)
+                types = {value for value, _affinity, _location in result.get("monster_type", [])}
+                self.assertIn("undead", types)
+
+    def test_amphibian_names_and_swamp_placement(self) -> None:
+        for name in ("Giant Frog", "Toad Beast", "Fire Salamander"):
+            with self.subTest(name=name):
+                record = {"id": name, "name": name, "display_name": name, "source_id": "test"}
+                suggestions = suggest_for_record(record)
+                self.assertIn("amphibian", suggestions["suggestions"]["monster_type"]["suggested_value"])
+                env_value = suggestions["suggestions"]["environment"]["suggested_value"]
+                self.assertIn(env_value, ("swamp", "river", "lake", "forest"))
+                terrain_value = suggestions["suggestions"]["terrain"]["suggested_value"]
+                self.assertIn(terrain_value, ("marsh", "flooded", "shore", "river"))
+
+    def test_fish_names_and_underwater_placement(self) -> None:
+        for name in ("Shark", "Giant Eel", "Squid", "Octopus"):
+            with self.subTest(name=name):
+                record = {"id": name, "name": name, "display_name": name, "source_id": "test"}
+                suggestions = suggest_for_record(record)
+                type_value = suggestions["suggestions"]["monster_type"]["suggested_value"]
+                self.assertIn(type_value, ("fish", "aquatic"))
+                terrain_value = suggestions["suggestions"]["terrain"]["suggested_value"]
+                self.assertIn(terrain_value, ("underwater", "river", "reef"))
+
+    def test_bird_names_suggest_aerial_terrain_not_aerial_type(self) -> None:
+        options = load_classification_options()
+        keyword_map = _keyword_map()
+        for name in ("Roc", "Harpy", "Giant Eagle", "Flying Snake"):
+            with self.subTest(name=name):
+                result = _keyword_suggestions(name, "", keyword_map, options)
+                types = {value for value, _affinity, _location in result.get("monster_type", [])}
+                self.assertNotIn("aerial", types)
+                if name in ("Roc", "Harpy", "Giant Eagle"):
+                    self.assertIn("avian", types)
+                terrains = {value for value, _affinity, _location in result.get("terrain", [])}
+                self.assertIn("aerial", terrains)
+
+    def test_lichen_and_creeper_do_not_suggest_undead(self) -> None:
+        options = load_classification_options()
+        keyword_map = _keyword_map()
+        for name in ("Sunburst Lichen", "Yellow Musk Creeper"):
+            with self.subTest(name=name):
+                result = _keyword_suggestions(name, "", keyword_map, options)
+                types = {value for value, _affinity, _location in result.get("monster_type", [])}
+                self.assertNotIn("undead", types)
+                self.assertIn("plant", types)
+
+    def test_giant_name_does_not_suggest_insect_or_plant(self) -> None:
+        options = load_classification_options()
+        keyword_map = _keyword_map()
+        result = _keyword_suggestions("Hill Giant", "", keyword_map, options)
+        types = {value for value, _affinity, _location in result.get("monster_type", [])}
+        self.assertIn("giant", types)
+        self.assertNotIn("insect", types)
+        self.assertNotIn("plant", types)
+
+    def test_added_option_values_are_present(self) -> None:
+        options = load_classification_options()
+        for value in (
+            "avian", "fish", "worm", "shapechanger", "lycanthrope", "celestial", "vermin"
+        ):
+            self.assertIn(value, options.get("monster_types"))
+        for value in (
+            "sky", "river", "lake", "sea", "volcanic", "ethereal", "shadow", "faerie"
+        ):
+            self.assertIn(value, options.get("environments"))
+        for value in (
+            "underwater", "ice", "snow", "sand", "dune", "lava", "burrow", "reef", "canopy", "rubble"
+        ):
+            self.assertIn(value, options.get("terrains"))
+        for value in (
+            "ocean", "island", "riverlands", "volcanic", "sky-realm", "faerie",
+            "shadow-realm", "elemental plane", "hell", "abyss"
+        ):
+            self.assertIn(value, options.get("regions"))
+
+    def test_affinities_only_reference_known_options(self) -> None:
+        warnings = validate_affinities_against_options()
+        self.assertEqual(warnings, [])
+
+    def test_aerial_is_not_a_monster_type_in_affinities(self) -> None:
+        affinities = load_classification_affinities()
+        self.assertNotIn("aerial", affinities.monster_type_affinities)
+
+
 class SafetyTests(unittest.TestCase):
     def test_no_live_catalog_modification(self) -> None:
         before_catalog = DEFAULT_MONSTER_CATALOG_JSON.read_text(encoding="utf-8")
@@ -255,6 +372,10 @@ class SafetyTests(unittest.TestCase):
             before_megadungeon = MEGADUNGEON_PREVIEW.read_text(encoding="utf-8")
         else:
             before_megadungeon = None
+        if COMBAT_PROJECTION.exists():
+            before_combat = COMBAT_PROJECTION.read_text(encoding="utf-8")
+        else:
+            before_combat = None
         load_classification_options()
         load_classification_affinities()
         build_inventory()
@@ -267,6 +388,27 @@ class SafetyTests(unittest.TestCase):
         if before_megadungeon is not None:
             after_megadungeon = MEGADUNGEON_PREVIEW.read_text(encoding="utf-8")
             self.assertEqual(before_megadungeon, after_megadungeon)
+        if before_combat is not None:
+            after_combat = COMBAT_PROJECTION.read_text(encoding="utf-8")
+            self.assertEqual(before_combat, after_combat)
+
+    def test_suggestions_do_not_write_correction_store(self) -> None:
+        if not DEFAULT_CORRECTIONS_PATH.exists():
+            self.skipTest("corrections file not present")
+        before_mtime = DEFAULT_CORRECTIONS_PATH.stat().st_mtime
+        before_text = DEFAULT_CORRECTIONS_PATH.read_text(encoding="utf-8")
+        generate_suggestions()
+        after_mtime = DEFAULT_CORRECTIONS_PATH.stat().st_mtime
+        after_text = DEFAULT_CORRECTIONS_PATH.read_text(encoding="utf-8")
+        self.assertEqual(before_mtime, after_mtime)
+        self.assertEqual(before_text, after_text)
+
+    def test_no_records_merged(self) -> None:
+        suggestions = generate_suggestions()
+        seen_ids = set()
+        for record in suggestions["suggestions"]:
+            self.assertNotIn(record["record_id"], seen_ids)
+            seen_ids.add(record["record_id"])
 
 
 if __name__ == "__main__":
