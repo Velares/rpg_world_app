@@ -266,7 +266,7 @@ def _get_app_version() -> str:
         return "unknown"
     try:
         text = status_file.read_text(encoding="utf-8")
-    except Exception:
+    except OSError:
         return "unknown"
     for line in text.splitlines():
         if "Current development version on" in line and "`v" in line:
@@ -720,12 +720,23 @@ class EquipmentDialog(tk.Toplevel):
     def equip_selected(self) -> None:
         label = self.item_var.get()
         if not label:
-            raise RuntimeError("Select an item to equip.")
-        self.state.equip_item(self.item_options[label], self.slot_var.get())
+            messagebox.showwarning(
+                "Equipment", "Select an item to equip.", parent=self
+            )
+            return
+        try:
+            self.state.equip_item(self.item_options[label], self.slot_var.get())
+        except (RuntimeError, ValueError, KeyError) as exc:
+            messagebox.showerror("Equipment", str(exc), parent=self)
+            return
         self.refresh()
 
     def unequip_selected(self) -> None:
-        self.state.unequip_slot(self.slot_var.get())
+        try:
+            self.state.unequip_slot(self.slot_var.get())
+        except (RuntimeError, ValueError) as exc:
+            messagebox.showerror("Equipment", str(exc), parent=self)
+            return
         self.refresh()
 
 

@@ -220,7 +220,12 @@ class GameState:
         return self.database.list_worlds()
 
     def load_world(self, world_id: int) -> World:
-        self.world = self.database.load_world(world_id)
+        try:
+            self.world = self.database.load_world(world_id)
+        except KeyError:
+            raise RuntimeError(f"Save {world_id} was not found in the database.")
+        except ValueError as exc:
+            raise RuntimeError(f"Save {world_id} could not be loaded: {exc}") from exc
         self.active_seed = self.world.generation_seed
         return self.world
 

@@ -421,5 +421,73 @@ class StressTests(unittest.TestCase):
             state.close()
 
 
+class ErrorHandlingTests(unittest.TestCase):
+    """Verify that errors are properly propagated with useful context."""
+
+    def make_state(self, folder: Path, seed: int = 1) -> GameState:
+        return GameState(
+            TableLoader(TABLES),
+            Database(folder / "worlds.db"),
+            random.Random(seed),
+        )
+
+    def test_load_missing_world_raises_runtime_error(self):
+        with tempfile.TemporaryDirectory() as folder:
+            state = self.make_state(Path(folder))
+            with self.assertRaises(RuntimeError) as ctx:
+                state.load_world(999)
+            self.assertIn("999", str(ctx.exception))
+            state.close()
+
+    def test_load_corrupt_save_raises_runtime_error(self):
+        with tempfile.TemporaryDirectory() as folder:
+            state = self.make_state(Path(folder))
+            state.database.connection.execute(
+                "INSERT INTO worlds (name, created_at, data_json) VALUES (?, ?, ?)",
+                ("corrupt", "2025-01-01", "not valid json{{{"),
+            )
+            state.database.connection.commit()
+            with self.assertRaises(RuntimeError) as ctx:
+                state.load_world(1)
+            self.assertIn("corrupt", str(ctx.exception).lower())
+            state.close()
+
+    def test_database_wraps_connection_error(self):
+        with tempfile.TemporaryDirectory() as folder:
+            bad_path = Path(folder) / "worlds.db"
+            bad_path.write_text("not a database")
+            import sqlite3
+            original_connect = sqlite3.connect
+            def broken_connect(*args, **kwargs):
+                raise sqlite3.OperationalError("unable to open database file")
+            sqlite3.connect = broken_connect
+            try:
+                with self.assertRaises(RuntimeError) as ctx:
+                    Database(bad_path)
+                self.assertIn("Could not open database", str(ctx.exception))
+            finally:
+                sqlite3.connect = original_connect
+
+    def test_downtime_format_survives_bad_template(self):
+        from app.downtime import DowntimeEngine
+        from app.models import ActiveDowntimeTask
+
+        task = ActiveDowntimeTask(
+            task_key="test", name="Test", category="training"
+        )
+        result = DowntimeEngine._format("{unknown_key}", task, 1, 0, 1)
+        self.assertEqual(result, "{unknown_key}")
+
+    def test_key_npc_format_survives_bad_template(self):
+        from app.key_npcs import _format_text
+
+        loader = TableLoader(TABLES)
+        rng = random.Random(42)
+        result = _format_text(loader, rng, "key_npc_tables", "key_npc_reasons",
+                              npc="Test", settlement_name="Town", faction_tag="unknown")
+        self.assertIsInstance(result, str)
+        self.assertTrue(result)
+
+
 if __name__ == "__main__":
     unittest.main()

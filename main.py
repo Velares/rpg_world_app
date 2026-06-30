@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 from app.database import Database
@@ -10,9 +11,13 @@ def main() -> None:
     base_dir = Path(__file__).resolve().parent
     tables_dir = base_dir / "data" / "tables"
     database_path = base_dir / "data" / "saves" / "worlds.db"
-    loader = TableLoader(tables_dir)
-    database = Database(database_path)
-    state = GameState(loader, database)
+    try:
+        loader = TableLoader(tables_dir)
+        database = Database(database_path)
+        state = GameState(loader, database)
+    except Exception as exc:
+        print(f"Failed to start RPG World App: {exc}", file=sys.stderr)
+        raise SystemExit(1) from exc
     app = RPGWorldApp(state)
     app.mainloop()
 
