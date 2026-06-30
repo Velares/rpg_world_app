@@ -11,6 +11,12 @@ from app.leads import (
     format_suggested_next_actions,
 )
 from app.models import NPC, TimelineEntry, World
+from app.shared import (
+    NO_WORLD_TEXT,
+    key_npcs as get_key_npcs,
+    prominent_npcs as get_prominent_npcs,
+    seed_text,
+)
 from app.table_loader import TableLoader
 
 
@@ -65,11 +71,7 @@ def add_timeline_entry(
 
 def format_verbose_timeline(world: World | None) -> str:
     if world is None:
-        return (
-            "NO ACTIVE WORLD\n"
-            "===============\n"
-            "Generate or load a world first."
-        )
+        return NO_WORLD_TEXT
     entries = world.player_state.timeline_entries
     lines = [
         "VERBOSE TIMELINE",
@@ -106,11 +108,7 @@ def format_verbose_timeline(world: World | None) -> str:
 
 def format_summary_timeline(world: World | None) -> str:
     if world is None:
-        return (
-            "NO ACTIVE WORLD\n"
-            "===============\n"
-            "Generate or load a world first."
-        )
+        return NO_WORLD_TEXT
     player = world.player_state
     entries = player.timeline_entries
     lines = [
@@ -118,7 +116,7 @@ def format_summary_timeline(world: World | None) -> str:
         "===============",
         "",
         f"Current Date: {format_calendar(player.day, player.time_period)}",
-        f"Seed: {world.generation_seed or 'Random / not recorded'}",
+        f"Seed: {seed_text(world)}",
         "",
     ]
     if not entries:
@@ -170,7 +168,7 @@ def format_summary_timeline(world: World | None) -> str:
         lines.append("- None yet.")
     else:
         lines.extend(recent_changes_text.splitlines())
-    prominent = [npc for npc in world.npcs if npc.prominent]
+    prominent = get_prominent_npcs(world)
     lines.extend(["", "Prominent NPCs", "--------------"])
     if prominent:
         for npc in prominent:
@@ -180,10 +178,10 @@ def format_summary_timeline(world: World | None) -> str:
             )
     else:
         lines.append("- None yet.")
-    key_npcs = [npc for npc in world.npcs if npc.is_key_npc]
+    key_npc_list = get_key_npcs(world)
     lines.extend(["", "Key NPCs", "--------"])
-    if key_npcs:
-        for npc in key_npcs:
+    if key_npc_list:
+        for npc in key_npc_list:
             lines.append(
                 f"- {npc.name}: {npc.faction_tag}, key since {npc.key_npc_since or 'unknown'}"
             )

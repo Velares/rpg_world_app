@@ -7,6 +7,7 @@ from app.calendar import advance_days, append_timeline_entry, calendar_date
 from app.key_npcs import run_key_npc_interaction_phase
 from app.leads import add_lead
 from app.models import ActiveDowntimeTask, InventoryItem, World
+from app.shared import append_unique
 from app.table_loader import TableLoader
 
 
@@ -430,8 +431,7 @@ class DowntimeEngine:
 
     @staticmethod
     def _append_unique(values: list, value) -> None:
-        if value not in values:
-            values.append(value)
+        append_unique(values, value)
 
     def _format_outcome_text(
         self,

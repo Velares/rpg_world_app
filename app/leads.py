@@ -5,6 +5,7 @@ from collections import defaultdict
 
 from app.calendar import advance_time, append_timeline_entry
 from app.models import LeadRecord, World
+from app.shared import append_unique as _append_unique
 
 
 OPEN_LEAD_STATUSES = {"new", "active", "uncorroborated", "corroborated"}
@@ -435,10 +436,6 @@ def _location_for_lead(world: World, lead: LeadRecord):
             return location
     return None
 
-
-def _append_unique(values: list, value) -> None:
-    if value not in values:
-        values.append(value)
 
 
 def _normalize(value: str) -> str:

@@ -7,6 +7,16 @@ from tkinter import filedialog, messagebox, simpledialog, ttk
 from typing import Callable
 
 from app.calendar import age_band, format_calendar
+from app.shared import (
+    NO_WORLD_TEXT,
+    body_lines as _shared_body_lines,
+    bulleted_or_fallback as _shared_bulleted_or_fallback,
+    find_npc_by_id,
+    key_npcs as get_key_npcs,
+    numbered_or_fallback as _shared_numbered_or_fallback,
+    prominent_npcs as get_prominent_npcs,
+    seed_text,
+)
 from app.diary import (
     DIARY_SCOPES,
     entries_for_scope,
@@ -327,7 +337,7 @@ def format_world_recap(world: World | None) -> str:
             "WORLD RECAP\n"
             "===========\n"
             "Generate or load a world first."
-        )
+        )  # distinct title from NO_WORLD_TEXT
     player = world.player_state
     character = player.character
     character_line = (
@@ -344,20 +354,20 @@ def format_world_recap(world: World | None) -> str:
         for index in player.known_rumor_indices
         if index < len(world.settlement.rumors)
     ]
-    key_npcs = [npc for npc in world.npcs if npc.is_key_npc][:5]
-    prominent_npcs = [
-        npc for npc in world.npcs if npc.prominent and not npc.is_key_npc
+    key_npc_list = get_key_npcs(world)[:5]
+    prominent_npc_list = [
+        npc for npc in get_prominent_npcs(world) if not npc.is_key_npc
     ][:5]
     recent_events = player.event_log[-5:]
     faction_notes = [
         f"{tag}: {status}" for tag, status in sorted(world.faction_status_notes.items())
     ]
-    summary_lines = _body_lines(format_summary_timeline(world))
+    summary_lines = _shared_body_lines(format_summary_timeline(world))
     return "\n".join(
         [
             "WORLD RECAP",
             "===========",
-            f"Seed: {world.generation_seed or 'Random / not recorded'}",
+            f"Seed: {seed_text(world)}",
             f"Calendar: {format_calendar(player.day, player.time_period)}",
             f"Character: {character_line}",
             f"Current Location: {location_line}",
@@ -377,7 +387,7 @@ def format_world_recap(world: World | None) -> str:
                 f"Total Bulk {player.total_carried_bulk():g} | Equipped Bulk {player.equipped_bulk():g} | "
                 f"Encumbrance {player.encumbrance_state()}"
             ),
-            _bulleted_or_fallback(
+            _shared_bulleted_or_fallback(
                 equipped_slot_lines(player),
                 "No equipment slots recorded.",
             ),
@@ -396,11 +406,11 @@ def format_world_recap(world: World | None) -> str:
             "",
             "QUEST NOTES",
             "===========",
-            _bulleted_or_fallback(player.quest_log, "No quest notes recorded."),
+            _shared_bulleted_or_fallback(player.quest_log, "No quest notes recorded."),
             "",
             "KNOWN CLUES AND THREATS",
             "=======================",
-            _bulleted_or_fallback(
+            _shared_bulleted_or_fallback(
                 [
                     *known_rumors[:3],
                     *player.known_threats[:3],
@@ -410,34 +420,34 @@ def format_world_recap(world: World | None) -> str:
             "",
             "KEY NPCS",
             "========",
-            _bulleted_or_fallback(
+            _shared_bulleted_or_fallback(
                 [
                     f"{npc.name} [{npc.faction_tag}] - {npc.key_npc_reason or 'Important contact.'}"
-                    for npc in key_npcs
+                    for npc in key_npc_list
                 ],
                 "No key NPCs yet.",
             ),
             "",
             "OTHER PROMINENT NPCS",
             "====================",
-            _bulleted_or_fallback(
+            _shared_bulleted_or_fallback(
                 [
                     f"{npc.name} - {npc.prominence_notes or 'Recurring figure.'}"
-                    for npc in prominent_npcs
+                    for npc in prominent_npc_list
                 ],
                 "No additional prominent NPCs yet.",
             ),
             "",
             "FACTION AND RELATIONSHIP NOTES",
             "==============================",
-            _bulleted_or_fallback(
+            _shared_bulleted_or_fallback(
                 faction_notes,
                 "No faction or relationship notes recorded yet.",
             ),
             "",
             "RECENT IMPORTANT EVENTS",
             "=======================",
-            _numbered_or_fallback(recent_events, "No recent events recorded yet."),
+            _shared_numbered_or_fallback(recent_events, "No recent events recorded yet."),
             "",
             "DIARY HIGHLIGHTS",
             "================",
@@ -450,21 +460,10 @@ def format_world_recap(world: World | None) -> str:
     )
 
 
-def _body_lines(text: str) -> list[str]:
-    lines = text.splitlines()
-    if len(lines) <= 4:
-        return lines
-    return lines[4:] or lines
-
-
-def _bulleted_or_fallback(values: list[str], fallback: str) -> str:
-    return "\n".join(f"- {value}" for value in values if value) or fallback
-
-
-def _numbered_or_fallback(values: list[str], fallback: str) -> str:
-    return "\n".join(
-        f"{index}. {value}" for index, value in enumerate((value for value in values if value), 1)
-    ) or fallback
+# Aliases kept for any internal callers; now delegate to shared module.
+_body_lines = _shared_body_lines
+_bulleted_or_fallback = _shared_bulleted_or_fallback
+_numbered_or_fallback = _shared_numbered_or_fallback
 
 
 class LoadDialog(tk.Toplevel):
@@ -1550,7 +1549,7 @@ class RPGWorldApp(tk.Tk):
         return "\n\n".join(
             [
                 f"{world.name.upper()}\n{'=' * len(world.name)}",
-                f"Seed: {world.generation_seed or 'Random / not recorded'}",
+                f"Seed: {seed_text(world)}",
                 f"A {settlement.condition} {settlement.type} of {settlement.population} souls.",
                 f"Known threats: {threats}",
                 f"Lead: rumors point toward {world.dungeon.name}, but its truth is unknown.",
