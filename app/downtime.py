@@ -444,17 +444,20 @@ class DowntimeEngine:
         amount: int | None = None,
     ) -> str:
         clean_context = {key: value for key, value in context.items() if not key.startswith("_")}
-        return template.format(
-            task_name=active.name,
-            category=active.category,
-            days=days,
-            total_days=active.required_days,
-            progress_days=display_progress,
-            actual_progress_days=active.progress_days,
-            remaining_days=remaining,
-            amount=amount if amount is not None else "",
-            **clean_context,
-        )
+        try:
+            return template.format(
+                task_name=active.name,
+                category=active.category,
+                days=days,
+                total_days=active.required_days,
+                progress_days=display_progress,
+                actual_progress_days=active.progress_days,
+                remaining_days=remaining,
+                amount=amount if amount is not None else "",
+                **clean_context,
+            )
+        except KeyError:
+            return template
 
     @staticmethod
     def _format(
@@ -464,15 +467,18 @@ class DowntimeEngine:
         remaining: int,
         display_progress: int,
     ) -> str:
-        return template.format(
-            task_name=active.name,
-            category=active.category,
-            days=days,
-            total_days=active.required_days,
-            progress_days=display_progress,
-            actual_progress_days=active.progress_days,
-            remaining_days=remaining,
-        )
+        try:
+            return template.format(
+                task_name=active.name,
+                category=active.category,
+                days=days,
+                total_days=active.required_days,
+                progress_days=display_progress,
+                actual_progress_days=active.progress_days,
+                remaining_days=remaining,
+            )
+        except KeyError:
+            return template
 
     @staticmethod
     def _lead_category_for_task(active: ActiveDowntimeTask) -> str:

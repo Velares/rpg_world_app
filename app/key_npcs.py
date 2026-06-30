@@ -286,4 +286,7 @@ def _format_text(
     **context,
 ) -> str:
     template = tables.choose(table_name, category, rng)
-    return str(template).format(**context)
+    try:
+        return str(template).format(**context)
+    except KeyError:
+        return str(template)

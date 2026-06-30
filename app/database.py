@@ -11,7 +11,12 @@ class Database:
     def __init__(self, path: Path):
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.connection = sqlite3.connect(self.path)
+        try:
+            self.connection = sqlite3.connect(self.path)
+        except sqlite3.Error as exc:
+            raise RuntimeError(
+                f"Could not open database at {self.path}: {exc}"
+            ) from exc
         self.connection.row_factory = sqlite3.Row
         self.initialize_schema()
 
@@ -159,7 +164,12 @@ class Database:
         ).fetchone()
         if row is None:
             raise KeyError(f"No saved world with id {world_id}")
-        data = json.loads(row["data_json"])
+        try:
+            data = json.loads(row["data_json"])
+        except json.JSONDecodeError as exc:
+            raise ValueError(
+                f"Save data for world {world_id} is corrupt: {exc}"
+            ) from exc
         data["world_id"] = world_id
         return World.from_dict(data)
 
