@@ -287,8 +287,8 @@ def _get_app_diagnostics() -> dict[str, str | bool]:
         "working_directory": str(Path.cwd()),
         "combat_projection_exists": (root / "data" / "import_reports" / "monster_combat_projection.json").exists(),
         "staging_preview_exists": (root / "data" / "import_reports" / "monster_corrected_staging_preview.json").exists(),
-        "monster_editor_registered": "Monster Editor" in SHARED_ACTIONS or "Monster Editor" in EDITOR_TOOLS_ACTIONS,
-        "editors_registered": "Editors" in SHARED_ACTIONS or "Editors" in EDITOR_TOOLS_ACTIONS,
+        "monster_editor_registered": "Monster Editor" in SHARED_ACTIONS and "Monster Editor" in EDITOR_TOOLS_ACTIONS,
+        "editors_registered": "Editors" in SHARED_ACTIONS and "Editors" in EDITOR_TOOLS_ACTIONS,
     }
 
 
