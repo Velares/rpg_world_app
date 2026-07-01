@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import re
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -13,9 +15,11 @@ from app.monster_classification import (
     validate_affinities_against_options,
 )
 from tools.importers.monster_classification_suggestions import (
+    _get_corrected_value,
     _keyword_map,
     _keyword_suggestions,
     _missing_or_unknown,
+    _record_title_text,
     _text_contains_keyword,
     generate_suggestions,
     suggest_for_record,
@@ -213,6 +217,17 @@ class SuggestionToolTests(unittest.TestCase):
                 self.assertIn("confidence", suggestion)
                 self.assertIn("reason", suggestion)
 
+    def test_inventory_reflects_current_suggestion_report(self) -> None:
+        suggestions = generate_suggestions()
+        inventory = build_inventory()
+        files = [record["file"] for record in inventory["by_domain"].get("monster catalogs/import previews/review data", [])]
+        self.assertIn("monster_classification_suggestions.json", files)
+        text = format_report(inventory)
+        self.assertIn("monster_classification_suggestions", text)
+        # The inventory should be regenerable after suggestions without error and
+        # should pick up the report file that exists now.
+        self.assertGreater(inventory["total_files"], 0)
+
     def test_suggestions_write_outputs(self) -> None:
         suggestions = generate_suggestions()
         json_path = PROJECT_ROOT / "data" / "import_reports" / "monster_classification_suggestions_test.json"
@@ -249,6 +264,50 @@ class KeywordMatchingTests(unittest.TestCase):
         self.assertTrue(_text_contains_keyword("Shambling Mound", "shambling mound"))
         self.assertFalse(_text_contains_keyword("Shambling", "shambling mound"))
         self.assertTrue(_text_contains_keyword("Animated Statue", "animated statue"))
+
+    def test_record_title_text_combines_name_display_name_and_canonical_name(self) -> None:
+        record = {
+            "id": "r1",
+            "display_name": "Giant Eagle",
+            "canonical_name": "Roc Lord",
+            "source_id": "test",
+        }
+        title = _record_title_text(record)
+        self.assertIn("Giant Eagle", title)
+        self.assertIn("Roc Lord", title)
+
+    def test_title_evidence_works_with_display_name_and_no_name(self) -> None:
+        record = {
+            "id": "r1",
+            "display_name": "Giant Frog",
+            "canonical_name": "Toad Beast",
+            "source_id": "test",
+        }
+        suggestions = suggest_for_record(record)
+        monster_type = suggestions["suggestions"]["monster_type"]["suggested_value"]
+        self.assertIn(monster_type, ("amphibian", "animal"))
+
+    def test_clear_title_evidence_can_produce_medium_or_high_confidence(self) -> None:
+        record = {
+            "id": "r1",
+            "display_name": "Skeleton Warrior",
+            "source_id": "test",
+        }
+        suggestions = suggest_for_record(record)
+        suggestion = suggestions["suggestions"]["monster_type"]
+        self.assertEqual(suggestion["suggested_value"], "undead")
+        self.assertIn(suggestion["confidence"], ("medium", "high"))
+
+    def test_golem_title_prioritizes_construct(self) -> None:
+        options = load_classification_options()
+        keyword_map = _keyword_map()
+        description = "This fiery being resembles a living elemental."
+        result = _keyword_suggestions("Iron Golem", description, keyword_map, options)
+        types = [value for value, _affinity, _location in result.get("monster_type", [])]
+        self.assertEqual(types[0], "construct")
+        self.assertNotIn("elemental", types)
+        self.assertNotIn("dragon", types)
+        self.assertNotIn("undead", types)
 
     def test_golem_name_suggests_construct_not_insect(self) -> None:
         options = load_classification_options()
@@ -320,6 +379,79 @@ class KeywordMatchingTests(unittest.TestCase):
         self.assertNotIn("insect", types)
         self.assertNotIn("plant", types)
 
+    def test_giant_animal_title_uses_creature_noun_not_giant(self) -> None:
+        for name, expected in (
+            ("Giant Crab", "aquatic"),
+            ("Giant Leech", "worm"),
+            ("Giant Mosquito", "insect"),
+        ):
+            with self.subTest(name=name):
+                record = {"id": name, "name": name, "display_name": name, "source_id": "test"}
+                suggestions = suggest_for_record(record)
+                monster_type = suggestions["suggestions"]["monster_type"]["suggested_value"]
+                self.assertEqual(monster_type, expected)
+
+    def test_fire_toad_prioritizes_amphibian(self) -> None:
+        record = {"id": "firetoad", "name": "Fire Toad", "display_name": "Fire Toad", "source_id": "test"}
+        suggestions = suggest_for_record(record)
+        monster_type = suggestions["suggestions"]["monster_type"]["suggested_value"]
+        self.assertEqual(monster_type, "amphibian")
+        # Fire can influence placement/terrain but not as the primary environment.
+        env_value = suggestions["suggestions"]["environment"]["suggested_value"]
+        self.assertIn(env_value, ("swamp", "river", "lake", "forest"))
+
+    def test_fungal_ant_preserves_insect_and_fungus_over_undead(self) -> None:
+        record = {
+            "id": "fungalant",
+            "name": "Fungal Ant",
+            "display_name": "Fungal Ant",
+            "source_id": "test",
+        }
+        suggestions = suggest_for_record(record)
+        types = {suggestions["suggestions"]["monster_type"]["suggested_value"]}
+        for alt in suggestions["suggestions"]["monster_type"].get("alternatives", []):
+            types.add(alt["value"])
+        self.assertTrue({"insect", "fungus"} & types)
+        self.assertNotIn("undead", types)
+
+    def test_corrections_are_normalized_to_lowercase_options(self) -> None:
+        options = load_classification_options()
+        corrections = {
+            "corrections": {
+                "normalized.test.toad": {
+                    "fields": {
+                        "monster_type": {
+                            "corrected_value": "Animal",
+                            "previous_value": "unknown",
+                            "updated_at": "2026-01-01T00:00:00+00:00",
+                            "reviewer": "example",
+                        }
+                    }
+                }
+            }
+        }
+        value = _get_corrected_value(corrections, "normalized.test.toad", "monster_type", options)
+        self.assertEqual(value, "animal")
+
+    def test_invalid_corrections_are_rejected(self) -> None:
+        options = load_classification_options()
+        corrections = {
+            "corrections": {
+                "normalized.test.toad": {
+                    "fields": {
+                        "monster_type": {
+                            "corrected_value": "not_a_real_type",
+                            "previous_value": "unknown",
+                            "updated_at": "2026-01-01T00:00:00+00:00",
+                            "reviewer": "example",
+                        }
+                    }
+                }
+            }
+        }
+        value = _get_corrected_value(corrections, "normalized.test.toad", "monster_type", options)
+        self.assertIsNone(value)
+
     def test_added_option_values_are_present(self) -> None:
         options = load_classification_options()
         for value in (
@@ -347,6 +479,74 @@ class KeywordMatchingTests(unittest.TestCase):
     def test_aerial_is_not_a_monster_type_in_affinities(self) -> None:
         affinities = load_classification_affinities()
         self.assertNotIn("aerial", affinities.monster_type_affinities)
+
+
+class ReviewDataTrackingTests(unittest.TestCase):
+    def test_gitignore_ignores_import_review_json_but_allows_examples(self) -> None:
+        gitignore = PROJECT_ROOT / ".gitignore"
+        self.assertTrue(gitignore.exists())
+        text = gitignore.read_text(encoding="utf-8")
+        self.assertIn("data/import_reviews/*.json", text)
+        self.assertIn("!data/import_reviews/*.example.json", text)
+
+    def test_real_review_json_not_tracked_by_git(self) -> None:
+        result = subprocess.run(
+            ["git", "ls-files", "data/import_reviews/*.json"],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        tracked = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+        for path in tracked:
+            self.assertTrue(
+                path.endswith(".example.json"),
+                f"tracked review file is not an example template: {path}",
+            )
+
+    def test_example_review_templates_are_tracked(self) -> None:
+        for name in (
+            "monster_canonical_group_decisions.example.json",
+            "monster_normalized_field_corrections.example.json",
+        ):
+            path = PROJECT_ROOT / "data" / "import_reviews" / name
+            self.assertTrue(path.exists(), f"missing example template: {name}")
+            result = subprocess.run(
+                ["git", "ls-files", f"data/import_reviews/{name}"],
+                cwd=PROJECT_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertIn(
+                f"data/import_reviews/{name}",
+                result.stdout,
+                f"example template {name} should be tracked",
+            )
+
+    def test_example_review_templates_are_sanitized(self) -> None:
+        for name in (
+            "monster_canonical_group_decisions.example.json",
+            "monster_normalized_field_corrections.example.json",
+        ):
+            path = PROJECT_ROOT / "data" / "import_reviews" / name
+            self.assertTrue(path.exists())
+            text = path.read_text(encoding="utf-8")
+            # No absolute local paths (Windows-style drive letters or home dirs).
+            self.assertNotRegex(text, r"[A-Za-z]:\\")
+            self.assertNotIn("local_user", text)
+            # Only fake example reviewer.
+            self.assertIn("example_reviewer", text)
+            # All example corrected values should be lowercase controlled options.
+            data = json.loads(text)
+            corrections = data.get("corrections", {})
+            for record_id, correction in corrections.items():
+                if "example" not in record_id:
+                    continue
+                for field, field_correction in correction.get("fields", {}).items():
+                    value = field_correction.get("corrected_value", "")
+                    self.assertIsInstance(value, str)
+                    self.assertEqual(value, value.lower())
 
 
 class SafetyTests(unittest.TestCase):

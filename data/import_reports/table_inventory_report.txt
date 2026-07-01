@@ -2,7 +2,7 @@ Table Inventory Report
 ======================
 
 Project root: C:\Users\chrismata\CascadeProjects\rpg_world_app
-Files scanned: 29
+Files scanned: 31
 
 Generated report files are NOT intended for manual editing.
 User-editable tables live under data/tables/.
@@ -456,11 +456,10 @@ monster_canonical_group_candidates.json  [import data]
   referenced by: app\monster_import_review.py, tests\test_monster_canonical_group_candidates.py, tools\importers\monster_canonical_group_candidates.py
 
 monster_classification_suggestions.json  [import data]
+  NOTE: generated report; do not edit manually
   - suggestions
-    entries: 487
+    entries: 452
     fields: display_name, record_id, source_id, suggestions
-    duplicate ids: normalized.megadungeon_monster_manual.greater
-  WARNING: suggestions: duplicate ids: normalized.megadungeon_monster_manual.greater
   referenced by: app\gui.py, tests\test_table_inventory_and_classification.py, tools\importers\monster_classification_suggestions.py
 
 monster_combat_projection.json  [import data]
@@ -496,8 +495,17 @@ table_inventory.json  [import data]
   WARNING: warnings: empty table
   referenced by: tests\test_table_inventory_and_classification.py, tools\report_table_inventory.py
 
+monster_canonical_group_decisions.example.json  [review data]
+  referenced by: tests\test_table_inventory_and_classification.py
+
 monster_canonical_group_decisions.json  [review data]
-  referenced by: app\monster_import_review.py
+  referenced by: app\monster_import_review.py, tests\test_table_inventory_and_classification.py
+
+monster_normalized_field_corrections.example.json  [review data]
+  - source_reports
+    entries: 2
+    type: text list
+  referenced by: tests\test_table_inventory_and_classification.py
 
 monster_normalized_field_corrections.json  [review data]
   - source_reports

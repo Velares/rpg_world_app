@@ -9,3 +9,5 @@ venv/
 .vscode/
 import_work/
 data/import_sources/
+data/import_reviews/*.json
+!data/import_reviews/*.example.json

@@ -68,6 +68,41 @@ history is the more reliable source.
 - Confirmed no live catalog JSON modification, no preview/staging/combat
   projection modification, no correction store writes, no record merging, no
   importer behavior changes, and no PDFs added.
+- Cleaned up v0.8.24 review data tracking:
+  - removed `data/import_reviews/monster_canonical_group_decisions.json` and
+    `data/import_reviews/monster_normalized_field_corrections.json` from Git
+    tracking while preserving local copies;
+  - added `.gitignore` rules to ignore `data/import_reviews/*.json` and allow
+    `data/import_reviews/*.example.json`;
+  - created sanitized `.example.json` templates with fake records, no absolute
+    local paths, no real timestamps, and `example_reviewer` only.
+- Fixed title/name evidence in `tools/importers/monster_classification_suggestions.py`:
+  - `_record_title_text` now combines `name`, `display_name`, `canonical_name`,
+    and nested `effective` values so real normalized records receive title-level
+    confidence;
+  - added deterministic priority rules for `golem` (construct wins), `giant crab`
+    / `giant leech` / `giant mosquito` (creature noun wins), `fire toad`
+    (amphibian stays primary), and `fungal ant` (insect/fungus preserved over
+    unrelated undead).
+- Added `aquatic` keyword mapping and `fire` placement keywords so fire toad and
+  giant aquatic creatures resolve without overbuilding a taxonomy engine.
+- Normalized corrected classification values to lowercase controlled options and
+  rejected invalid corrections before they could influence suggestions.
+- Added affinity evidence source `title` for keyword-derived types so their
+  placement affinities outrank raw keyword ties without claiming corrected-level
+  certainty.
+- Regenerated `data/import_reports/monster_classification_suggestions.json` and
+  `data/import_reports/monster_classification_suggestions_report.txt` (1307
+  suggestions across 452 records), then regenerated
+  `data/import_reports/table_inventory.json` and
+  `data/import_reports/table_inventory_report.txt` (31 files scanned).
+- Updated `tests/test_table_inventory_and_classification.py` with review-data
+  tracking, title-evidence, priority, correction normalization, and inventory
+  reflection tests; 391 total tests passing after the cleanup commit.
+- Confirmed no live catalog JSON modification, no preview/staging/combat
+  projection modification except intended reports, no correction store writes,
+  no record merging, no importer behavior changes, and no PDFs or
+  `data/saves/worlds.db` committed.
 
 ## v0.8.23 - Controlled Monster Classification Dropdowns and Suggestions
 

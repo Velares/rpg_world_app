@@ -99,8 +99,8 @@ Placeholder and mapping policy for that future normalized layer:
 
 ## Latest completed work
 
-Version 0.8.24 tightens monster classification vocabulary and suggestion
-confidence on `main`:
+Version 0.8.24 on `main` includes the tightened classification vocabulary and a
+subsequent cleanup/fix pass:
 
 - Expanded `data/tables/monster_classification_options.json` with new monster
   types (avian, fish, worm, shapechanger, lycanthrope, celestial, vermin),
@@ -121,21 +121,39 @@ confidence on `main`:
   words, golems as insects, lichens as undead).
 - Confidence now depends on match location (name vs description) and evidence
   source (corrected vs imported/generated monster type). Imported/generated types
-  cap affinity-derived confidence to `low`.
+  cap affinity-derived confidence to `low`; title-derived keyword types now use
+  their own `title` evidence level for placement affinities.
 - Suggestions preserve confidence ties as `alternatives` and include a reason
   for every candidate.
 - Added a `suggest_for_record` helper and chained keyword-suggested types to
   affinity-derived placement suggestions when no imported/corrected type exists.
+- Cleaned up review data tracking:
+  - removed committed `data/import_reviews/*.json` from Git while keeping local
+    copies;
+  - added `.gitignore` rules to ignore `data/import_reviews/*.json` and allow
+    `data/import_reviews/*.example.json`;
+  - created sanitized `.example.json` templates with fake records only.
+- Fixed title/name evidence so `display_name`, `canonical_name`, and nested
+  `effective` values are used in addition to `name`.
+- Added deterministic priority rules for `golem`, `giant crab`, `giant leech`,
+  `giant mosquito`, `fire toad`, and `fungal ant` without building a taxonomy
+  engine.
+- Normalized corrected classification values to lowercase controlled options and
+  rejected invalid values before they could influence suggestions.
+- Marked `monster_classification_suggestions.json` and `.txt` as generated reports
+  in the table inventory.
 - Regenerated reports:
-  - `data/import_reports/table_inventory.json` and `.txt`
+  - `data/import_reports/table_inventory.json` and `.txt` (31 files scanned)
   - `data/import_reports/monster_classification_suggestions.json` and `.txt`
-- Current suggestion run: 1049 suggestions across 438 records.
-- Validation: 377 passing `unittest` tests, `compileall`, `validate_sources.py`,
-  `monster_import_status.py`, `report_table_inventory.py`, and
-  `monster_classification_suggestions.py` all completed cleanly.
+    (1307 suggestions across 452 records)
+- Validation: 391 passing `unittest` tests after the cleanup commit,
+  `compileall`, `validate_sources.py`, `monster_import_status.py`,
+  `report_table_inventory.py`, and `monster_classification_suggestions.py` all
+  completed cleanly.
 - Safety: no live catalog JSON changes, no preview/staging/combat projection
-  changes, no correction store writes, no record merging, no importer behavior
-  changes, and no PDFs added.
+  changes except intended regenerated reports, no correction store writes, no
+  record merging, no importer behavior changes, and no PDFs or
+  `data/saves/worlds.db` committed.
 
 Version 0.8.23 adds controlled monster classification dropdowns and a
 conservative suggestion pass on `main`:

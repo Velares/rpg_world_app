@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import json
 import re
@@ -84,7 +84,7 @@ def _keyword_map() -> dict[str, dict[str, list[str]]]:
             "river": ["river"],
             "lake": ["lake"],
             "sea": ["sea"],
-            "volcanic": ["volcano", "volcanic", "lava"],
+            "volcanic": ["volcano", "volcanic", "lava", "fire"],
             "shadow": ["shadow"],
             "faerie": ["faerie", "fae"],
         },
@@ -102,7 +102,7 @@ def _keyword_map() -> dict[str, dict[str, list[str]]]:
             "snow": ["snow"],
             "sand": ["sand"],
             "dune": ["dune"],
-            "lava": ["lava"],
+            "lava": ["lava", "fire"],
             "burrow": ["burrow"],
             "reef": ["reef"],
             "canopy": ["canopy"],
@@ -127,6 +127,7 @@ def _keyword_map() -> dict[str, dict[str, list[str]]]:
         },
         "monster_type": {
             "undead": ["undead", "zombie", "skeleton", "ghoul", "wight", "ghost", "vampire", "lich", "mummy", "spectre", "phantom", "wraith"],
+            "aquatic": ["crab", "lobster"],
             "fish": ["fish", "shark", "eel", "squid", "octopus"],
             "amphibian": ["frog", "toad", "newt", "salamander"],
             "avian": ["bird", "eagle", "harpy", "roc"],
@@ -136,11 +137,11 @@ def _keyword_map() -> dict[str, dict[str, list[str]]]:
             "elemental": ["elemental"],
             "plant": ["plant", "vine", "shambling mound", "lichen", "creeper", "moss"],
             "fungus": ["fungus", "fungal", "mold", "spore", "mycelium"],
-            "insect": ["insect", "beetle", "ant", "wasp", "bee"],
+            "insect": ["insect", "beetle", "ant", "wasp", "bee", "mosquito"],
             "arachnid": ["spider", "scorpion", "tick"],
             "giant": ["giant", "troll", "ogre", "cyclops"],
             "humanoid": ["humanoid", "goblin", "orc", "hobgoblin", "kobold"],
-            "worm": ["worm", "wurm"],
+            "worm": ["worm", "wurm", "leech"],
             "vermin": ["vermin"],
             "shapechanger": ["shapechanger", "shapeshifter"],
             "lycanthrope": ["lycanthrope", "werewolf", "werebear", "weretiger"],
@@ -156,6 +157,29 @@ def _missing_or_unknown(value: Any) -> bool:
         return True
     text = str(value).strip()
     return not text or text.casefold() == "unknown"
+
+
+def _record_title_text(record: dict[str, Any]) -> str:
+    """Return a single title/name string for keyword matching.
+
+    Real normalized/staged records may use ``display_name`` or ``canonical_name``
+    instead of (or in addition to) ``name``. Synthetic test records may rely on
+    ``name`` alone. Effective/derived records can also nest the name under an
+    ``effective`` object. We concatenate all available sources, separated by spaces,
+    so that title evidence works for every supported record shape.
+    """
+    parts: list[str] = []
+    for key in ("name", "display_name", "canonical_name"):
+        value = record.get(key)
+        if value and str(value).strip():
+            parts.append(str(value).strip())
+    effective = record.get("effective") or {}
+    if isinstance(effective, dict):
+        for key in ("display_name", "canonical_name", "name"):
+            value = effective.get(key)
+            if value and str(value).strip():
+                parts.append(str(value).strip())
+    return " ".join(parts)
 
 
 _WORD_BOUNDARY_RE_CACHE: dict[str, re.Pattern[str]] = {}
@@ -218,14 +242,32 @@ def _load_preview_records(
 
 
 def _get_corrected_value(
-    corrections: dict[str, Any], record_id: str, field: str
+    corrections: dict[str, Any],
+    record_id: str,
+    field: str,
+    options: ClassificationOptions | None = None,
 ) -> str | None:
-    """Return the corrected value for a field if one exists, otherwise None."""
+    """Return the corrected value for a field if one exists and is valid.
+
+    Corrected classification values are normalized to lowercase and accepted
+    only when they exist in the controlled options. Invalid corrections are
+    ignored so they cannot corrupt suggestions.
+    """
     entry = corrections.get("corrections", {}).get(record_id, {})
     field_correction = entry.get("fields", {}).get(field)
-    if field_correction:
-        return str(field_correction.get("corrected_value", "")).strip() or None
-    return None
+    if not field_correction:
+        return None
+    raw = str(field_correction.get("corrected_value", "")).strip()
+    if not raw:
+        return None
+    if field in CLASSIFICATION_FIELDS and options:
+        option_key = field + "s" if field != "monster_type" else "monster_types"
+        allowed = {v.casefold(): v for v in options.get(option_key)}
+        normalized = raw.casefold()
+        if normalized in allowed:
+            return allowed[normalized]
+        return None
+    return raw
 
 
 def _affinity_suggestions(
@@ -243,36 +285,56 @@ def _affinity_suggestions(
     return result
 
 
-def _keyword_suggestions(
-    name: str,
+def _description_has_undead_evidence(description: str, keyword_map: dict[str, dict[str, list[str]]]) -> bool:
+    """Return True if the description explicitly contains undead keywords."""
+    undead_keywords = keyword_map.get("monster_type", {}).get("undead", [])
+    return any(_text_contains_keyword(description, kw) for kw in undead_keywords)
+
+
+def _apply_title_priority_rules(
+    result: dict[str, list[tuple[str, str, str]]],
+    title_text: str,
     description: str,
     keyword_map: dict[str, dict[str, list[str]]],
-    options: ClassificationOptions,
 ) -> dict[str, list[tuple[str, str, str]]]:
-    """Return keyword-based suggestions for each classification field.
+    """Apply narrow, deterministic priority rules to keyword candidates.
 
-    Each candidate is a tuple of (value, affinity, location). ``location`` is
-    either ``"name"`` or ``"description"`` and is used later to set confidence.
-
-    "Giant" is treated as a size prefix: if the name also contains a more
-    specific monster_type keyword, the generic ``giant`` match is dropped so that
-    "Giant Ant" suggests ``insect`` rather than ``giant``.
+    These rules are intentionally conservative and only override obviously
+    weaker candidates. They do not build a full taxonomy engine.
     """
-    result: dict[str, list[tuple[str, str, str]]] = defaultdict(list)
-    name_hits = _keyword_matches_in_text(name, keyword_map, options)
-    description_hits = _keyword_matches_in_text(description, keyword_map, options)
-    for field in keyword_map:
-        for value, affinity in name_hits.get(field, []):
-            result[field].append((value, affinity, "name"))
-        for value, affinity in description_hits.get(field, []):
-            # Only record description hits if the same value was not already
-            # matched in the name, to avoid double-counting.
-            name_values = {v for v, _ in name_hits.get(field, [])}
-            if value not in name_values:
-                result[field].append((value, affinity, "description"))
+    title_lower = title_text.lower()
+    monster_hits = {value for value, _affinity, _location in result.get("monster_type", [])}
 
-    # Drop "giant" as a monster type when the name also carries a more specific
-    # creature keyword (e.g. Giant Frog, Giant Eel, Giant Eagle, Giant Ant).
+    # Golem title: construct outranks elemental/dragon/undead unless stronger text
+    # explicitly says otherwise. The title itself is the strong text here.
+    if "golem" in title_lower and "construct" in monster_hits:
+        result["monster_type"] = [
+            (value, affinity, location)
+            for value, affinity, location in result["monster_type"]
+            if value not in ("elemental", "dragon", "undead")
+        ]
+
+    # Fire toad: amphibian stays primary; fire/elemental may influence placement
+    # or appear as alternatives, but it should not override toad.
+    if "toad" in title_lower and "amphibian" in monster_hits:
+        result["monster_type"] = [
+            (value, affinity, location)
+            for value, affinity, location in result["monster_type"]
+            if value != "elemental"
+        ]
+
+    # Fungal ant: preserve insect/fungus candidates over unrelated undead unless
+    # the description explicitly mentions undead evidence.
+    if "fungal" in title_lower and "ant" in title_lower:
+        if not _description_has_undead_evidence(description, keyword_map):
+            result["monster_type"] = [
+                (value, affinity, location)
+                for value, affinity, location in result["monster_type"]
+                if value != "undead"
+            ]
+
+    # Giant as a size prefix: if the title also carries a more specific creature
+    # keyword, drop the generic giant match (e.g. Giant Crab, Giant Leech).
     if "giant" in {value for value, _affinity, _location in result.get("monster_type", [])}:
         specific_hits = {
             value
@@ -286,6 +348,36 @@ def _keyword_suggestions(
                 if value != "giant"
             ]
     return result
+
+
+def _keyword_suggestions(
+    title_text: str,
+    description: str,
+    keyword_map: dict[str, dict[str, list[str]]],
+    options: ClassificationOptions,
+) -> dict[str, list[tuple[str, str, str]]]:
+    """Return keyword-based suggestions for each classification field.
+
+    Each candidate is a tuple of (value, affinity, location). ``location`` is
+    either ``"name"`` or ``"description"`` and is used later to set confidence.
+    ``title_text`` combines ``name``, ``display_name``, ``canonical_name``, and
+    any nested ``effective`` values so that real normalized records receive
+    title-level confidence.
+    """
+    result: dict[str, list[tuple[str, str, str]]] = defaultdict(list)
+    title_hits = _keyword_matches_in_text(title_text, keyword_map, options)
+    description_hits = _keyword_matches_in_text(description, keyword_map, options)
+    for field in keyword_map:
+        for value, affinity in title_hits.get(field, []):
+            result[field].append((value, affinity, "name"))
+        for value, affinity in description_hits.get(field, []):
+            # Only record description hits if the same value was not already
+            # matched in the title, to avoid double-counting.
+            title_values = {v for v, _ in title_hits.get(field, [])}
+            if value not in title_values:
+                result[field].append((value, affinity, "description"))
+
+    return _apply_title_priority_rules(result, title_text, description, keyword_map)
 
 
 CONFIDENCE_BY_AFFINITY: dict[str, str] = {
@@ -302,24 +394,30 @@ def _affinity_to_confidence(affinity: str, evidence_source: str = "imported") ->
     """Map an affinity value to a suggestion confidence.
 
     Affinities derived from a user-corrected monster_type are stronger evidence
-    than those derived from an imported/generated value.
+    than those derived from an imported/generated value. A keyword-derived type
+    that came from the title/name is stronger than imported but weaker than
+    corrected.
     """
     base = CONFIDENCE_BY_AFFINITY.get(affinity, "low")
     if evidence_source == "corrected" and base == "low":
         return "medium"
-    if evidence_source == "imported" and base in ("high", "medium"):
-        # Imported/generated monster_type is uncertain provenance, so cap it.
-        return "low"
+    if evidence_source == "title" and base in ("always", "usually"):
+        return "medium"
+    if evidence_source in ("imported", "title") and base == "high":
+        # Imported/generated/title types are strong but not definitive.
+        return "medium"
     return base
 
 
 def _keyword_to_confidence(
-    field: str, value: str, location: str, name: str
+    field: str, value: str, location: str, title_text: str
 ) -> str:
     """Map a keyword hit location to a suggestion confidence."""
     if location == "name":
         high_keywords = _HIGH_CONFIDENCE_NAME_KEYWORDS.get(field, {}).get(value, [])
-        if high_keywords and any(_text_contains_keyword(name, keyword) for keyword in high_keywords):
+        if high_keywords and any(
+            _text_contains_keyword(title_text, keyword) for keyword in high_keywords
+        ):
             return "high"
         return "medium"
     # description-only matches are low-confidence hints
@@ -363,10 +461,10 @@ def _suggest_for_record(
     display_name = record.get("display_name", "Unknown")
     source_id = record.get("source_id", "unknown")
     description = record.get("description", "")
-    name = record.get("name", "")
+    title_text = _record_title_text(record)
 
     corrected_monster_type = _get_corrected_value(
-        corrections, record_id, "monster_type"
+        corrections, record_id, "monster_type", options
     )
     imported_monster_type = record.get("monster_type", "unknown")
     current_monster_type = corrected_monster_type or imported_monster_type
@@ -379,14 +477,19 @@ def _suggest_for_record(
         "suggestions": {},
     }
 
-    # Keyword-based suggestions from name/description, treated separately.
-    keyword_candidates = _keyword_suggestions(name, description, keyword_map, options)
+    # Keyword-based suggestions from title/name/description, treated separately.
+    keyword_candidates = _keyword_suggestions(
+        title_text, description, keyword_map, options
+    )
 
     # If the imported/corrected type is unknown, use a keyword-suggested type
     # as a weak basis for affinity-based placement suggestions. This lets a
     # name like "Giant Frog" produce both monster_type: amphibian and the
-    # marsh/swamp placement that follows from amphibian affinities.
+    # marsh/swamp placement that follows from amphibian affinities. Keyword types
+    # matched in the title/name are treated as stronger evidence than types only
+    # seen in the description.
     affinity_type = current_monster_type
+    affinity_evidence_source = type_evidence_source
     if _missing_or_unknown(current_monster_type):
         keyword_type_hits = keyword_candidates.get("monster_type", [])
         if keyword_type_hits:
@@ -394,15 +497,21 @@ def _suggest_for_record(
             best = sorted(
                 keyword_type_hits,
                 key=lambda x: (
-                    confidence_order.index(_keyword_to_confidence("monster_type", x[0], x[2], name))
-                    if _keyword_to_confidence("monster_type", x[0], x[2], name) in confidence_order
+                    confidence_order.index(
+                        _keyword_to_confidence("monster_type", x[0], x[2], title_text)
+                    )
+                    if _keyword_to_confidence("monster_type", x[0], x[2], title_text)
+                    in confidence_order
                     else 99,
                     -ord(x[0][0]),
                 ),
             )[0]
-            best_confidence = _keyword_to_confidence("monster_type", best[0], best[2], name)
+            best_confidence = _keyword_to_confidence(
+                "monster_type", best[0], best[2], title_text
+            )
             if best_confidence in ("high", "medium"):
                 affinity_type = best[0]
+                affinity_evidence_source = "title" if best[2] == "name" else "imported"
 
     # Affinity-based suggestions derived from the current monster type.
     affinity_candidates: dict[str, list[tuple[str, str]]] = {}
@@ -414,43 +523,49 @@ def _suggest_for_record(
     total_suggestions = 0
     for field in CLASSIFICATION_FIELDS:
         # Do not suggest if the user has already corrected this field.
-        if _get_corrected_value(corrections, record_id, field):
+        if _get_corrected_value(corrections, record_id, field, options):
             continue
 
         current_value = record.get(field, "unknown")
         if not _missing_or_unknown(current_value):
             continue
 
-        candidates: list[tuple[str, str, str]] = []
+        # Candidate tuples: (value, confidence, reason, source). ``source`` is used
+        # only for tie-breaking so that affinity-derived placement outranks a raw
+        # keyword tie at the same confidence (e.g. amphibian swamp vs. fire volcanic).
+        candidates: list[tuple[str, str, str, str]] = []
         for value, affinity in affinity_candidates.get(field, []):
-            confidence = _affinity_to_confidence(affinity, type_evidence_source)
-            reason = (
-                f"affinity from corrected monster_type '{current_monster_type}'"
-                if type_evidence_source == "corrected"
-                else f"affinity from imported monster_type '{current_monster_type}'"
-            )
-            candidates.append((value, confidence, reason))
+            confidence = _affinity_to_confidence(affinity, affinity_evidence_source)
+            if affinity_evidence_source == "corrected":
+                reason = f"affinity from corrected monster_type '{affinity_type}'"
+            elif affinity_evidence_source == "title":
+                reason = f"affinity from title-derived monster_type '{affinity_type}'"
+            else:
+                reason = f"affinity from imported monster_type '{affinity_type}'"
+            candidates.append((value, confidence, reason, "affinity"))
         for value, _affinity, location in keyword_candidates.get(field, []):
-            confidence = _keyword_to_confidence(field, value, location, name)
+            confidence = _keyword_to_confidence(field, value, location, title_text)
             reason = f"keyword match in {location}"
-            candidates.append((value, confidence, reason))
+            candidates.append((value, confidence, reason, "keyword"))
 
         if not candidates:
             continue
 
         # Prefer the highest-confidence candidate. Preserve ties as alternatives.
         confidence_order = ("high", "medium", "low", "very_low")
+        source_order = {"affinity": 0, "keyword": 1}
         ordered = sorted(
             candidates,
             key=lambda x: (
                 confidence_order.index(x[1]) if x[1] in confidence_order else 99,
+                source_order.get(x[3], 99),
                 -ord(x[0][0]),
             ),
         )
-        chosen_value, chosen_confidence, chosen_reason = ordered[0]
+        chosen_value, chosen_confidence, chosen_reason, _chosen_source = ordered[0]
         alternatives = [
             {"value": value, "confidence": confidence, "reason": reason}
-            for value, confidence, reason in ordered[1:]
+            for value, confidence, reason, _source in ordered[1:]
             if confidence == chosen_confidence
         ]
         total_suggestions += 1

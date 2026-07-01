@@ -108,6 +108,8 @@ GENERATED_REPORT_FILES: set[str] = {
     "monster_corrected_staging_preview_report.txt",
     "monster_combat_projection.json",
     "monster_combat_projection_report.txt",
+    "monster_classification_suggestions.json",
+    "monster_classification_suggestions_report.txt",
 }
 
 

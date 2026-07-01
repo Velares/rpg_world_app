@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "source_report": "data/import_reports/monster_canonical_group_candidates.json",
+  "decisions": {
+    "cg_example_fake": {
+      "decision": "approved",
+      "notes": "Example only. Replace with real decisions locally; do not commit actual review data.",
+      "updated_at": "2026-01-01T00:00:00+00:00",
+      "reviewer": "example_reviewer"
+    }
+  }
+}

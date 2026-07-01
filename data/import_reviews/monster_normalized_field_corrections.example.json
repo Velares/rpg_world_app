@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "source_reports": [
+    "data/import_reports/mandbmaster_normalized_monster_preview.json",
+    "data/import_reports/megadungeon_normalized_monster_preview.json"
+  ],
+  "corrections": {
+    "normalized.example_source.example_record": {
+      "fields": {
+        "monster_type": {
+          "corrected_value": "animal",
+          "previous_value": "unknown",
+          "notes": "Example correction only. Keep real corrections local; do not commit them.",
+          "updated_at": "2026-01-01T00:00:00+00:00",
+          "reviewer": "example_reviewer"
+        }
+      },
+      "record_notes": "",
+      "record_status": "needs_review",
+      "updated_at": "2026-01-01T00:00:00+00:00",
+      "reviewer": "example_reviewer"
+    }
+  }
+}

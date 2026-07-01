@@ -1,6 +1,6 @@
 {
   "project_root": "C:\\Users\\chrismata\\CascadeProjects\\rpg_world_app",
-  "total_files": 29,
+  "total_files": 31,
   "domains": [
     "NPC generation",
     "character generation",
@@ -2353,12 +2353,12 @@
         "table_name": "monster_classification_suggestions",
         "domain": "monster catalogs/import previews/review data",
         "role": "import data",
-        "generated_report": false,
+        "generated_report": true,
         "user_editable": false,
         "categories": [
           {
             "name": "suggestions",
-            "entry_count": 487,
+            "entry_count": 452,
             "is_empty": false,
             "fields": [
               "display_name",
@@ -2370,18 +2370,15 @@
             "weighted": false,
             "is_text_list": false,
             "domain": "monster catalogs/import previews/review data",
-            "duplicate_ids": [
-              "normalized.megadungeon_monster_manual.greater"
-            ]
+            "duplicate_ids": []
           }
         ],
-        "warnings": [
-          "suggestions: duplicate ids: normalized.megadungeon_monster_manual.greater"
-        ],
+        "warnings": [],
         "references": [
           "app\\gui.py",
           "tests\\test_table_inventory_and_classification.py",
-          "tools\\importers\\monster_classification_suggestions.py"
+          "tools\\importers\\monster_classification_suggestions.py",
+          "tools\\report_table_inventory.py"
         ]
       },
       {
@@ -2556,6 +2553,20 @@
         ]
       },
       {
+        "path": "data\\import_reviews\\monster_canonical_group_decisions.example.json",
+        "file": "monster_canonical_group_decisions.example.json",
+        "table_name": "monster_canonical_group_decisions.example",
+        "domain": "monster catalogs/import previews/review data",
+        "role": "review data",
+        "generated_report": false,
+        "user_editable": false,
+        "categories": [],
+        "warnings": [],
+        "references": [
+          "tests\\test_table_inventory_and_classification.py"
+        ]
+      },
+      {
         "path": "data\\import_reviews\\monster_canonical_group_decisions.json",
         "file": "monster_canonical_group_decisions.json",
         "table_name": "monster_canonical_group_decisions",
@@ -2566,7 +2577,34 @@
         "categories": [],
         "warnings": [],
         "references": [
-          "app\\monster_import_review.py"
+          "app\\monster_import_review.py",
+          "tests\\test_table_inventory_and_classification.py"
+        ]
+      },
+      {
+        "path": "data\\import_reviews\\monster_normalized_field_corrections.example.json",
+        "file": "monster_normalized_field_corrections.example.json",
+        "table_name": "monster_normalized_field_corrections.example",
+        "domain": "monster catalogs/import previews/review data",
+        "role": "review data",
+        "generated_report": false,
+        "user_editable": false,
+        "categories": [
+          {
+            "name": "source_reports",
+            "entry_count": 2,
+            "is_empty": false,
+            "fields": [],
+            "id_present": false,
+            "weighted": false,
+            "is_text_list": true,
+            "domain": "monster catalogs/import previews/review data",
+            "duplicate_ids": []
+          }
+        ],
+        "warnings": [],
+        "references": [
+          "tests\\test_table_inventory_and_classification.py"
         ]
       },
       {
